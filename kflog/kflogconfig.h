@@ -103,6 +103,11 @@ class KFLogConfig : public QDialog
    */
   void airspaceFileListChanged();
 
+  /**
+   * Emitted to request a openAIP airspace file download.
+   */
+  void downloadOpenAipAirspaces();
+
  public slots:
   /** */
   void slotOk();
@@ -227,6 +232,27 @@ class KFLogConfig : public QDialog
    * file table.
    */
   void __loadAirspaceFilesIntoTable();
+
+  /**
+   * Checks the openAIP airspace country input for correctness. If not correct
+   * a message box is popup to inform the user about that fact.
+   *
+   * \param input String to be checked
+   *
+   * \return true if checked string is ok otherwise false
+   */
+  bool __checkOpenAipAirspaceInput( QString& input );
+
+  /**
+   * Checks the Welt2000 country input for correctness. If not correct a message
+   * box is popup to inform the user about that fact.
+   *
+   * \param input String to be checked
+   *
+   * \return true if checked string is ok otherwise false
+   */
+  bool __checkWelt2000Input( QString& input );
+
 
   QGridLayout *configLayout;
 

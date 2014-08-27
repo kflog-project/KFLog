@@ -194,6 +194,21 @@ void KFLogConfig::slotOk()
 {
   qDebug() << "KFLogConfig::slotOk()";
 
+  // First check, if the Welt2000 and openAIP countries are valid
+  QString input = countriesOpenAipAS->text().trimmed();
+
+  if( __checkOpenAipAirspaceInput( input ) == false )
+    {
+      return;
+    }
+
+  input = filterWelt2000->text().trimmed();
+
+  if( __checkWelt2000Input( input ) == false )
+    {
+      return;
+    }
+
   setVisible( false );
 
   // Save current projection
@@ -226,7 +241,7 @@ void KFLogConfig::slotOk()
   _settings.setValue( "/Homesite/Longitude", homeLonE->KFLogDegree() );
   _settings.setValue( "/MapData/ProjectionType", projectionSelect->currentIndex() );
 
-  _settings.setValue( "/Welt2000/CountryFilter", filterWelt2000->text() );
+  _settings.setValue( "/Welt2000/CountryFilter", filterWelt2000->text().trimmed().toUpper() );
   _settings.setValue( "/Welt2000/HomeRadius", homeRadiusWelt2000->value() );
   _settings.setValue( "/Welt2000/LoadOutlandings", readOlWelt2000->isChecked() );
 
@@ -257,6 +272,9 @@ void KFLogConfig::slotOk()
   _settings.setValue( "/Waypoints/DefaultWaypointCatalog",
                       waypointButtonGroup->id(waypointButtonGroup->checkedButton()) );
   _settings.setValue( "/Waypoints/DefaultCatalogName", catalogPathE->text() );
+
+  _settings.setValue( "/Airspace/Countries",
+                      countriesOpenAipAS->text().trimmed().toLower() );
 
   // Save units
   int altUnit  = unitAltitude->itemData( unitAltitude->currentIndex() ).toInt();
@@ -1548,10 +1566,17 @@ void KFLogConfig::__addAirspaceTab()
   QRegExp rx("[A-Za-z]{2}([ ,;][A-Za-z]{2})*");
   QValidator *validator = new QRegExpValidator(rx, this);
 
-  countriesOpenAipAS = new QLineEdit();
+  countriesOpenAipAS = new QLineEdit;
   countriesOpenAipAS->setMinimumWidth( 150 );
   countriesOpenAipAS->setValidator( validator );
   countriesOpenAipAS->setToolTip( tr("Add countries to be downloaded as 2 letter code according to ISO 3166-1-alpha-2.") );
+
+  QString countries = _settings.value("/Airspace/Countries", "").toString();
+
+  if( countries.isEmpty() == false )
+    {
+      countriesOpenAipAS->setText(countries);
+    }
 
   QPushButton* downloadAs = new QPushButton( tr("Download") );
   downloadAs->setToolTip( tr("Press button to download the desired openAIP airspace files.") );
@@ -1780,12 +1805,33 @@ void KFLogConfig::slotSelectFlightTypeColor( int buttonIdentifier )
 
 void KFLogConfig::slotDownloadWelt2000()
 {
+  QString input = filterWelt2000->text().trimmed();
+
+  if( __checkWelt2000Input( input ) == false )
+    {
+      return;
+    }
+
+  _settings.setValue( "/Welt2000/CountryFilter", filterWelt2000->text().trimmed().toUpper() );
+  _settings.setValue( "/Welt2000/HomeRadius", homeRadiusWelt2000->value() );
+  _settings.setValue( "/Welt2000/LoadOutlandings", readOlWelt2000->isChecked() );
+
   emit downloadWelt2000();
 }
 
 void KFLogConfig::slotDownloadOpenAipAS()
 {
-  // TODO something here
+  QString input = countriesOpenAipAS->text().trimmed();
+
+  if( __checkOpenAipAirspaceInput( input ) == false )
+    {
+      return;
+    }
+
+  _settings.setValue( "/Airspace/Countries",
+                      countriesOpenAipAS->text().trimmed().toLower() );
+
+  emit downloadOpenAipAirspaces();
 }
 
 /**
@@ -1908,4 +1954,56 @@ void KFLogConfig::__loadAirspaceFilesIntoTable()
     }
 
   asFileTable->resizeColumnsToContents();
+}
+
+bool KFLogConfig::__checkOpenAipAirspaceInput( QString& input )
+{
+  QRegExp rx("[A-Za-z]{2}([ ,;][A-Za-z]{2})*");
+  QRegExpValidator v(rx, 0);
+
+  int pos = 0;
+
+  QValidator::State state = v.validate( input, pos );
+
+  if( state != QValidator::Acceptable )
+    {
+      // Popup a warning message box
+      QMessageBox::warning( this,
+                            tr("Wrong country entries"),
+                            "<html>" +
+                            tr("Please check the openAIP airspace country entries!") +
+                            "<br><br>" +
+                            tr("The expected format is a two letter country code separated by spaces") +
+                            "</html>",
+                            QMessageBox::Ok );
+      return false;
+    }
+
+  return true;
+}
+
+bool KFLogConfig::__checkWelt2000Input( QString& input )
+{
+  QRegExp rx("[A-Za-z]{2}([ ,;][A-Za-z]{2})*");
+  QRegExpValidator v(rx, 0);
+
+  int pos = 0;
+
+  QValidator::State state = v.validate( input, pos );
+
+  if( state != QValidator::Acceptable )
+    {
+      // Popup a warning message box
+      QMessageBox::warning( this,
+                            tr("Wrong country entries"),
+                            "<html>" +
+                            tr("Please check the Welt2000 country entries!") +
+                            "<br><br>" +
+                            tr("The expected format is a two letter country code separated by spaces") +
+                            "</html>",
+                            QMessageBox::Ok );
+      return false;
+    }
+
+  return true;
 }
