@@ -33,6 +33,8 @@ MOC_DIR     = .obj
 # Map and GUI icons are handled by the Qt resource system
 RESOURCES = kflog.qrc
 
+win32:RC_FILE = kflog.rc
+
 SOURCES = \
     aboutwidget.cpp \
     airfield.cpp \
@@ -203,3 +205,6 @@ airspaces.files = ../README-AIRSPACE
 INSTALLS += landscape airfields airspaces
 
 DESTDIR = ../release/bin
+
+OTHER_FILES += \
+    kflog.rc
