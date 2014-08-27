@@ -1878,7 +1878,7 @@ void KFLogConfig::__loadAirspaceFilesIntoTable()
   asFileTable->setHorizontalHeaderItem( 0, hrItem );
 
   QDir dir( mapDir );
-  QStringList filters; filters << "*.txt" << "*.TXT";
+  QStringList filters; filters << "*.txt" << "*.TXT" << "*.aip" << "*.AIP";
   dir.setNameFilters(filters);
   dir.setFilter( QDir::Files|QDir::Readable);
   dir.setSorting( QDir::Name );
@@ -1896,17 +1896,6 @@ void KFLogConfig::__loadAirspaceFilesIntoTable()
 
   for( int i = 0; i < preselect.size(); i++ )
     {
-      if( preselect.at(i).endsWith( ".TXT" ) )
-        {
-          // Upper case file names are converted to lower case and renamed.
-          QFileInfo fInfo = preselect.at(i);
-          QString path    = fInfo.absolutePath();
-          QString fn      = fInfo.fileName().toLower();
-          QString newFn   = path + "/" + fn;
-          QFile::rename( preselect.at(i), newFn );
-          preselect[i] = newFn;
-        }
-
       asFileTable->setRowCount( row + 1 );
 
       QString file = QFileInfo( preselect.at(i) ).fileName();
