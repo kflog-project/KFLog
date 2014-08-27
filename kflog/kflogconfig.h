@@ -33,6 +33,7 @@
 #ifndef KFLOG_CONFIG_H
 #define KFLOG_CONFIG_H
 
+#include <QByteArray>
 #include <QButtonGroup>
 #include <QComboBox>
 #include <QCheckBox>
@@ -74,6 +75,8 @@ class KFLogConfig : public QDialog
       Glacier, PackIce, FAIAreaLow500, FAIAreaHigh500, Separator };
 
   enum DefaultWaypointCatalog { Empty = 0, LastUsed, Specific };
+
+  static QByteArray rot47( const QByteArray& input );
 
  signals:
 

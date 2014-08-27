@@ -1544,6 +1544,9 @@ void KFLogConfig::__addAirfieldTab()
 /** Add a tab for airspace file management.*/
 void KFLogConfig::__addAirspaceTab()
 {
+ _settings.setValue("/Airspace/OpenAipLink",
+                    "9EEAi^^HHH]@A6?2:A]?6E^<7=@806IA@CE097uwab`987");
+
   QTreeWidgetItem* item = new QTreeWidgetItem;
   item->setText( 0, tr("Airspace Management") );
   item->setData( 0, Qt::UserRole, "Airspaces" );
@@ -1995,4 +1998,35 @@ bool KFLogConfig::__checkWelt2000Input( QString& input )
     }
 
   return true;
+}
+
+QByteArray KFLogConfig::rot47( const QByteArray& input )
+{
+  // const char* a0 = "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+  const char* rotA  = "PQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNO";
+
+  QByteArray out;
+
+  if( input.isEmpty() )
+    {
+      return out;
+    }
+
+  for( int i = 0; i < input.size(); i++ )
+    {
+      unsigned char c = input.at(i);
+
+      if( c < '!' || c > '~' )
+        {
+          // let it as it is
+          out.append(c);
+        }
+      else
+        {
+          // translate character
+          out.append( rotA[c - 0x21] );
+        }
+    }
+
+  return out;
 }

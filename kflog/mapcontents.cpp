@@ -32,6 +32,7 @@
 #include "flightgroup.h"
 #include "flightselectiondialog.h"
 #include "isohypse.h"
+#include "kflogconfig.h"
 #include "lineelement.h"
 #include "mainwindow.h"
 #include "mapcontents.h"
@@ -96,8 +97,9 @@ MapContents::MapContents( QObject* object ) :
   askUser(true),
   loadWelt2000(true),
   loadAirspaces(true),
-  downloadManger(0),
-  currentFlightListIndex(-1)
+  m_downloadManger(0),
+  m_downloadOpenAipAsManger(0),
+  m_currentFlightListIndex(-1)
 {
   // Setup a hash used as reverse mapping from isoLine value to array index to
   // speed up loading of ground and terrain files.
@@ -170,12 +172,12 @@ void MapContents::slotCloseFlight()
       if( flightList.size() != 0 )
         {
           currentFlight = flightList.last();
-          currentFlightListIndex = flightList.size() - 1;
+          m_currentFlightListIndex = flightList.size() - 1;
         }
       else
         {
           currentFlight = 0;
-          currentFlightListIndex = -1;
+          m_currentFlightListIndex = -1;
         }
 
       emit currentFlightChanged();
@@ -199,17 +201,17 @@ bool MapContents::__downloadMapFile( QString &file, QString &directory )
       return false;
     }
 
-  if( downloadManger == static_cast<DownloadManager *> (0) )
+  if( m_downloadManger == static_cast<DownloadManager *> (0) )
     {
-      downloadManger = new DownloadManager(this);
+      m_downloadManger = new DownloadManager(this);
 
-      connect( downloadManger, SIGNAL(finished( int, int )),
+      connect( m_downloadManger, SIGNAL(finished( int, int )),
                this, SLOT(slotDownloadsFinished( int, int )) );
 
-      connect( downloadManger, SIGNAL(networkError()),
+      connect( m_downloadManger, SIGNAL(networkError()),
                this, SLOT(slotNetworkError()) );
 
-      connect( downloadManger, SIGNAL(status(const QString&)),
+      connect( m_downloadManger, SIGNAL(status(const QString&)),
                _mainWindow, SLOT(slotSetStatusMsg(const QString &)) );
     }
 
@@ -221,7 +223,7 @@ bool MapContents::__downloadMapFile( QString &file, QString &directory )
   QString url = srvUrl + file;
   QString dest = directory + "/" + file;
 
-  downloadManger->downloadRequest( url, dest );
+  m_downloadManger->downloadRequest( url, dest );
   return true;
 }
 
@@ -229,8 +231,8 @@ bool MapContents::__downloadMapFile( QString &file, QString &directory )
 void MapContents::slotDownloadsFinished( int requests, int errors )
 {
   // All has finished, free not more needed resources
-  downloadManger->deleteLater();
-  downloadManger = static_cast<DownloadManager *> (0);
+  m_downloadManger->deleteLater();
+  m_downloadManger = static_cast<DownloadManager *> (0);
 
   // initiate a new map load
   emit contentsChanged();
@@ -247,8 +249,8 @@ void MapContents::slotDownloadsFinished( int requests, int errors )
 void MapContents::slotNetworkError()
 {
   // A network error has occurred. We do stop all further downloads.
-  downloadManger->deleteLater();
-  downloadManger = static_cast<DownloadManager *> (0);
+  m_downloadManger->deleteLater();
+  m_downloadManger = static_cast<DownloadManager *> (0);
 
   QString msg;
   msg = QString(tr("Network error occurred.\nAll downloads are canceled!"));
@@ -273,21 +275,21 @@ void MapContents::slotDownloadWelt2000()
       return;
     }
 
-  if( downloadManger == static_cast<DownloadManager *> (0) )
+  if( m_downloadManger == static_cast<DownloadManager *> (0) )
     {
-      downloadManger = new DownloadManager(this);
+      m_downloadManger = new DownloadManager(this);
 
-      connect( downloadManger, SIGNAL(finished( int, int )),
+      connect( m_downloadManger, SIGNAL(finished( int, int )),
                this, SLOT(slotDownloadsFinished( int, int )) );
 
-      connect( downloadManger, SIGNAL(networkError()),
+      connect( m_downloadManger, SIGNAL(networkError()),
                this, SLOT(slotNetworkError()) );
 
-      connect( downloadManger, SIGNAL(status(const QString&)),
+      connect( m_downloadManger, SIGNAL(status(const QString&)),
                _mainWindow, SLOT(slotSetStatusMsg(const QString &)) );
     }
 
-  connect( downloadManger, SIGNAL(welt2000Downloaded()),
+  connect( m_downloadManger, SIGNAL(welt2000Downloaded()),
            this, SLOT(slotWelt2000Downloaded()) );
 
   QString welt2000FileName = _settings.value( "/Welt2000/FileName", "WELT2000.TXT").toString();
@@ -299,7 +301,7 @@ void MapContents::slotDownloadWelt2000()
   QString url  = welt2000Link + "/" + welt2000FileName;
   QString dest = getMapRootDirectory() + "/airfields/welt2000.txt.new";
 
-  downloadManger->downloadRequest( url, dest );
+  m_downloadManger->downloadRequest( url, dest );
 }
 
 /**
@@ -396,6 +398,93 @@ void MapContents::slotReloadWelt2000Data()
 
   loadWelt2000 = true;
   emit contentsChanged();
+}
+
+void MapContents::slotDownloadOpenAipAirspaceFiles()
+{
+  qDebug() << "MapContents::slotDownloadOpenAipAirspaceFiles()";
+
+  extern QSettings _settings;
+
+  if( __askUserForDownload() != Automatic )
+    {
+      qDebug() << "openAipAirspaces: Auto Download Inhibited";
+      return;
+    }
+
+  QString countries = _settings.value("/Airspace/Countries", "").toString();
+
+  if( countries.isEmpty() )
+    {
+      qWarning() << "MapContents::slotDownloadOpenAipAirspaceFiles(): No countries defined!";
+      return;
+    }
+
+  if( m_downloadOpenAipAsManger == static_cast<DownloadManager *> (0) )
+    {
+      m_downloadOpenAipAsManger = new DownloadManager(this);
+
+      connect( m_downloadOpenAipAsManger, SIGNAL(finished( int, int )),
+               this, SLOT(slotOpenAipAsDownloadsFinished( int, int )) );
+
+      connect( m_downloadOpenAipAsManger, SIGNAL(networkError()),
+               this, SLOT(slotOpenAipAsNetworkError()) );
+
+      connect( m_downloadOpenAipAsManger, SIGNAL(status(const QString&)),
+               _mainWindow, SLOT(slotSetStatusMsg(const QString &)) );
+    }
+
+  QStringList countryList = countries.split(QRegExp("[ ,;]"));
+
+  const QString urlPrefix = KFLogConfig::rot47(_settings.value("/Airspace/OpenAipLink", "").toByteArray()) + "/";
+  const QString destPrefix = getMapRootDirectory() + "/airspaces/";
+
+  for( int i = 0; i < countryList.size(); i++ )
+    {
+      // File name format: <country-code>_asp.aip, example: de_asp.aip
+      QString file = countryList.at(i).toLower() + "_asp.aip";
+      QString url  = urlPrefix + file;
+      QString dest = destPrefix + file;
+      m_downloadOpenAipAsManger->downloadRequest( url, dest );
+
+      qDebug() << "Download:" << url << dest;
+    }
+}
+
+void MapContents::slotOpenAipAsDownloadsFinished( int requests, int errors )
+{
+  // All has finished, free not more needed resources
+  m_downloadOpenAipAsManger->deleteLater();
+  m_downloadOpenAipAsManger = static_cast<DownloadManager *> (0);
+
+  // initiate a new map load
+  // TODO check next line
+  emit contentsChanged();
+
+  QString msg;
+  msg = QString(tr("%1 download(s) with %2 error(s) done.")).arg(requests).arg(errors);
+
+  QMessageBox::information( _mainWindow,
+                            tr("openAIP Airspace Downloads finished"),
+                            msg );
+}
+
+/**
+ * Called, if a network error occurred during the openAIP airspace file
+ * downloads.
+ */
+void MapContents::slotOpenAipAsNetworkError()
+{
+  // A network error has occurred. We do stop all further downloads.
+  m_downloadOpenAipAsManger->deleteLater();
+  m_downloadOpenAipAsManger = static_cast<DownloadManager *> (0);
+
+  QString msg;
+  msg = QString(tr("Network error occurred.\nAll downloads are canceled!"));
+
+  QMessageBox::information( _mainWindow,
+                            tr("Network Error"),
+                            msg );
 }
 
 /**
@@ -890,7 +979,7 @@ void MapContents::appendFlight(Flight* flight)
 {
   flightList.append(flight);
   currentFlight = flight;
-  currentFlightListIndex = flightList.size() - 1;
+  m_currentFlightListIndex = flightList.size() - 1;
 
   // Signal to object tree about new flight to slotNewFlightAdded
   emit newFlightAdded( flight );
@@ -1690,7 +1779,7 @@ void MapContents::slotNewTask()
 
   FlightTask *ft = new FlightTask(genTaskName());
   flightList.append(ft);
-  currentFlightListIndex = flightList.size() - 1;
+  m_currentFlightListIndex = flightList.size() - 1;
   currentFlight = ft;
 
   // Calls ObjectTree::slotNewTaskAdded()
@@ -1759,7 +1848,7 @@ void MapContents::slotNewFlightGroup()
       FlightGroup* flightGroup = new FlightGroup(fl, tmp);
 
       flightList.append(flightGroup);
-      currentFlightListIndex = flightList.size() - 1;
+      m_currentFlightListIndex = flightList.size() - 1;
       currentFlight = flightGroup;
 
       emit newFlightGroupAdded(flightGroup);
@@ -1776,7 +1865,7 @@ void MapContents::slotSetFlight( QAction *action )
   if (id >= 0 && id < flightList.count())
     {
       currentFlight = flightList.at(id);
-      currentFlightListIndex = id;
+      m_currentFlightListIndex = id;
       emit currentFlightChanged();
     }
 }
@@ -1785,8 +1874,8 @@ void MapContents::slotSetFlight(BaseFlightElement *bfe)
 {
   if( flightList.contains( bfe ) )
     {
-      currentFlightListIndex = flightList.indexOf( bfe );
-      currentFlight = flightList.at(currentFlightListIndex);
+      m_currentFlightListIndex = flightList.indexOf( bfe );
+      currentFlight = flightList.at(m_currentFlightListIndex);
       emit currentFlightChanged();
     }
 }

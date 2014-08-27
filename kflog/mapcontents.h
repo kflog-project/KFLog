@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
-**                   2010-2013 by Axel Pauli
+**                   2010-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -229,7 +229,7 @@ class MapContents : public QObject
   /**
    * @return a pointer to the current flight index
    */
-  int getFlightIndex() { return currentFlightListIndex; };
+  int getFlightIndex() { return m_currentFlightListIndex; };
 
   /**
    * @returns the flightList
@@ -336,18 +336,32 @@ class MapContents : public QObject
    */
   void slotReloadWelt2000Data();
 
+  /*
+   * Called, if openAIP airspace files shall be downloaded.
+   */
+  void slotDownloadOpenAipAirspaceFiles();
+
   /**
    * Reload airspace data. Can be called after a configuration change.
    */
   void slotReloadAirspaceData();
 
-  private slots:
+ private slots:
 
   /** Called, if all downloads are finished. */
   void slotDownloadsFinished( int requests, int errors );
 
   /** Called, if a network error occurred during the downloads. */
   void slotNetworkError();
+
+  /** Called, if all openAIP airspace file downloads are finished. */
+  void slotOpenAipAsDownloadsFinished( int requests, int errors );
+
+  /**
+   * Called, if a network error occurred during the openAIP airspace file
+   * downloads.
+   */
+  void slotOpenAipAsNetworkError();
 
  signals:
   /**
@@ -630,12 +644,15 @@ class MapContents : public QObject
   bool __downloadMapFile( QString &file, QString &directory );
 
   /** Manager to handle downloads of missing map file. */
-  DownloadManager *downloadManger;
+  DownloadManager *m_downloadManger;
+
+  /** Manager to handle downloads of requested openAIP airspace files. */
+  DownloadManager *m_downloadOpenAipAsManger;
 
   /**
    * index of the current flight in flightList
    */
-  int currentFlightListIndex;
+  int m_currentFlightListIndex;
 };
 
 #endif
