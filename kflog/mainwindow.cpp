@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Heiner Lamprecht, Florian Ehinger
-**                   2010-2011 by Axel Pauli
+**                   2010-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -1724,6 +1724,9 @@ void MainWindow::slotConfigureKFLog()
 
   connect( confDlg, SIGNAL(reloadWelt2000Data()),
            _globalMapContents, SLOT(slotReloadWelt2000Data()) );
+
+  connect( confDlg, SIGNAL(downloadOpenAipAirspaces()),
+           _globalMapContents, SLOT(slotDownloadOpenAipAirspaceFiles()) );
 
   connect( confDlg, SIGNAL(airspaceFileListChanged()),
           _globalMapContents, SLOT(slotReloadAirspaceData()) );

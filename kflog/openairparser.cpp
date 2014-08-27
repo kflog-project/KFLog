@@ -7,7 +7,7 @@
  ************************************************************************
  **
  **   Copyright (c):  2005      by André Somers
- **                   2009-2012 by Axel Pauli
+ **                   2009-2014 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -60,7 +60,7 @@ uint OpenAirParser::load( QList<Airspace>& list )
 
   QStringList preselect;
 
-  for ( int i = 0; i < mapDirs.size(); ++i )
+  for ( int i = 0; i < mapDirs.size(); i++ )
     {
       MapContents::addDir(preselect, mapDirs.at(i) + "/airspaces", "*.txt");
       MapContents::addDir(preselect, mapDirs.at(i) + "/airspaces", "*.TXT");
@@ -70,22 +70,6 @@ uint OpenAirParser::load( QList<Airspace>& list )
     {
       qWarning( "OpenAirParser: No Open Air files could be found in the map directories" );
       return loadCounter;
-    }
-
-  // First check, if we have found a file name in upper letters. May
-  // be true, if a file was downloaded from the Internet. We will convert
-  // such a file name to lower cases and replace it in the file list.
-  for ( int i = 0; i < preselect.size(); ++i )
-    {
-      if ( preselect.at(i).endsWith( ".TXT" ) )
-        {
-          QFileInfo fInfo = preselect.at(i);
-          QString path    = fInfo.absolutePath();
-          QString fn      = fInfo.fileName().toLower();
-          QString newFn   = path + "/" + fn;
-          QFile::rename( preselect.at(i), newFn );
-          preselect[i] = newFn;
-        }
     }
 
   preselect.sort();
@@ -106,7 +90,7 @@ uint OpenAirParser::load( QList<Airspace>& list )
       // the files list.
       for( int i = preselect.size() - 1; i >= 0; i-- )
         {
-          QString file = QFileInfo(preselect.at(i)).completeBaseName() + ".txt";
+          QString file = QFileInfo(preselect.at(i)).fileName();
 
           if( files.contains( file ) == false )
             {

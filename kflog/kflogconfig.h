@@ -33,6 +33,7 @@
 #ifndef KFLOG_CONFIG_H
 #define KFLOG_CONFIG_H
 
+#include <QByteArray>
 #include <QButtonGroup>
 #include <QComboBox>
 #include <QCheckBox>
@@ -75,6 +76,8 @@ class KFLogConfig : public QDialog
 
   enum DefaultWaypointCatalog { Empty = 0, LastUsed, Specific };
 
+  static QByteArray rot47( const QByteArray& input );
+
  signals:
 
   /** */
@@ -102,6 +105,11 @@ class KFLogConfig : public QDialog
    * Emitted to request a reload of all airspace file.
    */
   void airspaceFileListChanged();
+
+  /**
+   * Emitted to request a openAIP airspace file download.
+   */
+  void downloadOpenAipAirspaces();
 
  public slots:
   /** */
@@ -227,6 +235,27 @@ class KFLogConfig : public QDialog
    * file table.
    */
   void __loadAirspaceFilesIntoTable();
+
+  /**
+   * Checks the openAIP airspace country input for correctness. If not correct
+   * a message box is popup to inform the user about that fact.
+   *
+   * \param input String to be checked
+   *
+   * \return true if checked string is ok otherwise false
+   */
+  bool __checkOpenAipAirspaceInput( QString& input );
+
+  /**
+   * Checks the Welt2000 country input for correctness. If not correct a message
+   * box is popup to inform the user about that fact.
+   *
+   * \param input String to be checked
+   *
+   * \return true if checked string is ok otherwise false
+   */
+  bool __checkWelt2000Input( QString& input );
+
 
   QGridLayout *configLayout;
 
