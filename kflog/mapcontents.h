@@ -326,11 +326,6 @@ class MapContents : public QObject
   void slotDownloadWelt2000();
 
   /**
-   * Called, if the Welt2000 file download is finished successfully.
-   */
-  void slotWelt2000Downloaded();
-
-  /**
    * Reload Welt2000 data file. Can be called after a configuration change or
    * after a download update.
    */
@@ -353,6 +348,9 @@ class MapContents : public QObject
 
   /** Called, if a network error occurred during the downloads. */
   void slotNetworkError();
+
+  /** Called, if a WELT2000.TXT download is finished. */
+  void slotWelt2000DownloadFinished( int requests, int errors );
 
   /** Called, if all openAIP airspace file downloads are finished. */
   void slotOpenAipAsDownloadsFinished( int requests, int errors );
@@ -645,6 +643,9 @@ class MapContents : public QObject
 
   /** Manager to handle downloads of missing map file. */
   DownloadManager *m_downloadManger;
+
+  /** Manager to handle download of WELT2000.TXT file. */
+  DownloadManager *m_downloadMangerW2000;
 
   /** Manager to handle downloads of requested openAIP airspace files. */
   DownloadManager *m_downloadOpenAipAsManger;

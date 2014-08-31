@@ -98,6 +98,7 @@ MapContents::MapContents( QObject* object ) :
   loadWelt2000(true),
   loadAirspaces(true),
   m_downloadManger(0),
+  m_downloadMangerW2000(0),
   m_downloadOpenAipAsManger(0),
   m_currentFlightListIndex(-1)
 {
@@ -261,11 +262,11 @@ void MapContents::slotNetworkError()
 }
 
 /**
- * This slot is called to download the Welt2000 file from the internet.
+ * This slot is called to download the Welt2000 file from the Internet.
  */
 void MapContents::slotDownloadWelt2000()
 {
-  // qDebug() << "MapContents::slotDownloadWelt2000()";
+  qDebug() << "MapContents::slotDownloadWelt2000()";
 
   extern QSettings _settings;
 
@@ -275,22 +276,19 @@ void MapContents::slotDownloadWelt2000()
       return;
     }
 
-  if( m_downloadManger == static_cast<DownloadManager *> (0) )
+  if( m_downloadMangerW2000 == static_cast<DownloadManager *> (0) )
     {
-      m_downloadManger = new DownloadManager(this);
+      m_downloadMangerW2000 = new DownloadManager(this);
 
-      connect( m_downloadManger, SIGNAL(finished( int, int )),
-               this, SLOT(slotDownloadsFinished( int, int )) );
+      connect( m_downloadMangerW2000, SIGNAL(finished( int, int )),
+               this, SLOT(slotWelt2000DownloadFinished( int, int )) );
 
-      connect( m_downloadManger, SIGNAL(networkError()),
+      connect( m_downloadMangerW2000, SIGNAL(networkError()),
                this, SLOT(slotNetworkError()) );
 
-      connect( m_downloadManger, SIGNAL(status(const QString&)),
+      connect( m_downloadMangerW2000, SIGNAL(status(const QString&)),
                _mainWindow, SLOT(slotSetStatusMsg(const QString &)) );
     }
-
-  connect( m_downloadManger, SIGNAL(welt2000Downloaded()),
-           this, SLOT(slotWelt2000Downloaded()) );
 
   QString welt2000FileName = _settings.value( "/Welt2000/FileName", "WELT2000.TXT").toString();
   QString welt2000Link     = _settings.value( "/Welt2000/Link", "http://www.segelflug.de/vereine/welt2000/download").toString();
@@ -299,19 +297,25 @@ void MapContents::slotDownloadWelt2000()
   _settings.setValue( "/Welt2000/Link", welt2000Link );
 
   QString url  = welt2000Link + "/" + welt2000FileName;
-  QString dest = getMapRootDirectory() + "/airfields/welt2000.txt.new";
+  QString dest = getMapRootDirectory() + "/airfields/WELT2000.TXT.new";
 
-  m_downloadManger->downloadRequest( url, dest );
+  m_downloadMangerW2000->downloadRequest( url, dest );
 }
 
 /**
  * Called, if the Welt2000 file download is finished successfully.
  */
-void MapContents::slotWelt2000Downloaded()
+void MapContents::slotWelt2000DownloadFinished( int requests, int errors )
 {
+  qDebug() << "MapContents::slotWelt2000DownloadFinished():" << requests << errors;
+
+  // All has finished, free not more needed resources
+  m_downloadMangerW2000->deleteLater();
+  m_downloadMangerW2000 = static_cast<DownloadManager *> (0);
+
   // Check, if the file content of the new Welt2000 file has been changed.
-  QString curW2000 = getMapRootDirectory() + "/airfields/welt2000.txt";
-  QString newW2000 = getMapRootDirectory() + "/airfields/welt2000.txt.new";
+  QString curW2000 = getMapRootDirectory() + "/airfields/WELT2000.TXT";
+  QString newW2000 = getMapRootDirectory() + "/airfields/WELT2000.TXT.new";
 
   QFileInfo curFi(curW2000);
   QFileInfo newFi(newW2000);

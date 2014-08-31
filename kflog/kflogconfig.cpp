@@ -197,14 +197,14 @@ void KFLogConfig::slotOk()
   // First check, if the Welt2000 and openAIP countries are valid
   QString input = countriesOpenAipAS->text().trimmed();
 
-  if( __checkOpenAipAirspaceInput( input ) == false )
+  if( input.isEmpty() == false && __checkOpenAipAirspaceInput( input ) == false )
     {
       return;
     }
 
   input = filterWelt2000->text().trimmed();
 
-  if( __checkWelt2000Input( input ) == false )
+  if( input.isEmpty() == false && __checkWelt2000Input( input ) == false )
     {
       return;
     }

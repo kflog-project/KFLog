@@ -46,9 +46,6 @@ extern QSettings _settings;
 #undef BOUNDING_BOX
 // #define BOUNDING_BOX 1
 
-// version used for files created from welt2000 data
-#define FILE_VERSION_AIRFIELD_C 202
-
 extern MapContents*  _globalMapContents;
 extern MapMatrix*    _globalMapMatrix;
 
@@ -78,6 +75,9 @@ bool Welt2000::check4update()
 {
   static bool hasCalled = false;
 
+  qDebug() << "Welt2000::check4update(): hasCalled=" << hasCalled;
+
+
   if( hasCalled == true )
     {
       // This method is callable only once to avoid a call dead lock.
@@ -86,72 +86,50 @@ bool Welt2000::check4update()
 
   hasCalled = true;
 
-  QString wl = "welt2000.txt";
-  QString wu = "WELT2000.TXT_";
+  QString wu = "WELT2000.TXT";
   QString sd = "/airfields/";
-
   QString mapDir = _globalMapContents->getMapRootDirectory();
 
-  QString pl = mapDir + sd + wl;
-  QString pu = mapDir + sd + wu;
+  // Search for the Welt2000 source file.
+  QString path2File = mapDir + sd + wu;
 
-  // Search for Welt2000 source file.
-  QString path2File = pl;
-
-  QFileInfo test( pl );
+  QFileInfo test( path2File );
 
   if( ! test.exists() )
     {
-      test.setFile( pu );
-
-      if( ! test.exists() )
-        {
-          // No welt2000 exists and we return false in this case because we cannot
-          // check the update state.
-          return false;
-        }
-
-      path2File = pu;
+      // No welt2000 exists and we return false in this case because we cannot
+      // check the update state.
+      return false;
     }
 
   if( test.lastModified().date() == QDate::currentDate() )
     {
+      qDebug() << "Welt2000::check4update(): Dates are equal, return false.";
       // The file was already updated today. Don't allow further updates.
       return false;
     }
 
-  // Only one update try per day is initiated.
+  // Only one update try per day is allowed.
   return true;
 }
 
 /**
- * search on default places a welt2000 file and load it. A source can
- * be the original ASCII file or a compiled version of it. The results
+ * Search on default places a welt2000 file and load it. The results
  * are put in the passed lists
  */
 bool Welt2000::load( QList<Airfield>& airfieldList,
                      QList<Airfield>& gliderfieldList,
                      QList<Airfield>& outlandingList )
 {
-  // Rename WELT2000.TXT -> welt2000.txt.
-  QString wl = "welt2000.txt";
-  QString wu = "WELT2000.TXT_";
-  QString sd = "/airfields/";
+  qDebug() << "Welt2000::load";
 
+  QString wu = "WELT2000.TXT";
+  QString sd = "/airfields/";
   QString mapDir = _globalMapContents->getMapRootDirectory();
 
-  QString pl = mapDir + sd + wl;
-  QString pu = mapDir + sd + wu;
+  QString path2File = mapDir + sd + wu;
 
-  if( QFileInfo(pu).exists() )
-    {
-      QFile::remove( pl );
-      QFile::rename( pu, pl );
-    }
-
-  QString w2PathTxt = pl;
-
-  QFileInfo test( w2PathTxt );
+  QFileInfo test( path2File );
 
   if( ! test.exists() )
     {
@@ -160,229 +138,7 @@ bool Welt2000::load( QList<Airfield>& airfieldList,
     }
 
   // parse source file
-  return parse( w2PathTxt, airfieldList, gliderfieldList, outlandingList );
-}
-
-/**
- * The passed file has to be a welt2000 file. All not relevant
- * entries, like turn points, will be filtered out. A new file is
- * written with the same name and an own header.
- */
-bool Welt2000::filter( QString& path )
-{
-  QString header1 = "# Welt2000 file was filtered by cumulus at ";
-  QString header2 = "# Please do not modify or remove this header";
-
-  QFile in(path);
-  QString fout = path + ".filtered";
-  QFile out(fout);
-
-  if( !in.open(QIODevice::ReadOnly) )
-    {
-      qWarning("W2000: Cannot open airfield file %s!", path.toLatin1().data());
-      return false;
-    }
-
-  QTextStream ins(&in);
-  QTextStream outs;
-
-  ins.setCodec( "ISO 8859-15" );
-  outs.setCodec( "ISO 8859-15" );
-
-  uint outLines = 0; // counter for written lines
-
-  while( ! ins.atEnd() )
-    {
-      QString line = ins.readLine();
-
-      if( outLines == 0 )
-        {
-          if( line.startsWith( header1 ) )
-            {
-              // File was already filtered, stop all doing
-              in.close();
-              return true;
-            }
-
-          // open output file for filtering
-          if( !out.open(QIODevice::WriteOnly) )
-            {
-              in.close();
-              qWarning("W2000: Cannot open temporary file %s!", fout.toLatin1().data());
-              return false;
-            }
-
-          outs.setDevice( &out );
-          outs << header1.toLatin1().data()
-               << QDateTime::currentDateTime().toString().toLatin1().data() << '\n'
-               << header2.toLatin1().data() << '\n' << '\n';
-          outLines += 2;
-        }
-
-      // remove white spaces and line end characters
-      line = line.trimmed();
-
-      // remove temporary commented out entries
-      if( line.startsWith("$-") || line.startsWith("$+") ||
-          line.startsWith("$*") || line.startsWith("$$") )
-        {
-          continue;
-        }
-
-      // real comments are not filtered out
-      if( line.startsWith("#") || line.startsWith("$") )
-        {
-          outs << line.toLatin1().data() << '\n';
-          outLines++;
-          continue;
-        }
-
-      if( line.length() < 62 )
-        {
-          // country sign not included, skip over it
-          continue;
-        }
-
-      // look, what kind of line was read.
-      // COL5 = 1 Airfield
-      // COL5 = 2 Outlanding, can contain UL fields
-      QString kind = line.mid( 5, 1 );
-
-      if( kind != "1" && kind != "2" )
-        {
-          continue; // skip it, not of interest for us
-        }
-
-      outs << line.toLatin1().data() << '\n';
-      outLines++;
-    }
-
-  in.close();
-  out.close();
-
-  if( outLines > 2 )
-    {
-      // overwrite old file with new extracted file
-      rename( fout.toLatin1().data(), path.toLatin1().data() );
-    }
-  else
-    {
-      // remove unneeded file, if nothing could be extracted
-      unlink( fout.toLatin1().data() );
-    }
-
-  return true;
-}
-
-/**
- * The passed file can contain country information, to be used during
- * parsing of welt2000.txt file. The entries country and home radius
- * can be overwritten by user values defined in GeneralConfig class.
- *
- * File syntax: [#$] These 2 signs starts a comment line, it ends with the newline
- *              FILTER countries=<country_1>,<country_2>,...<country_n>'\nl'
- *              FILTER countries=....
- *              MAP_ICAO <name>=[IntAirport|Airport|MilAirport|CivMilAirport|Airfield|ClosedAirfield|CivHeliport|MilHeliport|AmbHeliport|Gliderfield|UltraLight|HangGlider]
- *              MAP_SHORT_NAME <name>=[IntAirport|Airport|MilAirport|CivMilAirport|Airfield|ClosedAirfield|CivHeliport|MilHeliport|AmbHeliport|Gliderfield|UltraLight|HangGlider]
- *
- * You can define several filter lines, all will be processed.
- *
- */
-bool Welt2000::readConfigEntries( QString &path )
-{
-  c_countryList.clear();
-  c_homeRadius = 0.0;
-  c_icaoMap.clear();
-  c_shortMap.clear();
-
-  QFile in(path);
-
-  if( !in.open(QIODevice::ReadOnly) )
-    {
-      qWarning("W2000: User has not provided a configuration file %s!", path.toLatin1().data());
-      return false;
-    }
-
-  QTextStream ins(&in);
-
-  while( ! ins.atEnd() )
-    {
-      QString line = ins.readLine();
-
-      if( line.isEmpty() )
-        {
-          continue; // skip empty lines
-        }
-
-      // remove white spaces and line end characters
-      line = line.trimmed();
-
-      // step over comment lines
-      if( line.startsWith("#") || line.startsWith("$") )
-        {
-          continue;
-        }
-
-      if( line.startsWith("FILTER") || line.startsWith("filter") )
-        {
-          QStringList list = line.split(QRegExp("[=,]"), QString::SkipEmptyParts);
-
-          if( list.count() < 2 || list[0].contains("countries", Qt::CaseInsensitive) == false )
-            {
-              // No country elements to find in list
-              continue;
-            }
-
-          // remove first entry, it is the filter-country key
-          list.removeAt( 0 );
-
-          for( int i = 0; i < list.count(); i++ )
-            {
-              QString e = list[i].trimmed().toUpper();
-
-              if( c_countryList.contains(e) )
-                continue;
-
-              c_countryList += e;
-            }
-
-          c_countryList.sort();
-          continue;
-        }
-
-      if( line.startsWith("MAP_") || line.startsWith("map_") )
-        {
-          QStringList list = line.split(QRegExp("[=]"), QString::SkipEmptyParts);
-
-          if( list.count() < 2 )
-            {
-              // No map elements to find in list
-              continue;
-            }
-
-          if( list[0].contains("MAP_ICAO",Qt::CaseInsensitive) )
-            {
-              list[0].remove( 0, 8 );
-              list[0] = list[0].trimmed().toUpper(); // icao name of airfield
-              list[1] = list[1].trimmed(); // new map type for airfield
-              c_icaoMap.insert( list[0], list[1] );
-              // qDebug("W2000: c_icaoMap.insert(%s, %s)", list[0].toLatin1().data(), list[1].toLatin1().data());
-            }
-          else if( list[0].contains("MAP_SHORT_NAME",Qt::CaseInsensitive) )
-            {
-              list[0].remove( 0, 14 );
-              list[0] = list[0].trimmed(); // short name of airfield
-              list[1] = list[1].trimmed(); // new map type for airfield
-              c_shortMap.insert( list[0], list[1] );
-              // qDebug("W2000: c_shortMap.insert(%s, %s)", list[0].toLatin1().data(), list[1].toLatin1().data());
-            }
-        }
-
-    } // End of while( ! in.atEnd() )
-
-  in.close();
-
-  return true;
+  return parse( path2File, airfieldList, gliderfieldList, outlandingList );
 }
 
 /**
@@ -404,16 +160,6 @@ bool Welt2000::parse( QString& path,
   QTime t;
   t.start();
 
-#if 0
-  // Filter out the needed extract for us from the Welt2000
-  // file. That will reduce the file size over the half.
-  if( filter( path ) == false )
-    {
-      // It seems, that no Welt2000 file has been passed
-      return false;
-    }
-#endif
-
   QFile in(path);
 
   if( !in.open(QIODevice::ReadOnly) )
@@ -424,15 +170,6 @@ bool Welt2000::parse( QString& path,
 
   QTextStream ins(&in);
   ins.setCodec( "ISO 8859-15" );
-
-  // look, if a configuration file is accessible. If yes read out its data.
-  QFileInfo fi( path );
-  QString confFile = fi.path() + "/welt2000.conf";
-
-  // It is expected that the filter file is located in the same
-  // directory as the welt2000.txt file and carries the name
-  // welt2000.conf
-  readConfigEntries( confFile );
 
   // Check, if in KFLOg settings other definitions exist. These will
   // overwrite the definitions in the configuration file.

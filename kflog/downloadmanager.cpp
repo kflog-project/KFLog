@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c): 2010-2012 Axel Pauli
+**   Copyright (c): 2010-2014 Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -17,7 +17,7 @@
 
 /**
  * This class is a HTTP download manager. It processes download requests
- * in their incoming order one after another, not in parallel.
+ * in their incoming order one by one but not in parallel.
  */
 
 #ifndef _WIN32
@@ -168,22 +168,6 @@ void DownloadManager::slotFinished( QString &urlIn, QNetworkReply::NetworkError 
   if( ! queue.isEmpty() )
     {
       QPair<QString, QString> pair = queue.dequeue();
-
-      if( codeIn == QNetworkReply::NoError )
-        {
-          if( pair.second.contains( "welt2000.txt") )
-            {
-              // Special check for Welt2000 download to signal that. The signal
-              // is the trigger for the reload of the Welt2000 data file.
-              emit welt2000Downloaded();
-            }
-          else if( pair.second.contains( "/airspaces/") )
-            {
-              // Special check for an airspace download. The signal is the
-              // trigger for the reload of the airspace data file.
-              emit airspaceDownloaded();
-            }
-        }
     }
 
   // Remove last done request from the url set.
