@@ -465,9 +465,8 @@ void MapContents::slotOpenAipAsDownloadsFinished( int requests, int errors )
   m_downloadOpenAipAsManger->deleteLater();
   m_downloadOpenAipAsManger = static_cast<DownloadManager *> (0);
 
-  // initiate a new map load
-  // TODO check next line
-  emit contentsChanged();
+  // initiate a reload of all airspace data
+  slotReloadAirspaceData();
 
   QString msg;
   msg = QString(tr("%1 download(s) with %2 error(s) done.")).arg(requests).arg(errors);
