@@ -27,7 +27,7 @@
  * It takes control over loading all needed map-files.
  * The class contains several QPtrLists holding the map elements.
  *
- * \date 2000-2013
+ * \date 2000-2014
  *
  * \version $Id$
  */

@@ -330,7 +330,11 @@ void MapContents::slotWelt2000DownloadFinished( int requests, int errors )
     {
       // Current file is not available or file sizes are different.
       // Rename new file and initiate a load of it.
-      QFile::remove( curW2000 );
+      if( curFi.exists() )
+	{
+	  QFile::remove( curW2000 );
+	}
+
       QFile::rename( newW2000, curW2000 );
       slotReloadWelt2000Data();
       return;
