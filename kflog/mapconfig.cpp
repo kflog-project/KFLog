@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Heiner Lamprecht
-**                   2011 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -340,6 +340,21 @@ void MapConfig::slotReadConfig()
         AIRF_BRUSH_STYLE_3, AIRF_BRUSH_STYLE_4,
         PRINT_AIRF_BRUSH_STYLE_1, PRINT_AIRF_BRUSH_STYLE_2);
   __readAsOpacity(AS_F, airFOpacityList);
+
+  __readPenBrush(AS_FIR, airFirPenList, airFirBorder, airFirBrushList,
+        AIRFIR_COLOR_1, AIRFIR_COLOR_2, AIRFIR_COLOR_3, AIRFIR_COLOR_4,
+        PRINT_AIRFIR_COLOR_1, PRINT_AIRFIR_COLOR_2,
+        AIRFIR_PEN_1, AIRFIR_PEN_2, AIRFIR_PEN_3, AIRFIR_PEN_4,
+        PRINT_AIRFIR_PEN_1, PRINT_AIRFIR_PEN_2,
+        AIRFIR_PEN_STYLE_1, AIRFIR_PEN_STYLE_2, AIRFIR_PEN_STYLE_3, AIRFIR_PEN_STYLE_4,
+        PRINT_AIRFIR_PEN_STYLE_1, PRINT_AIRFIR_PEN_STYLE_2,
+        AIRFIR_BRUSH_COLOR_1, AIRFIR_BRUSH_COLOR_2,
+        AIRFIR_BRUSH_COLOR_3, AIRFIR_BRUSH_COLOR_4,
+        PRINT_AIRFIR_BRUSH_COLOR_1, PRINT_AIRFIR_BRUSH_COLOR_2,
+        AIRFIR_BRUSH_STYLE_1, AIRFIR_BRUSH_STYLE_2,
+        AIRFIR_BRUSH_STYLE_3, AIRFIR_BRUSH_STYLE_4,
+        PRINT_AIRFIR_BRUSH_STYLE_1, PRINT_AIRFIR_BRUSH_STYLE_2);
+  __readAsOpacity(AS_FIR, airFirOpacityList);
 
   __readPenBrush(AS_CTR_C, ctrCPenList, ctrCBorder, ctrCBrushList,
         CTRC_COLOR_1, CTRC_COLOR_2, CTRC_COLOR_3, CTRC_COLOR_4,
@@ -730,6 +745,8 @@ QPen& MapConfig::__getPen( unsigned int typeID, int sIndex )
           return airEPenList[sIndex];
       case BaseMapElement::AirF:
           return airFPenList[sIndex];
+      case BaseMapElement::AirFir:
+          return airFirPenList[sIndex];
       case BaseMapElement::ControlC:
           return ctrCPenList[sIndex];
       case BaseMapElement::ControlD:
@@ -785,6 +802,8 @@ int MapConfig::getAsOpacity( uint asType )
           return airEOpacityList[scaleIndex];
       case BaseMapElement::AirF:
           return airFOpacityList[scaleIndex];
+      case BaseMapElement::AirFir:
+          return airFirOpacityList[scaleIndex];
       case BaseMapElement::ControlC:
           return ctrCOpacityList[scaleIndex];
       case BaseMapElement::ControlD:
@@ -854,6 +873,8 @@ bool MapConfig::isBorder( unsigned int typeID )
           return airEBorder[scaleIndex];
       case BaseMapElement::AirF:
           return airFBorder[scaleIndex];
+      case BaseMapElement::AirFir:
+          return airFirBorder[scaleIndex];
       case BaseMapElement::ControlC:
           return ctrCBorder[scaleIndex];
       case BaseMapElement::ControlD:
@@ -982,6 +1003,8 @@ QBrush& MapConfig::__getBrush(unsigned int typeID, int index)
           return airEBrushList[index];
       case BaseMapElement::AirF:
           return airFBrushList[index];
+      case BaseMapElement::AirFir:
+          return airFirBrushList[index];
       case BaseMapElement::ControlC:
           return ctrCBrushList[index];
       case BaseMapElement::ControlD:

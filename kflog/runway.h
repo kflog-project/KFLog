@@ -2,11 +2,11 @@
 **
 **   runway.h
 **
-**   This file is part of KFlog4
+**   This file is part of KFLog
 **
 ************************************************************************
 **
-**   Copyright (c): 2008-2013 Axel Pauli
+**   Copyright (c): 2008-2014 Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -25,9 +25,7 @@
  * This class is used for defining a runway together with its surface and the
  * translation types.
  *
- * \date 2008-2013
- *
- * $Id$
+ * \date 2008-2014
  *
  */
 
@@ -49,26 +47,32 @@ public:
    */
   enum SurfaceType {Unknown = 0, Grass = 1, Asphalt = 2, Concrete = 3, Sand = 4};
 
-  /**
-   * Default constructor.
-   */
   Runway() :
-    length(0.0),
-    width(0.0),
-    surface(Unknown),
-    isOpen(false),
-    rwShift(9),
-    headings(QPair<ushort, ushort> (0, 0))
+    m_length(0),
+    m_heading(QPair<ushort, ushort> (0, 0)),
+    m_surface(Unknown),
+    m_isOpen(false),
+    m_isBidirectional(true),
+    m_width(0)
     {
     };
 
-  Runway( const float length,
-          const QPair<ushort, ushort> headings,
+  Runway( const float rwLength,
+          const QPair<ushort, ushort> heading,
           const enum SurfaceType surf,
-          const bool open=false,
+          const bool open=true,
+          const bool bidirectional=true,
           const float width=0.0 );
 
   virtual ~Runway() {};
+
+  /**
+   * \return The runway headings
+   */
+  QPair<ushort, ushort> getRunwayHeadings()
+    {
+      return m_heading;
+    };
 
   /**
    * Get translation string for surface type.
@@ -86,51 +90,39 @@ public:
   static QStringList& getSortedTranslationList();
 
   /**
-   * The length of the runway, given in meters.
+   * Prints out all runway data.
    */
-  float length;
+  void printData();
 
   /**
-   * The width of the runway, given in meters.
+   * The length of the runway, given in meters.
    */
-  float width;
+  float m_length;
+
+  /**
+   * The headings of the runway, given in steps of 1/10 degree (0-36).
+   */
+  QPair<ushort, ushort> m_heading;
 
   /**
    * The surface of the runway, one of SurfaceType, see above.
    */
-  enum SurfaceType surface;
+  enum SurfaceType m_surface;
 
   /**
    * Flag to indicate if the runway is open or closed.
    */
-  bool isOpen;
+  bool m_isOpen;
 
   /**
-   * Contains the shift of the runway during drawing.
+   * Flag to indicate if the runway is bidirectional or not.
    */
-  unsigned short rwShift;
+  bool m_isBidirectional;
 
   /**
-   * \return The runway headings as pair.
+   * The width of the runway, given in meters.
    */
-  QPair<ushort, ushort> getRunwayHeadings()
-    {
-      return headings;
-    }
-
-  /**
-   * Sets the runway headings.
-   *
-   * \param New Runway headings as pair.
-   */
-  void setRunwayHeadings( const QPair<ushort, ushort>& rwyHeadings );
-
-  /**
-   * The headings of the runway, given in steps of 1/10 degree (1-36).
-   */
-  QPair<ushort, ushort> headings;
-
-private:
+  float m_width;
 
   /**
    * Static pointer to surface translations

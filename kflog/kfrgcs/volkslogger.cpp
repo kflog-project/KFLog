@@ -423,8 +423,8 @@ int Volkslogger::readWaypoints(QList<Waypoint*> *waypoints)
     bool isLandable = (wp->typ & VLAPI_DATA::WPT::WPTTYP_L) > 0;
 
     if (isLandable) {
-      rwy.isOpen = true;
-      rwy.surface = (wp->typ & VLAPI_DATA::WPT::WPTTYP_H) > 0 ? Runway::Asphalt : Runway::Grass;
+      rwy.m_isOpen = true;
+      rwy.m_surface = (wp->typ & VLAPI_DATA::WPT::WPTTYP_H) > 0 ? Runway::Asphalt : Runway::Grass;
     }
 
     frWp->type = (wp->typ & VLAPI_DATA::WPT::WPTTYP_A) > 0 ? BaseMapElement::Airfield : -1;
@@ -475,8 +475,8 @@ int Volkslogger::writeWaypoints(QList<Waypoint*> *waypoints)
       }
 
     wp->typ =
-      (rwy.isOpen ? VLAPI_DATA::WPT::WPTTYP_L : 0) |
-      (rwy.surface == Runway::Asphalt || rwy.surface == Runway::Concrete ? VLAPI_DATA::WPT::WPTTYP_H : 0) |
+      (rwy.m_isOpen ? VLAPI_DATA::WPT::WPTTYP_L : 0) |
+      (rwy.m_surface == Runway::Asphalt || rwy.m_surface == Runway::Concrete ? VLAPI_DATA::WPT::WPTTYP_H : 0) |
       (frWp->type == BaseMapElement::Airfield || frWp->type == BaseMapElement::Gliderfield ||
        frWp->type == BaseMapElement::Airport || frWp->type == BaseMapElement::IntAirport ||
        frWp->type == BaseMapElement::MilAirport || frWp->type == BaseMapElement::CivMilAirport ? VLAPI_DATA::WPT::WPTTYP_A : 0);

@@ -387,9 +387,6 @@ private:
 
   /** Current used map projection. */
   ProjectionBase* currentProjection;
-
-  /** optimization to prevent recurring recalculation of this value */
-  int _MaxScaleToCScaleRatio;
 };
 
 #endif

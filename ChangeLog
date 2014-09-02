@@ -4,6 +4,11 @@
 #
 ################################################################################
 
+  * openAIP airspace data can be downloaded and read now by KFLog.
+  
+  * Tried to fix welt2000 reload loop.
+
+2014-09-02 Axel Pauli <kflog.cumulus@gmail.com>
 
   * Map configuration extensions introduced for airspace FIR.
 

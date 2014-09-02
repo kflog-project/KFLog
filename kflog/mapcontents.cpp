@@ -265,13 +265,11 @@ void MapContents::slotNetworkError()
 /**
  * This slot is called to download the Welt2000 file from the Internet.
  */
-void MapContents::slotDownloadWelt2000()
+void MapContents::slotDownloadWelt2000(bool askUser)
 {
-  qDebug() << "MapContents::slotDownloadWelt2000()";
-
   extern QSettings _settings;
 
-  if( __askUserForDownload() != Automatic )
+  if( askUser == true && __askUserForDownload() != Automatic )
     {
       qDebug() << "Welt2000: Auto Download Inhibited";
       return;
@@ -410,13 +408,13 @@ void MapContents::slotReloadWelt2000Data()
   emit contentsChanged();
 }
 
-void MapContents::slotDownloadOpenAipAirspaceFiles()
+void MapContents::slotDownloadOpenAipAirspaceFiles(bool askUser)
 {
   qDebug() << "MapContents::slotDownloadOpenAipAirspaceFiles()";
 
   extern QSettings _settings;
 
-  if( __askUserForDownload() != Automatic )
+  if( askUser == true && __askUserForDownload() != Automatic )
     {
       qDebug() << "openAipAirspaces: Auto Download Inhibited";
       return;
@@ -1006,7 +1004,8 @@ int MapContents::__askUserForDownload()
     {
       _settings.setValue("/Internet/AutomaticMapDownload", Inhibited);
 
-      int ret = QMessageBox::question(_mainWindow, tr("Automatic data download?"),
+      int ret = QMessageBox::question(_mainWindow,
+                tr("Automatic data download?"),
                 tr("<html>There are data missing under the directory tree<br><b>%1."
                 "</b><br> Do you want to download these data automatically?<br>"
                 "(If you want to change the root directory, "
@@ -1298,7 +1297,7 @@ void MapContents::proofeSection(bool isPrint)
         {
           // Welt2000 update available or load failed, try to download a new
           // Welt2000 File from the Internet web page.
-          slotDownloadWelt2000();
+          slotDownloadWelt2000( true );
         }
     }
 }

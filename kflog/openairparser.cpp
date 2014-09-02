@@ -23,98 +23,29 @@
 #include <QtCore>
 
 #include "airspace.h"
+#include "AirspaceHelper.h"
 #include "openairparser.h"
 #include "mapcalc.h"
-#include "mapcontents.h"
 #include "mapdefaults.h"
-#include "mapmatrix.h"
 #include "resource.h"
 
-extern MapContents* _globalMapContents;
-extern QSettings    _settings;
-
-OpenAirParser::OpenAirParser()
+OpenAirParser::OpenAirParser() :
+ _lineNumber(0),
+ _objCounter(0),
+ _isCurrentAirspace(true),
+  asType(BaseMapElement::NotSelected),
+  asUpper(BaseMapElement::NotSet),
+  asUpperType(BaseMapElement::NotSet),
+  asLower(BaseMapElement::NotSet),
+  asLowerType(BaseMapElement::NotSet),
+  _awy_width(0),
+  _direction(1)
 {
-  initializeBaseMapping();
+  QLocale::setDefault(QLocale::C);
 }
 
 OpenAirParser::~OpenAirParser()
 {
-}
-
-/**
- * Searches on default places for openair files. That can be source
- * files or compiled versions of them.
- *
- * @returns number of successfully loaded files
- * @param list the list of Airspace objects the objects in this
- *   file should be added to.
- */
-uint OpenAirParser::load( QList<Airspace>& list )
-{
-  QTime t;
-  t.start();
-  uint loadCounter = 0; // number of successfully loaded files
-  QStringList mapDirs;
-  mapDirs << _globalMapContents->getMapRootDirectory();
-
-  QStringList preselect;
-
-  for ( int i = 0; i < mapDirs.size(); i++ )
-    {
-      MapContents::addDir(preselect, mapDirs.at(i) + "/airspaces", "*.txt");
-      MapContents::addDir(preselect, mapDirs.at(i) + "/airspaces", "*.TXT");
-    }
-
-  if (preselect.count() == 0)
-    {
-      qWarning( "OpenAirParser: No Open Air files could be found in the map directories" );
-      return loadCounter;
-    }
-
-  preselect.sort();
-
-  // Check, which files shall be loaded.
-  QStringList files = _settings.value( "/Airspace/FileList", QStringList(QString("All"))).toStringList();
-
-  if( files.isEmpty() )
-    {
-      // No files shall be loaded
-      qWarning() << "OpenAirParser: No Open Air files defined for loading!";
-      return loadCounter;
-    }
-
-  if( files.first() != "All" )
-    {
-      // Check for desired files to be loaded. All other items are removed from
-      // the files list.
-      for( int i = preselect.size() - 1; i >= 0; i-- )
-        {
-          QString file = QFileInfo(preselect.at(i)).fileName();
-
-          if( files.contains( file ) == false )
-            {
-              preselect.removeAt(i);
-            }
-        }
-    }
-
-  while( !preselect.isEmpty() )
-    {
-      QString txtName;
-
-      txtName = preselect.first();
-
-      if( parse( txtName, list ) )
-        {
-          loadCounter++;
-        }
-
-      preselect.removeAt( 0 );
-    } // End of While
-
-  qDebug("OpenAirParser: %d OpenAir file(s) loaded in %dms", loadCounter, t.elapsed());
-  return loadCounter;
 }
 
 bool OpenAirParser::parse(const QString& path, QList<Airspace>& list)
@@ -132,7 +63,8 @@ bool OpenAirParser::parse(const QString& path, QList<Airspace>& list)
     }
 
   resetState();
-  initializeStringMapping( path );
+
+  m_airspaceTypeMapper = AirspaceHelper::initializeAirspaceTypeMapping( path );
 
   QTextStream in(&source);
   in.setCodec( "ISO 8859-15" );
@@ -378,133 +310,23 @@ void OpenAirParser::finishAirspace()
   //qDebug("finalized airspace %s. %d points in airspace", asName.toLatin1().data(), asPA.count());
 }
 
-
-void OpenAirParser::initializeBaseMapping()
-{
-  // create a mapping from a string representation of the supported
-  // airspace types in Cumulus to their integer codes
-  m_baseTypeMap.clear();
-
-  m_baseTypeMap.insert("AirA", BaseMapElement::AirA);
-  m_baseTypeMap.insert("AirB", BaseMapElement::AirB);
-  m_baseTypeMap.insert("AirC", BaseMapElement::AirC);
-  m_baseTypeMap.insert("AirD", BaseMapElement::AirD);
-  m_baseTypeMap.insert("AirE", BaseMapElement::AirE);
-  m_baseTypeMap.insert("WaveWindow", BaseMapElement::WaveWindow);
-  m_baseTypeMap.insert("AirF", BaseMapElement::AirF);
-  m_baseTypeMap.insert("ControlC", BaseMapElement::ControlC);
-  m_baseTypeMap.insert("ControlD", BaseMapElement::ControlD);
-  m_baseTypeMap.insert("Danger", BaseMapElement::Danger);
-  m_baseTypeMap.insert("Restricted", BaseMapElement::Restricted);
-  m_baseTypeMap.insert("Prohibited", BaseMapElement::Prohibited);
-  m_baseTypeMap.insert("LowFlight", BaseMapElement::LowFlight);
-  m_baseTypeMap.insert("Tmz", BaseMapElement::Tmz);
-  m_baseTypeMap.insert("GliderSector", BaseMapElement::GliderSector);
-}
-
-void OpenAirParser::initializeStringMapping(const QString& mapFilePath)
-{
-  //fist, initialize the mapping QMap with the defaults
-  m_stringTypeMap.clear();
-
-  m_stringTypeMap.insert("A", "AirA");
-  m_stringTypeMap.insert("B", "AirB");
-  m_stringTypeMap.insert("C", "AirC");
-  m_stringTypeMap.insert("D", "AirD");
-  m_stringTypeMap.insert("E", "AirE");
-  m_stringTypeMap.insert("F", "AirF");
-  m_stringTypeMap.insert("GP", "Restricted");
-  m_stringTypeMap.insert("R", "Restricted");
-  m_stringTypeMap.insert("P", "Prohibited");
-  m_stringTypeMap.insert("TRA", "Restricted");
-  m_stringTypeMap.insert("Q", "Danger");
-  m_stringTypeMap.insert("CTR", "ControlD");
-  m_stringTypeMap.insert("TMZ", "Tmz");
-  m_stringTypeMap.insert("W", "WaveWindow");
-  m_stringTypeMap.insert("GSEC", "GliderSector");
-
-  //then, check to see if we need to update this mapping
-  //construct file name for mapping file
-  QFileInfo fi(mapFilePath);
-
-  QString path = fi.path() + "/" + fi.baseName() + "_mappings.conf";
-  fi.setFile(path);
-
-  if (fi.exists() && fi.isFile() && fi.isReadable())
-    {
-      QFile f(path);
-
-      if (!f.open(QIODevice::ReadOnly))
-        {
-          qWarning("OpenAirParser: Cannot open airspace mapping file %s!", path.toLatin1().data());
-          return;
-        }
-
-      QTextStream in(&f);
-      qDebug("Parsing mapping file '%s'.", path.toLatin1().data());
-
-      //start parsing
-      QString line = in.readLine();
-
-      while (!line.isNull())
-        {
-          line = line.simplified();
-          if (line.startsWith("*") || line.startsWith("#"))
-            {
-              //comment, ignore
-            }
-          else if (line.isEmpty())
-            {
-              //empty line, ignore
-            }
-          else
-            {
-              int pos = line.indexOf("=");
-              if (pos>0 && pos < int(line.length()))
-                {
-                  QString key = line.left(pos).simplified();
-                  QString value = line.mid(pos+1).simplified();
-                  qDebug("  added '%s' => '%s' to mappings", key.toLatin1().data(), value.toLatin1().data());
-                  m_stringTypeMap.remove(key);
-                  m_stringTypeMap.insert(key, value);
-                }
-            }
-
-          line=in.readLine();
-        }
-    }
-}
-
-
 void OpenAirParser::parseType(QString& line)
 {
   line=line.mid(3);
 
-  if (!m_stringTypeMap.contains(line))
+  if( ! m_airspaceTypeMapper.contains(line) )
     {
       //no mapping from the found type to a Cumulus base type was found
-      qWarning("OpenAirParser: Line=%d Type, '%s' not mapped to base type. Object not interpretted.", _lineNumber, line.toLatin1().data());
+      qWarning("OAP: Line=%d AS Type, '%s' not mapped to a basetype. Object ignored.",
+               _lineNumber, line.toLatin1().data());
       _isCurrentAirspace = false; //stop accepting other lines in this object
       return;
     }
   else
     {
-      QString stringType = m_stringTypeMap[line];
-      if (!m_baseTypeMap.contains(stringType))
-        {
-          //the indicated base type is not a valid Cumulus base type.
-          qWarning("OpenAirParser:=Line %d, Type '%s' is not a valid base type. Object not interpretted.", _lineNumber, stringType.toLatin1().data());
-          _isCurrentAirspace = false; //stop accepting other lines in this object
-          return;
-        }
-      else
-        {
-          //all seems to be right with the world!
-          asType = m_baseTypeMap[stringType];
-        }
+      asType = m_airspaceTypeMapper.value(line, BaseMapElement::AirUkn);
     }
 }
-
 
 void OpenAirParser::parseAltitude(QString& line, BaseMapElement::elevationType& type, int& alt)
 {

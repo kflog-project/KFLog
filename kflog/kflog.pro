@@ -1,7 +1,7 @@
 ###############################################################################
-# KFLog4 qmake project file
 #
-# $Id$
+# KFLog qmake project file for Qt4.x
+#
 ###############################################################################
 
 !win32 {
@@ -39,6 +39,7 @@ SOURCES = \
     aboutwidget.cpp \
     airfield.cpp \
     airspace.cpp \
+    AirspaceHelper.cpp \
     airspacelistviewitem.cpp \
     altitude.cpp \
     authdialog.cpp \
@@ -85,6 +86,7 @@ SOURCES = \
     mapcontrolview.cpp \
     mapmatrix.cpp \
     objecttree.cpp \
+    openaip.cpp \
     openairparser.cpp \
     optimization.cpp \
     optimizationwizard.cpp \
@@ -113,6 +115,7 @@ HEADERS = \
     aboutwidget.h \
     airfield.h \
     airspace.h \
+    AirspaceHelper.h \
     airspacelistviewitem.h \
     airspacewarningdistance.h \
     altitude.h \
@@ -163,6 +166,7 @@ HEADERS = \
     mapdefaults.h \
     mapmatrix.h \
     objecttree.h \
+    openaip.h \
     openairparser.h \
     optimization.h \
     optimizationwizard.h \

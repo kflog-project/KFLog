@@ -33,13 +33,16 @@ Airfield::Airfield( const QString& name,
                     const QString comment,
                     bool winch,
                     bool towing,
-                    bool landable ) :
+                    bool landable,
+                    const float atis) :
   SinglePoint(name, shortName, typeId, wgsPos, pos, elevation, comment, country),
-  icao(icao),
-  frequency(frequency),
-  winch(winch),
-  towing(towing),
-  landable(landable)
+  m_icao(icao),
+  m_frequency(frequency),
+  m_atis(atis),
+  m_winch(winch),
+  m_towing(towing),
+  m_rwShift(0),
+  m_landable(landable)
 {
 }
 
@@ -58,9 +61,9 @@ QString Airfield::getInfoString()
          glConfig->getPixmapName(typeID, hasWinch(), false) + "> " +
          name;
 
-  if( !icao.isEmpty() )
+  if( !m_icao.isEmpty() )
     {
-      text1 = " (" + icao;
+      text1 = " (" + m_icao;
     }
 
   if( !country.isEmpty() )
@@ -96,17 +99,17 @@ QString Airfield::getInfoString()
 
           Runway *rw = getRunway(i);
 
-          text += QString("<b>%1/%2</b>").arg( rw->getRunwayHeadings().first, 2, 10, QChar('0') )
-                                         .arg( rw->getRunwayHeadings().second, 2, 10, QChar('0') );
-          text += " (" + Runway::item2Text( rw->surface ) + ")";
+          text += QString("<b>%1/%2</b>").arg( rw->m_heading.first, 2, 10, QChar('0') )
+                                         .arg( rw->m_heading.second, 2, 10, QChar('0') );
+          text += " (" + Runway::item2Text( rw->m_surface ) + ")";
           text += "</td><td>" + QObject::tr("Length:") + "</td><td><b>" +
-                  QString("%1 m").arg(rw->length) + "</b><td></tr>";
+                  QString("%1 m").arg(rw->m_length) + "</b><td></tr>";
         }
     }
 
   text += "<tr><td>" + QObject::tr("Frequency:") + "</td><td>";
 
-  if( frequency > 0.0 )
+  if( m_frequency > 0.0 )
     {
       text += "<b>" + frequencyAsString() + " " + QObject::tr("MHz") + "</b></td>";
     }
@@ -153,12 +156,12 @@ QString Airfield::getInfoString()
 
 Runway* Airfield::getRunway( int index )
 {
-  if( rwData.size() == 0 )
+  if( m_rwList.size() == 0 )
     {
       return static_cast<Runway*> ( 0 );
     }
 
-  return &rwData[index];
+  return &m_rwList[index];
 }
 
 bool Airfield::drawMapElement( QPainter* targetP )
@@ -173,14 +176,14 @@ bool Airfield::drawMapElement( QPainter* targetP )
 
   if( glConfig->isRotatable( typeID ) )
     {
-      QPixmap image( glConfig->getPixmapRotatable(typeID, winch) );
+      QPixmap image( glConfig->getPixmapRotatable(typeID, m_winch) );
 
       const Runway* runway = getRunway();
       int rwShift = 0;
 
       if( runway )
         {
-          rwShift = runway->rwShift;
+          rwShift = runway->m_heading.first;
         }
       else
         {

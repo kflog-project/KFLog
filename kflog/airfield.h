@@ -7,7 +7,7 @@
  ************************************************************************
  **
  **   Copyright (c):  2000      by Heiner Lamprecht, Florian Ehinger
- **                   2008-2013 by Axel Pauli
+ **                   2008-2014 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -43,12 +43,26 @@
 #include <QList>
 #include <QString>
 
-#include "singlepoint.h"
 #include "runway.h"
+#include "singlepoint.h"
 
 class Airfield : public SinglePoint
 {
  public:
+
+  /**
+   * Airfield default constructor
+   */
+  Airfield() :
+    SinglePoint(),
+    m_frequency(0.0),
+    m_atis(0.0),
+    m_winch(false),
+    m_towing(false),
+    m_rwShift(0),
+    m_landable(true)
+   {
+   };
 
   /**
    * Creates a new Airfield-object.
@@ -66,6 +80,7 @@ class Airfield : public SinglePoint
    * @param  winch  "true", if winch launch is available
    * @param  towing "true", if aero towing is available
    * @param  landable "true", if airfield is landable
+   * @param  atis ATIS
    */
   Airfield( const QString& name,
             const QString& icao,
@@ -79,7 +94,8 @@ class Airfield : public SinglePoint
             const QString comment = "",
             bool winch = false,
             bool towing = false,
-            bool landable = true );
+            bool landable = true,
+            const float atis = 0.0 );
 
   /**
    * Destructor
@@ -91,7 +107,7 @@ class Airfield : public SinglePoint
    */
   QString frequencyAsString() const
     {
-      return (frequency > 0) ? QString("%1").arg(frequency, 0, 'f', 3) : QString("");
+      return (m_frequency > 0) ? QString("%1").arg(m_frequency, 0, 'f', 3) : QString("");
     };
 
   /**
@@ -99,7 +115,31 @@ class Airfield : public SinglePoint
    */
   float getFrequency() const
     {
-      return frequency;
+      return m_frequency;
+    };
+
+  /**
+   * @param value The frequency of the airfield as float value.
+   */
+  void setFrequency( const float value )
+    {
+      m_frequency = value;
+    };
+
+  /**
+   * @return The ATIS frequency of the airfield.
+   */
+  float getAtis() const
+    {
+      return m_atis;
+    };
+
+  /**
+   * @param The ATIS frequency of the airfield.
+   */
+  void setAtis( const float value )
+    {
+      m_atis = value;
     };
 
   /**
@@ -107,7 +147,15 @@ class Airfield : public SinglePoint
    */
   QString getICAO() const
     {
-      return icao;
+      return m_icao;
+    };
+
+  /**
+   * @param value The ICAO name of the airfield
+   */
+  void setICAO( const QString& value )
+    {
+      m_icao = value;
     };
 
   /**
@@ -124,7 +172,7 @@ class Airfield : public SinglePoint
    */
   int getRunwayNumber()
   {
-    return rwData.size();
+    return m_rwList.size();
   };
 
   /**
@@ -132,7 +180,7 @@ class Airfield : public SinglePoint
    */
   QList<Runway>& getRunwayList()
   {
-    return rwData;
+    return m_rwList;
   };
 
   /**
@@ -142,7 +190,7 @@ class Airfield : public SinglePoint
    */
   void addRunway( Runway& runway )
   {
-    rwData.append( runway );
+    m_rwList.append( runway );
   };
 
   /**
@@ -150,7 +198,15 @@ class Airfield : public SinglePoint
    */
   bool hasWinch() const
     {
-      return winch;
+      return m_winch;
+    };
+
+  /**
+   * \param value The winch flag of the airfield
+   */
+  void setWinch( const bool value )
+    {
+      m_winch = value;
     };
 
   /**
@@ -158,7 +214,15 @@ class Airfield : public SinglePoint
    */
   bool hasTowing() const
     {
-      return towing;
+      return m_towing;
+    };
+
+  /**
+   * \param value The towing flag of the airfield
+   */
+  void setTowing( const bool value )
+    {
+      m_towing = value;
     };
 
   /**
@@ -166,7 +230,15 @@ class Airfield : public SinglePoint
    */
   bool isLandable() const
     {
-      return landable;
+      return m_landable;
+    };
+
+  /**
+   * \param value The landing flag of the airfield
+   */
+  void setLandable( const bool value )
+    {
+      m_landable = value;
     };
 
   /**
@@ -195,37 +267,70 @@ class Airfield : public SinglePoint
    */
   virtual void printMapElement( QPainter* printP, bool isText );
 
+ protected:
+
+  /**
+   * Calculates the runway shift for the icon to be drawn.
+   */
+  void calculateRunwayShift()
+  {
+    // calculate the default runway shift in 1/10 degrees.
+    m_rwShift = 90/10; // default direction is 90 degrees
+
+    // We assume, that the first runway is always the main runway.
+    if( m_rwList.size() > 0 )
+      {
+        Runway rw = m_rwList.first();
+
+        // calculate the real runway shift in 1/10 degrees.
+        if ( rw.m_heading.first <= 36 )
+          {
+            m_rwShift = (rw.m_heading.first >= 18 ? (rw.m_heading.first)-18 : rw.m_heading.first);
+          }
+      }
+  };
+
  private:
 
    /**
     * The ICAO name
     */
-   QString icao;
+   QString m_icao;
 
    /**
     * The frequency
     */
-   float frequency;
+   float m_frequency;
 
-  /**
+   /**
+    * The ATIS frequency
+    */
+   float m_atis;
+
+   /**
    * Contains the available runways.
    */
-  QList<Runway> rwData;
+  QList<Runway> m_rwList;
 
   /**
    * The launching-type. "true" if the site has a winch.
    */
-  bool winch;
+  bool m_winch;
 
   /**
    * The launching-type. "true" if the site has aero tow.
    */
-  bool towing;
+  bool m_towing;
+
+  /**
+   * Contains the shift of the runway during drawing.
+   */
+  unsigned short m_rwShift;
 
   /**
    * Flag to indicate the landability of the airfield.
    */
-  bool landable;
+  bool m_landable;
 };
 
 #endif

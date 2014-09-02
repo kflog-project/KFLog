@@ -1819,7 +1819,7 @@ void KFLogConfig::slotDownloadWelt2000()
   _settings.setValue( "/Welt2000/HomeRadius", homeRadiusWelt2000->value() );
   _settings.setValue( "/Welt2000/LoadOutlandings", readOlWelt2000->isChecked() );
 
-  emit downloadWelt2000();
+  emit downloadWelt2000( false );
 }
 
 void KFLogConfig::slotDownloadOpenAipAS()
@@ -1834,7 +1834,7 @@ void KFLogConfig::slotDownloadOpenAipAS()
   _settings.setValue( "/Airspace/Countries",
                       countriesOpenAipAS->text().trimmed().toLower() );
 
-  emit downloadOpenAipAirspaces();
+  emit downloadOpenAipAirspaces( false );
 }
 
 /**

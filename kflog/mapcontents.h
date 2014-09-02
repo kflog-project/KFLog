@@ -323,7 +323,7 @@ class MapContents : public QObject
   /**
    * This slot is called to download the Welt2000 file from the Internet.
    */
-  void slotDownloadWelt2000();
+  void slotDownloadWelt2000(bool askUser);
 
   /**
    * Reload Welt2000 data file. Can be called after a configuration change or
@@ -334,7 +334,7 @@ class MapContents : public QObject
   /*
    * Called, if openAIP airspace files shall be downloaded.
    */
-  void slotDownloadOpenAipAirspaceFiles();
+  void slotDownloadOpenAipAirspaceFiles(bool askUser);
 
   /**
    * Reload airspace data. Can be called after a configuration change.

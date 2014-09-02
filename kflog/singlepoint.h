@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
-**                   2011 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -36,7 +36,7 @@
  *
  * \author Heiner Lamprecht, Florian Ehinger, Axel Pauli
  *
- * \date 2000-2011
+ * \date 2000-2014
  *
  * \version $Id$
  */
@@ -44,6 +44,12 @@
 class SinglePoint : public BaseMapElement
 {
   public:
+
+  /**
+   * Default constructor.
+   */
+  SinglePoint();
+
   /**
    * Creates a new "SinglePoint".
    *
@@ -64,8 +70,8 @@ class SinglePoint : public BaseMapElement
                const WGSPoint& wgsPos,
                const QPoint& pos,
                const float elevation = 0.0,
-               const QString& comment = QString::null,
-               const QString& country = QString::null,
+               const QString& comment = "",
+               const QString& country = "",
                const unsigned short secID = 0,
                unsigned int lmType = 0 );
   /**
@@ -114,11 +120,43 @@ class SinglePoint : public BaseMapElement
     };
 
   /**
+   * @return The WGS position of the element in kflog format.
+   */
+  virtual WGSPoint* getWGSPositionPtr()
+    {
+      return &wgsPosition;
+    };
+
+  /**
+   * @return The WGS position of the element in kflog format.
+   */
+  virtual WGSPoint& getWGSPositionRef()
+    {
+      return wgsPosition;
+    };
+
+  /**
+   * @param newPos The new WGS position of the element in kflog format.
+   */
+  virtual void setWGSPosition( const WGSPoint& value )
+    {
+      wgsPosition = value;
+    };
+
+  /**
    * @return the  short name of the element.
    */
   virtual QString getWPName() const
     {
       return shortName;
+    };
+
+  /**
+   * @param newName The new short name of the element.
+   */
+  virtual void setWPName( const QString& newName )
+    {
+      shortName = newName;
     };
 
   /**
@@ -130,11 +168,27 @@ class SinglePoint : public BaseMapElement
     };
 
   /**
+   * @param newPos The new position in the current map.
+   */
+  virtual void setMapPosition( const QPoint& newPos )
+    {
+      curPos = newPos;
+    };
+
+  /**
    * @return the elevation of the element.
    */
   virtual float getElevation() const
     {
       return elevation;
+    };
+
+  /**
+   * @param newElevation The new elevation of the element.
+   */
+  virtual void setElevation( const float value )
+    {
+      elevation = value;
     };
 
   /**
@@ -146,19 +200,13 @@ class SinglePoint : public BaseMapElement
     };
 
   /**
-   * @return the country of the single point
+   * Sets the comment text of the single point.
+   *
+   * @param newValue New country code of the element.
    */
-  const QString& getCountry()
+  virtual void setComment( QString value )
     {
-      return country;
-    };
-
-  /**
-   * @param newValue tTe country of the single point
-   */
-  void setCountry( QString& newValue )
-    {
-      country = newValue;;
+      comment = value;
     };
 
   /**
@@ -203,10 +251,6 @@ protected:
    * Comment related to the single point.
    */
   QString comment;
-  /**
-   * Country as two letter code.
-   */
-  QString country;
 };
 
 #endif

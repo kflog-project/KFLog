@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by André Somers
-**                   2011-2013 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -632,10 +632,10 @@ void ObjectTree::slotSaveTask()
         rwy = w->rwyList[0];
       }
 
-    child.setAttribute("Landable", rwy.isOpen);
-    child.setAttribute("Runway", rwy.headings.first * 256 + rwy.headings.second);
-    child.setAttribute("Length", (int) rwy.length);
-    child.setAttribute("Surface", rwy.surface);
+    child.setAttribute("Landable", rwy.m_isOpen);
+    child.setAttribute("Runway", rwy.m_heading.first * 256 + rwy.m_heading.second);
+    child.setAttribute("Length", (int) rwy.m_length);
+    child.setAttribute("Surface", rwy.m_surface);
 
     t.appendChild(child);
   }
@@ -751,10 +751,10 @@ void ObjectTree::slotSaveAllTask()
             rwy = w->rwyList[0];
           }
 
-        child.setAttribute("Landable", rwy.isOpen);
-        child.setAttribute("Runway", rwy.headings.first * 256 + rwy.headings.second);
-        child.setAttribute("Length", (int) rwy.length);
-        child.setAttribute("Surface", rwy.surface);
+        child.setAttribute("Landable", rwy.m_isOpen);
+        child.setAttribute("Runway", rwy.m_heading.first * 256 + rwy.m_heading.second);
+        child.setAttribute("Length", (int) rwy.m_length);
+        child.setAttribute("Surface", rwy.m_surface);
 
         t.appendChild(child);
       }

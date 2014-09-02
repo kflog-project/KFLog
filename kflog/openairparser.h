@@ -2,12 +2,12 @@
 **
 **   openairparser.h
 **
-**   This file is part of KFLog4.
+**   This file is part of KFLog.
 **
 ************************************************************************
 **
 **   Copyright (c):  2005      by André Somers
-**                   2008-2012 by Axel Pauli
+**                   2008-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -33,7 +33,7 @@
  * For a file named airspace.txt, the matching mapping file has to
  * named airspace_mappings.conf and must be placed in the same directory.
  *
- * \date 2005-2012
+ * \date 2005-2014
  *
  * \version $Id$
  */
@@ -55,7 +55,6 @@
 #include "basemapelement.h"
 
 class Airspace;
-class QString;
 
 class OpenAirParser
 {
@@ -72,19 +71,6 @@ public:
   virtual ~OpenAirParser();
 
   /**
-   * Searches on default places for OpenAir files. That can be source
-   * files or compiled versions of them.
-   *
-   * @return number of successfully loaded files
-   * @param list the list of Airspace objects the objects in this
-   *        file should be added to.
-   */
-
-  uint load( QList<Airspace>& list );
-
-private:
-
-  /**
    * Parses the file indicated and adds them to the indicated
    * airspace list.
    *
@@ -94,6 +80,8 @@ private:
    *        file should be added to.
    */
   bool parse(const QString& path, QList<Airspace>& list);
+
+private:
 
   void resetState();
   void parseLine(QString&);
@@ -113,8 +101,6 @@ private:
   void addCircle(const double& radius);
   void addArc(const double& rLat, const double& rLon,
               double angle1, double angle2);
-  void initializeStringMapping(const QString& path);
-  void initializeBaseMapping();
 
 private:
 
@@ -135,8 +121,10 @@ private:
   double _awy_width;
   int _direction; // 1 for clockwise, -1 for anti clockwise
 
-  QMap<QString, BaseMapElement::objectType> m_baseTypeMap;
-  QMap<QString, QString> m_stringTypeMap;
+  /**
+   * Mapper openair airspace type to Cumulus airspace type.
+   */
+  QMap<QString, BaseMapElement::objectType> m_airspaceTypeMapper;
 };
 
 #endif

@@ -20,8 +20,9 @@
 #include "airspace.h"
 
 Airspace::Airspace() :
-  lLimitType(BaseMapElement::NotSet),
-  uLimitType(BaseMapElement::NotSet)
+  m_lLimitType(BaseMapElement::NotSet),
+  m_uLimitType(BaseMapElement::NotSet),
+  m_id(-1)
 {
   // All Airspaces are closed regions ...
   closed = true;
@@ -34,10 +35,12 @@ Airspace::Airspace( QString name,
                     BaseMapElement::elevationType uType,
                     const float lower,
                     BaseMapElement::elevationType lType,
+                    const int identifier,
                     QString country ) :
   LineElement( name, oType, pP, false, 0, country ),
-  lLimitType(lType),
-  uLimitType(uType)
+  m_lLimitType(lType),
+  m_uLimitType(uType),
+  m_id(identifier)
 {
   // All Airspaces are closed regions ...
   closed = true;
@@ -45,7 +48,7 @@ Airspace::Airspace( QString name,
   // Normalize values
   double lLim=0.0;
 
-  switch( lLimitType )
+  switch( m_lLimitType )
   {
     case GND:
     case MSL:
@@ -65,10 +68,10 @@ Airspace::Airspace( QString name,
       lLim=0.0;
   }
 
-  lLimit.setMeters( lLim );
+  m_lLimit.setMeters( lLim );
   double uLim=0.0;
 
-  switch( uLimitType )
+  switch( m_uLimitType )
   {
     case GND:
     case MSL:
@@ -89,28 +92,27 @@ Airspace::Airspace( QString name,
     break;
   };
 
-  uLimit.setMeters( uLim );
+  m_uLimit.setMeters( uLim );
 
   // create a QPainterPath object from the projected airspace.
   m_airspaceRegion.addPolygon(projPolygon);
   m_airspaceRegion.closeSubpath();
 }
 
-Airspace* Airspace::createAirspaceObject()
+Airspace Airspace::createAirspaceObject()
 {
   // We need that method because the default constructor cannot setup a
   // complete airspace. The default constructor is only used as a collection
   // container during parsing of airspace source file.
-  Airspace* as = new Airspace( getName(),
-                               getTypeID(),
-                               getProjectedPolygon(),
-                               uLimit.getFeet(),
-                               uLimitType,
-                               lLimit.getFeet(),
-                               lLimitType,
-                               getCountry() );
-
-  return as;
+  return Airspace( getName(),
+		   getTypeID(),
+		   getProjectedPolygon(),
+		   m_uLimit.getFeet(),
+		   m_uLimitType,
+		   m_lLimit.getFeet(),
+		   m_lLimitType,
+		   m_id,
+		   getCountry() );
 }
 
 void Airspace::drawRegion( QPainter* targetP, const QRect &viewRect )
@@ -142,7 +144,7 @@ void Airspace::drawRegion( QPainter* targetP, const QRect &viewRect )
        */
       double opacity = (double) glConfig->getAsOpacity(typeID);
 
-      if( uLimitType == BaseMapElement::FL && uLimit.getFL() >= 200.0 )
+      if( m_uLimitType == BaseMapElement::FL && m_uLimit.getFL() >= 200.0 )
         {
           opacity = 0.0;
         }
@@ -203,6 +205,8 @@ QString Airspace::getTypeName (objectType type)
       return QObject::tr("Wave Window");
     case BaseMapElement::AirF:
       return QObject::tr("AS-F");
+    case BaseMapElement::AirFir:
+      return QObject::tr("AS-FIR");
     case BaseMapElement::Restricted:
       return QObject::tr("Restricted");
     case BaseMapElement::Danger:
@@ -230,22 +234,22 @@ QString Airspace::getInfoString(bool ExtendedHTMLFormat) const
 
   QString type;
 
-  switch(lLimitType)
+  switch(m_lLimitType)
   {
     case MSL:
-      tempL.sprintf("%s MSL", lLimit.getText(true,0).toLatin1().data());
+      tempL.sprintf("%s MSL", m_lLimit.getText(true,0).toLatin1().data());
       break;
     case GND:
-      if(lLimit.getMeters())
-        tempL.sprintf("%s GND", lLimit.getText(true,0).toLatin1().data());
+      if(m_lLimit.getMeters())
+        tempL.sprintf("%s GND", m_lLimit.getText(true,0).toLatin1().data());
       else
         tempL = "GND";
       break;
     case FL:
-      tempL.sprintf("FL %d (%s)", (int) rint(lLimit.getFeet()/100.), lLimit.getText(true,0).toLatin1().data());
+      tempL.sprintf("FL %d (%s)", (int) rint(m_lLimit.getFeet()/100.), m_lLimit.getText(true,0).toLatin1().data());
       break;
     case STD:
-      tempL.sprintf("%s STD", lLimit.getText(true,0).toLatin1().data());
+      tempL.sprintf("%s STD", m_lLimit.getText(true,0).toLatin1().data());
       break;
     case UNLTD:
       tempL = QObject::tr("Unlimited");
@@ -254,22 +258,22 @@ QString Airspace::getInfoString(bool ExtendedHTMLFormat) const
       break;
   }
 
-  switch(uLimitType)
+  switch(m_uLimitType)
   {
     case MSL:
-      if(uLimit.getMeters() >= 99999)
+      if(m_uLimit.getMeters() >= 99999)
         tempU = QObject::tr("Unlimited");
       else
-        tempU.sprintf("%s MSL", uLimit.getText(true,0).toLatin1().data());
+        tempU.sprintf("%s MSL", m_uLimit.getText(true,0).toLatin1().data());
       break;
     case GND:
-      tempU.sprintf("%s GND", uLimit.getText(true,0).toLatin1().data());
+      tempU.sprintf("%s GND", m_uLimit.getText(true,0).toLatin1().data());
       break;
     case FL:
-      tempU.sprintf("FL %d (%s)", (int) rint(uLimit.getFeet()/100.), uLimit.getText(true,0).toLatin1().data());
+      tempU.sprintf("FL %d (%s)", (int) rint(m_uLimit.getFeet()/100.), m_uLimit.getText(true,0).toLatin1().data());
       break;
     case STD:
-      tempU.sprintf("%s STD", uLimit.getText(true,0).toLatin1().data());
+      tempU.sprintf("%s STD", m_uLimit.getText(true,0).toLatin1().data());
       break;
     case UNLTD:
       tempU = QObject::tr("Unlimited");
@@ -306,7 +310,7 @@ Airspace::ConflictType Airspace::conflicts( const AltitudeCollection& alt,
   //set which altitude to use from our range of available altitudes,
   //and apply uncertainty margins
 
-  switch (lLimitType)
+  switch (m_lLimitType)
     {
       case NotSet:
         break;
@@ -315,7 +319,7 @@ Airspace::ConflictType Airspace::conflicts( const AltitudeCollection& alt,
         break;
       case GND:
         lowerAlt = alt.gndAltitude + alt.gndAltitudeError; // we need to use a conservative estimate
-        if (lLimit == 0)
+        if (m_lLimit == 0)
           lowerAlt.setMeters(1); // we're always above ground
         break;
       case FL:
@@ -326,7 +330,7 @@ Airspace::ConflictType Airspace::conflicts( const AltitudeCollection& alt,
         return None;
     }
 
-  switch (uLimitType)
+  switch (m_uLimitType)
     {
       case NotSet:
         upperAlt.setMeters(100000);
@@ -342,13 +346,13 @@ Airspace::ConflictType Airspace::conflicts( const AltitudeCollection& alt,
         upperAlt = alt.stdAltitude;
         break;
       case UNLTD:
-        upperAlt = uLimit - 1; //we are always below the upper border of an Unlimited airspace
+        upperAlt = m_uLimit - 1; //we are always below the upper border of an Unlimited airspace
         break;
     }
 
   //check to see if we're inside the airspace
-  if ((lowerAlt.getMeters() >= lLimit.getMeters()) &&
-      (upperAlt.getMeters() <= uLimit.getMeters()))
+  if ((lowerAlt.getMeters() >= m_lLimit.getMeters()) &&
+      (upperAlt.getMeters() <= m_uLimit.getMeters()))
     {
       // qDebug("vertical conflict: %d, airspace: %s", _lastVConflict, getName().latin1());
       return Inside;
@@ -359,8 +363,8 @@ Airspace::ConflictType Airspace::conflicts( const AltitudeCollection& alt,
   // fine.
 
   //not inside. Check to see if we're very near to the airspace
-  if ((lowerAlt.getMeters() >= (lLimit.getMeters() - dist.verBelowVeryClose.getMeters())) &&
-      (upperAlt.getMeters() <= (uLimit.getMeters() + dist.verAboveVeryClose.getMeters())))
+  if ((lowerAlt.getMeters() >= (m_lLimit.getMeters() - dist.verBelowVeryClose.getMeters())) &&
+      (upperAlt.getMeters() <= (m_uLimit.getMeters() + dist.verAboveVeryClose.getMeters())))
     {
       // VeryNear;
       // Divide between Above and below:
@@ -368,8 +372,8 @@ Airspace::ConflictType Airspace::conflicts( const AltitudeCollection& alt,
       // - rest is either
       //   - inside (but handled in if-clause above)
       //   - above
-      if ((lowerAlt.getMeters() >= (lLimit.getMeters() - dist.verBelowVeryClose.getMeters())) &&
-         ((lowerAlt.getMeters() < lLimit.getMeters()) ))
+      if ((lowerAlt.getMeters() >= (m_lLimit.getMeters() - dist.verBelowVeryClose.getMeters())) &&
+         ((lowerAlt.getMeters() < m_lLimit.getMeters()) ))
       {
             return VeryNearBelow;
       }
@@ -380,8 +384,8 @@ Airspace::ConflictType Airspace::conflicts( const AltitudeCollection& alt,
     }
 
   //not very near. Just near then?
-  if ((lowerAlt.getMeters() >= (lLimit.getMeters() - dist.verBelowClose.getMeters())) &&
-      (upperAlt.getMeters() < (uLimit.getMeters() + dist.verAboveClose.getMeters())))
+  if ((lowerAlt.getMeters() >= (m_lLimit.getMeters() - dist.verBelowClose.getMeters())) &&
+      (upperAlt.getMeters() < (m_uLimit.getMeters() + dist.verAboveClose.getMeters())))
     {
       // Near;
       // Divide between Above and below:
@@ -389,8 +393,8 @@ Airspace::ConflictType Airspace::conflicts( const AltitudeCollection& alt,
       // - rest is either
       //   - inside (but handled in if-clause above)
       //   - above
-      if ( (lowerAlt.getMeters() >= (lLimit.getMeters() - dist.verBelowClose.getMeters())) &&
-          (lowerAlt.getMeters() < (lLimit.getMeters() - dist.verBelowVeryClose.getMeters())) )
+      if ( (lowerAlt.getMeters() >= (m_lLimit.getMeters() - dist.verBelowClose.getMeters())) &&
+          (lowerAlt.getMeters() < (m_lLimit.getMeters() - dist.verBelowVeryClose.getMeters())) )
       {
               return NearBelow;
       }

@@ -2,11 +2,11 @@
 **
 **   runway.cpp
 **
-**   This file is part of KFLog4
+**   This file is part of KFLog
 **
 ************************************************************************
 **
-**   Copyright (c): 2008-2011 Axel Pauli
+**   Copyright (c): 2008-2014 Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -23,36 +23,29 @@
 QHash<int, QString> Runway::surfaceTranslations;
 QStringList Runway::sortedTranslations;
 
-Runway::Runway( const float len,
-                const QPair<ushort, ushort> headings,
+Runway::Runway( const float rwLength,
+                const QPair<ushort, ushort> heading,
                 const enum SurfaceType surf,
                 const bool open,
-                const float width ) :
-  length(len),
-  width(width),
-  surface(surf),
-  isOpen(open),
-  rwShift(9),
-  headings(headings)
+                const bool bidirectional,
+                const float rwWidth ) :
+ m_length(rwLength),
+ m_heading(heading),
+ m_surface(surf),
+ m_isOpen(open),
+ m_isBidirectional(bidirectional),
+ m_width(rwWidth)
 {
-  // Calculate the real runway shift in 1/10 degrees. Used by drawing to find
-  // the right icon.
-  if( headings.first <= 36 )
-    {
-      rwShift = ( headings.first >= 18 ? headings.first-18 : headings.first );
-    }
 }
 
-void Runway::setRunwayHeadings( const QPair<ushort, ushort>& newRwyHeadings )
+void Runway::printData()
 {
-  // Calculate the real runway shift in 1/10 degrees. Used by drawing to find
-  // the right icon.
-  if( newRwyHeadings.first <= 36 )
-    {
-      rwShift = ( headings.first >= 18 ? headings.first-18 : headings.first );
-    }
-
-  headings = newRwyHeadings;
+  qDebug() << "RWY-Heading=" << m_heading.first << "/" << m_heading.second
+           << "Length=" << m_length
+           << "Width=" << m_width
+           << "Sfc=" << m_surface
+           << "Open=" << m_isOpen
+           << "BiDir=" << m_isBidirectional;
 }
 
 /**
@@ -108,11 +101,10 @@ void Runway::loadTranslations()
  */
 QStringList& Runway::getSortedTranslationList()
 {
-  if( surfaceTranslations.isEmpty() )
-    {
-      // Load surface - translation data
-      loadTranslations();
-    }
+  if( surfaceTranslations.isEmpty() ) {
+    // Load surface - translation data
+    loadTranslations();
+  }
 
   // qDebug("Runway::getSortedTranslationList: size: %d", sortedTranslations.size());
 

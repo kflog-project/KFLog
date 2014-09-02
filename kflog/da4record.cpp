@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by Eggert Ehmke
-**                   2011-2013 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   Parts are derived from LoggerFil
 **   Copyright (C) 2003 Christian Fughe
@@ -262,9 +262,9 @@ void DA4WPRecord::setWaypoint (Waypoint* wp)
       rwy = wp->rwyList[0];
     }
 
-  setLen((short) rwy.length);
+  setLen((short) rwy.m_length);
   setDir( (short) rwy.getRunwayHeadings().first );
-  setSurface( rwy.surface );
+  setSurface( rwy.m_surface );
   setTC();
 }
 

@@ -68,6 +68,8 @@ public:
    * \param upperType The upper altitude reference
    * \param lower The lower altitude limit of the airspace
    * \param lowerType The lower altitude reference
+   * \param identifier An airspace identifier
+   * \param country The country as two letter code, where the airspace is located
    */
   Airspace( QString name,
             BaseMapElement::objectType oType,
@@ -76,12 +78,13 @@ public:
             const BaseMapElement::elevationType upperType,
             const float lower,
             const BaseMapElement::elevationType lowerType,
+            const int identifier=-1,
             QString country="" );
 
   /**
    * Creates a new airspace object using the current set airspace data.
    */
-  Airspace* createAirspaceObject();
+  Airspace createAirspaceObject();
 
   /**
    * Tells the caller, if the airspace is drawable or not
@@ -140,7 +143,7 @@ public:
    */
   void setUpperL( const Altitude& alt )
   {
-    uLimit = alt;
+    m_uLimit = alt;
   };
 
   /**
@@ -148,7 +151,7 @@ public:
    */
   unsigned int getUpperL() const
   {
-    return (unsigned int) rint(uLimit.getMeters());
+    return (unsigned int) rint(m_uLimit.getMeters());
   };
 
   /**
@@ -156,7 +159,7 @@ public:
    */
   const Altitude& getUpperAltitude() const
   {
-    return uLimit;
+    return m_uLimit;
   };
 
   /**
@@ -164,7 +167,7 @@ public:
    */
   void setLowerL( const Altitude& alt )
   {
-    lLimit = alt;
+    m_lLimit = alt;
   };
 
   /**
@@ -172,7 +175,7 @@ public:
    */
   unsigned int getLowerL() const
   {
-    return (unsigned int) rint(lLimit.getMeters());
+    return (unsigned int) rint(m_lLimit.getMeters());
   };
 
   /**
@@ -180,7 +183,7 @@ public:
    */
   const Altitude& getLowerAltitude() const
   {
-    return lLimit;
+    return m_lLimit;
   };
 
   /**
@@ -190,7 +193,12 @@ public:
    */
   BaseMapElement::elevationType getUpperT() const
   {
-      return uLimitType;
+      return m_uLimitType;
+  };
+
+  void setUpperT( const BaseMapElement::elevationType ut )
+  {
+    m_uLimitType = ut;
   };
 
   /**
@@ -200,7 +208,12 @@ public:
    */
   BaseMapElement::elevationType getLowerT() const
   {
-      return lLimitType;
+      return m_lLimitType;
+  };
+
+  void setLowerT( const BaseMapElement::elevationType lt )
+  {
+    m_lLimitType = lt;
   };
 
   /**
@@ -238,34 +251,59 @@ public:
 
   bool operator < (const Airspace& other) const;
 
+  /**
+   * Get airspace identifier.
+   *
+   * \return airspace identifier
+   */
+  int getId() const
+  {
+    return m_id;
+  };
+
+  /**
+   * Set airspace identifier
+   *
+   * \param id airspace identifier
+   */
+  void setId(int id)
+  {
+    m_id = id;
+  };
+
 private:
   /**
    * Contains the lower limit.
    * @see #getLowerL
    */
-  Altitude lLimit;
+  Altitude m_lLimit;
   /**
    * Contains the type of the lower limit
    * @see #lLimit
    * @see #getLowerT
    */
-  BaseMapElement::elevationType lLimitType;
+  BaseMapElement::elevationType m_lLimitType;
   /**
    * Contains the upper limit.
    * @see #getUpperL
    */
-  Altitude uLimit;
+  Altitude m_uLimit;
   /**
    * Contains the type of the upper limit
    * @see #uLimit
    * @see #getUpperT
    */
-  BaseMapElement::elevationType uLimitType;
+  BaseMapElement::elevationType m_uLimitType;
 
   /**
    * The airspace data as QPainterPath object in WGS84 coordinates.
    */
   QPainterPath m_airspaceRegion;
+
+  /**
+   * Unique identifier used by openAip.
+   */
+  int m_id;
 };
 
 /**

@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
-**                   2011 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -20,6 +20,13 @@
 
 #include "singlepoint.h"
 
+SinglePoint::SinglePoint() :
+  BaseMapElement(),
+  elevation(0.0),
+  lm_typ(0)
+{
+}
+
 SinglePoint::SinglePoint( const QString& name,
                           const QString& shortName,
                           const BaseMapElement::objectType typ,
@@ -30,15 +37,14 @@ SinglePoint::SinglePoint( const QString& name,
                           const QString& country,
                           const unsigned short secID,
                           unsigned int lmType ) :
- BaseMapElement(name, typ, secID),
+ BaseMapElement(name, typ, secID, country),
   wgsPosition(wgsP),
   position(pos),
   shortName(shortName),
   curPos(pos),
   elevation(elev),
   lm_typ(lmType),
-  comment(comment),
-  country(country)
+  comment(comment)
 {
 }
 

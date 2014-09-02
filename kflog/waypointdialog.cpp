@@ -349,24 +349,24 @@ void WaypointDialog::slotAddWaypoint()
   Runway rwy;
   w->rwyList.append(rwy);
 
-  rwy.headings.first = runway->currentIndex();
+  rwy.m_heading.first = runway->currentIndex();
 
   if( runway->currentIndex() > 0 )
     {
-      int rw1 = rwy.headings.first;
+      int rw1 = rwy.m_heading.first;
 
-      rwy.headings.second = ((rw1 > 18) ? rw1 - 18 : rw1 + 18 );
+      rwy.m_heading.second = ((rw1 > 18) ? rw1 - 18 : rw1 + 18 );
     }
 
   text = length->text();
 
   if( !text.isEmpty() )
     {
-      rwy.length = text.toFloat();
+      rwy.m_length = text.toFloat();
     }
 
-  rwy.surface = getSurface();
-  rwy.isOpen = isLandable->isChecked();
+  rwy.m_surface = getSurface();
+  rwy.m_isOpen = isLandable->isChecked();
 
   emit addWaypoint(w);
   // clear should not be called when apply was pressed ...

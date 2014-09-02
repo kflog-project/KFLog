@@ -95,7 +95,7 @@ class KFLogConfig : public QDialog
   /**
    * Emitted to request a Welt2000 file download.
    */
-  void downloadWelt2000();
+  void downloadWelt2000( bool askUser );
 
   /**
    * Emitted to request a Welt2000 file reload after a configuration change.
@@ -109,7 +109,7 @@ class KFLogConfig : public QDialog
   /**
    * Emitted to request a openAIP airspace file download.
    */
-  void downloadOpenAipAirspaces();
+  void downloadOpenAipAirspaces( bool askUser );
 
  public slots:
   /** */

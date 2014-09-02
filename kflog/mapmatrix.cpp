@@ -49,6 +49,7 @@ MapMatrix::MapMatrix( QObject* object ) :
   printCenterLat(0),
   printCenterLon(0),
   cScale(0),
+  pScale(0),
   rotationArc(0),
   printArc(0)
 {

@@ -7,7 +7,7 @@
  ************************************************************************
  **
  **   Copyright (c):  2000      by Heiner Lamprecht, Florian Ehinger
- **                   2008-2011 by Axel Pauli
+ **                   2008-2014 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -52,7 +52,7 @@ struct radioContact
  *
  * \see BaseMapElement#objectType
  *
- * \date 2000-2011
+ * \date 2000-2014
  *
  * \version $Id$
  */
@@ -60,6 +60,15 @@ struct radioContact
 class RadioPoint : public SinglePoint
 {
  public:
+
+  /**
+   * Default constructor
+   */
+  RadioPoint() : SinglePoint(),
+  m_frequency(0.0)
+   {
+   };
+
   /**
    * Creates a new radio-point.
    *
@@ -70,6 +79,7 @@ class RadioPoint : public SinglePoint
    * @param  wgsPos The original WGS84 position.
    * @param  pos    The projected position.
    * @param  frequency  The frequency.
+   * @param  channel The channel.
    * @param  elevation The elevation.
    * @param  comment An additional comment related to the radio point
    */
@@ -79,9 +89,10 @@ class RadioPoint : public SinglePoint
               BaseMapElement::objectType typeID,
               const WGSPoint& wgsPos,
               const QPoint& pos,
-              const QString& frequency,
-              int elevation = 0,
-              const QString& comment = QString::null );
+              const float frequency = 0.0,
+              const QString channel = "",
+              float elevation = 0.0,
+              const QString& country = "" );
 
   /**
    * Destructor
@@ -98,12 +109,35 @@ class RadioPoint : public SinglePoint
     */
    virtual void printMapElement( QPainter* printPainter, bool isText );
 
+   /**
+    * @return The frequency
+    */
+   QString frequencyAsString() const
+     {
+       return (m_frequency > 0) ? QString("%1").arg(m_frequency, 0, 'f', 3) : QString("");
+     };
+
   /**
    * @return The frequency
    */
-  virtual QString getFrequency() const
+  virtual float getFrequency() const
     {
-      return frequency;
+      return m_frequency;
+    };
+
+  virtual void setFrequency( const float value)
+    {
+      m_frequency = value;
+    };
+
+  virtual QString getChannel() const
+    {
+      return m_channel;
+    };
+
+  virtual void setChannel( const QString& value )
+    {
+      m_channel = value;
     };
 
   /**
@@ -111,19 +145,32 @@ class RadioPoint : public SinglePoint
    */
   virtual QString getICAO() const
     {
-      return icao;
+      return m_icao;
+    };
+
+  /**
+   * @param value ICAO name
+   */
+  virtual void setICAO( const QString& value )
+    {
+      m_icao = value;
     };
 
  protected:
   /**
    * The frequency
    */
-  QString frequency;
+  float m_frequency;
+
+  /**
+   * The channel.
+   */
+  QString m_channel;
 
   /**
    * The icao name
    */
-  QString icao;
+  QString m_icao;
 };
 
 #endif

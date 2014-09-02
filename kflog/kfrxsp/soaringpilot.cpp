@@ -719,7 +719,7 @@ int SoaringPilot::readWaypoints(QList<Waypoint*> *waypoints)
         bool isLandable = (tmp.contains('A') > 0) || (tmp.contains('L') > 0);
 
         if (isLandable) {
-          rwy.surface = tmp.contains('A') > 0 ? Runway::Asphalt : Runway::Grass;
+          rwy.m_surface = tmp.contains('A') > 0 ? Runway::Asphalt : Runway::Grass;
           frWp->type = tmp.contains('A') > 0 ? BaseMapElement::Airfield : BaseMapElement::Gliderfield;
         }
 
@@ -756,7 +756,7 @@ int SoaringPilot::writeWaypoints(QList<Waypoint*> *waypoints)
         rwy = frWp->rwyList[0];
       }
 
-    if (rwy.isOpen) {
+    if (rwy.m_isOpen) {
       switch(frWp->type) {
         case BaseMapElement::Airfield:
         case BaseMapElement::Airport:
