@@ -25,6 +25,7 @@
 
 #include "airfield.h"
 #include "airspace.h"
+#include "AirspaceHelper.h"
 #include "basemapelement.h"
 #include "distance.h"
 #include "elevationfinder.h"
@@ -1266,8 +1267,7 @@ void MapContents::proofeSection(bool isPrint)
     {
       loadAirspaces = false;
 
-      OpenAirParser oap;
-      oap.load( airspaceList );
+      AirspaceHelper::loadAirspaces( airspaceList );
 
       // finally, sort the airspaces
       airspaceList.sort();
