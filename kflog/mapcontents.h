@@ -99,7 +99,7 @@ class MapContents : public QObject
   /**
    * Destructor, deletes all lists.
    */
-  ~MapContents();
+  virtual ~MapContents();
 
   static MapContents* instance();
 

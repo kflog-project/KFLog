@@ -391,6 +391,7 @@ void MapContents::slotWelt2000DownloadFinished( int requests, int errors )
       slotReloadWelt2000Data();
     }
 
+  qDebug() << "MapContents::slotWelt2000DownloadFinished(): no difference between old and new";
   return;
 }
 
@@ -1276,15 +1277,24 @@ void MapContents::proofeSection(bool isPrint)
       emit airspacesLoaded();
     }
 
+  qDebug() << "MapContents::proofeSection() loadWelt2000=" << loadWelt2000;
+
   // Checking for Airfield, Gliderfield and Outlanding data
   if( loadWelt2000 == true )
     {
       loadWelt2000 = false;
 
+      // At first try a load of welt2000, that airfield data are available
       Welt2000 welt2000;
+      bool loadOk = welt2000.load( airfieldList, gliderfieldList, outLandingList );
 
-      if( welt2000.check4update() == true ||
-          welt2000.load( airfieldList, gliderfieldList, outLandingList ) == false )
+      // As next make the update check
+      bool check4update = welt2000.check4update();
+
+      qDebug() << "MapContents::proofeSection(): loadOk=" << loadOk
+	       << "check4update=" << check4update;
+
+      if( loadOk == false || check4update == true )
         {
           // Welt2000 update available or load failed, try to download a new
           // Welt2000 File from the Internet web page.
