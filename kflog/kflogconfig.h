@@ -2,7 +2,7 @@
 **
 **   kflogconfig.h
 **
-**   This file is part of KFLog4.
+**   This file is part of KFLog.
 **
 ************************************************************************
 **
@@ -37,6 +37,7 @@
 #include <QButtonGroup>
 #include <QComboBox>
 #include <QCheckBox>
+#include <QGroupBox>
 #include <QDialog>
 #include <QLayout>
 #include <QLCDNumber>
@@ -101,6 +102,7 @@ class KFLogConfig : public QDialog
    * Emitted to request a Welt2000 file reload after a configuration change.
    */
   void reloadWelt2000Data();
+
   /**
    * Emitted to request a reload of all airspace file.
    */
@@ -111,9 +113,12 @@ class KFLogConfig : public QDialog
    */
   void downloadOpenAipAirspaces( bool askUser );
 
+  /**
+   * Emitted to request a openAIP airfield file download.
+   */
+  void downloadOpenAipAirfields( bool askUser );
+
  public slots:
-  /** */
-  void slotOk();
 
   void slotPageClicked( QTreeWidgetItem * item, int column );
   /** */
@@ -152,15 +157,16 @@ class KFLogConfig : public QDialog
   void slotDefaultWaypoint();
   /** */
   void slotSearchDefaultWaypoint();
+
   /**
-   * Open a color dialog and let the user define a new color.
+   * Opens a color dialog and let the user define a new color.
    *
    * \param buttonIdentifier Identifier of pressed button.
    */
   void slotSelectFlightTypeColor( int buttonIdentifier );
 
   /**
-   * Reset all flight path line widths to their default values.
+   * Resets all flight path line widths to their default values.
    */
   void slotDefaultFlightPathLines();
 
@@ -179,17 +185,12 @@ class KFLogConfig : public QDialog
    */
   void slotSelectPrintElement( int index );
 
-  /**
-   * Called if a Welt2000 file shall be downloaded.
-   */
-  void slotDownloadWelt2000();
-
-  /**
-   * Called if openAIP airspace files shall be downloaded.
-   */
-  void slotDownloadOpenAipAS();
-
  private slots:
+
+ /**
+  * Called, if the Ok button is pressed.
+  */
+ void slotOk();
 
  /**
   * Called to make all text to upper cases.
@@ -201,6 +202,26 @@ class KFLogConfig : public QDialog
  * file table.
  */
  void slotToggleAsCheckBox( int, int );
+
+ /**
+  * Called, if the airfield source has been changed.
+  */
+ void slotAirfieldSourceChanged(int sourceIndex);
+
+ /**
+  * Called if a Welt2000 file shall be downloaded.
+  */
+ void slotDownloadWelt2000();
+
+ /**
+  * Called if openAIP airspace files shall be downloaded.
+  */
+ void slotDownloadOpenAipAs();
+
+ /**
+  * Called if openAIP airfield files shall be downloaded.
+  */
+ void slotDownloadOpenAipAf();
 
  private:
 
@@ -237,14 +258,14 @@ class KFLogConfig : public QDialog
   void __loadAirspaceFilesIntoTable();
 
   /**
-   * Checks the openAIP airspace country input for correctness. If not correct
+   * Checks the openAIP country input for correctness. If not correct
    * a message box is popup to inform the user about that fact.
    *
    * \param input String to be checked
    *
    * \return true if checked string is ok otherwise false
    */
-  bool __checkOpenAipAirspaceInput( QString& input );
+  bool __checkOpenAipCountryInput( QString& input );
 
   /**
    * Checks the Welt2000 country input for correctness. If not correct a message
@@ -255,7 +276,6 @@ class KFLogConfig : public QDialog
    * \return true if checked string is ok otherwise false
    */
   bool __checkWelt2000Input( QString& input );
-
 
   QGridLayout *configLayout;
 
@@ -306,26 +326,40 @@ class KFLogConfig : public QDialog
   QSpinBox* solidPenWidth;
   QSpinBox* enginePenWidth;
 
-  QLineEdit* filterWelt2000;
-  QSpinBox* homeRadiusWelt2000;
-  QCheckBox* readOlWelt2000;
+  QLineEdit* welt2000CountryFilter;
+  QSpinBox*  welt2000HomeRadius;
+  QCheckBox* welt2000ReadOl;
 
-  QLineEdit* countriesOpenAipAS;
+  QComboBox* afSourceBox;
+  QLineEdit* afOpenAipCountries;
+  QSpinBox*  afOpenAipHomeRadius;
+
+  QLineEdit* asOpenAipCountries;
 
   /**
    * Initial value of home radius.
    */
-  int homeRadiusWelt2000Value;
+  int wel2000HomeRadiusValue;
 
   /**
    * Initial value of country filter
    */
-  QString filterWelt2000Text;
+  QString welt2000CountryFilterValue;
 
   /**
    * Initial value of outlanding checkbox.
    */
-  bool readOlWelt2000Value;
+  bool welt2000ReadOlValue;
+
+  /**
+   * Initial value of openAIP airfield home radius.
+   */
+  int afOpenAipHomeRadiusValue;
+
+  /**
+   * Initial value of openAIP airfield countries
+   */
+  QString afOpenAipCountryValue;
 
   QSlider* lLimit;
   QSlider* uLimit;
@@ -395,6 +429,15 @@ class KFLogConfig : public QDialog
 
   /** Table for airspace files to be loaded. */
   QTableWidget* asFileTable;
+
+  /** Table for openAIP airfield files to be loaded. */
+  QTableWidget* afFileTable;
+
+  /** Group box for Welt2000 airfield configuration widget. */
+  QGroupBox* welt2000Group;
+
+  /** Group box for openAIP airfield configuration widget. */
+  QGroupBox* openAipGroup;
 };
 
 #endif

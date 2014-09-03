@@ -126,7 +126,7 @@ void KFLogConfig::slotPageClicked( QTreeWidgetItem* item, int column )
   else if( itemText == "Airspaces" )
     {
       // Because the airspace directory can be changed in the meantime, we
-      // reload this page beore showing.
+      // reload this page before showing.
       __loadAirspaceFilesIntoTable();
       activePage->setVisible( false );
       airspacePage->setVisible( true );
@@ -195,14 +195,21 @@ void KFLogConfig::slotOk()
   qDebug() << "KFLogConfig::slotOk()";
 
   // First check, if the Welt2000 and openAIP countries are valid
-  QString input = countriesOpenAipAS->text().trimmed();
+  QString input = asOpenAipCountries->text().trimmed();
 
-  if( input.isEmpty() == false && __checkOpenAipAirspaceInput( input ) == false )
+  if( input.isEmpty() == false && __checkOpenAipCountryInput( input ) == false )
     {
       return;
     }
 
-  input = filterWelt2000->text().trimmed();
+  input = afOpenAipCountries->text().trimmed();
+
+  if( input.isEmpty() == false && __checkOpenAipCountryInput( input ) == false )
+    {
+      return;
+    }
+
+  input = welt2000CountryFilter->text().trimmed();
 
   if( input.isEmpty() == false && __checkWelt2000Input( input ) == false )
     {
@@ -241,9 +248,14 @@ void KFLogConfig::slotOk()
   _settings.setValue( "/Homesite/Longitude", homeLonE->KFLogDegree() );
   _settings.setValue( "/MapData/ProjectionType", projectionSelect->currentIndex() );
 
-  _settings.setValue( "/Welt2000/CountryFilter", filterWelt2000->text().trimmed().toUpper() );
-  _settings.setValue( "/Welt2000/HomeRadius", homeRadiusWelt2000->value() );
-  _settings.setValue( "/Welt2000/LoadOutlandings", readOlWelt2000->isChecked() );
+  _settings.setValue( "/Airfield/Source", afSourceBox->currentIndex() );
+
+  _settings.setValue( "/Airfield/Countries", afOpenAipCountries->text().trimmed().toLower() );
+  _settings.setValue( "/Airfield/HomeRadius", afOpenAipHomeRadius->value() );
+
+  _settings.setValue( "/Welt2000/CountryFilter", welt2000CountryFilter->text().trimmed().toUpper() );
+  _settings.setValue( "/Welt2000/HomeRadius", welt2000HomeRadius->value() );
+  _settings.setValue( "/Welt2000/LoadOutlandings", welt2000ReadOl->isChecked() );
 
   _settings.setValue( "/FlightColor/LeftTurn", flightTypeLeftTurnColor.name() );
   _settings.setValue( "/FlightColor/RightTurn", flightTypeRightTurnColor.name() );
@@ -274,7 +286,7 @@ void KFLogConfig::slotOk()
   _settings.setValue( "/Waypoints/DefaultCatalogName", catalogPathE->text() );
 
   _settings.setValue( "/Airspace/Countries",
-                      countriesOpenAipAS->text().trimmed().toLower() );
+                      asOpenAipCountries->text().trimmed().toLower() );
 
   // Save units
   int altUnit  = unitAltitude->itemData( unitAltitude->currentIndex() ).toInt();
@@ -358,9 +370,9 @@ void KFLogConfig::slotOk()
   emit scaleChanged((int)lLimitN->value(), (int)uLimitN->value());
 
   // Check, if Welt2000 must be updated
-  if( homeRadiusWelt2000Value !=  homeRadiusWelt2000->value() ||
-      filterWelt2000Text != filterWelt2000->text() ||
-      readOlWelt2000Value != readOlWelt2000->isChecked () )
+  if( wel2000HomeRadiusValue !=  welt2000HomeRadius->value() ||
+      welt2000CountryFilterValue != welt2000CountryFilter->text() ||
+      welt2000ReadOlValue != welt2000ReadOl->isChecked () )
     {
       emit reloadWelt2000Data();
     }
@@ -1480,29 +1492,31 @@ void KFLogConfig::__addAirfieldTab()
 
   configLayout->addWidget( airfieldPage, 0, 1, 1, 2 );
 
-  //----------------------------------------------------------------------------
-  QGroupBox* welt2000Group = new QGroupBox( tr("Welt2000") );
-
-  // Check input with a validator. Country codes are consist of 2 letters and
-  // are separated by space, comma or semicolon.
+  // Check country input with a validator. Country codes are consist of 2 letters
+  // and are separated by space, comma or semicolon.
   QRegExp rx("[A-Za-z]{2}([ ,;][A-Za-z]{2})*");
-  QValidator *validator = new QRegExpValidator(rx, this);
 
-  filterWelt2000 = new QLineEdit();
-  filterWelt2000->setMinimumWidth( 150 );
-  filterWelt2000->setValidator( validator );
-  filterWelt2000->setToolTip( tr("Add countries to be read in as 2 letter code according to ISO 3166-1-alpha-2.") );
+  QString toolTip  = tr("Add countries to be loaded as 2 letter code according to ISO 3166-1.");
+  QString toolTip1 = tr("Read in all objects inside home site radius.");
 
-  homeRadiusWelt2000 = new QSpinBox();
-  homeRadiusWelt2000->setRange( 0, 10000 );
-  homeRadiusWelt2000->setSingleStep( 10 );
-  homeRadiusWelt2000->setButtonSymbols( QSpinBox::PlusMinus );
-  homeRadiusWelt2000->setSuffix( " Km" );
-  homeRadiusWelt2000->setSpecialValueText(tr("Off"));
-  homeRadiusWelt2000->setToolTip( tr("Read in all objects within home site radius.") );
+  //----------------------------------------------------------------------------
 
-  readOlWelt2000 = new QCheckBox( tr("Read Outlandings:") );
-  readOlWelt2000->setToolTip( tr("Activate checkbox, if outlandings should be read in.") );
+  welt2000Group = new QGroupBox( "Welt2000: www.segelflug.de/vereine/welt2000" );
+  welt2000CountryFilter = new QLineEdit;
+  welt2000CountryFilter->setMinimumWidth( 150 );
+  welt2000CountryFilter->setValidator( new QRegExpValidator(rx, this) );
+  welt2000CountryFilter->setToolTip( toolTip );
+
+  welt2000HomeRadius = new QSpinBox();
+  welt2000HomeRadius->setRange( 0, 10000 );
+  welt2000HomeRadius->setSingleStep( 10 );
+  welt2000HomeRadius->setButtonSymbols( QSpinBox::PlusMinus );
+  welt2000HomeRadius->setSuffix( " Km" );
+  welt2000HomeRadius->setSpecialValueText(tr("Off"));
+  welt2000HomeRadius->setToolTip( toolTip1 );
+
+  welt2000ReadOl = new QCheckBox( tr("Read Outlandings:") );
+  welt2000ReadOl->setToolTip( tr("Activate checkbox, if outlandings should be read in.") );
 
   QPushButton* downloadWelt2000 = new QPushButton( tr("Download") );
   downloadWelt2000->setToolTip( tr("Press button to download the Welt2000 file.") );
@@ -1512,34 +1526,91 @@ void KFLogConfig::__addAirfieldTab()
 
   QFormLayout* weltLayout = new QFormLayout();
   weltLayout->setSpacing( 10 );
-  weltLayout->addRow( tr( "Country Filter" ) + ":", filterWelt2000 );
-  weltLayout->addRow( tr( "Home Radius" )  + ":", homeRadiusWelt2000 );
+  weltLayout->addRow( tr( "Country Filter" ) + ":", welt2000CountryFilter );
+  weltLayout->addRow( tr( "Home Radius" )  + ":", welt2000HomeRadius );
 
   QVBoxLayout* weltGroupLayout = new QVBoxLayout;
   weltGroupLayout->addLayout( weltLayout );
-  weltGroupLayout->addWidget( readOlWelt2000 );
+  weltGroupLayout->addWidget( welt2000ReadOl );
   weltGroupLayout->addSpacing( 10 );
   weltGroupLayout->addWidget( downloadWelt2000, Qt::AlignLeft );
 
   welt2000Group->setLayout( weltGroupLayout );
 
   //----------------------------------------------------------------------------
+
+  openAipGroup = new QGroupBox( "openAIP: www.openaip.net", this );
+
+  int grow = 0;
+  QGridLayout *oaipLayout = new QGridLayout(openAipGroup);
+  QPushButton* downloadOpenAip = new QPushButton( tr("Download") );
+  oaipLayout->addWidget( downloadOpenAip, grow, 0 );
+
+  connect( downloadOpenAip, SIGNAL(clicked()), this, SLOT(slotDownloadOpenAipAf()));
+
+  oaipLayout->addWidget(new QLabel( tr("Countries:") ), grow, 1);
+
+  afOpenAipCountries = new QLineEdit;
+  afOpenAipCountries->setMinimumWidth( 150 );
+  afOpenAipCountries->setValidator( new QRegExpValidator(rx, this) );
+  afOpenAipCountries->setToolTip( toolTip );
+  oaipLayout->addWidget( afOpenAipCountries, grow, 2 );
+  grow++;
+
+  oaipLayout->addWidget( new QLabel( tr("Home Radius:") ), grow, 0 );
+
+  afOpenAipHomeRadius = new QSpinBox();
+  afOpenAipHomeRadius->setRange( 0, 10000 );
+  afOpenAipHomeRadius->setSingleStep( 10 );
+  afOpenAipHomeRadius->setButtonSymbols( QSpinBox::PlusMinus );
+  afOpenAipHomeRadius->setSuffix( " Km" );
+  afOpenAipHomeRadius->setSpecialValueText(tr("Off"));
+  afOpenAipHomeRadius->setToolTip( toolTip1 );
+  oaipLayout->addWidget( afOpenAipHomeRadius, grow, 1 );
+  grow++;
+
+  oaipLayout->setColumnStretch( 2, 5 );
+
+  //----------------------------------------------------------------------------
+
   QVBoxLayout* afLayout = new QVBoxLayout;
 
+  QGridLayout *sourceLayout = new QGridLayout;
+  sourceLayout->addWidget( new QLabel( tr("Airfield source:") ), 0, 0 );
+  afSourceBox = new QComboBox;
+  afSourceBox->addItem("OpenAIP");
+  afSourceBox->addItem("Welt2000");
+  sourceLayout->addWidget( afSourceBox, 0, 1 );
+  sourceLayout->setColumnStretch( 2, 10 );
+
+  connect( afSourceBox, SIGNAL(currentIndexChanged(int)),
+           this, SLOT(slotAirfieldSourceChanged(int)) );
+
+  afLayout->addLayout( sourceLayout );
+  afLayout->addSpacing(10);
   afLayout->addWidget( welt2000Group );
+  afLayout->addWidget( openAipGroup );
   afLayout->addStretch( 10 );
 
   airfieldPage->setLayout( afLayout );
 
-  homeRadiusWelt2000Value = _settings.value( "/Welt2000/HomeRadius", 0 ).toInt();
-  filterWelt2000Text      = _settings.value( "/Welt2000/CountryFilter", "" ).toString();
-  readOlWelt2000Value     = _settings.value( "/Welt2000/LoadOutlandings", true ).toBool();
+  int afSourceIndex = _settings.value( "/Airfield/Source", 0 ).toInt();
+  slotAirfieldSourceChanged( afSourceIndex );
 
-  homeRadiusWelt2000->setValue( homeRadiusWelt2000Value );
-  filterWelt2000->setText( filterWelt2000Text );
-  readOlWelt2000->setChecked( readOlWelt2000Value );
+  wel2000HomeRadiusValue     = _settings.value( "/Welt2000/HomeRadius", 0 ).toInt();
+  welt2000CountryFilterValue = _settings.value( "/Welt2000/CountryFilter", "" ).toString();
+  welt2000ReadOlValue        = _settings.value( "/Welt2000/LoadOutlandings", true ).toBool();
+
+  welt2000HomeRadius->setValue( wel2000HomeRadiusValue );
+  welt2000CountryFilter->setText( welt2000CountryFilterValue );
+  welt2000ReadOl->setChecked( welt2000ReadOlValue );
+
+  afOpenAipHomeRadiusValue = _settings.value( "/Airfield/HomeRadius", 0 ).toInt();
+  afOpenAipCountryValue    = _settings.value( "/Airfield/Countries", "" ).toString();
+
+  afOpenAipHomeRadius->setValue( afOpenAipHomeRadiusValue );
+  afOpenAipCountries->setText( afOpenAipCountryValue );
 }
-
 
 /** Add a tab for airspace file management.*/
 void KFLogConfig::__addAirspaceTab()
@@ -1562,34 +1633,34 @@ void KFLogConfig::__addAirspaceTab()
   //----------------------------------------------------------------------------
   QVBoxLayout *topLayout = new QVBoxLayout;
 
-  QGroupBox* openAipGroup = new QGroupBox( tr("openAIP Airspaces") );
+  QGroupBox* openAipGroup = new QGroupBox( tr("openAIP Airspaces: www.openaip.net") );
 
   // Check input with a validator. Country codes are consist of 2 letters and
   // are separated by space, comma or semicolon.
   QRegExp rx("[A-Za-z]{2}([ ,;][A-Za-z]{2})*");
   QValidator *validator = new QRegExpValidator(rx, this);
 
-  countriesOpenAipAS = new QLineEdit;
-  countriesOpenAipAS->setMinimumWidth( 150 );
-  countriesOpenAipAS->setValidator( validator );
-  countriesOpenAipAS->setToolTip( tr("Add countries to be downloaded as 2 letter code according to ISO 3166-1-alpha-2.") );
+  asOpenAipCountries = new QLineEdit;
+  asOpenAipCountries->setMinimumWidth( 150 );
+  asOpenAipCountries->setValidator( validator );
+  asOpenAipCountries->setToolTip( tr("Add countries to be downloaded as 2 letter code according to ISO 3166-1.") );
 
   QString countries = _settings.value("/Airspace/Countries", "").toString();
 
   if( countries.isEmpty() == false )
     {
-      countriesOpenAipAS->setText(countries);
+      asOpenAipCountries->setText(countries);
     }
 
   QPushButton* downloadAs = new QPushButton( tr("Download") );
   downloadAs->setToolTip( tr("Press button to download the desired openAIP airspace files.") );
   downloadAs->setMaximumWidth(downloadAs->sizeHint().width() + 10);
   downloadAs->setMinimumHeight(downloadAs->sizeHint().height() + 2);
-  connect( downloadAs, SIGNAL(clicked()), this, SLOT(slotDownloadOpenAipAS()) );
+  connect( downloadAs, SIGNAL(clicked()), this, SLOT(slotDownloadOpenAipAs()) );
 
   QFormLayout* openAipFormLayout = new QFormLayout();
   openAipFormLayout->setSpacing( 10 );
-  openAipFormLayout->addRow( tr( "Countries" ) + ":", countriesOpenAipAS );
+  openAipFormLayout->addRow( tr( "Countries" ) + ":", asOpenAipCountries );
 
   QVBoxLayout* openAipLayout = new QVBoxLayout;
   openAipLayout->addLayout( openAipFormLayout );
@@ -1599,7 +1670,7 @@ void KFLogConfig::__addAirspaceTab()
   topLayout->addWidget( openAipGroup );
 
   asFileTable = new QTableWidget( 0, 1, this );
-  asFileTable->setToolTip( tr("Use check boxes to activate or deactivate airspace file loading.") );
+  asFileTable->setToolTip( tr("Uncheck All to enable loading of single airspace files.") );
   asFileTable->setSelectionBehavior( QAbstractItemView::SelectRows );
   asFileTable->setShowGrid( true );
 
@@ -1808,33 +1879,48 @@ void KFLogConfig::slotSelectFlightTypeColor( int buttonIdentifier )
 
 void KFLogConfig::slotDownloadWelt2000()
 {
-  QString input = filterWelt2000->text().trimmed();
+  QString input = welt2000CountryFilter->text().trimmed();
 
   if( __checkWelt2000Input( input ) == false )
     {
       return;
     }
 
-  _settings.setValue( "/Welt2000/CountryFilter", filterWelt2000->text().trimmed().toUpper() );
-  _settings.setValue( "/Welt2000/HomeRadius", homeRadiusWelt2000->value() );
-  _settings.setValue( "/Welt2000/LoadOutlandings", readOlWelt2000->isChecked() );
+  _settings.setValue( "/Welt2000/CountryFilter", welt2000CountryFilter->text().trimmed().toUpper() );
+  _settings.setValue( "/Welt2000/HomeRadius", welt2000HomeRadius->value() );
+  _settings.setValue( "/Welt2000/LoadOutlandings", welt2000ReadOl->isChecked() );
 
   emit downloadWelt2000( false );
 }
 
-void KFLogConfig::slotDownloadOpenAipAS()
+void KFLogConfig::slotDownloadOpenAipAs()
 {
-  QString input = countriesOpenAipAS->text().trimmed();
+  QString input = asOpenAipCountries->text().trimmed();
 
-  if( __checkOpenAipAirspaceInput( input ) == false )
+  if( __checkOpenAipCountryInput( input ) == false )
     {
       return;
     }
 
   _settings.setValue( "/Airspace/Countries",
-                      countriesOpenAipAS->text().trimmed().toLower() );
+                      asOpenAipCountries->text().trimmed().toLower() );
 
   emit downloadOpenAipAirspaces( false );
+}
+
+void KFLogConfig::slotDownloadOpenAipAf()
+{
+  QString input = afOpenAipCountries->text().trimmed();
+
+  if( __checkOpenAipCountryInput( input ) == false )
+    {
+      return;
+    }
+
+  _settings.setValue( "/Airfield/Countries",
+                      afOpenAipCountries->text().trimmed().toLower() );
+
+  emit downloadOpenAipAirfields( false );
 }
 
 /**
@@ -1855,15 +1941,14 @@ void KFLogConfig::slotToggleAsCheckBox( int row, int column )
 
   if( row == 0 && column == 0 )
     {
-      // First entry was clicked. Change related check items.
-      if( item->checkState() == Qt::Checked )
-        {
-          // All other items are checked too
-          for( int i = asFileTable->rowCount() - 1; i > 0; i-- )
-            {
-              asFileTable->item( i, 0 )->setCheckState( Qt::Checked );
-            }
-        }
+      // First item was clicked. Change all other check items too.
+      Qt::CheckState newState = item->checkState();
+
+      // All other items are toggled too
+      for( int i = asFileTable->rowCount() - 1; i > 0; i-- )
+	{
+	  asFileTable->item( i, 0 )->setCheckState( newState );
+	}
     }
 }
 
@@ -1891,7 +1976,7 @@ void KFLogConfig::__loadAirspaceFilesIntoTable()
   int row = 0;
   asFileTable->setRowCount( row + 1 );
 
-  QTableWidgetItem* item = new QTableWidgetItem( tr("Select all"), 0 );
+  QTableWidgetItem* item = new QTableWidgetItem( tr("Check/Uncheck all"), 0 );
   item->setFlags( Qt::ItemIsEnabled );
   item->setCheckState( Qt::Unchecked );
   asFileTable->setItem( row, 0, item );
@@ -1948,7 +2033,7 @@ void KFLogConfig::__loadAirspaceFilesIntoTable()
   asFileTable->resizeColumnsToContents();
 }
 
-bool KFLogConfig::__checkOpenAipAirspaceInput( QString& input )
+bool KFLogConfig::__checkOpenAipCountryInput( QString& input )
 {
   QRegExp rx("[A-Za-z]{2}([ ,;][A-Za-z]{2})*");
   QRegExpValidator v(rx, 0);
@@ -1963,7 +2048,7 @@ bool KFLogConfig::__checkOpenAipAirspaceInput( QString& input )
       QMessageBox::warning( this,
                             tr("Wrong country entries"),
                             "<html>" +
-                            tr("Please check the openAIP airspace country entries!") +
+                            tr("Please check the openAIP country entries!") +
                             "<br><br>" +
                             tr("The expected format is a two letter country code separated by spaces") +
                             "</html>",
@@ -2029,4 +2114,19 @@ QByteArray KFLogConfig::rot47( const QByteArray& input )
     }
 
   return out;
+}
+
+void KFLogConfig::slotAirfieldSourceChanged( int index )
+{
+  // Toggle source visibility
+  if( index == 0 )
+    {
+      openAipGroup->setVisible( true );
+      welt2000Group->setVisible( false );
+    }
+  else
+    {
+      openAipGroup->setVisible( false );
+      welt2000Group->setVisible( true );
+    }
 }
