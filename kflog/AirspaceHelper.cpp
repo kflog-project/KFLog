@@ -299,6 +299,7 @@ AirspaceHelperThread::~AirspaceHelperThread()
 
 void AirspaceHelperThread::run()
 {
+#ifndef WIN32
   sigset_t sigset;
   sigfillset( &sigset );
 
@@ -311,7 +312,7 @@ void AirspaceHelperThread::run()
       qWarning() << "AirspaceHelperThread: No Slot connection to Signal loadedList!";
       return;
     }
-
+#endif
   SortableAirspaceList* airspaceList = new SortableAirspaceList;
 
   int ok = AirspaceHelper::loadAirspaces( *airspaceList );
