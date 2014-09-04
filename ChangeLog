@@ -4,6 +4,8 @@
 #
 ################################################################################
 
+  * openAIP airfield data can be downloaded and read now by KFLog.
+
   * openAIP airspace data can be downloaded and read now by KFLog.
   
   * Tried to fix welt2000 reload loop.
