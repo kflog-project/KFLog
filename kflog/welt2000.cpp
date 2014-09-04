@@ -2,7 +2,7 @@
  **
  **   welt2000.cpp
  **
- **   This file is part of Cumulus.
+ **   This file is part of KFLog.
  **
  ************************************************************************
  **

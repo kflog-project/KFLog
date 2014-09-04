@@ -326,10 +326,10 @@ class MapContents : public QObject
   void slotDownloadWelt2000(bool askUser);
 
   /**
-   * Reload Welt2000 data file. Can be called after a configuration change or
+   * Reload airfield data. Can be called after a configuration change or
    * after a download update.
    */
-  void slotReloadWelt2000Data();
+  void slotReloadAirfieldData();
 
   /*
    * Called, if openAIP airspace files shall be downloaded.
@@ -340,6 +340,17 @@ class MapContents : public QObject
    * Reload airspace data. Can be called after a configuration change.
    */
   void slotReloadAirspaceData();
+
+  /*
+   * Called, if openAIP airfield files shall be downloaded.
+   */
+  void slotDownloadOpenAipAirfieldFiles(bool askUser);
+
+  /**
+   * Reload airfield data. Can be called after a configuration change.
+   */
+  //void slotReloadOpenAipAirfieldData();
+
 
  private slots:
 
@@ -360,6 +371,15 @@ class MapContents : public QObject
    * downloads.
    */
   void slotOpenAipAsNetworkError();
+
+  /** Called, if all openAIP airfield file downloads are finished. */
+  void slotOpenAipAfDownloadsFinished( int requests, int errors );
+
+  /**
+   * Called, if a network error occurred during the openAIP airfield file
+   * downloads.
+   */
+  void slotOpenAipAfNetworkError();
 
  signals:
   /**
@@ -592,9 +612,9 @@ class MapContents : public QObject
   bool askUser;
 
   /**
-   * Flag to indicate, if Welt2000 load is needed.
+   * Flag to indicate, if airfield load is needed.
    */
-  bool loadWelt2000;
+  bool loadAirfields;
 
   /**
    * Flag to indicate, if airspace load is needed.
@@ -649,6 +669,9 @@ class MapContents : public QObject
 
   /** Manager to handle downloads of requested openAIP airspace files. */
   DownloadManager *m_downloadOpenAipAsManger;
+
+  /** Manager to handle downloads of requested openAIP airfield files. */
+  DownloadManager *m_downloadOpenAipAfManger;
 
   /**
    * index of the current flight in flightList

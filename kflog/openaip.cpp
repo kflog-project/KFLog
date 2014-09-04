@@ -1493,7 +1493,7 @@ void OpenAip::loadUserFilterValues()
 
   m_homePosition = _globalMapMatrix->getHomeCoord();
 
-  QString cFilter = _settings.value( "/Welt2000/CountryFilter", "" ).toString().toUpper();
+  QString cFilter = _settings.value( "/Airfield/Countries", "" ).toString().toUpper();
 
   QStringList clist = cFilter.split( QRegExp("[, ]"), QString::SkipEmptyParts );
 
@@ -1503,7 +1503,7 @@ void OpenAip::loadUserFilterValues()
     }
 
   // Get filter radius around the home position in kilometers.
-  m_filterRadius = _settings.value( "/Welt2000/HomeRadius", 0 ).toDouble();
+  m_filterRadius = _settings.value( "/Airfield/HomeRadius", 0 ).toDouble();
 
   // Get runway length filter in meters.
   // m_filterRunwayLength = 0.0;
@@ -1947,7 +1947,6 @@ bool OpenAip::readAirspaceGeometrie( QXmlStreamReader& xml, Airspace& as )
     }
 
   QPolygon asPolygon( polygonList.size() / 2 );
-  extern MapMatrix* _globalMapMatrix;
 
   for( int i = 0; i < polygonList.size(); i += 2 )
     {

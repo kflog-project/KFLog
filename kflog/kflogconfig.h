@@ -99,9 +99,9 @@ class KFLogConfig : public QDialog
   void downloadWelt2000( bool askUser );
 
   /**
-   * Emitted to request a Welt2000 file reload after a configuration change.
+   * Emitted to request airfield data reload after a configuration change.
    */
-  void reloadWelt2000Data();
+  void reloadAirfieldData();
 
   /**
    * Emitted to request a reload of all airspace file.
@@ -204,6 +204,12 @@ class KFLogConfig : public QDialog
  void slotToggleAsCheckBox( int, int );
 
  /**
+ * Called to toggle the check box of the clicked table cell in the airfield
+ * file table.
+ */
+ void slotToggleAfCheckBox( int, int );
+
+ /**
   * Called, if the airfield source has been changed.
   */
  void slotAirfieldSourceChanged(int sourceIndex);
@@ -256,6 +262,22 @@ class KFLogConfig : public QDialog
    * file table.
    */
   void __loadAirspaceFilesIntoTable();
+
+  /**
+   * Loads the content of the current airfield file directory into the
+   * file table.
+   */
+  void __loadAirfieldFilesIntoTable();
+
+  /**
+   * Checks the airspace file table for changes.
+   */
+  void __checkAirspaceFileTable();
+
+  /**
+   * Checks the airfield file table for changes.
+   */
+  void __checkAirfieldFileTable();
 
   /**
    * Checks the openAIP country input for correctness. If not correct
@@ -339,27 +361,27 @@ class KFLogConfig : public QDialog
   /**
    * Initial value of home radius.
    */
-  int wel2000HomeRadiusValue;
+  int m_wel2000HomeRadiusValue;
 
   /**
    * Initial value of country filter
    */
-  QString welt2000CountryFilterValue;
+  QString m_welt2000CountryFilterValue;
 
   /**
    * Initial value of outlanding checkbox.
    */
-  bool welt2000ReadOlValue;
+  bool m_welt2000ReadOlValue;
 
   /**
    * Initial value of openAIP airfield home radius.
    */
-  int afOpenAipHomeRadiusValue;
+  int m_afOpenAipHomeRadiusValue;
 
   /**
    * Initial value of openAIP airfield countries
    */
-  QString afOpenAipCountryValue;
+  QString m_afOpenAipCountryValue;
 
   QSlider* lLimit;
   QSlider* uLimit;
@@ -412,32 +434,32 @@ class KFLogConfig : public QDialog
   /** Widget to configure the map print elements. */
   ConfigMapElement* configPrintWidget;
 
-  int cylinPar;
-  int lambertV1;
-  int lambertV2;
-  int lambertOrigin;
-  int currentProjType;
+  int m_cylinPar;
+  int m_lambertV1;
+  int m_lambertV2;
+  int m_lambertOrigin;
+  int m_currentProjType;
 
   /** Combo box for distance unit configuration. */
-  QComboBox* unitDistance;
+  QComboBox* m_unitDistance;
 
   /** Combo box for position unit configuration. */
-  QComboBox* unitPosition;
+  QComboBox* m_unitPosition;
 
   /** Combo box for altitude unit configuration. */
-  QComboBox* unitAltitude;
+  QComboBox* m_unitAltitude;
 
   /** Table for airspace files to be loaded. */
-  QTableWidget* asFileTable;
+  QTableWidget* m_asFileTable;
 
   /** Table for openAIP airfield files to be loaded. */
-  QTableWidget* afFileTable;
+  QTableWidget* m_afFileTable;
 
   /** Group box for Welt2000 airfield configuration widget. */
-  QGroupBox* welt2000Group;
+  QGroupBox* m_welt2000Group;
 
   /** Group box for openAIP airfield configuration widget. */
-  QGroupBox* openAipGroup;
+  QGroupBox* m_openAipGroup;
 };
 
 #endif

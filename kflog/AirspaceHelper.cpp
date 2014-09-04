@@ -21,10 +21,8 @@
 
 #include "AirspaceHelper.h"
 #include "mapcontents.h"
-#include "mapmatrix.h"
 #include "openaip.h"
 #include "openairparser.h"
-#include "projectionbase.h"
 #include "resource.h"
 
 extern QSettings _settings;
@@ -47,14 +45,14 @@ int AirspaceHelper::loadAirspaces( QList<Airspace>& list )
   QString mapDir = MapContents::instance()->getMapRootDirectory() + "/airspaces";
   QStringList preselect;
 
-  // Setup a filter for the wanted file extensions.
+  // Setup a filter for the desired file extensions.
   QString filter = "*.txt *.TXT *.aip";
 
   MapContents::addDir( preselect, mapDir, filter );
 
   if( preselect.count() == 0 )
     {
-      qWarning( "ASH: No Airspace files found in the map directories!" );
+      qWarning( "ASH: No Airspace files found in the map directory!" );
       return loadCounter;
     }
 
@@ -295,7 +293,6 @@ AirspaceHelperThread::AirspaceHelperThread( QObject *parent ) :
 AirspaceHelperThread::~AirspaceHelperThread()
 {
 }
-
 
 void AirspaceHelperThread::run()
 {

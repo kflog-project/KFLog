@@ -1,8 +1,8 @@
 /************************************************************************
  **
- **   This file is part of KFLog4.
+ **   This file is part of KFLog.
  **
- **   Copyright (c):  2006-2014 by Axel Pauli, axel@kflog.org
+ **   Copyright (c):  2006-2014 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -13,9 +13,8 @@
  **
  **   welt2000.h
  **
- **   This class is part of Cumulus. It provides an interface to be
- **   able to read data from a welt2000.txt ascii file, craeted by
- **   Michael Meier and maintained by Howard Mills and Mike Köster
+ **   This class is part of KFLog. It provides an interface to be
+ **   able to read airfield data from a welt2000.txt Ascii file
  **
  **   http:http://www.segelflug.de/vereine/welt2000/download/WELT2000.TXT
  **
@@ -47,54 +46,7 @@
  **
  **   c) If no country filter rule is defined, then all data are used
  **      inside 500Km radius around the home position. I hope that is an
- *       useful compromise and protects cumulus for memory overflows.
- **
- **   Now some remarks about the configuration file and its
- **   content. Its name is welt2000.conf. The expected location is the
- **   same where the welt2000.txt file is to find. It can contain
- **   entries for country filtering and also entries for additional
- **   mappings. A comment line starts with a hashmark or a dollar sign
- **   and ends with the newline sign.
- **
- **   A country filter rule in the welt2000.conf file has to be defined
- **   in the following way:
- **
- **   FILTER countries=de,pl,cz,nl
- **
- **   Different countries can be defined within one rule but they have
- **   to be separated by commas. The definition of several filter
- **   lines is also possible. Country abbreviations are coded according
- **   to ISO-3166. See in the header of welt2000.txt file which
- **   countries are inside to find and how is their spelling.
- **
- **   Furthermore the configuration file supports the remapping of single
- **   airfield entries to other map elements of cumulus. The
- **   welt2000.txt file knows only three different types (airfield,
- **   glider field, ul field). Cumulus supports more. There are two
- **   possibilities for a remapping available:
- **
- **   a) A short name (first six left standing characters of definition)
- **      can be remapped according to the following rule:
- **
- **      MAP_SHORT_NAME <short-name>=<new-map-element-of-cumulus>
- **
- **   b) An ICAO identifier can be remapped according to the following rule:
- **
- **      MAP_ICAO <icao-sign>=<new-map-element-of-cumulus>
- **
- **   The supported cumulus map elements are:
- **
- **   [IntAirport|Airport|MilAirport|CivMilAirport|Airfield|ClosedAirfield|
- **    CivHeliport|MilHeliport|AmbHeliport|Gliderfield|UltraLight|HangGlider]
- **
- **   Against the original compiled version of an cumulus airfield
- **   file, the elements of a compiled welt2000 file were further
- **   reduced. All redundant entries with no information were removed
- **   from the output. Therefore the compiled file is incompatible
- **   with the kfc files but slimmer. To avoid confusion with the
- **   existing kfc files, which are derived from kfl, the extension
- **   .txc was choosen to show that this file is derived from a .txt
- **   file.
+ **      useful compromise and protects cumulus for memory overflows.
  **
  ***********************************************************************/
 
@@ -154,7 +106,7 @@ public:
 
     /**
      * Check if a Welt2000 download shall be done. That is allowed only onetimes
-     * per day by comparing the last modification date of the current installed
+     * per 30 days by comparing the last modification date of the current installed
      * Welt2000 file and the current date.
      *
      * \return true, if an update shall be made otherwise false

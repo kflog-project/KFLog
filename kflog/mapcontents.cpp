@@ -39,6 +39,7 @@
 #include "mapcontents.h"
 #include "mapmatrix.h"
 #include "mapcalc.h"
+#include "openaipairfieldloader.h"
 #include "openairparser.h"
 #include "radiopoint.h"
 #include "singlepoint.h"
@@ -91,16 +92,18 @@ const short MapContents::isoLevels[] =
 };
 
 extern MainWindow *_mainWindow;
+extern QSettings _settings;
 
 MapContents::MapContents( QObject* object ) :
   QObject(object),
   currentFlight(0),
   askUser(true),
-  loadWelt2000(true),
+  loadAirfields(true),
   loadAirspaces(true),
   m_downloadManger(0),
   m_downloadMangerW2000(0),
   m_downloadOpenAipAsManger(0),
+  m_downloadOpenAipAfManger(0),
   m_currentFlightListIndex(-1)
 {
   // Setup a hash used as reverse mapping from isoLine value to array index to
@@ -120,8 +123,6 @@ MapContents::MapContents( QObject* object ) :
 
   // The user is asked once after each startup, if he wants to download
   // missing map files.
-  extern QSettings _settings;
-
  _settings.setValue("/Internet/AutomaticMapDownload", ADT_NotSet);
 }
 
@@ -195,8 +196,6 @@ void MapContents::slotCloseFlight()
  */
 bool MapContents::__downloadMapFile( QString &file, QString &directory )
 {
-  extern QSettings _settings;
-
   if( _settings.value( "/Internet/AutomaticMapDownload", ADT_NotSet ).toInt() == Inhibited )
     {
       qDebug() << "Auto Download Inhibited";
@@ -270,8 +269,6 @@ void MapContents::slotNetworkError()
  */
 void MapContents::slotDownloadWelt2000(bool askUser)
 {
-  extern QSettings _settings;
-
   if( askUser == true && __askUserForDownload() != Automatic )
     {
       qDebug() << "Welt2000: Auto Download Inhibited";
@@ -333,7 +330,7 @@ void MapContents::slotWelt2000DownloadFinished( int requests, int errors )
       // Current file is not available or file sizes are different.
       // Rename new file and initiate a load of it.
       rename( newW2000.toLatin1().data(), curW2000.toLatin1().data() );
-      slotReloadWelt2000Data();
+      slotReloadAirfieldData();
       return;
     }
 
@@ -385,33 +382,25 @@ void MapContents::slotWelt2000DownloadFinished( int requests, int errors )
 
   if( differ == true )
     {
-      slotReloadWelt2000Data();
+      slotReloadAirfieldData();
     }
 
   qDebug() << "MapContents::slotWelt2000DownloadFinished(): no difference between old and new";
   return;
 }
 
-/**
- * Reload Welt2000 data file. Can be called after a configuration change or
- * a download update.
- */
-void MapContents::slotReloadWelt2000Data()
+void MapContents::slotReloadAirfieldData()
 {
   airfieldList.clear();
   gliderfieldList.clear();
   outLandingList.clear();
 
-  loadWelt2000 = true;
+  loadAirfields = true;
   emit contentsChanged();
 }
 
-void MapContents::slotDownloadOpenAipAirspaceFiles(bool askUser)
+void MapContents::slotDownloadOpenAipAirspaceFiles( bool askUser )
 {
-  qDebug() << "MapContents::slotDownloadOpenAipAirspaceFiles()";
-
-  extern QSettings _settings;
-
   if( askUser == true && __askUserForDownload() != Automatic )
     {
       qDebug() << "openAipAirspaces: Auto Download Inhibited";
@@ -442,7 +431,7 @@ void MapContents::slotDownloadOpenAipAirspaceFiles(bool askUser)
 
   QStringList countryList = countries.split(QRegExp("[ ,;]"));
 
-  const QString urlPrefix = KFLogConfig::rot47(_settings.value("/Airspace/OpenAipLink", "").toByteArray()) + "/";
+  const QString urlPrefix = KFLogConfig::rot47(_settings.value("/OpenAip/Link", "").toByteArray()) + "/";
   const QString destPrefix = getMapRootDirectory() + "/airspaces/";
 
   for( int i = 0; i < countryList.size(); i++ )
@@ -451,9 +440,8 @@ void MapContents::slotDownloadOpenAipAirspaceFiles(bool askUser)
       QString file = countryList.at(i).toLower() + "_asp.aip";
       QString url  = urlPrefix + file;
       QString dest = destPrefix + file;
-      m_downloadOpenAipAsManger->downloadRequest( url, dest );
 
-      qDebug() << "Download:" << url << dest;
+      m_downloadOpenAipAsManger->downloadRequest( url, dest );
     }
 }
 
@@ -505,6 +493,90 @@ void MapContents::slotReloadAirspaceData()
 
   loadAirspaces = true;
   emit contentsChanged();
+}
+
+void MapContents::slotDownloadOpenAipAirfieldFiles( bool askUser )
+{
+  if( askUser == true && __askUserForDownload() != Automatic )
+    {
+      qDebug() << "openAipAirfields: Auto Download Inhibited";
+      return;
+    }
+
+  QString countries = _settings.value("/Airfield/Countries", "").toString();
+
+  if( countries.isEmpty() )
+    {
+      qWarning() << "MapContents::slotDownloadOpenAipAirfieldFiles(): No countries defined!";
+      return;
+    }
+
+  if( m_downloadOpenAipAfManger == static_cast<DownloadManager *> (0) )
+    {
+      m_downloadOpenAipAfManger = new DownloadManager(this);
+
+      connect( m_downloadOpenAipAfManger, SIGNAL(finished( int, int )),
+               this, SLOT(slotOpenAipAfDownloadsFinished( int, int )) );
+
+      connect( m_downloadOpenAipAfManger, SIGNAL(networkError()),
+               this, SLOT(slotOpenAipAfNetworkError()) );
+
+      connect( m_downloadOpenAipAfManger, SIGNAL(status(const QString&)),
+               _mainWindow, SLOT(slotSetStatusMsg(const QString &)) );
+    }
+
+  QStringList countryList = countries.split(QRegExp("[ ,;]"));
+
+  const QString urlPrefix = KFLogConfig::rot47(_settings.value("/OpenAip/Link", "").toByteArray()) + "/";
+  const QString destPrefix = getMapRootDirectory() + "/airfields/";
+
+  for( int i = 0; i < countryList.size(); i++ )
+    {
+      // File name format: <country-code>_wpt.aip, example: de_wpt.aip
+      QString file = countryList.at(i).toLower() + "_wpt.aip";
+      QString url  = urlPrefix + file;
+      QString dest = destPrefix + file;
+
+      m_downloadOpenAipAfManger->downloadRequest( url, dest );
+    }
+}
+
+void MapContents::slotOpenAipAfDownloadsFinished( int requests, int errors )
+{
+  // All has finished, free not more needed resources
+  m_downloadOpenAipAfManger->deleteLater();
+  m_downloadOpenAipAfManger = static_cast<DownloadManager *> (0);
+
+  // initiate a reload of all airfield data
+  slotReloadAirfieldData();
+
+  if( errors )
+    {
+      QString msg;
+      msg = QString(tr("%1 download(s) with %2 error(s) done.")).arg(requests).arg(errors);
+
+      QMessageBox::warning( _mainWindow,
+			    tr("openAIP Airfield Downloads finished"),
+			    msg );
+    }
+}
+
+/**
+ * Called, if a network error occurred during the openAIP airspace file
+ * downloads.
+ */
+void MapContents::slotOpenAipAfNetworkError()
+{
+  // A network error has occurred. We do stop all further downloads.
+  m_downloadOpenAipAfManger->deleteLater();
+  m_downloadOpenAipAfManger = static_cast<DownloadManager *> (0);
+
+  QString msg;
+  msg = QString(tr("Network error occurred.\nAll downloads are canceled!"));
+
+  QMessageBox::warning( _mainWindow,
+                        tr("Network Error"),
+                        msg );
 }
 
 bool MapContents::__readTerrainFile( const int fileSecID,
@@ -997,7 +1069,6 @@ void MapContents::appendFlight(Flight* flight)
 int MapContents::__askUserForDownload()
 {
   extern MainWindow *_mainWindow;
-  extern QSettings  _settings;
 
   int result = _settings.value( "/Internet/AutomaticMapDownload", ADT_NotSet ).toInt();;
 
@@ -1126,8 +1197,6 @@ bool MapContents::createMapDirectories()
  */
 QString MapContents::getMapRootDirectory()
 {
-  extern QSettings _settings;
-
   QString mapDefRootDir = QDir::homePath() + "/KFLog/mapdata";
 
   QString mapRootDir = _settings.value( "/Path/DefaultMapDirectory", "" ).toString();
@@ -1147,7 +1216,6 @@ void MapContents::proofeSection(bool isPrint)
 {
   extern MainWindow *_mainWindow;
   extern MapMatrix  *_globalMapMatrix;
-  extern QSettings  _settings;
   QRect mapBorder;
 
   if(isPrint)
@@ -1277,29 +1345,39 @@ void MapContents::proofeSection(bool isPrint)
       emit airspacesLoaded();
     }
 
-  qDebug() << "MapContents::proofeSection() loadWelt2000=" << loadWelt2000;
+  qDebug() << "MapContents::proofeSection() loadAirfields=" << loadAirfields;
 
   // Checking for Airfield, Gliderfield and Outlanding data
-  if( loadWelt2000 == true )
+  if( loadAirfields == true )
     {
-      loadWelt2000 = false;
+      loadAirfields = false;
 
-      // At first try a load of welt2000, that airfield data are available
-      Welt2000 welt2000;
-      bool loadOk = welt2000.load( airfieldList, gliderfieldList, outLandingList );
+      int afSourceIndex = _settings.value( "/Airfield/Source", 0 ).toInt();
 
-      // As next make the update check
-      bool check4update = welt2000.check4update();
+      if( afSourceIndex == 0 )
+	{
+          OpenAipAirfieldLoader afl;
+          afl.load( airfieldList );
+	}
+      else if( afSourceIndex == 1 )
+	{
+	  // At first try a load of welt2000, that airfield data are available
+	  Welt2000 welt2000;
+	  bool loadOk = welt2000.load( airfieldList, gliderfieldList, outLandingList );
 
-      qDebug() << "MapContents::proofeSection(): loadOk=" << loadOk
-	       << "check4update=" << check4update;
+	  // As next make the update check
+	  bool check4update = welt2000.check4update();
 
-      if( loadOk == false || check4update == true )
-        {
-          // Welt2000 update available or load failed, try to download a new
-          // Welt2000 File from the Internet web page.
-          slotDownloadWelt2000( true );
-        }
+	  qDebug() << "MapContents::proofeSection(): loadOk=" << loadOk
+		   << "check4update=" << check4update;
+
+	  if( loadOk == false || check4update == true )
+	    {
+	      // Welt2000 update available or load failed, try to download a new
+	      // Welt2000 File from the Internet web page.
+	      slotDownloadWelt2000( true );
+	    }
+	}
     }
 }
 

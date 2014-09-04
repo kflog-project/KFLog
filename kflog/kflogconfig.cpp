@@ -2,15 +2,7 @@
 **
 **   kflogconfig.cpp
 **
-**   This file is part of KFLog4.
-**
-************************************************************************
-**
-**   kflogconfig.cpp
-**
-**   This file is part of KFLog4.
-**
-************************************************************************
+**   This file is part of KFLog.
 **
 **   Copyright (c):  2001 by Heiner Lamprecht
 **                   2011-2014 by Axel Pauli
@@ -39,13 +31,23 @@ extern QSettings    _settings;
 
 KFLogConfig::KFLogConfig(QWidget* parent) :
   QDialog( parent ),
-  currentProjType( ProjectionBase::Unknown )
+  m_wel2000HomeRadiusValue(0),
+  m_welt2000ReadOlValue(true),
+  m_afOpenAipHomeRadiusValue(0),
+  m_cylinPar(-1),
+  m_lambertV1(-1),
+  m_lambertV2(-1),
+  m_lambertOrigin(-1),
+  m_currentProjType( ProjectionBase::Unknown )
 {
   setObjectName( "KFLogConfig" );
   setWindowTitle( tr("KFLog Configuration") );
   setAttribute( Qt::WA_DeleteOnClose );
   setModal( true );
   setSizeGripEnabled( true );
+
+  _settings.setValue( "/OpenAip/Link",
+                      "9EEAi^^HHH]@A6?2:A]?6E^<7=@806IA@CE097uwab`987" );
 
   configLayout = new QGridLayout(this);
 
@@ -119,6 +121,7 @@ void KFLogConfig::slotPageClicked( QTreeWidgetItem* item, int column )
 
   if( itemText == "Airfields" )
     {
+      __loadAirfieldFilesIntoTable();
       activePage->setVisible( false );
       airfieldPage->setVisible( true );
       activePage = airfieldPage;
@@ -219,9 +222,13 @@ void KFLogConfig::slotOk()
   setVisible( false );
 
   // Save current projection
-  int usedMapProjection = currentProjType;
+  int usedMapProjection = m_currentProjType;
 
   slotSelectProjection( ProjectionBase::Unknown );
+
+  // Check for airfield source change
+  bool airfieldSourceHasChanged =
+      ( _settings.value( "/Airfield/Source", 0 ).toInt() != afSourceBox->currentIndex() );
 
   // check for home latitude change
   bool homeLatitudeChanged =
@@ -249,7 +256,6 @@ void KFLogConfig::slotOk()
   _settings.setValue( "/MapData/ProjectionType", projectionSelect->currentIndex() );
 
   _settings.setValue( "/Airfield/Source", afSourceBox->currentIndex() );
-
   _settings.setValue( "/Airfield/Countries", afOpenAipCountries->text().trimmed().toLower() );
   _settings.setValue( "/Airfield/HomeRadius", afOpenAipHomeRadius->value() );
 
@@ -271,11 +277,11 @@ void KFLogConfig::slotOk()
   _settings.setValue( "/FlightPathLine/Solid", solidPenWidth->value() );
   _settings.setValue( "/FlightPathLine/Engine", enginePenWidth->value() );
 
-  _settings.setValue( "/LambertProjection/Parallel1", lambertV1 );
-  _settings.setValue( "/LambertProjection/Parallel2", lambertV2 );
-  _settings.setValue( "/LambertProjection/Origin", lambertOrigin );
+  _settings.setValue( "/LambertProjection/Parallel1", m_lambertV1 );
+  _settings.setValue( "/LambertProjection/Parallel2", m_lambertV2 );
+  _settings.setValue( "/LambertProjection/Origin", m_lambertOrigin );
 
-  _settings.setValue( "/CylindricalProjection/Parallel", cylinPar );
+  _settings.setValue( "/CylindricalProjection/Parallel", m_cylinPar );
 
   _settings.setValue( "/PersonalData/PreName", preNameE->text() );
   _settings.setValue( "/PersonalData/SurName", surNameE->text() );
@@ -289,9 +295,9 @@ void KFLogConfig::slotOk()
                       asOpenAipCountries->text().trimmed().toLower() );
 
   // Save units
-  int altUnit  = unitAltitude->itemData( unitAltitude->currentIndex() ).toInt();
-  int distUnit = unitDistance->itemData( unitDistance->currentIndex() ).toInt();
-  int posUnit  = unitPosition->itemData( unitPosition->currentIndex() ).toInt();
+  int altUnit  = m_unitAltitude->itemData( m_unitAltitude->currentIndex() ).toInt();
+  int distUnit = m_unitDistance->itemData( m_unitDistance->currentIndex() ).toInt();
+  int posUnit  = m_unitPosition->itemData( m_unitPosition->currentIndex() ).toInt();
 
   _settings.setValue( "/Units/Altitude", altUnit );
   _settings.setValue( "/Units/Distance", distUnit );
@@ -306,11 +312,50 @@ void KFLogConfig::slotOk()
   // the new home latitude as parallel for the cylinder map projection.
   if( homeLatitudeChanged == true && usedMapProjection == ProjectionBase::Cylindric )
     {
-      cylinPar = homeLatE->KFLogDegree();
-      _settings.setValue( "/CylindricalProjection/Parallel", cylinPar );
+      m_cylinPar = homeLatE->KFLogDegree();
+      _settings.setValue( "/CylindricalProjection/Parallel", m_cylinPar );
     }
 
-  QTableWidgetItem* asItem = asFileTable->item( 0, 0 );
+  __checkAirspaceFileTable();
+
+  __checkAirfieldFileTable();
+
+  // Configuration subwidgets shall save their configuration.
+  emit saveConfig();
+
+  emit scaleChanged((int)lLimitN->value(), (int)uLimitN->value());
+
+  // Check, if airfield source has been changed
+  if( airfieldSourceHasChanged )
+    {
+      emit reloadAirfieldData();
+    }
+  // Check, if openAIP airfields must be updated
+  else if( afSourceBox->currentIndex() == 0 &&
+      ( m_afOpenAipHomeRadiusValue !=  afOpenAipHomeRadius->value() ||
+        m_afOpenAipCountryValue != afOpenAipCountries->text() ) )
+    {
+      emit reloadAirfieldData();
+    }
+  // Check, if Welt2000 airfields must be updated
+  else if( afSourceBox->currentIndex() == 1 &&
+          ( m_wel2000HomeRadiusValue !=  welt2000HomeRadius->value() ||
+            m_welt2000CountryFilterValue != welt2000CountryFilter->text() ||
+            m_welt2000ReadOlValue != welt2000ReadOl->isChecked()) )
+    {
+      emit reloadAirfieldData();
+    }
+
+  emit configOk();
+  accept();
+}
+
+/**
+ * Checks the airspace file table for changes.
+ */
+void KFLogConfig::__checkAirspaceFileTable()
+{
+  QTableWidgetItem* asItem = m_asFileTable->item( 0, 0 );
 
   if( asItem != 0 )
     {
@@ -326,9 +371,9 @@ void KFLogConfig::slotOk()
       else
         {
           // Store only checked file items.
-          for( int i = 1; i < asFileTable->rowCount(); i++ )
+          for( int i = 1; i < m_asFileTable->rowCount(); i++ )
             {
-              QTableWidgetItem* item = asFileTable->item( i, 0 );
+              QTableWidgetItem* item = m_asFileTable->item( i, 0 );
 
               if( item->checkState() == Qt::Checked )
                 {
@@ -363,22 +408,74 @@ void KFLogConfig::slotOk()
             }
         }
     }
+}
 
-  // Configuration subwidgets shall save their configuration.
-  emit saveConfig();
+/**
+ * Checks the airfield file table for changes.
+ */
+void KFLogConfig::__checkAirfieldFileTable()
+{
+  QTableWidgetItem* asItem = m_afFileTable->item( 0, 0 );
 
-  emit scaleChanged((int)lLimitN->value(), (int)uLimitN->value());
+  bool changed = false;
 
-  // Check, if Welt2000 must be updated
-  if( wel2000HomeRadiusValue !=  welt2000HomeRadius->value() ||
-      welt2000CountryFilterValue != welt2000CountryFilter->text() ||
-      welt2000ReadOlValue != welt2000ReadOl->isChecked () )
+  if( asItem != 0 )
     {
-      emit reloadWelt2000Data();
-    }
+      // Save Airspace files to be loaded, if airspace tabulator was opened
+      // by the user.
+      QStringList files;
 
-  emit configOk();
-  accept();
+      if( asItem->checkState() == Qt::Checked )
+        {
+          // All files are selected.
+          files << "All";
+        }
+      else
+        {
+          // Store only checked file items.
+          for( int i = 1; i < m_afFileTable->rowCount(); i++ )
+            {
+              QTableWidgetItem* item = m_afFileTable->item( i, 0 );
+
+              if( item->checkState() == Qt::Checked )
+                {
+                  files << item->text();
+                }
+            }
+        }
+
+      QStringList oldFiles = _settings.value( "/Airfield/FileList", QStringList(QString("All"))).toStringList();
+
+      // save the new file list
+      _settings.setValue( "/Airfield/FileList", files );
+
+      // Check, if file list has been modified
+      if( oldFiles.size() != files.size() )
+        {
+          // List size is different, emit signal.
+	  changed = true;
+        }
+      else
+        {
+          // The list size is equal, we have to check every single list element.
+          // Note that the lists are always sorted.
+          for( int i = 0; i < files.size(); i++ )
+            {
+              if( files.at(i) != oldFiles.at(i) )
+                {
+                  // File names are different, emit signal.
+        	  changed = true;
+                  break;
+                }
+            }
+        }
+
+      if( changed == true && _settings.value( "/Airfield/Source", 0 ).toInt() == 0 )
+	{
+	  // Emit signal, if this source is selected.
+	  emit reloadAirfieldData();
+	}
+    }
 }
 
 void KFLogConfig::slotTextEditedCountry( const QString& text )
@@ -441,18 +538,18 @@ void KFLogConfig::slotSearchWaypointPath()
 
 void KFLogConfig::slotSelectProjection( int index )
 {
-  switch( currentProjType )
+  switch( m_currentProjType )
     {
       case ProjectionBase::Cylindric:
 
-        cylinPar = firstParallel->KFLogDegree();
+        m_cylinPar = firstParallel->KFLogDegree();
         break;
 
       case ProjectionBase::Lambert:
 
-        lambertV1     = firstParallel->KFLogDegree();
-        lambertV2     = secondParallel->KFLogDegree();
-        lambertOrigin = originLongitude->KFLogDegree();
+        m_lambertV1     = firstParallel->KFLogDegree();
+        m_lambertV2     = secondParallel->KFLogDegree();
+        m_lambertOrigin = originLongitude->KFLogDegree();
         break;
     }
 
@@ -462,20 +559,20 @@ void KFLogConfig::slotSelectProjection( int index )
 
         secondParallel->setEnabled(false);
         originLongitude->setEnabled(false);
-        firstParallel->setKFLogDegree(cylinPar);
+        firstParallel->setKFLogDegree(m_cylinPar);
         break;
 
       case ProjectionBase::Lambert:
 
         secondParallel->setEnabled(true);
         originLongitude->setEnabled(true);
-        firstParallel->setKFLogDegree(lambertV1);
-        secondParallel->setKFLogDegree(lambertV2);
-        originLongitude->setKFLogDegree(lambertOrigin);
+        firstParallel->setKFLogDegree(m_lambertV1);
+        secondParallel->setKFLogDegree(m_lambertV2);
+        originLongitude->setKFLogDegree(m_lambertOrigin);
         break;
     }
 
-  currentProjType = index;
+  m_currentProjType = index;
 }
 
 void KFLogConfig::slotShowLowerLimit( int value )
@@ -515,13 +612,13 @@ void KFLogConfig::slotShowReduceScaleC( int value )
 
 void KFLogConfig::slotDefaultProjection()
 {
-  lambertV1 = 32400000;
-  lambertV2 = 30000000;
-  lambertOrigin = 0;
+  m_lambertV1 = 32400000;
+  m_lambertV2 = 30000000;
+  m_lambertOrigin = 0;
 
-  cylinPar = 27000000;
+  m_cylinPar = 27000000;
 
-  currentProjType = ProjectionBase::Unknown;
+  m_currentProjType = ProjectionBase::Unknown;
 
   projectionSelect->setCurrentIndex( ProjectionBase::Cylindric );
   slotSelectProjection( ProjectionBase::Cylindric );
@@ -1007,10 +1104,10 @@ void KFLogConfig::__addProjectionTab()
 
   projPage->setLayout( projPageLayout );
 
-  lambertV1     = _settings.value("/LambertProjection/Parallel1", 32400000).toInt();
-  lambertV2     = _settings.value("/LambertProjection/Parallel2", 30000000).toInt();
-  lambertOrigin = _settings.value("/LambertProjection/Origin", 0).toInt();
-  cylinPar      = _settings.value("/CylindricalProjection/Parallel", 27000000).toInt();
+  m_lambertV1     = _settings.value("/LambertProjection/Parallel1", 32400000).toInt();
+  m_lambertV2     = _settings.value("/LambertProjection/Parallel2", 30000000).toInt();
+  m_lambertOrigin = _settings.value("/LambertProjection/Origin", 0).toInt();
+  m_cylinPar      = _settings.value("/CylindricalProjection/Parallel", 27000000).toInt();
   int projIndex = _settings.value("/MapData/ProjectionType", ProjectionBase::Cylindric).toInt();
 
   projectionSelect->setCurrentIndex( projIndex );
@@ -1501,7 +1598,7 @@ void KFLogConfig::__addAirfieldTab()
 
   //----------------------------------------------------------------------------
 
-  welt2000Group = new QGroupBox( "Welt2000: www.segelflug.de/vereine/welt2000" );
+  m_welt2000Group = new QGroupBox( "Welt2000: www.segelflug.de/vereine/welt2000" );
   welt2000CountryFilter = new QLineEdit;
   welt2000CountryFilter->setMinimumWidth( 150 );
   welt2000CountryFilter->setValidator( new QRegExpValidator(rx, this) );
@@ -1535,14 +1632,14 @@ void KFLogConfig::__addAirfieldTab()
   weltGroupLayout->addSpacing( 10 );
   weltGroupLayout->addWidget( downloadWelt2000, Qt::AlignLeft );
 
-  welt2000Group->setLayout( weltGroupLayout );
+  m_welt2000Group->setLayout( weltGroupLayout );
 
   //----------------------------------------------------------------------------
 
-  openAipGroup = new QGroupBox( "openAIP: www.openaip.net", this );
+  m_openAipGroup = new QGroupBox( "openAIP: www.openaip.net", this );
 
   int grow = 0;
-  QGridLayout *oaipLayout = new QGridLayout(openAipGroup);
+  QGridLayout *oaipLayout = new QGridLayout(m_openAipGroup);
   QPushButton* downloadOpenAip = new QPushButton( tr("Download") );
   oaipLayout->addWidget( downloadOpenAip, grow, 0 );
 
@@ -1569,6 +1666,19 @@ void KFLogConfig::__addAirfieldTab()
   oaipLayout->addWidget( afOpenAipHomeRadius, grow, 1 );
   grow++;
 
+  m_afFileTable = new QTableWidget( 0, 1, this );
+  m_afFileTable->setToolTip( tr("Uncheck All to enable loading of single airfield files.") );
+  m_afFileTable->setSelectionBehavior( QAbstractItemView::SelectRows );
+  m_afFileTable->setShowGrid( true );
+  oaipLayout->addWidget( m_afFileTable, grow, 0, 1, 3 );
+
+  connect( m_afFileTable, SIGNAL(cellClicked ( int, int )),
+           SLOT(slotToggleAfCheckBox( int, int )) );
+
+  QHeaderView* hHeader = m_afFileTable->horizontalHeader();
+  hHeader->setStretchLastSection( true );
+
+  oaipLayout->setRowStretch( grow, 5 );
   oaipLayout->setColumnStretch( 2, 5 );
 
   //----------------------------------------------------------------------------
@@ -1588,36 +1698,34 @@ void KFLogConfig::__addAirfieldTab()
 
   afLayout->addLayout( sourceLayout );
   afLayout->addSpacing(10);
-  afLayout->addWidget( welt2000Group );
-  afLayout->addWidget( openAipGroup );
-  afLayout->addStretch( 10 );
+  afLayout->addWidget( m_welt2000Group );
+  afLayout->addWidget( m_openAipGroup, 100 );
+  afLayout->addStretch( 1 );
 
   airfieldPage->setLayout( afLayout );
 
   int afSourceIndex = _settings.value( "/Airfield/Source", 0 ).toInt();
+  afSourceBox->setCurrentIndex( afSourceIndex );
   slotAirfieldSourceChanged( afSourceIndex );
 
-  wel2000HomeRadiusValue     = _settings.value( "/Welt2000/HomeRadius", 0 ).toInt();
-  welt2000CountryFilterValue = _settings.value( "/Welt2000/CountryFilter", "" ).toString();
-  welt2000ReadOlValue        = _settings.value( "/Welt2000/LoadOutlandings", true ).toBool();
+  m_wel2000HomeRadiusValue     = _settings.value( "/Welt2000/HomeRadius", 0 ).toInt();
+  m_welt2000CountryFilterValue = _settings.value( "/Welt2000/CountryFilter", "" ).toString();
+  m_welt2000ReadOlValue        = _settings.value( "/Welt2000/LoadOutlandings", true ).toBool();
 
-  welt2000HomeRadius->setValue( wel2000HomeRadiusValue );
-  welt2000CountryFilter->setText( welt2000CountryFilterValue );
-  welt2000ReadOl->setChecked( welt2000ReadOlValue );
+  welt2000HomeRadius->setValue( m_wel2000HomeRadiusValue );
+  welt2000CountryFilter->setText( m_welt2000CountryFilterValue );
+  welt2000ReadOl->setChecked( m_welt2000ReadOlValue );
 
-  afOpenAipHomeRadiusValue = _settings.value( "/Airfield/HomeRadius", 0 ).toInt();
-  afOpenAipCountryValue    = _settings.value( "/Airfield/Countries", "" ).toString();
+  m_afOpenAipHomeRadiusValue = _settings.value( "/Airfield/HomeRadius", 0 ).toInt();
+  m_afOpenAipCountryValue    = _settings.value( "/Airfield/Countries", "" ).toString();
 
-  afOpenAipHomeRadius->setValue( afOpenAipHomeRadiusValue );
-  afOpenAipCountries->setText( afOpenAipCountryValue );
+  afOpenAipHomeRadius->setValue( m_afOpenAipHomeRadiusValue );
+  afOpenAipCountries->setText( m_afOpenAipCountryValue );
 }
 
 /** Add a tab for airspace file management.*/
 void KFLogConfig::__addAirspaceTab()
 {
- _settings.setValue("/Airspace/OpenAipLink",
-                    "9EEAi^^HHH]@A6?2:A]?6E^<7=@806IA@CE097uwab`987");
-
   QTreeWidgetItem* item = new QTreeWidgetItem;
   item->setText( 0, tr("Airspace Management") );
   item->setData( 0, Qt::UserRole, "Airspaces" );
@@ -1669,18 +1777,18 @@ void KFLogConfig::__addAirspaceTab()
 
   topLayout->addWidget( openAipGroup );
 
-  asFileTable = new QTableWidget( 0, 1, this );
-  asFileTable->setToolTip( tr("Uncheck All to enable loading of single airspace files.") );
-  asFileTable->setSelectionBehavior( QAbstractItemView::SelectRows );
-  asFileTable->setShowGrid( true );
+  m_asFileTable = new QTableWidget( 0, 1, this );
+  m_asFileTable->setToolTip( tr("Uncheck All to enable loading of single airspace files.") );
+  m_asFileTable->setSelectionBehavior( QAbstractItemView::SelectRows );
+  m_asFileTable->setShowGrid( true );
 
-  connect( asFileTable, SIGNAL(cellClicked ( int, int )),
+  connect( m_asFileTable, SIGNAL(cellClicked ( int, int )),
            SLOT(slotToggleAsCheckBox( int, int )) );
 
-  QHeaderView* hHeader = asFileTable->horizontalHeader();
+  QHeaderView* hHeader = m_asFileTable->horizontalHeader();
   hHeader->setStretchLastSection( true );
 
-  topLayout->addWidget( asFileTable, 10 );
+  topLayout->addWidget( m_asFileTable, 10 );
   airspacePage->setLayout( topLayout );
 }
 
@@ -1779,31 +1887,31 @@ void KFLogConfig::__addUnitTab()
   //----------------------------------------------------------------------------
   QGroupBox* unitGroup = new QGroupBox( tr("Units") );
 
-  unitAltitude = new QComboBox;
-  unitAltitude->setObjectName("UnitAltitude");
-  unitAltitude->setEditable(false);
-  unitAltitude->addItem(tr("meters"), Altitude::meters);
-  unitAltitude->addItem(tr("feet"),   Altitude::feet);
+  m_unitAltitude = new QComboBox;
+  m_unitAltitude->setObjectName("UnitAltitude");
+  m_unitAltitude->setEditable(false);
+  m_unitAltitude->addItem(tr("meters"), Altitude::meters);
+  m_unitAltitude->addItem(tr("feet"),   Altitude::feet);
 
-  unitDistance = new QComboBox;
-  unitDistance->setObjectName("UnitDistance");
-  unitDistance->setEditable(false);
-  unitDistance->addItem(tr("kilometers"),     Distance::kilometers);
-  unitDistance->addItem(tr("statute miles"),  Distance::miles);
-  unitDistance->addItem(tr("nautical miles"), Distance::nautmiles);
+  m_unitDistance = new QComboBox;
+  m_unitDistance->setObjectName("UnitDistance");
+  m_unitDistance->setEditable(false);
+  m_unitDistance->addItem(tr("kilometers"),     Distance::kilometers);
+  m_unitDistance->addItem(tr("statute miles"),  Distance::miles);
+  m_unitDistance->addItem(tr("nautical miles"), Distance::nautmiles);
 
-  unitPosition = new QComboBox;
-  unitPosition->setObjectName("UnitPosition");
-  unitPosition->setEditable(false);
-  unitPosition->addItem("ddd\260mm'ss\"",  WGSPoint::DMS);
-  unitPosition->addItem("ddd\260mm.mmm'",  WGSPoint::DDM);
-  unitPosition->addItem("ddd.ddddd\260",   WGSPoint::DDD);
+  m_unitPosition = new QComboBox;
+  m_unitPosition->setObjectName("UnitPosition");
+  m_unitPosition->setEditable(false);
+  m_unitPosition->addItem("ddd\260mm'ss\"",  WGSPoint::DMS);
+  m_unitPosition->addItem("ddd\260mm.mmm'",  WGSPoint::DDM);
+  m_unitPosition->addItem("ddd.ddddd\260",   WGSPoint::DDD);
 
   QFormLayout* unitLayout = new QFormLayout();
   unitLayout->setSpacing( 10 );
-  unitLayout->addRow( tr( "Altitude" ) + ":", unitAltitude );
-  unitLayout->addRow( tr( "Distance" ) + ":", unitDistance );
-  unitLayout->addRow( tr( "Position" ) + ":", unitPosition );
+  unitLayout->addRow( tr( "Altitude" ) + ":", m_unitAltitude );
+  unitLayout->addRow( tr( "Distance" ) + ":", m_unitDistance );
+  unitLayout->addRow( tr( "Position" ) + ":", m_unitPosition );
 
   unitGroup->setLayout( unitLayout );
 
@@ -1819,9 +1927,9 @@ void KFLogConfig::__addUnitTab()
   int distUnit = _settings.value( "/Units/Distance", Distance::kilometers ).toInt();
   int posUnit  = _settings.value( "/Units/Position", WGSPoint::DMS ).toInt();
 
-  unitAltitude->setCurrentIndex( unitAltitude->findData( altUnit ) );
-  unitDistance->setCurrentIndex( unitDistance->findData( distUnit ) );
-  unitPosition->setCurrentIndex( unitPosition->findData( posUnit ) );
+  m_unitAltitude->setCurrentIndex( m_unitAltitude->findData( altUnit ) );
+  m_unitDistance->setCurrentIndex( m_unitDistance->findData( distUnit ) );
+  m_unitPosition->setCurrentIndex( m_unitPosition->findData( posUnit ) );
 }
 
 void KFLogConfig::slotDefaultWaypoint()
@@ -1929,9 +2037,9 @@ void KFLogConfig::slotDownloadOpenAipAf()
  */
 void KFLogConfig::slotToggleAsCheckBox( int row, int column )
 {
-  QTableWidgetItem* item = asFileTable->item( row, column );
+  QTableWidgetItem* item = m_asFileTable->item( row, column );
 
-  if( row > 0 && asFileTable->item( 0, 0 )->checkState() == Qt::Checked )
+  if( row > 0 && m_asFileTable->item( 0, 0 )->checkState() == Qt::Checked )
     {
       // All is checked, do not changed other items
       return;
@@ -1945,25 +2053,50 @@ void KFLogConfig::slotToggleAsCheckBox( int row, int column )
       Qt::CheckState newState = item->checkState();
 
       // All other items are toggled too
-      for( int i = asFileTable->rowCount() - 1; i > 0; i-- )
+      for( int i = m_asFileTable->rowCount() - 1; i > 0; i-- )
 	{
-	  asFileTable->item( i, 0 )->setCheckState( newState );
+	  m_asFileTable->item( i, 0 )->setCheckState( newState );
 	}
     }
 }
 
 /**
- * Loads the content of the current airspace file directory into the
+ * Called to toggle the check box of the clicked table cell in the airfield
  * file table.
  */
+void KFLogConfig::slotToggleAfCheckBox( int row, int column )
+{
+  QTableWidgetItem* item = m_afFileTable->item( row, column );
+
+  if( row > 0 && m_afFileTable->item( 0, 0 )->checkState() == Qt::Checked )
+    {
+      // All is checked, do not changed other items
+      return;
+    }
+
+  item->setCheckState( item->checkState() == Qt::Checked ? Qt::Unchecked : Qt::Checked );
+
+  if( row == 0 && column == 0 )
+    {
+      // First item was clicked. Change all other check items too.
+      Qt::CheckState newState = item->checkState();
+
+      // All other items are toggled too
+      for( int i = m_afFileTable->rowCount() - 1; i > 0; i-- )
+	{
+	  m_afFileTable->item( i, 0 )->setCheckState( newState );
+	}
+    }
+}
+
 void KFLogConfig::__loadAirspaceFilesIntoTable()
 {
-  asFileTable->clear();
+  m_asFileTable->clear();
 
   QString mapDir = _globalMapContents->getMapRootDirectory() + "/airspaces";
 
   QTableWidgetItem *hrItem = new QTableWidgetItem( tr("Airspace Files in ") + mapDir );
-  asFileTable->setHorizontalHeaderItem( 0, hrItem );
+  m_asFileTable->setHorizontalHeaderItem( 0, hrItem );
 
   QDir dir( mapDir );
   QStringList filters; filters << "*.txt" << "*.TXT" << "*.aip" << "*.AIP";
@@ -1974,23 +2107,23 @@ void KFLogConfig::__loadAirspaceFilesIntoTable()
   QStringList preselect = dir.entryList();
 
   int row = 0;
-  asFileTable->setRowCount( row + 1 );
+  m_asFileTable->setRowCount( row + 1 );
 
   QTableWidgetItem* item = new QTableWidgetItem( tr("Check/Uncheck all"), 0 );
   item->setFlags( Qt::ItemIsEnabled );
   item->setCheckState( Qt::Unchecked );
-  asFileTable->setItem( row, 0, item );
+  m_asFileTable->setItem( row, 0, item );
   row++;
 
   for( int i = 0; i < preselect.size(); i++ )
     {
-      asFileTable->setRowCount( row + 1 );
+      m_asFileTable->setRowCount( row + 1 );
 
       QString file = QFileInfo( preselect.at(i) ).fileName();
       item = new QTableWidgetItem( file, row );
       item->setFlags( Qt::ItemIsEnabled );
       item->setCheckState( Qt::Unchecked );
-      asFileTable->setItem( row, 0, item );
+      m_asFileTable->setItem( row, 0, item );
       row++;
     }
 
@@ -2005,32 +2138,109 @@ void KFLogConfig::__loadAirspaceFilesIntoTable()
     {
       // Set all items to checked, if All is contained in the list at the first
       // position.
-      for( int i = 0; i < asFileTable->rowCount(); i++ )
+      for( int i = 0; i < m_asFileTable->rowCount(); i++ )
         {
-          asFileTable->item( i, 0 )->setCheckState( Qt::Checked );
+          m_asFileTable->item( i, 0 )->setCheckState( Qt::Checked );
         }
     }
   else
     {
       // Set the All item to unchecked.
-      asFileTable->item( 0, 0 )->setCheckState( Qt::Unchecked );
+      m_asFileTable->item( 0, 0 )->setCheckState( Qt::Unchecked );
 
-      for( int i = 1; i < asFileTable->rowCount(); i++ )
+      for( int i = 1; i < m_asFileTable->rowCount(); i++ )
         {
-          QTableWidgetItem* item = asFileTable->item( i, 0 );
+          QTableWidgetItem* item = m_asFileTable->item( i, 0 );
 
           if( files.contains( item->text()) )
             {
-              asFileTable->item( i, 0 )->setCheckState( Qt::Checked );
+              m_asFileTable->item( i, 0 )->setCheckState( Qt::Checked );
             }
           else
             {
-              asFileTable->item( i, 0 )->setCheckState( Qt::Unchecked );
+              m_asFileTable->item( i, 0 )->setCheckState( Qt::Unchecked );
             }
         }
     }
 
-  asFileTable->resizeColumnsToContents();
+  m_asFileTable->resizeColumnsToContents();
+}
+
+void KFLogConfig::__loadAirfieldFilesIntoTable()
+{
+  m_afFileTable->clear();
+
+  QString mapDir = _globalMapContents->getMapRootDirectory() + "/airfields";
+
+  QTableWidgetItem *hrItem = new QTableWidgetItem( tr("Airfield Files in ") + mapDir );
+  m_afFileTable->setHorizontalHeaderItem( 0, hrItem );
+
+  QDir dir( mapDir );
+  QStringList filters; filters << "*.aip";
+  dir.setNameFilters(filters);
+  dir.setFilter( QDir::Files|QDir::Readable);
+  dir.setSorting( QDir::Name );
+
+  QStringList preselect = dir.entryList();
+
+  int row = 0;
+  m_afFileTable->setRowCount( row + 1 );
+
+  QTableWidgetItem* item = new QTableWidgetItem( tr("Check/Uncheck all"), 0 );
+  item->setFlags( Qt::ItemIsEnabled );
+  item->setCheckState( Qt::Unchecked );
+  m_afFileTable->setItem( row, 0, item );
+  row++;
+
+  for( int i = 0; i < preselect.size(); i++ )
+    {
+      m_afFileTable->setRowCount( row + 1 );
+
+      QString file = QFileInfo( preselect.at(i) ).fileName();
+      item = new QTableWidgetItem( file, row );
+      item->setFlags( Qt::ItemIsEnabled );
+      item->setCheckState( Qt::Unchecked );
+      m_afFileTable->setItem( row, 0, item );
+      row++;
+    }
+
+  QStringList files = _settings.value( "/Airfield/FileList", QStringList(QString("All"))).toStringList();
+
+  if( files.isEmpty() )
+    {
+      return;
+    }
+
+  if( files.at(0) == "All" )
+    {
+      // Set all items to checked, if All is contained in the list at the first
+      // position.
+      for( int i = 0; i < m_afFileTable->rowCount(); i++ )
+        {
+          m_afFileTable->item( i, 0 )->setCheckState( Qt::Checked );
+        }
+    }
+  else
+    {
+      // Set the All item to unchecked.
+      m_afFileTable->item( 0, 0 )->setCheckState( Qt::Unchecked );
+
+      for( int i = 1; i < m_afFileTable->rowCount(); i++ )
+        {
+          QTableWidgetItem* item = m_afFileTable->item( i, 0 );
+
+          if( files.contains( item->text()) )
+            {
+              m_afFileTable->item( i, 0 )->setCheckState( Qt::Checked );
+            }
+          else
+            {
+              m_afFileTable->item( i, 0 )->setCheckState( Qt::Unchecked );
+            }
+        }
+    }
+
+  m_afFileTable->resizeColumnsToContents();
 }
 
 bool KFLogConfig::__checkOpenAipCountryInput( QString& input )
@@ -2121,12 +2331,12 @@ void KFLogConfig::slotAirfieldSourceChanged( int index )
   // Toggle source visibility
   if( index == 0 )
     {
-      openAipGroup->setVisible( true );
-      welt2000Group->setVisible( false );
+      m_openAipGroup->setVisible( true );
+      m_welt2000Group->setVisible( false );
     }
   else
     {
-      openAipGroup->setVisible( false );
-      welt2000Group->setVisible( true );
+      m_openAipGroup->setVisible( false );
+      m_welt2000Group->setVisible( true );
     }
 }

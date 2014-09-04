@@ -1199,7 +1199,7 @@ void WaypointTreeView::slotSetHome()
       _settings.setValue("/Homesite/Country", w->country);
 
       // update airfield lists from Welt2000 if home site changes:
-      _globalMapContents->slotReloadWelt2000Data();
+      _globalMapContents->slotReloadAirfieldData();
       slotFillWaypoints();
   }
 }
