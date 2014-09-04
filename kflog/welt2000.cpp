@@ -102,10 +102,10 @@ bool Welt2000::check4update()
       return false;
     }
 
-  if( test.lastModified().date() == QDate::currentDate() )
+  if( test.lastModified().secsTo(QDateTime::currentDateTime()) < 3600 * 24 * 30 )
     {
-      qDebug() << "Welt2000::check4update(): Dates are equal, return false.";
-      // The file was already updated today. Don't allow further updates.
+      qDebug() << "Welt2000::check4update(): last update < 30 days, return false.";
+      // The file was already updated in the last 30 days. Don't allow an update.
       return false;
     }
 
