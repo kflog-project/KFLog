@@ -239,12 +239,15 @@ void MapContents::slotDownloadsFinished( int requests, int errors )
   // initiate a new map load
   emit contentsChanged();
 
-  QString msg;
-  msg = QString(tr("%1 download(s) with %2 error(s) done.")).arg(requests).arg(errors);
+  if( errors )
+    {
+      QString msg;
+      msg = QString(tr("%1 download(s) with %2 error(s) done.")).arg(requests).arg(errors);
 
-  QMessageBox::information( _mainWindow,
+      QMessageBox::warning( _mainWindow,
                             tr("Downloads finished"),
                             msg );
+    }
 }
 
 /** Called, if a network error occurred during the downloads. */
@@ -257,9 +260,9 @@ void MapContents::slotNetworkError()
   QString msg;
   msg = QString(tr("Network error occurred.\nAll downloads are canceled!"));
 
-  QMessageBox::information( _mainWindow,
-                            tr("Network Error"),
-                            msg );
+  QMessageBox::warning( _mainWindow,
+                        tr("Network Error"),
+                        msg );
 }
 
 /**
@@ -463,12 +466,15 @@ void MapContents::slotOpenAipAsDownloadsFinished( int requests, int errors )
   // initiate a reload of all airspace data
   slotReloadAirspaceData();
 
-  QString msg;
-  msg = QString(tr("%1 download(s) with %2 error(s) done.")).arg(requests).arg(errors);
+  if( errors )
+    {
+      QString msg;
+      msg = QString(tr("%1 download(s) with %2 error(s) done.")).arg(requests).arg(errors);
 
-  QMessageBox::information( _mainWindow,
-                            tr("openAIP Airspace Downloads finished"),
-                            msg );
+      QMessageBox::warning( _mainWindow,
+			    tr("openAIP Airspace Downloads finished"),
+			    msg );
+    }
 }
 
 /**
@@ -484,9 +490,9 @@ void MapContents::slotOpenAipAsNetworkError()
   QString msg;
   msg = QString(tr("Network error occurred.\nAll downloads are canceled!"));
 
-  QMessageBox::information( _mainWindow,
-                            tr("Network Error"),
-                            msg );
+  QMessageBox::warning( _mainWindow,
+                        tr("Network Error"),
+                        msg );
 }
 
 /**
