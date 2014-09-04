@@ -305,6 +305,7 @@ void AirspaceHelperThread::run()
 
   // deactivate all signals in this thread
   pthread_sigmask( SIG_SETMASK, &sigset, 0 );
+#endif
 
   // Check is signal is connected to a slot.
   if( receivers( SIGNAL( loadedList( int, SortableAirspaceList* )) ) == 0 )
@@ -312,7 +313,7 @@ void AirspaceHelperThread::run()
       qWarning() << "AirspaceHelperThread: No Slot connection to Signal loadedList!";
       return;
     }
-#endif
+
   SortableAirspaceList* airspaceList = new SortableAirspaceList;
 
   int ok = AirspaceHelper::loadAirspaces( *airspaceList );
