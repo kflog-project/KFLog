@@ -269,7 +269,7 @@ void MapContents::slotNetworkError()
  */
 void MapContents::slotDownloadWelt2000(bool askUser)
 {
-  if( askUser == true && __askUserForDownload() != Automatic )
+  if( askUser == true && __askUserForDownload( tr("Welt2000 airfield")) != Automatic )
     {
       qDebug() << "Welt2000: Auto Download Inhibited";
       return;
@@ -401,7 +401,7 @@ void MapContents::slotReloadAirfieldData()
 
 void MapContents::slotDownloadOpenAipAirspaceFiles( bool askUser )
 {
-  if( askUser == true && __askUserForDownload() != Automatic )
+  if( askUser == true && __askUserForDownload( tr("openAIP airspace") ) != Automatic )
     {
       qDebug() << "openAipAirspaces: Auto Download Inhibited";
       return;
@@ -463,6 +463,8 @@ void MapContents::slotOpenAipAsDownloadsFinished( int requests, int errors )
 			    tr("openAIP Airspace Downloads finished"),
 			    msg );
     }
+
+  emit airspacesDownloaded();
 }
 
 /**
@@ -497,7 +499,7 @@ void MapContents::slotReloadAirspaceData()
 
 void MapContents::slotDownloadOpenAipAirfieldFiles( bool askUser )
 {
-  if( askUser == true && __askUserForDownload() != Automatic )
+  if( askUser == true && __askUserForDownload(tr("openAIP airfield") ) != Automatic )
     {
       qDebug() << "openAipAirfields: Auto Download Inhibited";
       return;
@@ -559,6 +561,8 @@ void MapContents::slotOpenAipAfDownloadsFinished( int requests, int errors )
 			    tr("openAIP Airfield Downloads finished"),
 			    msg );
     }
+
+  emit airfieldsDownloaded();
 }
 
 /**
@@ -604,7 +608,7 @@ bool MapContents::__readTerrainFile( const int fileSecID,
     {
       qWarning() << "KFLog: Can not open Terrain file" << pathName;
 
-      int answer = __askUserForDownload();
+      int answer = __askUserForDownload( tr("KFLog map") );
 
       if( answer == Automatic )
         {
@@ -803,7 +807,7 @@ bool MapContents::__readBinaryFile( const int  fileSecID,
     {
       qWarning() << "KFLog: Can not open map file" << pathName;
 
-      int answer = __askUserForDownload();
+      int answer = __askUserForDownload( tr("KFLog map") );
 
       if( answer == Automatic )
         {
@@ -1066,7 +1070,7 @@ void MapContents::appendFlight(Flight* flight)
   emit currentFlightChanged();
 }
 
-int MapContents::__askUserForDownload()
+int MapContents::__askUserForDownload( QString what )
 {
   extern MainWindow *_mainWindow;
 
@@ -1078,11 +1082,9 @@ int MapContents::__askUserForDownload()
 
       int ret = QMessageBox::question(_mainWindow,
                 tr("Automatic data download?"),
-                tr("<html>There are data missing under the directory tree<br><b>%1."
-                "</b><br> Do you want to download these data automatically?<br>"
-                "(If you want to change the root directory, "
-                "press <i>Cancel</i> and change it in the Settings menu.)</html>")
-                 .arg( getMapRootDirectory() ),
+                tr("<html>There are <b>%1</b> data missing!"
+                "<br><br>Do you want to download these data from the Internet?</html>")
+                 .arg( what ),
                  QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel );
 
       switch (ret)

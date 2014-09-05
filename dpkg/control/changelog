@@ -6,9 +6,9 @@ kflog (4.8.0) unstable, urgency=low
   
   * Bugfix: Tried to fix in general welt2000 reload loop.
   
-  * openAIP airspace data can be downloaded and read now by KFLog.
+  * openAIP airfield and airspace data can be downloaded and read by KFLog now.
 
- -- Axel Pauli <kflog.cumulus@gmail.com>  Tue, 01 Sep 2014 21:15:37 +0200
+ -- Axel Pauli <kflog.cumulus@gmail.com>  Tue, 05 Sep 2014 21:15:37 +0200
 
 kflog (4.7.3) unstable; urgency=low
 

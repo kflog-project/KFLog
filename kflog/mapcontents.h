@@ -78,13 +78,30 @@ class MapContents : public QObject
   /**
    * The index of Map element-Lists.
    */
-  enum MapContentsListID { NotSet = 0, AirfieldList, GliderfieldList,
-                           AddSitesList, OutLandingList, NavList, AirspaceList,
-                           ObstacleList, ReportList, CityList, VillageList,
-                           LandmarkList, HighwayList, HighwayEntryList,
-                           RoadList, RailList, StationList, HydroList,
-                           LakeList, TopoList, IsohypseList,
-                           WaypointList, DigitList, FlightList };
+  enum MapContentsListID { NotSet = 0,
+                           AirfieldList,
+                           GliderfieldList,
+                           AddSitesList,
+                           OutLandingList,
+                           NavList,
+                           AirspaceList,
+                           ObstacleList,
+                           ReportList,
+                           CityList,
+                           VillageList,
+                           LandmarkList,
+                           HighwayList,
+                           HighwayEntryList,
+                           RoadList,
+                           RailList,
+                           StationList,
+                           HydroList,
+                           LakeList,
+                           TopoList,
+                           IsohypseList,
+                           WaypointList,
+                           DigitList,
+                           FlightList };
 
   /**
    * Types used by automatic download actions.
@@ -238,10 +255,13 @@ class MapContents : public QObject
 
   /** read a task file and append all tasks to flight list switch to first task in file */
   bool loadTask(QFile& path);
+
   /** generate new task name */
   QString genTaskName();
+
   /** generate a task name, using the suggestion given. Prevents double task names */
   QString genTaskName(QString suggestion);
+
   /** Checks if a task name is already in use or not. */
   bool taskNameInUse( QString name );
 
@@ -299,18 +319,25 @@ class MapContents : public QObject
    * Close current flight
    */
   void slotCloseFlight();
+
   /** No descriptions */
   void slotSetFlight( QAction *action );
+
   /** No descriptions */
   void slotSetFlight(BaseFlightElement *);
+
   /** create a new, empty flight group */
   void slotNewFlightGroup();
+
   /** create a new, empty task */
   void slotNewTask();
+
   /** append task to flight list */
   void slotAppendTask(FlightTask *f);
+
   /** No descriptions */
   void slotEditFlightGroup();
+
   /** */
   void slotReloadMapData();
 
@@ -345,12 +372,6 @@ class MapContents : public QObject
    * Called, if openAIP airfield files shall be downloaded.
    */
   void slotDownloadOpenAipAirfieldFiles(bool askUser);
-
-  /**
-   * Reload airfield data. Can be called after a configuration change.
-   */
-  //void slotReloadOpenAipAirfieldData();
-
 
  private slots:
 
@@ -439,6 +460,16 @@ class MapContents : public QObject
    * Emitted, if airspaces have been loaded.
    */
   void airspacesLoaded();
+
+  /**
+   * Emitted, if openAIP airspaces have been downloaded.
+   */
+  void airspacesDownloaded();
+
+  /**
+   * Emitted, if openAIP airfields have been downloaded.
+   */
+  void airfieldsDownloaded();
 
  private:
 
@@ -648,9 +679,12 @@ class MapContents : public QObject
   QHash<short, uchar> isoHash;
 
   /**
-   * Displays a message box and asks, weather the map files shall be downloaded.
+   * Displays a message box and asks, weather files shall be downloaded from
+   * the Internet.
+   *
+   * \param what A description what shall be downloaded.
    */
-  int __askUserForDownload();
+  int __askUserForDownload( QString what );
 
   /**
    * Try to download a missing ground/terrain file.
