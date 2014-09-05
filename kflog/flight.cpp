@@ -13,7 +13,7 @@
 **
 **                :  2008, 2009 Improvements by Constantijn Neeteson
 **
-**                :  2011-2013 Portage to Qt4 by Axel Pauli
+**                :  2011-2014 Portage to Qt4 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -1371,6 +1371,12 @@ void Flight::calAirSpaceIntersections()
           bool insideAs = false;
 
           Airspace& as = loadedAirspaces[i];
+
+          if( as.getTypeID() == BaseMapElement::AirFir )
+            {
+              // Don't consider FIR airspaces
+              continue;
+            }
 
           // At first check, if the projected coordinate lays inside the
           // airspace polygon.
