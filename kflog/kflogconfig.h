@@ -185,6 +185,18 @@ class KFLogConfig : public QDialog
    */
   void slotSelectPrintElement( int index );
 
+  /**
+   * Loads the content of the current airspace file directory into the
+   * file table.
+   */
+  void slotLoadAirspaceFilesIntoTable();
+
+  /**
+   * Loads the content of the current airfield file directory into the
+   * file table.
+   */
+  void slotLoadAirfieldFilesIntoTable();
+
  private slots:
 
  /**
@@ -256,18 +268,6 @@ class KFLogConfig : public QDialog
 
   /** Adds a tab for unit configuration. */
   void __addUnitTab();
-
-  /**
-   * Loads the content of the current airspace file directory into the
-   * file table.
-   */
-  void __loadAirspaceFilesIntoTable();
-
-  /**
-   * Loads the content of the current airfield file directory into the
-   * file table.
-   */
-  void __loadAirfieldFilesIntoTable();
 
   /**
    * Checks the airspace file table for changes.

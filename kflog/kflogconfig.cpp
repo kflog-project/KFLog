@@ -121,7 +121,7 @@ void KFLogConfig::slotPageClicked( QTreeWidgetItem* item, int column )
 
   if( itemText == "Airfields" )
     {
-      __loadAirfieldFilesIntoTable();
+      slotLoadAirfieldFilesIntoTable();
       activePage->setVisible( false );
       airfieldPage->setVisible( true );
       activePage = airfieldPage;
@@ -130,7 +130,7 @@ void KFLogConfig::slotPageClicked( QTreeWidgetItem* item, int column )
     {
       // Because the airspace directory can be changed in the meantime, we
       // reload this page before showing.
-      __loadAirspaceFilesIntoTable();
+      slotLoadAirspaceFilesIntoTable();
       activePage->setVisible( false );
       airspacePage->setVisible( true );
       activePage = airspacePage;
@@ -2089,7 +2089,7 @@ void KFLogConfig::slotToggleAfCheckBox( int row, int column )
     }
 }
 
-void KFLogConfig::__loadAirspaceFilesIntoTable()
+void KFLogConfig::slotLoadAirspaceFilesIntoTable()
 {
   m_asFileTable->clear();
 
@@ -2166,7 +2166,7 @@ void KFLogConfig::__loadAirspaceFilesIntoTable()
   m_asFileTable->resizeColumnsToContents();
 }
 
-void KFLogConfig::__loadAirfieldFilesIntoTable()
+void KFLogConfig::slotLoadAirfieldFilesIntoTable()
 {
   m_afFileTable->clear();
 

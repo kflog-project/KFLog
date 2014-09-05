@@ -1728,6 +1728,12 @@ void MainWindow::slotConfigureKFLog()
   connect( confDlg, SIGNAL(downloadOpenAipAirspaces(bool)),
            _globalMapContents, SLOT(slotDownloadOpenAipAirspaceFiles(bool)) );
 
+  connect( _globalMapContents, SIGNAL(airspacesDownloaded()),
+           confDlg, SLOT(slotLoadAirspaceFilesIntoTable()) );
+
+  connect( _globalMapContents, SIGNAL(airfieldsDownloaded()),
+           confDlg, SLOT(slotLoadAirfieldFilesIntoTable()) );
+
   connect( confDlg, SIGNAL(downloadOpenAipAirfields(bool)),
            _globalMapContents, SLOT(slotDownloadOpenAipAirfieldFiles(bool)) );
 
