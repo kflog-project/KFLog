@@ -25,13 +25,13 @@ RequestExecutionLevel highest
 
 
 
-LicenseText "Welcome to KFlog 4.7.0 BETA Setup"
+LicenseText "Welcome to KFlog 4.7.3 BETA Setup"
 LicenseData "License.rtf"
 ;--------------------------------
 
 ; Pages
 PageEx license
-   LicenseData license_beta.txt
+   LicenseData License_beta.rtf
    LicenseForceSelection checkbox
 PageExEnd
 Page license 
@@ -56,14 +56,15 @@ Section "KFlog program (required)"
   SetOutPath $INSTDIR
   
   ; Put file there
-  File "Kflog4Windows.exe"
-  File "mingwm10.dll"
-  File "libgcc_s_dw2-1.dll"
-  File "QtCore4.dll"
-  File "QtGui4.dll"
-  File "QtNetwork4.dll"
-  File "QtOpenGL4.dll"
-  File "QtXml4.dll"
+  File ${ExeSourcePath}\kflog.exe
+  File ${MingwBinPath}\libgcc_s_dw2-1.dll
+  File ${MingwBinPath}\libwinpthread-1.dll
+  File ${MingwBinPath}\libstdc++-6.dll
+  File ${QtBinPath}\QtCore4.dll
+  File ${QtBinPath}\QtGui4.dll
+  File ${QtBinPath}\QtNetwork4.dll
+  File ${QtBinPath}\QtOpenGL4.dll
+  File ${QtBinPath}\QtXml4.dll
   
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\KFlog "Install_Dir" "$INSTDIR"
@@ -82,7 +83,7 @@ Section "Start Menu Shortcuts"
 
   CreateDirectory "$SMPROGRAMS\KFlog"
   CreateShortCut "$SMPROGRAMS\KFlog\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\KFlog\KFlog.lnk" "$INSTDIR\Kflog4Windows.exe" "" "$INSTDIR\Kflog4Windows.exe" 0
+  CreateShortCut "$SMPROGRAMS\KFlog\KFlog.lnk" "$INSTDIR\Kflog.exe" "" "$INSTDIR\Kflog.exe" 0
   
 SectionEnd
 
@@ -103,7 +104,7 @@ NoDelete:
   ; Remove files and uninstaller
     ;files
   Delete "$INSTDIR\Uninstall.exe"
-  Delete "$INSTDIR\Kflog4Windows.exe"
+  Delete "$INSTDIR\kflog.exe"
   Delete "$INSTDIR\mingwm10.dll"
   Delete "$INSTDIR\libgcc_s_dw2-1.dll"
   Delete "$INSTDIR\QtCore4.dll"
