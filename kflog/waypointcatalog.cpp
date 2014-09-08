@@ -2,7 +2,7 @@
 **
 **   waypointcatalog.cpp
 **
-**   This file is part of KFLog4.
+**   This file is part of KFLog.
 **
 ************************************************************************
 **
@@ -1679,8 +1679,8 @@ bool WaypointCatalog::readWelt2000(const QString& catalog)
   QString lastInput = _settings.value( "/Waypoints/Welt2000Filter", "").toString();
 
   QString cFilter = QInputDialog::getText( _mainWindow,
-                                           QObject::tr("Enter countries to be read"),
-                                           QObject::tr("Two letter Country codes:"),
+                                           QObject::tr("Country filter"),
+                                           QObject::tr("2 letter country codes to be read:"),
                                            QLineEdit::Normal,
                                            lastInput,
                                            &ok );
