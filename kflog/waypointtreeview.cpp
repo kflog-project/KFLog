@@ -1266,17 +1266,19 @@ void WaypointTreeView::getFilterData()
   currentWaypointCatalog->radiusSize = importFilterDlg->getCenterRadius();
 
   // normalize coordinates
-  if (currentWaypointCatalog->areaLat1 > currentWaypointCatalog->areaLat2) {
-    int tmp = currentWaypointCatalog->areaLat1;
-    currentWaypointCatalog->areaLat1 = currentWaypointCatalog->areaLat2;
-    currentWaypointCatalog->areaLat2 = tmp;
-  }
+  if (currentWaypointCatalog->areaLat1 > currentWaypointCatalog->areaLat2)
+    {
+      int tmp = currentWaypointCatalog->areaLat1;
+      currentWaypointCatalog->areaLat1 = currentWaypointCatalog->areaLat2;
+      currentWaypointCatalog->areaLat2 = tmp;
+    }
 
-  if (currentWaypointCatalog->areaLong1 > currentWaypointCatalog->areaLong2) {
-    int tmp = currentWaypointCatalog->areaLong1;
-    currentWaypointCatalog->areaLong1 = currentWaypointCatalog->areaLong2;
-    currentWaypointCatalog->areaLong2 = tmp;
-  }
+  if (currentWaypointCatalog->areaLong1 > currentWaypointCatalog->areaLong2)
+    {
+      int tmp = currentWaypointCatalog->areaLong1;
+      currentWaypointCatalog->areaLong1 = currentWaypointCatalog->areaLong2;
+      currentWaypointCatalog->areaLong2 = tmp;
+    }
 }
 
 void WaypointTreeView::setFilterData()
