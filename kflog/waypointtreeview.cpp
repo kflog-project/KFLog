@@ -680,6 +680,12 @@ void WaypointTreeView::slotFillWaypoints()
 
   waypointTree->clear();
 
+  if( currentWaypointCatalog == 0 )
+    {
+      // There is no waypoint catalog defined.
+      return;
+    }
+
   filterRadius = ( currentWaypointCatalog->getCenterPoint().lat() != 0  ||
                    currentWaypointCatalog->getCenterPoint().lon() != 0);
 
