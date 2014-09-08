@@ -11,10 +11,16 @@
 QT += network \
       xml
 
+!win32 {
 CONFIG += qt \
     warn_on \
     debug
-    
+}
+win32 {
+CONFIG += qt \
+    warn_on
+}
+
 # additional define for Qt4.6
 contains(QT_VERSION, ^4\\.[6]\\..*) {
     DEFINES += QT_4_6
@@ -210,7 +216,9 @@ airspaces.files = ../README-AIRSPACE
 
 INSTALLS += landscape airfields airspaces
 
+!win32 {
 DESTDIR = ../release/bin
+}
 
 OTHER_FILES += \
     kflog.rc
