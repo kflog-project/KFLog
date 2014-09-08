@@ -1,7 +1,7 @@
 /***************************************************************************
 **                     waypointtreeview.cpp
 **
-**   This file is part of KFLog4.
+**   This file is part of KFLog.
 **
 ****************************************************************************
 
@@ -148,7 +148,7 @@ void WaypointTreeView::createWaypointWindow()
   catalogBox = new QComboBox;
   connect(catalogBox, SIGNAL(activated(int)), SLOT(slotSwitchWaypointCatalog(int)));
 
-  listItems = new QLabel( tr("Items: 0") );
+  listItems = new QLabel( tr("Total Items: 0") );
 
   QPushButton *fileOpen = new QPushButton;
   fileOpen->setIcon(_mainWindow->getPixmap("kde_fileopen_16.png"));
@@ -680,6 +680,12 @@ void WaypointTreeView::slotFillWaypoints()
 
   waypointTree->clear();
 
+  if( currentWaypointCatalog == 0 )
+    {
+      // There is no waypoint catalog defined.
+      return;
+    }
+
   filterRadius = ( currentWaypointCatalog->getCenterPoint().lat() != 0  ||
                    currentWaypointCatalog->getCenterPoint().lon() != 0);
 
@@ -759,7 +765,7 @@ void WaypointTreeView::slotFillWaypoints()
             continue;
           }
       }
-    else if (filterRadius)
+    else if (filterRadius && currentWaypointCatalog->radiusSize > 0.0 )
       {
         // We have to consider the user chosen distance unit.
         double catalogDist = Distance::convertToMeters( currentWaypointCatalog->radiusSize ) / 1000.;
@@ -1036,7 +1042,7 @@ void WaypointTreeView::slotImportWaypointFromMap()
              continue;
             }
           }
-        else if (filterRadius)
+        else if ( filterRadius && currentWaypointCatalog->radiusSize > 0.0 )
           {
             // We have to consider the user chosen distance unit.
             double catalogDist = Distance::convertToMeters( currentWaypointCatalog->radiusSize ) / 1000.;
@@ -1257,7 +1263,7 @@ void WaypointTreeView::getFilterData()
   }
 
   currentWaypointCatalog->setCenterPoint( QPoint(lat, lon) );
-  currentWaypointCatalog->radiusSize = importFilterDlg->radius->currentText().toDouble();
+  currentWaypointCatalog->radiusSize = importFilterDlg->getCenterRadius();
 
   // normalize coordinates
   if (currentWaypointCatalog->areaLat1 > currentWaypointCatalog->areaLat2) {
@@ -1295,17 +1301,7 @@ void WaypointTreeView::setFilterData()
 
   QString radTxt = QString::number(currentWaypointCatalog->radiusSize);
 
-  int idx = importFilterDlg->radius->findText( radTxt );
-
-  if( idx != -1 )
-    {
-      importFilterDlg->radius->setCurrentIndex( idx );
-    }
-  else
-    {
-      importFilterDlg->radius->setCurrentIndex( 0 );
-    }
-
+  importFilterDlg->setCenterRadius( radTxt );
   importFilterDlg->airfieldRefTxt = currentWaypointCatalog->airfieldRef;
 }
 
@@ -1376,5 +1372,7 @@ void WaypointTreeView::updateWpListItems()
       items = currentWaypointCatalog->wpList.size();
     }
 
-  listItems->setText( tr("Items: ") + QString::number( items ) );
+  listItems->setText( tr("Total Items: ") + QString::number( items ) + " - " +
+                      tr("Filtered Items: ") +
+                      QString::number( waypointTree->topLevelItemCount()) );
 }

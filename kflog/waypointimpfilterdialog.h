@@ -2,12 +2,12 @@
 **
 **   waypointimpfilterdialog.h
 **
-**   This file is part of KFLog4.
+**   This file is part of KFLog.
 **
 ************************************************************************
 **
 **   Copyright (c):  2002 by Harald Maier
-**                   2011 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -25,7 +25,7 @@
  *
  * This dialog is used to define waypoint filter parameters.
  *
- * \date 2002-2011
+ * \date 2002-2014
  *
  * \version $Id$
  */
@@ -59,14 +59,28 @@ private:
 
 public:
 
-	WaypointImpFilterDialog( QWidget *parent=0 );
+  WaypointImpFilterDialog( QWidget *parent=0 );
 
-	virtual ~WaypointImpFilterDialog();
+  virtual ~WaypointImpFilterDialog();
 
   /** No descriptions */
   int getCenterRef() const;
 
   WGSPoint getAirfieldRef();
+
+  /**
+   * Gets the center radius of this filter.
+   *
+   * \return filter center radius
+   */
+  double getCenterRadius();
+
+  /**
+   * Selects the given entry in the radiusbox.
+   *
+   * \param radius element to be selected in the box.
+   */
+  void setCenterRadius( QString& radius );
 
   QCheckBox *useAll;
   QCheckBox *airfields;
@@ -88,8 +102,6 @@ public:
   LongEdit *toLong;
   LatEdit *centerLat;
   LongEdit *centerLong;
-
-  QComboBox *radius;
 
   QString airfieldRefTxt;
 
@@ -114,6 +126,9 @@ private slots:
   /** Called, if a new airfield reference is selected. */
   void slotAirfieldRefChanged( const QString& text );
 
+  /** Called, if the radius is changed. */
+  void slotRadiusChanged( int newIndex );
+
   /** Called, if the cancel button is pressed. */
   void slotCancel();
 
@@ -130,6 +145,16 @@ private:
   void saveValues();
 
   /**
+   * Loads the selected radius value.
+   */
+  void loadRadiusValue();
+
+  /**
+   * Saves the selected radius value.
+   */
+  void saveRadiusValue();
+
+  /**
    * Restores all save values.
    */
   void restoreValues();
@@ -137,6 +162,7 @@ private:
   int centerRef;
   QHash<QString, SinglePoint*> airfieldDict;
   QComboBox *airfieldRefBox;
+  QComboBox *radius;
   QLabel* radiusUnit;
 
   /** Structure to save the initial values of the dialog. */
@@ -164,7 +190,10 @@ private:
       int centerLong;
       int centerRef;
 
-      int radiusIdx;
+      int radiusIdxPosition;
+      int radiusIdxHome;
+      int radiusIdxMap;
+      int radiusIdxAirfield;
       int airfieldRefIdx;
     } save;
 };
