@@ -2,12 +2,12 @@
 **
 **   waypointimpfilterdialog.cpp
 **
-**   This file is part of KFLog4.
+**   This file is part of KFLog.
 **
 ************************************************************************
 **
 **   Copyright (c):  2002 by Harald Maier
-**                   2011 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -22,7 +22,6 @@
 #include <QtGui>
 
 extern MapContents *_globalMapContents;
-extern MapMatrix   *_globalMapMatrix;
 
 WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
  QDialog(parent),
@@ -30,11 +29,16 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
 {
   setObjectName( "WaypointImpFilterDialog" );
   setWindowTitle(tr("Waypoint Filter"));
-  //setAttribute( Qt::WA_DeleteOnClose );
   setModal( true );
 
+  save.radiusIdxPosition = 5;
+  save.radiusIdxHome = 5;
+  save.radiusIdxMap = 5;
+  save.radiusIdxAirfield = 5;
+  save.airfieldRefIdx = 0;
+
   // create checkboxes
-  useAll       = new QCheckBox(tr("&Use all"));
+  useAll       = new QCheckBox(tr("Check/Uncheck all"));
   airfields    = new QCheckBox(tr("&Airfields"));
   gliderfields = new QCheckBox(tr("&Gliderfields"));
   outlandings  = new QCheckBox(tr("Ou&tlandings"));
@@ -120,9 +124,11 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
   radius->setEditable( true );
   radius->setValidator( new QIntValidator(1, 10000, this) );
   QStringList itemList;
-  itemList << "10" << "50" << "100" << "300" << "500" << "1000" << "2000";
+  itemList << tr("none") << "10" << "25" << "50" << "100" << "250" << "500" << "1000" << "2000";
   radius->addItems( itemList );
-  radius->setCurrentIndex( 4 );
+  radius->setCurrentIndex( 5 );
+
+  connect( radius, SIGNAL(currentIndexChanged(int)), SLOT(slotRadiusChanged(int)) );
 
   QGridLayout *radiusGrid = new QGridLayout;
   radiusGrid->setSpacing(10);
@@ -180,11 +186,11 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
   slotClear();
   slotChangeUseAll();
   selectRadius(CENTER_HOMESITE);
+  loadRadiusValue();
 }
 
 WaypointImpFilterDialog::~WaypointImpFilterDialog()
 {
-  //qDebug() << "~WaypointImpFilterDialog()";
 }
 
 void WaypointImpFilterDialog::showEvent( QShowEvent *event )
@@ -207,21 +213,20 @@ void WaypointImpFilterDialog::slotCancel()
   // The user has pressed the cancel button. All dialog values are restored
   // because the user could have modified them before canceling.
   restoreValues();
-
   QDialog::reject();
 }
 
 void WaypointImpFilterDialog::slotChangeUseAll()
 {
-  bool show = !useAll->isChecked();
+  bool show = useAll->isChecked();
 
-  airfields->setEnabled(show);
-  gliderfields->setEnabled(show);
-  otherSites->setEnabled(show);
-  outlandings->setEnabled(show);
-  obstacles->setEnabled(show);
-  landmarks->setEnabled(show);
-  stations->setEnabled(show);
+  airfields->setChecked(show);
+  gliderfields->setChecked(show);
+  otherSites->setChecked(show);
+  outlandings->setChecked(show);
+  obstacles->setChecked(show);
+  landmarks->setChecked(show);
+  stations->setChecked(show);
 }
 
 /** reset all dialog items to default values */
@@ -250,13 +255,18 @@ void WaypointImpFilterDialog::slotClear()
   rb2->setChecked( false );
   rb3->setChecked( false );
 
+  save.radiusIdxPosition = 5;
+  save.radiusIdxHome = 5;
+  save.radiusIdxMap = 5;
+  save.radiusIdxAirfield = 5;
+  save.airfieldRefIdx = 0;
+
+  radius->setCurrentIndex( 5 );
   airfieldRefBox->setCurrentIndex( 0 );
-  radius->setCurrentIndex( 4 );
 
   selectRadius(CENTER_HOMESITE);
 }
 
-/** No descriptions */
 void WaypointImpFilterDialog::selectRadius(int n)
 {
   centerRef = n;
@@ -281,8 +291,10 @@ void WaypointImpFilterDialog::selectRadius(int n)
       airfieldRefBox->setEnabled(true);
       break;
     }
+
+  loadRadiusValue();
 }
-/** No descriptions */
+
 int WaypointImpFilterDialog::getCenterRef() const
 {
   return centerRef;
@@ -367,9 +379,103 @@ void WaypointImpFilterDialog::saveValues()
   save.centerLat = centerLat->KFLogDegree();
   save.centerLong = centerLong->KFLogDegree();
   save.centerRef = centerRef;
-
-  save.radiusIdx = radius->currentIndex();
   save.airfieldRefIdx = airfieldRefBox->currentIndex();
+  saveRadiusValue();
+}
+
+void WaypointImpFilterDialog::slotRadiusChanged( int newIndex )
+{
+  Q_UNUSED(newIndex)
+
+  saveRadiusValue();
+}
+
+void WaypointImpFilterDialog::saveRadiusValue()
+{
+  if( rb0->isChecked() )
+    {
+      save.radiusIdxPosition = radius->currentIndex();
+    }
+  else if( rb1->isChecked() )
+    {
+      save.radiusIdxHome = radius->currentIndex();
+    }
+  else if( rb2->isChecked() )
+    {
+      save.radiusIdxMap = radius->currentIndex();
+    }
+  else if( rb3->isChecked() )
+    {
+      save.radiusIdxAirfield = radius->currentIndex();
+    }
+}
+
+void WaypointImpFilterDialog::loadRadiusValue()
+{
+  if( rb0->isChecked() )
+    {
+      radius->setCurrentIndex( save.radiusIdxPosition );
+    }
+  else if( rb1->isChecked() )
+    {
+      radius->setCurrentIndex( save.radiusIdxHome );
+    }
+  else if( rb2->isChecked() )
+    {
+      radius->setCurrentIndex( save.radiusIdxMap );
+    }
+  else if( rb3->isChecked() )
+    {
+      radius->setCurrentIndex( save.radiusIdxAirfield );
+    }
+  else
+    {
+      // Set default to 5
+      radius->setCurrentIndex( 5 );
+    }
+}
+
+double WaypointImpFilterDialog::getCenterRadius()
+{
+  int index = 0;
+
+  if( rb0->isChecked() )
+    {
+      index = save.radiusIdxPosition;
+    }
+  else if( rb1->isChecked() )
+    {
+      index = save.radiusIdxHome;
+    }
+  else if( rb2->isChecked() )
+    {
+      index = save.radiusIdxMap;
+    }
+  else if( rb3->isChecked() )
+    {
+      index = save.radiusIdxAirfield;
+    }
+
+  if( index == 0 )
+    {
+      return 0.0;
+    }
+
+  return radius->itemText(index).toDouble();
+}
+
+void WaypointImpFilterDialog::setCenterRadius( QString& value )
+{
+  int idx = radius->findText( value );
+
+  if( idx != -1 )
+    {
+      radius->setCurrentIndex( idx );
+    }
+  else
+    {
+      radius->setCurrentIndex( 0 );
+    }
 }
 
 /** restore all dialog items to the saved values */
@@ -399,7 +505,6 @@ void WaypointImpFilterDialog::restoreValues()
   rb3->setChecked( save.rb3 );
 
   airfieldRefBox->setCurrentIndex( save.airfieldRefIdx );
-  radius->setCurrentIndex( save.radiusIdx );
-
+  loadRadiusValue();
   selectRadius(save.centerRef);
 }
