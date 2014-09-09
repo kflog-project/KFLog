@@ -2,12 +2,12 @@
 **
 **   waypointcatalog.h
 **
-**   This file is part of KFLog4.
+**   This file is part of KFLog.
 **
 ************************************************************************
 **
 **   Copyright (c):  2001 by Harald Maier
-**                   2011 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -26,7 +26,7 @@
  * Class for waypoint catalog management. Different file formats can be read
  * and written by this class.
  *
- * \date 2001-2011
+ * \date 2001-2014
  *
  * \version $Id$
  */
@@ -45,9 +45,25 @@ class WaypointCatalog
 {
 public:
 
+  /**
+   * Defines the available filters.
+   */
+  enum FilterType { None=0, Radius, Area };
+
   WaypointCatalog(const QString& name="");
 
   virtual ~WaypointCatalog();
+
+  enum FilterType getFilter() const
+  {
+    return activatedFilter;
+  };
+
+  void setFilter( enum FilterType filter )
+  {
+    activatedFilter = filter;
+  };
+
   /** Reads a KFLog waypoint file in XML format. */
   bool readXml(const QString &catalog);
   /** Reads a KFLog waypoint file in binary format. */
@@ -163,6 +179,9 @@ public:
   QString catalogName;
 
 private: // Private attributes
+
+  /** Activated filter */
+  enum FilterType activatedFilter;
 
   /** Coordinates of center point. */
   WGSPoint centerPoint;

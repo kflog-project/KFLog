@@ -102,6 +102,7 @@ char* getLogin()
 
 WaypointCatalog::WaypointCatalog(const QString& name) :
   modified(false),
+  activatedFilter(None),
   onDisc(false)
 {
   static int catalogNr = 1;

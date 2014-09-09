@@ -36,13 +36,15 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialog>
+#include <QGroupBox>
 #include <QHash>
 #include <QLabel>
 #include <QPoint>
 #include <QRadioButton>
 
-#include "singlepoint.h"
 #include "coordedit.h"
+#include "singlepoint.h"
+#include "waypointcatalog.h"
 
 #define CENTER_POS      0
 #define CENTER_HOMESITE 1
@@ -82,6 +84,20 @@ public:
    */
   void setCenterRadius( QString& radius );
 
+  /**
+   * Returns the activated filter.
+   *
+   * \return The activated filter
+   */
+  enum WaypointCatalog::FilterType getFilter();
+
+  /**
+   * Sets the filter to be activated.
+   *
+   * \param filter Fliter to be used.
+   */
+  void setFilter( enum WaypointCatalog::FilterType filter );
+
   QCheckBox *useAll;
   QCheckBox *airfields;
   QCheckBox *gliderfields;
@@ -90,11 +106,6 @@ public:
   QCheckBox *obstacles;
   QCheckBox *landmarks;
   QCheckBox *stations;
-
-  QRadioButton *rb0;
-  QRadioButton *rb1;
-  QRadioButton *rb2;
-  QRadioButton *rb3;
 
   LatEdit *fromLat;
   LongEdit *fromLong;
@@ -129,8 +140,14 @@ private slots:
   /** Called, if the radius is changed. */
   void slotRadiusChanged( int newIndex );
 
+  /** Called, if the filter is changed. */
+  void slotFilterChanged( int filter );
+
   /** Called, if the cancel button is pressed. */
   void slotCancel();
+
+  /** Called if the Ok button is pressed. */
+  void slotOk();
 
 private:
 
@@ -159,11 +176,26 @@ private:
    */
   void restoreValues();
 
+  QRadioButton *rb0;
+  QRadioButton *rb1;
+  QRadioButton *rb2;
+  QRadioButton *rb3;
+
+  QRadioButton *rbf0;
+  QRadioButton *rbf1;
+
+  QGroupBox* filterGroup;
+  QGroupBox* fromGroup;
+  QGroupBox* toGroup;
+  QGroupBox* radiusGroup;
+
   int centerRef;
   QHash<QString, SinglePoint*> airfieldDict;
   QComboBox *airfieldRefBox;
   QComboBox *radius;
   QLabel* radiusUnit;
+
+  enum WaypointCatalog::FilterType usedFilter;
 
   /** Structure to save the initial values of the dialog. */
   struct
@@ -177,10 +209,14 @@ private:
       bool landmarks;
       bool stations;
 
+      enum WaypointCatalog::FilterType usedFilter;
       bool rb0;
       bool rb1;
       bool rb2;
       bool rb3;
+
+      bool rbf0;
+      bool rbf1;
 
       int fromLat;
       int fromLong;

@@ -334,7 +334,7 @@ void WaypointTreeView::slotOpenWaypointCatalog()
                                          _mainWindow->getApplicationDataDirectory() ).toString();
 
   QString filter;
-  filter.append(tr("All formats") + " (welt2000.txt WELT2000.TXT *.da4 *.DA4 *.dat *.DAT *.dbt *.DBT *.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
+  filter.append(tr("All formats") + " (WELT2000.TXT *.da4 *.DA4 *.dat *.DAT *.dbt *.DBT *.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
   filter.append(tr("KFLog") + " (*.kflogwp *.KFLOGWP);;");
   filter.append(tr("Cumulus") + " (*.kwp *.KWP);;");
   filter.append(tr("Cambridge") + " (*.dat *.DAT);;");
@@ -342,7 +342,7 @@ void WaypointTreeView::slotOpenWaypointCatalog()
   filter.append(tr("Filser da4") + " (*.da4 *.DA4);;");
   filter.append(tr("SeeYou") + " (*.cup *.CUP);;");
   filter.append(tr("Volkslogger") + " (*.dbt *.DBT);;" );
-  filter.append(tr("Welt2000") + " (welt2000.txt WELT2000.TXT)");
+  filter.append(tr("Welt2000") + " (WELT2000.TXT)");
 
   QString fName = QFileDialog::getOpenFileName( this,
                                                 tr("Open waypoint catalog"),
@@ -439,10 +439,13 @@ void WaypointTreeView::slotNewWaypoint()
 void WaypointTreeView::slotNewWaypointCatalog()
 {
   int newItem = catalogBox->count();
-  WaypointCatalog *w = new WaypointCatalog;
+  WaypointCatalog *wc = new WaypointCatalog;
 
-  waypointCatalogs.append(w);
-  catalogBox->addItem(w->path);
+  // Set filter data in catalog
+  setFilterDataInCatalog( wc );
+
+  waypointCatalogs.append(wc);
+  catalogBox->addItem(wc->path);
 
   catalogBox->setCurrentIndex(newItem);
   slotSwitchWaypointCatalog(newItem);
@@ -676,7 +679,8 @@ void WaypointTreeView::slotFillWaypoints()
   QString tmp;
   Waypoint *w;
 
-  bool filterRadius, filterArea;
+  bool filterRadius = false;
+  bool filterArea = false;
 
   waypointTree->clear();
 
@@ -686,11 +690,21 @@ void WaypointTreeView::slotFillWaypoints()
       return;
     }
 
-  filterRadius = ( currentWaypointCatalog->getCenterPoint().lat() != 0  ||
-                   currentWaypointCatalog->getCenterPoint().lon() != 0);
+  // Retrieve filter values from catalog
+  setFilterDataFromCatalog();
 
-  filterArea   = ( currentWaypointCatalog->areaLat2 != 0 &&
-                   currentWaypointCatalog->areaLong2 != 0 && !filterRadius);
+  enum WaypointCatalog::FilterType ft = currentWaypointCatalog->getFilter();
+
+  if( ft == WaypointCatalog::Radius )
+    {
+      filterRadius = ( currentWaypointCatalog->getCenterPoint().lat() != 0  ||
+		       currentWaypointCatalog->getCenterPoint().lon() != 0);
+    }
+  else if( ft == WaypointCatalog::Area )
+    {
+      filterArea   = ( currentWaypointCatalog->areaLat2 != 0 &&
+                       currentWaypointCatalog->areaLong2 != 0 && !filterRadius);
+    }
 
   Altitude::altitudeUnit altUnit = Altitude::getUnit();
 
@@ -860,6 +874,7 @@ void WaypointTreeView::slotFillWaypoints()
 void WaypointTreeView::slotSwitchWaypointCatalog(int idx)
 {
   currentWaypointCatalog = waypointCatalogs.value(idx);
+
   slotFillWaypoints();
 }
 
@@ -887,7 +902,7 @@ void WaypointTreeView::slotImportWaypointCatalog()
                                          _mainWindow->getApplicationDataDirectory() ).toString();
 
   QString filter;
-  filter.append(tr("All formats") + " (welt2000.txt WELT2000.TXT *.dat *.DAT *.dbt *.DBT *.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
+  filter.append(tr("All formats") + " (WELT2000.TXT *.dat *.DAT *.dbt *.DBT *.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
   filter.append(tr("KFLog") + " (*.kflogwp *.KFLOGWP);;");
   filter.append(tr("Cumulus") + " (*.kwp *.KWP);;");
   filter.append(tr("Cambridge") + " (*.dat *.DAT);;");
@@ -895,7 +910,7 @@ void WaypointTreeView::slotImportWaypointCatalog()
   filter.append(tr("Filser da4") + " (*.da4 *.DA4);;");
   filter.append(tr("SeeYou") + " (*.cup *.CUP);;");
   filter.append(tr("Volkslogger") + " (*.dbt *.DBT);;" );
-  filter.append(tr("Welt2000") + " (welt2000.txt WELT2000.TXT)");
+  filter.append(tr("Welt2000") + " (WELT2000.TXT)");
 
   QString fName = QFileDialog::getOpenFileName( this,
                                                 tr("Import waypoints from catalog"),
@@ -903,6 +918,8 @@ void WaypointTreeView::slotImportWaypointCatalog()
                                                 filter );
   if( ! fName.isEmpty() )
     {
+      // Update filter of catalog
+
       // read from disk
       bool ok = currentWaypointCatalog->load(fName);
       currentWaypointCatalog->modified = ok;
@@ -978,11 +995,12 @@ void WaypointTreeView::slotImportWaypointFromMap()
   QRegExp blank("[ ]");
   QList<int> searchList;
 
-  bool filterRadius, filterArea;
+  bool filterRadius = false;
+  bool filterArea = false;
 
   if (importFilterDlg->exec() == QDialog::Accepted)
     {
-      getFilterData();
+      setFilterDataInCatalog( currentWaypointCatalog );
 
       if( currentWaypointCatalog->showAll || currentWaypointCatalog->showAirfields )
         {
@@ -1019,11 +1037,18 @@ void WaypointTreeView::slotImportWaypointFromMap()
           searchList.append( MapContents::StationList );
         }
 
-      filterRadius = ( currentWaypointCatalog->getCenterPoint().lat() != 0  ||
-                       currentWaypointCatalog->getCenterPoint().lon() != 0);
+      enum WaypointCatalog::FilterType ft = importFilterDlg->getFilter();
 
-      filterArea = ( currentWaypointCatalog->areaLat2 != 0 &&
-                     currentWaypointCatalog->areaLong2 != 0 && !filterRadius );
+      if( ft == WaypointCatalog::Radius )
+	{
+	  filterRadius = ( currentWaypointCatalog->getCenterPoint().lat() != 0  ||
+			   currentWaypointCatalog->getCenterPoint().lon() != 0);
+	}
+      else if( ft == WaypointCatalog::Area )
+      	{
+	  filterArea = ( currentWaypointCatalog->areaLat2 != 0 &&
+			 currentWaypointCatalog->areaLong2 != 0 && !filterRadius );
+      	}
 
     for( int k = 0; k < searchList.size(); k++ )
       {
@@ -1125,7 +1150,7 @@ void WaypointTreeView::slotFilterWaypoints()
 
   if( importFilterDlg->exec() == QDialog::Accepted )
     {
-      getFilterData();
+      setFilterDataInCatalog( currentWaypointCatalog );
       slotFillWaypoints();
     }
 }
@@ -1210,24 +1235,30 @@ void WaypointTreeView::slotSetHome()
   }
 }
 
-void WaypointTreeView::getFilterData()
+void WaypointTreeView::setFilterDataInCatalog( WaypointCatalog* catalog )
 {
+  if( ! catalog )
+    {
+      return;
+    }
+
   WGSPoint p;
 
-  currentWaypointCatalog->showAll = importFilterDlg->useAll->isChecked();
-  currentWaypointCatalog->showAirfields = importFilterDlg->airfields->isChecked();
-  currentWaypointCatalog->showGliderfields = importFilterDlg->gliderfields->isChecked();
-  currentWaypointCatalog->showOtherSites = importFilterDlg->otherSites->isChecked();
-  currentWaypointCatalog->showObstacles = importFilterDlg->obstacles->isChecked();
-  currentWaypointCatalog->showLandmarks = importFilterDlg->landmarks->isChecked();
-  currentWaypointCatalog->showOutlandings = importFilterDlg->outlandings->isChecked();
-  currentWaypointCatalog->showStations = importFilterDlg->stations->isChecked();
+  catalog->showAll = importFilterDlg->useAll->isChecked();
+  catalog->showAirfields = importFilterDlg->airfields->isChecked();
+  catalog->showGliderfields = importFilterDlg->gliderfields->isChecked();
+  catalog->showOtherSites = importFilterDlg->otherSites->isChecked();
+  catalog->showObstacles = importFilterDlg->obstacles->isChecked();
+  catalog->showLandmarks = importFilterDlg->landmarks->isChecked();
+  catalog->showOutlandings = importFilterDlg->outlandings->isChecked();
+  catalog->showStations = importFilterDlg->stations->isChecked();
 
-  currentWaypointCatalog->areaLat1 = importFilterDlg->fromLat->KFLogDegree();
-  currentWaypointCatalog->areaLat2 = importFilterDlg->toLat->KFLogDegree();
-  currentWaypointCatalog->areaLong1 = importFilterDlg->fromLong->KFLogDegree();
-  currentWaypointCatalog->areaLong2 = importFilterDlg->toLong->KFLogDegree();
-  currentWaypointCatalog->centerRef = importFilterDlg->getCenterRef();
+  catalog->setFilter( importFilterDlg->getFilter() );
+  catalog->areaLat1 = importFilterDlg->fromLat->KFLogDegree();
+  catalog->areaLat2 = importFilterDlg->toLat->KFLogDegree();
+  catalog->areaLong1 = importFilterDlg->fromLong->KFLogDegree();
+  catalog->areaLong2 = importFilterDlg->toLong->KFLogDegree();
+  catalog->centerRef = importFilterDlg->getCenterRef();
 
   int lat, lon;
 
@@ -1251,7 +1282,7 @@ void WaypointTreeView::getFilterData()
       break;
 
     case CENTER_AIRFIELD:
-      currentWaypointCatalog->airfieldRef = importFilterDlg->airfieldRefTxt;
+      catalog->airfieldRef = importFilterDlg->airfieldRefTxt;
       lat = importFilterDlg->getAirfieldRef().lat();
       lon = importFilterDlg->getAirfieldRef().lon();
       break;
@@ -1262,26 +1293,26 @@ void WaypointTreeView::getFilterData()
       break;
   }
 
-  currentWaypointCatalog->setCenterPoint( QPoint(lat, lon) );
-  currentWaypointCatalog->radiusSize = importFilterDlg->getCenterRadius();
+  catalog->setCenterPoint( QPoint(lat, lon) );
+  catalog->radiusSize = importFilterDlg->getCenterRadius();
 
   // normalize coordinates
-  if (currentWaypointCatalog->areaLat1 > currentWaypointCatalog->areaLat2)
+  if (catalog->areaLat1 > catalog->areaLat2)
     {
-      int tmp = currentWaypointCatalog->areaLat1;
-      currentWaypointCatalog->areaLat1 = currentWaypointCatalog->areaLat2;
-      currentWaypointCatalog->areaLat2 = tmp;
+      int tmp = catalog->areaLat1;
+      catalog->areaLat1 = catalog->areaLat2;
+      catalog->areaLat2 = tmp;
     }
 
-  if (currentWaypointCatalog->areaLong1 > currentWaypointCatalog->areaLong2)
+  if (catalog->areaLong1 > catalog->areaLong2)
     {
-      int tmp = currentWaypointCatalog->areaLong1;
-      currentWaypointCatalog->areaLong1 = currentWaypointCatalog->areaLong2;
-      currentWaypointCatalog->areaLong2 = tmp;
+      int tmp = catalog->areaLong1;
+      catalog->areaLong1 = catalog->areaLong2;
+      catalog->areaLong2 = tmp;
     }
 }
 
-void WaypointTreeView::setFilterData()
+void WaypointTreeView::setFilterDataFromCatalog()
 {
   importFilterDlg->useAll->setChecked(currentWaypointCatalog->showAll);
   importFilterDlg->airfields->setChecked(currentWaypointCatalog->showAirfields);
@@ -1292,6 +1323,7 @@ void WaypointTreeView::setFilterData()
   importFilterDlg->outlandings->setChecked(currentWaypointCatalog->showOutlandings);
   importFilterDlg->stations->setChecked(currentWaypointCatalog->showStations);
 
+  importFilterDlg->setFilter( currentWaypointCatalog->getFilter() );
   importFilterDlg->fromLat->setKFLogDegree(currentWaypointCatalog->areaLat1);
   importFilterDlg->toLat->setKFLogDegree(currentWaypointCatalog->areaLat2);
   importFilterDlg->fromLong->setKFLogDegree(currentWaypointCatalog->areaLong1);
@@ -1317,6 +1349,10 @@ void WaypointTreeView::openCatalog( QString &catalog )
 
       waypointCatalogs.append( wc );
       currentWaypointCatalog = wc;
+
+      // set filter data in current catalog
+      setFilterDataInCatalog( wc );
+
       catalogBox->addItem( wc->path );
       catalogBox->setCurrentIndex( newItem );
 

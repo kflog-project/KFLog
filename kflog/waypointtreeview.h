@@ -79,14 +79,14 @@ private: // Private methods
   void createMenu();
 
   /**
-   * read filter and store in catalog
+   * read filter and store the values in the passed catalog
    */
-  void getFilterData();
+  void setFilterDataInCatalog( WaypointCatalog* catalog );
 
   /**
    * set filter data to values from catalog
    */
-  void setFilterData();
+  void setFilterDataFromCatalog();
 
   void openCatalog(QString &catalog);
 

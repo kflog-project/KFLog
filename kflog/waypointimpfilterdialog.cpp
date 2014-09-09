@@ -31,10 +31,11 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
   setWindowTitle(tr("Waypoint Filter"));
   setModal( true );
 
-  save.radiusIdxPosition = 5;
-  save.radiusIdxHome = 5;
-  save.radiusIdxMap = 5;
-  save.radiusIdxAirfield = 5;
+  save.usedFilter = WaypointCatalog::Radius;
+  save.radiusIdxPosition = 6;
+  save.radiusIdxHome = 6;
+  save.radiusIdxMap = 6;
+  save.radiusIdxAirfield = 6;
   save.airfieldRefIdx = 0;
 
   // create checkboxes
@@ -65,6 +66,27 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
   typeGroup->setLayout( typeLayout );
 
   //---------------------------------------------------------------------------
+  rbf0 = new QRadioButton(tr("Radius"));
+  rbf1 = new QRadioButton(tr("Area"));
+
+  QButtonGroup* filterButtonGroup = new QButtonGroup(this);
+  filterButtonGroup->setExclusive(true);
+  filterButtonGroup->addButton( rbf0, WaypointCatalog::Radius );
+  filterButtonGroup->addButton( rbf1, WaypointCatalog::Area );
+
+  connect( filterButtonGroup, SIGNAL( buttonClicked(int)),
+           this, SLOT(slotFilterChanged(int)) );
+
+  QHBoxLayout* filterBox = new QHBoxLayout;
+  filterBox->addWidget( rbf0 );
+  filterBox->addSpacing( 10 );
+  filterBox->addWidget( rbf1 );
+  filterBox->addStretch( 10 );
+
+  filterGroup = new QGroupBox( tr("Filter") );
+  filterGroup->setLayout( filterBox );
+
+  //---------------------------------------------------------------------------
   fromLat  = new LatEdit;
   fromLong = new LongEdit;
 
@@ -77,7 +99,7 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
   fromGrid->addWidget( fromLong, 0, 4 );
   fromGrid->setColumnStretch( 5, 10 );
 
-  QGroupBox* fromGroup = new QGroupBox( tr("Area From") );
+  fromGroup = new QGroupBox( tr("Area From") );
   fromGroup->setLayout( fromGrid );
 
   //---------------------------------------------------------------------------
@@ -93,7 +115,7 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
   toGrid->addWidget( toLong, 0, 4 );
   toGrid->setColumnStretch( 5, 10 );
 
-  QGroupBox* toGroup = new QGroupBox( tr("Area to") );
+  toGroup = new QGroupBox( tr("Area to") );
   toGroup->setLayout( toGrid );
 
   //---------------------------------------------------------------------------
@@ -110,7 +132,7 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
   radiusButtonGroup->addButton( rb3, CENTER_AIRFIELD );
 
   connect( radiusButtonGroup, SIGNAL( buttonClicked(int)),
-           this, SLOT(selectRadius(int)));
+           this, SLOT(selectRadius(int)) );
 
   centerLat  = new LatEdit;
   centerLong = new LongEdit;
@@ -124,7 +146,8 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
   radius->setEditable( true );
   radius->setValidator( new QIntValidator(1, 10000, this) );
   QStringList itemList;
-  itemList << tr("none") << "10" << "25" << "50" << "100" << "250" << "500" << "1000" << "2000";
+  itemList << tr("Off") << "10" << "25" << "50" << "100" << "250" << "500"
+           << "750" << "1000" << "1500" << "2000";
   radius->addItems( itemList );
   radius->setCurrentIndex( 5 );
 
@@ -147,7 +170,7 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
   radiusGrid->addWidget( radius, 4, 2 );
   radiusGrid->setColumnStretch( 5, 10 );
 
-  QGroupBox* radiusGroup = new QGroupBox( tr("Radius") );
+  radiusGroup = new QGroupBox( tr("Radius") );
   radiusGroup->setLayout( radiusGrid );
 
   //---------------------------------------------------------------------------
@@ -160,7 +183,7 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
 
   b = new QPushButton(tr("&Ok"), this);
   b->setDefault(true);
-  connect(b, SIGNAL(clicked()), this, SLOT(accept()));
+  connect(b, SIGNAL(clicked()), this, SLOT(slotOk()));
   buttonBox->addWidget(b);
 
   b = new QPushButton(tr("&Cancel"), this);
@@ -169,9 +192,11 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
 
   //---------------------------------------------------------------------------
   QVBoxLayout *ftrBox = new QVBoxLayout;
+  ftrBox->addWidget( filterGroup );
   ftrBox->addWidget( fromGroup );
   ftrBox->addWidget( toGroup );
   ftrBox->addWidget( radiusGroup );
+  ftrBox->addStretch( 10 );
 
   QHBoxLayout *hBox = new QHBoxLayout;
   hBox->addWidget( typeGroup );
@@ -206,6 +231,57 @@ void WaypointImpFilterDialog::showEvent( QShowEvent *event )
 
   // Save all values for restore in reject case.
   saveValues();
+}
+
+enum WaypointCatalog::FilterType
+WaypointImpFilterDialog::getFilter()
+{
+  if( rbf0->isChecked() )
+    {
+      return WaypointCatalog::Radius;
+    }
+  else
+    {
+      return WaypointCatalog::Area;
+    }
+}
+
+void WaypointImpFilterDialog::slotOk()
+{
+  if( rbf0->isChecked() && rb0->isChecked() )
+    {
+      // Check the latitude coordinate values in the radius position box for
+      // correctness, if it is selected.
+      if( centerLat->KFLogDegree() == 0 )
+	{
+	  QMessageBox::warning( this, QObject::tr("Latitude error"),
+	                        "<html>" + QObject::tr("Please enter a valid latitude for the Radius Position Filter!") +
+	                        "</html>", QMessageBox::Ok);
+
+	  return;
+	}
+    }
+
+  if( rbf1->isChecked() )
+    {
+      int fLat = fromLat->KFLogDegree();
+      int tLat = toLat->KFLogDegree();
+      int fLon = fromLong->KFLogDegree();
+      int tLon = toLong->KFLogDegree();
+
+      // Check the area coordinates for correctness
+      if( fLat == 00 || tLat == 00 ||
+	  fLat == tLat || fLon == tLon )
+	{
+	  QMessageBox::warning( this, QObject::tr("Error in coordinates"),
+	                        "<html>" + QObject::tr("Please enter valid coordinates for the Area filter !") +
+	                        "</html>", QMessageBox::Ok);
+
+	  return;
+	}
+    }
+
+  QDialog::accept();
 }
 
 void WaypointImpFilterDialog::slotCancel()
@@ -255,16 +331,21 @@ void WaypointImpFilterDialog::slotClear()
   rb2->setChecked( false );
   rb3->setChecked( false );
 
-  save.radiusIdxPosition = 5;
-  save.radiusIdxHome = 5;
-  save.radiusIdxMap = 5;
-  save.radiusIdxAirfield = 5;
+  rbf0->setChecked( true );
+  rbf1->setChecked( false );
+
+  save.usedFilter = WaypointCatalog::Radius;
+  save.radiusIdxPosition = 6;
+  save.radiusIdxHome = 6;
+  save.radiusIdxMap = 6;
+  save.radiusIdxAirfield = 6;
   save.airfieldRefIdx = 0;
 
-  radius->setCurrentIndex( 5 );
+  radius->setCurrentIndex( 6 );
   airfieldRefBox->setCurrentIndex( 0 );
 
   selectRadius(CENTER_HOMESITE);
+  slotFilterChanged( WaypointCatalog::Radius );
 }
 
 void WaypointImpFilterDialog::selectRadius(int n)
@@ -274,18 +355,37 @@ void WaypointImpFilterDialog::selectRadius(int n)
   switch (centerRef)
   {
     case CENTER_POS:
+      rb0->setChecked(true);
+      rb1->setChecked(false);
+      rb2->setChecked(false);
+      rb3->setChecked(false);
       centerLat->setEnabled(true);
       centerLong->setEnabled(true);
       airfieldRefBox->setEnabled(false);
       break;
     case CENTER_HOMESITE:
-      // fall through
+      rb0->setChecked(false);
+      rb1->setChecked(true);
+      rb2->setChecked(false);
+      rb3->setChecked(false);
+      centerLat->setEnabled(false);
+      centerLong->setEnabled(false);
+      airfieldRefBox->setEnabled(false);
+      break;
     case CENTER_MAP:
+      rb0->setChecked(false);
+      rb1->setChecked(false);
+      rb2->setChecked(true);
+      rb3->setChecked(false);
       centerLat->setEnabled(false);
       centerLong->setEnabled(false);
       airfieldRefBox->setEnabled(false);
       break;
     case CENTER_AIRFIELD:
+      rb0->setChecked(false);
+      rb1->setChecked(false);
+      rb2->setChecked(false);
+      rb3->setChecked(true);
       centerLat->setEnabled(false);
       centerLong->setEnabled(false);
       airfieldRefBox->setEnabled(true);
@@ -371,6 +471,9 @@ void WaypointImpFilterDialog::saveValues()
   save.rb1 = rb1->isChecked();
   save.rb2 = rb2->isChecked();
   save.rb3 = rb3->isChecked();
+
+  save.rbf0 = rbf0->isChecked();
+  save.rbf1 = rbf1->isChecked();
 
   save.fromLat = fromLat->KFLogDegree();
   save.fromLong = fromLong->KFLogDegree();
@@ -490,8 +593,6 @@ void WaypointImpFilterDialog::restoreValues()
   landmarks->setChecked( save.landmarks );
   stations->setChecked( save.stations );
 
-  slotChangeUseAll();
-
   fromLat->setKFLogDegree( save.fromLat );
   fromLong->setKFLogDegree( save.fromLong );
   toLat->setKFLogDegree( save.toLat );
@@ -504,7 +605,45 @@ void WaypointImpFilterDialog::restoreValues()
   rb2->setChecked( save.rb2 );
   rb3->setChecked( save.rb3 );
 
+  rbf0->setChecked( save.rbf0 );
+  rbf1->setChecked( save.rbf1 );
+
   airfieldRefBox->setCurrentIndex( save.airfieldRefIdx );
   loadRadiusValue();
   selectRadius(save.centerRef);
+
+  if( save.rbf1 )
+    {
+      slotFilterChanged( WaypointCatalog::Area );
+    }
+  else
+    {
+      slotFilterChanged( WaypointCatalog::Radius );
+    }
+}
+
+void WaypointImpFilterDialog::slotFilterChanged( int newFilter )
+{
+  switch( newFilter )
+  {
+    case WaypointCatalog::Area:
+      save.usedFilter = WaypointCatalog::Area;
+      radiusGroup->hide();
+      fromGroup->show();
+      toGroup->show();
+      break;
+
+    case WaypointCatalog::Radius:
+    default:
+      save.usedFilter = WaypointCatalog::Radius;
+      radiusGroup->show();
+      fromGroup->hide();
+      toGroup->hide();
+      break;
+  }
+}
+
+void WaypointImpFilterDialog::setFilter( enum WaypointCatalog::FilterType filter )
+{
+  slotFilterChanged( filter );
 }
