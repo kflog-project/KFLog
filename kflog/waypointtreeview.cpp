@@ -673,7 +673,6 @@ void WaypointTreeView::slotDeleteWaypoints()
   emit waypointCatalogChanged(currentWaypointCatalog);
 }
 
-/** No descriptions */
 void WaypointTreeView::slotFillWaypoints()
 {
   QString tmp;

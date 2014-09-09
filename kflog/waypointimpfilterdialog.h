@@ -94,9 +94,10 @@ public:
   /**
    * Sets the filter to be activated.
    *
-   * \param filter Fliter to be used.
+   * \param filter Filter to be used.
    */
-  void setFilter( enum WaypointCatalog::FilterType filter );
+  void setFilter( enum WaypointCatalog::FilterType newFilter );
+
 
   QCheckBox *useAll;
   QCheckBox *airfields;
@@ -129,7 +130,7 @@ public slots:
   /** reset all dialog items to default values */
   void slotClear();
 
-  /** No descriptions */
+  /** Selects the radius item to be used. */
   void selectRadius(int n);
 
 private slots:
@@ -152,7 +153,7 @@ private slots:
 private:
 
   /**
-   * Loads the content into the airfield combo box.
+   * Loads the airfield content into the airfield combo box.
    */
   void loadAirfieldComboBox();
 
@@ -172,7 +173,7 @@ private:
   void saveRadiusValue();
 
   /**
-   * Restores all save values.
+   * Restores all saved values.
    */
   void restoreValues();
 

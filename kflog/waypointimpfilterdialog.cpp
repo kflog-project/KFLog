@@ -274,7 +274,9 @@ void WaypointImpFilterDialog::slotOk()
 	  fLat == tLat || fLon == tLon )
 	{
 	  QMessageBox::warning( this, QObject::tr("Error in coordinates"),
-	                        "<html>" + QObject::tr("Please enter valid coordinates for the Area filter !") +
+	                        "<html>" + QObject::tr("Please enter valid coordinates for the Area filter!") +
+	                        "<br><br>" +
+	                        QObject::tr("Latitudes maybe not zero and from-to coordinates should be different.") +
 	                        "</html>", QMessageBox::Ok);
 
 	  return;
@@ -643,7 +645,21 @@ void WaypointImpFilterDialog::slotFilterChanged( int newFilter )
   }
 }
 
-void WaypointImpFilterDialog::setFilter( enum WaypointCatalog::FilterType filter )
+void WaypointImpFilterDialog::setFilter( enum WaypointCatalog::FilterType newFilter )
 {
-  slotFilterChanged( filter );
+  switch( newFilter )
+  {
+    case WaypointCatalog::Area:
+      rbf0->setChecked( false );
+      rbf1->setChecked( true );
+      break;
+
+    case WaypointCatalog::Radius:
+    default:
+      rbf0->setChecked( true );
+      rbf1->setChecked( false );
+      break;
+  }
+
+  slotFilterChanged( newFilter );
 }
