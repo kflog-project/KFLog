@@ -1860,7 +1860,7 @@ void MainWindow::slotShowAbout()
   aw->setHeaderText( header );
 
   QString about( tr(
-          "<hml>"
+          "<html>"
           "KFLog %1, compiled at %2 with QT %3<br><br>"
           "Homepage: <a href=\"http://www.kflog.org/kflog/\">www.kflog.org/kflog/</a><br><br>"
           "GitHub Software Repository: <a href=\"https://github.com/kflog-project/KFLog\">https://github.com/kflog-project/KFLog</a><br><br>"
@@ -1873,7 +1873,7 @@ void MainWindow::slotShowAbout()
   aw->setAboutText( about );
 
   QString team( tr(
-      "<hml>"
+      "<html>"
       "<b>Current Maintainer</b>"
       "<blockquote>"
       "Hendrik Hoeth &lt;<a href=\"mailto:hoeth&#64;linta.de\">hoeth&#64;linta.de</a>&gt;"
@@ -1890,7 +1890,8 @@ void MainWindow::slotShowAbout()
       "Harald Maier (Developer, Waypoint-Dialog, Task-handling)<br>"
       "Thomas Nielsen (Developer, 3D-Dialog)<br>"
       "Jan Kr&uuml;ger (Developer, 3D-Dialog)<br>"
-      "Matthias Degenkolb (Developer, MS-Windows portage)"
+      "Matthias Degenkolb (Developer, MS-Windows portage)<br>"
+      "Peter Simon (Developer, MS-Windows portage)"
       "</blockquote>"
       "<b>Server Sponsor</b>"
       "<blockquote>"
