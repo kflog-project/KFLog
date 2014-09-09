@@ -4,11 +4,18 @@
 #
 ################################################################################
 
-  * openAIP airfield data can be downloaded and read now by KFLog.
+  * Issue #11 fixed. Waypoint catalog filter handling modified. In the filter GUI
+    a selection between area or radius has been added. Every waypoint catalog
+    should uses now its own filter and restore it when the waypoint catalog is
+    selected.
 
-  * openAIP airspace data can be downloaded and read now by KFLog.
+2014-09-09 Axel Pauli <kflog.cumulus@gmail.com>
+
+  * Issue #4 fixed. openAIP airfield data can be downloaded and read now by KFLog.
+
+  * Issue #2 fixed. openAIP airspace data can be downloaded and read now by KFLog.
   
-  * Tried to fix welt2000 reload loop.
+  * Issue #1 fixed. Tried to fix welt2000 reload loop.
 
 2014-09-02 Axel Pauli <kflog.cumulus@gmail.com>
 
