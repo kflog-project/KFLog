@@ -2,7 +2,7 @@
 **
 **   MainWindow.cpp
 **
-**   This file is part of KFLog4.
+**   This file is part of KFLog.
 **
 ************************************************************************
 **
@@ -11,8 +11,6 @@
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 #ifdef _WIN32
@@ -789,15 +787,16 @@ void MainWindow::createMenuBar()
   fm->addAction( flightAnimateEndAction );
 
   //----------------------------------------------------------------------------
-  // Window menu creation
+  // Flight navigation menu creation
   //----------------------------------------------------------------------------
-  windowMenu = menuBar()->addMenu( tr("&Window") );
-  connect( windowMenu, SIGNAL(aboutToShow()),
-           this, SLOT(slotWindowsMenuAboutToShow()) );
-  connect( windowMenu, SIGNAL(triggered(QAction *)),
+  flightsMenu = menuBar()->addMenu( tr("&Flights") );
+  connect( flightsMenu, SIGNAL(aboutToShow()),
+           this, SLOT(slotFlightsMenuAboutToShow()) );
+  connect( flightsMenu, SIGNAL(triggered(QAction *)),
            _globalMapContents, SLOT(slotSetFlight(QAction *)) );
 
-  windowMenu->setEnabled(false);
+  flightsMenu->setEnabled(false);
+  flightsMenu->setVisible(false);
 
   //----------------------------------------------------------------------------
   // Settings menu creation
@@ -1184,7 +1183,8 @@ void MainWindow::slotModifyMenu()
       // Note AP: The flight list number is incremented when a new task is
       // created but the current flight maybe NULL!!! I got a core dump here.
       // Added check above to if clause.
-      windowMenu->setEnabled(true);
+      //flightsMenu->setVisible(true);
+      //flightsMenu->setEnabled(true);
 
       switch(_globalMapContents->getFlight()->getTypeID())
         {
@@ -1280,7 +1280,8 @@ void MainWindow::slotModifyMenu()
       flightAnimate10PrevAction->setEnabled( false );
       flightAnimateHomeAction->setEnabled( false );
       flightAnimateEndAction->setEnabled( false );
-      windowMenu->setEnabled(false);
+      flightsMenu->setVisible(false);
+      flightsMenu->setEnabled(false);
     }
 }
 
@@ -1821,11 +1822,11 @@ void MainWindow::slotWhatsThis()
 }
 
 /** Insert available flights into menu. */
-void MainWindow::slotWindowsMenuAboutToShow()
+void MainWindow::slotFlightsMenuAboutToShow()
 {
   QList<BaseFlightElement *> *flights = _globalMapContents->getFlightList();
 
-  windowMenu->clear();
+  flightsMenu->clear();
 
   for( int i = 0; i < flights->size(); i++ )
     {
@@ -1834,7 +1835,7 @@ void MainWindow::slotWindowsMenuAboutToShow()
       action->setEnabled( true );
       action->setData( i );
       action->setChecked( _globalMapContents->getFlightIndex() == i );
-      windowMenu->addAction( action );
+      flightsMenu->addAction( action );
     }
 }
 
@@ -1874,13 +1875,13 @@ void MainWindow::slotShowAbout()
 
   QString team( tr(
       "<html>"
-      "<b>Current Maintainer</b>"
+      "<b>Temporarily Maintainer</b>"
       "<blockquote>"
-      "Hendrik Hoeth &lt;<a href=\"mailto:hoeth&#64;linta.de\">hoeth&#64;linta.de</a>&gt;"
+      "Axel Pauli &lt;<a href=\"mailto:kflog.cumulus&#64;gmail.com\">kflog.cumulus&#64;gmail.com</a>&gt;"
       "</blockquote>"
       "<b>Developers, Maintainers</b>"
       "<blockquote>"
-      "Axel Pauli (Developer, Portage to Qt4), &lt;<a href=\"mailto:kflog.cumulus&#64;gmail.com\">kflog.cumulus&#64;gmail.com</a>&gt;<br>"
+      "Axel Pauli (Developer, Portage to Qt4)<br>"
       "Constantijn Neeteson (Maintenance, Core-developer)<br>"
       "Florian Ehinger (Maintenance, Core-developer, Mapdata)<br>"
       "Heiner Lamprecht (Maintenance, Core-developer)<br>"
@@ -1901,7 +1902,7 @@ void MainWindow::slotShowAbout()
       "<br></html>" ));
 
   aw->setTeamText( team );
-  aw->resize( 600, 500 );
+  aw->resize( 600, 550 );
   aw->setVisible( true );
 }
 

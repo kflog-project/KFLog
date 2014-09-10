@@ -44,6 +44,7 @@ win32:RC_FILE = kflog.rc
 SOURCES = \
     aboutwidget.cpp \
     airfield.cpp \
+    AirfieldSelectionList.cpp \
     airspace.cpp \
     AirspaceHelper.cpp \
     airspacelistviewitem.cpp \
@@ -121,6 +122,7 @@ SOURCES = \
 HEADERS = \
     aboutwidget.h \
     airfield.h \
+    AirfieldSelectionList.h \
     airspace.h \
     AirspaceHelper.h \
     airspacelistviewitem.h \

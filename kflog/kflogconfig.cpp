@@ -10,12 +10,11 @@
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
 #include <QtGui>
 
+#include "AirfieldSelectionList.h"
 #include "configmapelement.h"
 #include "kflogconfig.h"
 #include "mapcalc.h"
@@ -111,6 +110,21 @@ KFLogConfig::KFLogConfig(QWidget* parent) :
 KFLogConfig::~KFLogConfig()
 {
   _settings.setValue( "/KFLogConfig/Geometry", saveGeometry() );
+}
+
+void KFLogConfig::showEvent( QShowEvent *event )
+{
+  // That is the trick to prevent dialog closing, if the return key is pressed.
+  // But note, it has only effect, if the dialog is shown!
+  QList<QPushButton *> buttonList = findChildren<QPushButton *>();
+
+  foreach( QPushButton *pb, buttonList )
+    {
+      pb->setDefault( false );
+      pb->setAutoDefault( false );
+    }
+
+  QDialog::showEvent( event );
 }
 
 void KFLogConfig::slotPageClicked( QTreeWidgetItem* item, int column )
@@ -230,9 +244,12 @@ void KFLogConfig::slotOk()
   bool airfieldSourceHasChanged =
       ( _settings.value( "/Airfield/Source", 0 ).toInt() != afSourceBox->currentIndex() );
 
-  // check for home latitude change
+  // check for home latitude and longitude change
   bool homeLatitudeChanged =
       (homeLatE->KFLogDegree() != _settings.value("/Homesite/Latitude", HOME_DEFAULT_LAT).toInt());
+
+  bool homeLongitudeChanged =
+      (homeLonE->KFLogDegree() != _settings.value("/Homesite/Longitude", HOME_DEFAULT_LON).toInt());
 
   _settings.setValue( "/GeneralOptions/Version", "4.1" );
 
@@ -318,15 +335,17 @@ void KFLogConfig::slotOk()
 
   __checkAirspaceFileTable();
 
-  __checkAirfieldFileTable();
-
   // Configuration subwidgets shall save their configuration.
   emit saveConfig();
 
   emit scaleChanged((int)lLimitN->value(), (int)uLimitN->value());
 
-  // Check, if airfield source has been changed
-  if( airfieldSourceHasChanged )
+  // Check, if airfield source has been changed.
+  // Check, if airfield load list has been changed.
+  // Check, if homesite has been modified.
+  if( airfieldSourceHasChanged == true ||
+      __checkAirfieldFileTable() == true ||
+      homeLatitudeChanged == true || homeLongitudeChanged == true )
     {
       emit reloadAirfieldData();
     }
@@ -410,10 +429,7 @@ void KFLogConfig::__checkAirspaceFileTable()
     }
 }
 
-/**
- * Checks the airfield file table for changes.
- */
-void KFLogConfig::__checkAirfieldFileTable()
+bool KFLogConfig::__checkAirfieldFileTable()
 {
   QTableWidgetItem* asItem = m_afFileTable->item( 0, 0 );
 
@@ -472,10 +488,12 @@ void KFLogConfig::__checkAirfieldFileTable()
 
       if( changed == true && _settings.value( "/Airfield/Source", 0 ).toInt() == 0 )
 	{
-	  // Emit signal, if this source is selected.
-	  emit reloadAirfieldData();
+	  // Return true, if this source is selected.
+	  return true;
 	}
     }
+
+  return false;
 }
 
 void KFLogConfig::slotTextEditedCountry( const QString& text )
@@ -1533,6 +1551,13 @@ void KFLogConfig::__addPersonalTab()
   homeLayout->addRow( tr("Latitude") + ":", homeLatE );
   homeLayout->addRow( tr("Longitude") + ":", homeLonE );
 
+  m_airfieldSelectionList = new AirfieldSelectionList;
+  m_airfieldSelectionList->setGroupBoxTitle( tr("Homesite choice") );
+
+  connect( m_airfieldSelectionList, SIGNAL(takeThisPoint(const SinglePoint*)),
+           SLOT(slotTakeThisPoint(const SinglePoint*)) );
+
+  homeLayout->addRow( "", m_airfieldSelectionList );
   homeGroup->setLayout( homeLayout );
 
   //----------------------------------------------------------------------------
@@ -1554,6 +1579,20 @@ void KFLogConfig::__addPersonalTab()
   preNameE->setText(_settings.value("/PersonalData/PreName", "").toString());
   surNameE->setText(_settings.value("/PersonalData/SurName", "").toString());
   dateOfBirthE->setText(_settings.value("/PersonalData/Birthday", "").toString());
+}
+
+void KFLogConfig::slotTakeThisPoint( const SinglePoint* sp )
+{
+  // Set the data of the passed single point as homesite data
+  if( sp == 0 )
+    {
+      return;
+    }
+
+  homeNameE->setText( sp->getName() );
+  homeCountryE->setText( sp->getCountry() );
+  homeLatE->setKFLogDegree( sp->getWGSPosition().lat() );
+  homeLonE->setKFLogDegree( sp->getWGSPosition().lon() );
 }
 
 int KFLogConfig::__setScaleValue(int value)

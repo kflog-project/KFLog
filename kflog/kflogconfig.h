@@ -51,8 +51,10 @@
 
 #include "coordedit.h"
 
+class AirfieldSelectionList;
 class ConfigMapElement;
 class ConfigPrintElement;
+class SinglePoint;
 
 class KFLogConfig : public QDialog
 {
@@ -78,6 +80,10 @@ class KFLogConfig : public QDialog
   enum DefaultWaypointCatalog { Empty = 0, LastUsed, Specific };
 
   static QByteArray rot47( const QByteArray& input );
+
+ protected:
+
+  void showEvent( QShowEvent *event );
 
  signals:
 
@@ -197,6 +203,11 @@ class KFLogConfig : public QDialog
    */
   void slotLoadAirfieldFilesIntoTable();
 
+  /**
+   * Takes this point as new homesite position.
+   */
+  void slotTakeThisPoint( const SinglePoint* sp );
+
  private slots:
 
  /**
@@ -276,8 +287,10 @@ class KFLogConfig : public QDialog
 
   /**
    * Checks the airfield file table for changes.
+   *
+   * \returns true in case of changes otherwise false.
    */
-  void __checkAirfieldFileTable();
+  bool __checkAirfieldFileTable();
 
   /**
    * Checks the openAIP country input for correctness. If not correct
@@ -460,6 +473,9 @@ class KFLogConfig : public QDialog
 
   /** Group box for openAIP airfield configuration widget. */
   QGroupBox* m_openAipGroup;
+
+  /** Widget with a airfield list. */
+  AirfieldSelectionList* m_airfieldSelectionList;
 };
 
 #endif

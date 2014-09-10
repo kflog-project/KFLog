@@ -2,12 +2,12 @@
  **
  **   mainwindow.h
  **
- **   This file is part of KFLog4.
+ **   This file is part of KFLog.
  **
  ************************************************************************
  **
  **   Copyright (c):  2001      by Heiner Lamprecht, Florian Ehinger
- **                   2010-2011 by Axel Pauli
+ **                   2010-2014 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -26,7 +26,7 @@
  * This class provides the main window of KFLog. All needed GUI stuff
  * is initialized and handled here.
  *
- * \date 2001-2011
+ * \date 2001-2014
  *
  * \version $Id$
  */
@@ -225,7 +225,7 @@ public slots:
   /**
    * Insert available flights into the related menu.
    */
-  void slotWindowsMenuAboutToShow();
+  void slotFlightsMenuAboutToShow();
 
   /**
    * Called, if an action of the group is triggered.
@@ -387,9 +387,9 @@ private:
   QAction *solidAction;
 
   /**
-   * Action for the menu Window
+   * Action for the flights menu Window
    */
-  QMenu* windowMenu;
+  QMenu* flightsMenu;
   /**
    * Actions for the menu Settings
    */

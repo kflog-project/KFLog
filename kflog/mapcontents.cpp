@@ -1370,9 +1370,6 @@ void MapContents::proofeSection(bool isPrint)
 	  // As next make the update check
 	  bool check4update = welt2000.check4update();
 
-	  qDebug() << "MapContents::proofeSection(): loadOk=" << loadOk
-		   << "check4update=" << check4update;
-
 	  if( loadOk == false || check4update == true )
 	    {
 	      // Welt2000 update available or load failed, try to download a new
