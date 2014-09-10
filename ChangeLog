@@ -4,6 +4,17 @@
 #
 ################################################################################
 
+  * Issue #20 fixed. Prevent the automatic closing of KFLog settings dialog,
+    if the return key is pressed.
+    
+  * Issue #18 fixed. New class AirfieldSelectionList created, which handles the
+    selection of an single airfield from a combo list box together with a search
+    function. On button click the selected SinglePoint is emitted as signal.
+    
+  * Issue #8 fixed. Menu structure in MainWindow modified.
+
+2014-09-09 Axel Pauli <kflog.cumulus@gmail.com>
+
   * Issue #11 fixed. Waypoint catalog filter handling modified. In the filter GUI
     a selection between area or radius has been added. Every waypoint catalog
     should uses now its own filter and restore it when the waypoint catalog is
