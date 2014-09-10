@@ -390,6 +390,7 @@ private:
    * Action for the flights menu Window
    */
   QMenu* flightsMenu;
+
   /**
    * Actions for the menu Settings
    */

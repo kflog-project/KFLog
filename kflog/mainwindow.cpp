@@ -875,18 +875,19 @@ void MainWindow::createMenuBar()
   connect( waypointsDock, SIGNAL(visibilityChanged(bool)),
            settingsWaypointsAction, SLOT(setDisabled(bool)) );
 
-  QMenu * sm = menuBar()->addMenu( tr("&Settings") );
-  sm->addAction( flightEvaluationWindowAction );
-  sm->addAction( settingsFlightDataAction );
-  sm->addAction( settingsHelpWindowAction );
-  sm->addAction( settingsObjectTreeAction );
-  sm->addAction( settingsLegendAction );
-  // sm->addAction( settingsMapAction );
-  sm->addAction( settingsMapControlAction );
-  sm->addAction( settingsToolBarAction );
-  sm->addAction( settingsStatusBarAction );
-  sm->addAction( settingsWaypointsAction );
-  sm->addSeparator();
+  QMenu* wm = menuBar()->addMenu( tr("&Windows") );
+  wm->addAction( flightEvaluationWindowAction );
+  wm->addAction( settingsFlightDataAction );
+  wm->addAction( settingsHelpWindowAction );
+  wm->addAction( settingsObjectTreeAction );
+  wm->addAction( settingsLegendAction );
+  // wm->addAction( settingsMapAction );
+  wm->addAction( settingsMapControlAction );
+  wm->addAction( settingsToolBarAction );
+  wm->addAction( settingsStatusBarAction );
+  wm->addAction( settingsWaypointsAction );
+
+  QMenu* sm = menuBar()->addMenu( tr("&Settings") );
   sm->addAction( getPixmap("kde_configure_16.png"),
                  tr("KFLog &Setup..."),
                  this,
