@@ -18,12 +18,13 @@
  *
  * \author Axel Pauli
  *
- * \brief A widget with a combo box list and a search function for airfields.
+ * \brief A widget with a combo list box and a search function for a single
+ * airfield.
  *
- * A widget with a combo list box and a search function for airfields. With the
- * help of the search function you can navigate to a certain entry in the combo
- * list box. The current selected entry in the combo box list is emitted as
- * signal, if a set button is clicked.
+ * A widget with a combo list box and a search function for a single airfield.
+ * With the help of the search function you can navigate to a certain entry in
+ * the combo list box. The current selected entry in the combo list box is
+ * emitted as signal, if the set button is clicked.
  *
  * \date 2014
  *
