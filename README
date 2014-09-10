@@ -1,9 +1,8 @@
-$Id$
-
+=============
 Current state
 =============
 
-- KFLog is ported now fully to Qt4 without using any Qt3 support library parts.
+- KFLog is ported fully to Qt4 without using any Qt3 support library parts.
   Not all parts are tested in detail. Some parts can be unstable.
 
 Known bugs

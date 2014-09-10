@@ -1,10 +1,8 @@
-# $Id$
+=============================
+= A Basic Test Installation =
+=============================
 
-=========================
-A Basic Test Installation
-=========================
-
-Preconditions for self compiling KFlog4 under Ubuntu 13.04:
+Preconditions for self compiling KFlog under Ubuntu 14.04:
 
   1. It should be installed the following Qt 4.8.x packages:
   
@@ -15,7 +13,7 @@ Preconditions for self compiling KFlog4 under Ubuntu 13.04:
   
   sudo apt-get install <package-name> ...
 
-The simplest way to compile this package in Ubuntu 13.04 is:
+The simplest way to compile the source code in Ubuntu or Debian is:
 
   1. 'cd' into the directory containing the package's source code and type
      'make -f Makefile.qmake all'
@@ -26,7 +24,7 @@ The simplest way to compile this package in Ubuntu 13.04 is:
      directory and can be accessed by typing 'cd ~/KFLog/'. The map files are
      stored in different subdirectories under the subdirectory mapdata.
      Landscape and airfield files are downloaded automatically. Airspace
-     files have to be installed by hand.
+     files have to be installed by hand or over the setup airspace page.
 
   3. You can remove the program binaries and object files from the
      source code directory by typing 'make -f Makefile.qmake distclean'.
@@ -37,6 +35,8 @@ You can use the following command to get the sources of KFLog as git repository.
 
 Please report found bugs on GitHub: https://github.com/kflog-project/KFLog/issues
 
-You can find for more information about KFLog at www.kflog.org.
+To do that you need a GitHub account.
+
+You can find more information about KFLog at www.kflog.org.
 
 Have fun with KFlog ...

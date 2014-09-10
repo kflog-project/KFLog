@@ -1,10 +1,9 @@
-# $Id: INSTALL-windows 1405 2012-05-24 21:14:55Z matthias $
 
 ====================================
 A Basic Test Installation on Windows
 ====================================
 
-Preconditions for self compiling KFlog4 under Windows 7:
+Preconditions for self compiling KFlog under Windows 7:
 
   1. Install QT SDK 4.8.0 (select mingw 32bit as compiler)
 
@@ -16,15 +15,14 @@ The simplest way to compile this package in Windows 7 is:
 
   3. Hit compile and wait until you're done :)
      
-You can checkout the latest sources by using subversion. Use the following
-command to do that:
+You can use the following command to get the sources of KFLog as git repository.
 
-  svn co https://svn.kflog.org/svn/repos/kflog2/qt4/trunk
+  git clone https://github.com/kflog-project/KFLog.git
 
-Please report found bugs on our KFLog mailing list. Under the link
+Please report found bugs on GitHub: https://github.com/kflog-project/KFLog/issues
 
-http://www.kflog.org/kflog
+To do that you need a GitHub account.
 
-you can find for more information about KFLog.
+You can find for more information about KFLog at www.kflog.org.
 
 Have fun with KFlog ...
