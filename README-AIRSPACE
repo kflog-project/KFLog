@@ -1,4 +1,18 @@
 This directory is used for the airspace files.
 
-Airspace files are supported only in OpenAir format.
-The file name must end with the extension ".txt".
+KFLog supports two airspace source formats:
+
+1. OpenAir files with the extension [txt|TXT].
+
+2. openAIP from http://www.openaip.net/ with the file name
+   <2-letter-country-code>_asp.aip
+   
+   See there for more information.
+   
+KFLog downloads openAIP airspace files automatically for you in the settings
+airspace page. Please define on that page, for which coutries do you want to
+download openAIP airspace files and for which countries airspace data should be loaded.
+OpenAir files must be installed manually in this directory.
+
+Please do not mix OpenAir and openAIP airspace files from the same country. The
+results are unpredictable.
