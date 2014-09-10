@@ -26,6 +26,8 @@ AirfieldSelectionList::AirfieldSelectionList( QWidget *parent ) :
   setObjectName( "AirfieldSelectionList" );
 
   m_searchEntry  = new QLineEdit;
+  m_searchEntry->setToolTip( tr("Enter a search string, to navigate to a certain list entry.") );
+
   connect( m_searchEntry, SIGNAL(returnPressed ()), SLOT(slotReturnPressed()) );
   connect( m_searchEntry, SIGNAL(textEdited(const QString&)),
            this, SLOT(slotTextEdited(const QString&)) );
@@ -33,10 +35,14 @@ AirfieldSelectionList::AirfieldSelectionList( QWidget *parent ) :
   m_selectionBox = new QComboBox;
 
   QPushButton* clearButton = new QPushButton(tr("Clear"));
+  clearButton->setToolTip( tr("Click Clear to remove the search string.") );
+
   connect( clearButton, SIGNAL(clicked()),
            SLOT(slotClearSearchEntry()));
 
   QPushButton* setButton = new QPushButton(tr("Set"));
+  setButton->setToolTip( tr("Click Set to take over the selected list entry.") );
+
   connect( setButton, SIGNAL(clicked()),
            SLOT(slotSetSelectedEntry()));
 
