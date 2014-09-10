@@ -1,9 +1,6 @@
-This directory is used for the map-files.
+This directory is used for the KFLog map files. The needed files are downloaded
+automatically by KFLog from the Internet.
 
-If you want to obtain maps manually, please visit the KFLog-Homepage.
-To enable the automatic map download for the users, change the permissions
-for this directory and its subdirectories. (chmod -R a+w .)
-
-You can find the map-files at:
+You can find the map-files under the following link:
 
 http://www.kflog.org/maproom/
