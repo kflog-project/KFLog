@@ -30,6 +30,10 @@
 
 2014-09-02 Axel Pauli <kflog.cumulus@gmail.com>
 
+  * Issue #21 fixed. Enable opening multiple files.
+
+2014-08-19 Peter Simon
+
   * Map configuration extensions introduced for airspace FIR.
 
 2014-08-14 Axel Pauli <kflog.cumulus@gmail.com>
