@@ -5,24 +5,37 @@ A Basic Test Installation on Windows
 
 Preconditions for self compiling KFlog under Windows 7:
 
-  1. Install QT SDK 4.8.0 (select mingw 32bit as compiler)
 
-The simplest way to compile this package in Windows 7 is:
+  1. Download and Install the Git Windows Client from www.github.com
 
-  1. 'cd' into the directory containing the package's source code and double click KFlog4Windows.pro
+  2. Download and Install QT SDK 4.8.(latest version) (select mingw 32bit as compiler)
+     During the installation of QT SDK you will be asked for the mingw location.
+     The help text includes the download location for the right mingw version.
+     Download this version and unpack it (currently 7z is used for the archive)
+     Do not use directories containing blanks in the filename for destination of mingw or qt SDK
+  
+  3. Download and install QT Creator, which is not part of the SDK
 
-  2. Select the build configuration to be built, e.g. MinGW - QT 4.8.0 for Desktop - MinGW (Qt SDK) Release
+  4. Create a local KFLog Git-Repository:
+     - Start the Git-Shell
+     - Create a working directory (without banks in the path)
+     - Change to that directory (cd <workdir>)
+     - clone the remote Git repository
+        git clone https://github.com/kflog-project/KFLog.git
 
-  3. Hit compile and wait until you're done :)
+  5. Start the QtCreator and Open the project file:
+	 File - Open File or Project ---> browse to your local KFLog Git repository and open kflog.pro
+
+  6. Hit the Projects symbol on the left hand toolbar
+     - click on Manage Kits...
+	 - select Qt Build and Run
+	 - check the single tabs - most important: select the right Qt Version
+
+  7. Start the build of KFLog by Build - Build All (or shortcut key CTRL - SHIFT - B
+  
      
-You can use the following command to get the sources of KFLog as git repository.
-
-  git clone https://github.com/kflog-project/KFLog.git
-
 Please report found bugs on GitHub: https://github.com/kflog-project/KFLog/issues
-
+ 
 To do that you need a GitHub account.
-
 You can find for more information about KFLog at www.kflog.org.
-
 Have fun with KFlog ...
