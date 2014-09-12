@@ -2,11 +2,11 @@
 **
 **   wgspoint.h - general position representations
 **
-**   This file is part of KFLog4
+**   This file is part of KFLog
 **
 ************************************************************************
 **
-**   Copyright (c):  2008-2010 by Axel Pauli (axel@kflog.org)
+**   Copyright (c):  2008-2010 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
