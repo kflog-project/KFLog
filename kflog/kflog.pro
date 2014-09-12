@@ -29,10 +29,11 @@ contains(QT_VERSION, ^4\\.[6]\\..*) {
 TEMPLATE = app
 
 # Put all generated objects into an extra directory
+
+!win32{
 OBJECTS_DIR = .obj
 MOC_DIR     = .obj
 
-!win32 {
     LIBS += -ldl
 }
 

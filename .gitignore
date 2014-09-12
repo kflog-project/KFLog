@@ -25,6 +25,10 @@ moc_*.cpp
 # Directories
 .obj/*
 /release
+windows_setup/windows_setup.pro
+windows_setup/windows_setup.pro.user
+kflog/object_script.kflog
+kflog.pro.user
 
 /Makefile
 /kflog/kfrcai/Makefile

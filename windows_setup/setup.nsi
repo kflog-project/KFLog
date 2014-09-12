@@ -58,7 +58,7 @@ Section "KFlog program (required)"
   ; Put file there
   File ${ExeSourcePath}\kflog.exe
   File ${MingwBinPath}\libgcc_s_dw2-1.dll
-  File ${MingwBinPath}\libwinpthread-1.dll
+  File ${MingwBinPath}\..\mingw32\opt\bin\libwinpthread-1.dll
   File ${MingwBinPath}\libstdc++-6.dll
   File ${QtBinPath}\QtCore4.dll
   File ${QtBinPath}\QtGui4.dll
