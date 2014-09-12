@@ -4,6 +4,11 @@
 #
 ################################################################################
 
+  * Issue #20 fixed. Added a Eula Tab in the 'About KFLog' widget, which shows
+    the GNU GPL V2 licence text.
+
+2014-09-12 Axel Pauli <kflog.cumulus@gmail.com>
+
   * Issue #20 fixed. Prevent the automatic closing of KFLog settings dialog,
     if the return key is pressed.
     
@@ -13,7 +18,7 @@
     
   * Issue #8 fixed. Menu structure in MainWindow modified.
 
-2014-09-09 Axel Pauli <kflog.cumulus@gmail.com>
+2014-09-10 Axel Pauli <kflog.cumulus@gmail.com>
 
   * Issue #11 fixed. Waypoint catalog filter handling modified. In the filter GUI
     a selection between area or radius has been added. Every waypoint catalog

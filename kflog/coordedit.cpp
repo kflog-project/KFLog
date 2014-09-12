@@ -2,15 +2,13 @@
 **
 **   coordedit.cpp - Editor for WGS84 coordinates, supports three formats.
 **
-**   This file is part of KFLog4
+**   This file is part of KFLog
 **
 ************************************************************************
 **
 **   Copyright (c):  2001 by Harald Maier
 **                   2009 by Axel Pauli complete redesign done
 **                   2011 by Axel Pauli Bug fixing
-**
-**   Email:           axel@kflog.org
 **
 ************************************************************************
 **

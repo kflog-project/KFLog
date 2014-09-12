@@ -2,11 +2,11 @@
 **
 **   aboutwidget.h
 **
-**   This file is part of KFLog4.
+**   This file is part of KFLog.
 **
 ************************************************************************
 **
-**   Copyright (c): 2010-2011 Axel Pauli
+**   Copyright (c): 2010-2014 Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -25,7 +25,7 @@
  * This widget displays the about application data in a tabbed window
  * decorated this a headline and an icon on top.
  *
- * \date 2010-2011
+ * \date 2010-2014
  *
 */
 
@@ -33,9 +33,10 @@
 #define ABOUT_WIDGET_H
 
 #include <QWidget>
+#include <QFile>
 #include <QLabel>
-#include <QTextBrowser>
 #include <QString>
+#include <QTextBrowser>
 
 class QPixmap;
 
@@ -60,7 +61,7 @@ class AboutWidget : public QWidget
   */
   void setHeaderIcon( const QPixmap pixmap )
   {
-    headerIcon->setPixmap( pixmap );
+    m_headerIcon->setPixmap( pixmap );
   };
 
   /**
@@ -70,7 +71,7 @@ class AboutWidget : public QWidget
   */
   void setHeaderText( const QString& text )
   {
-    headerText->setText( text );
+    m_headerText->setText( text );
   };
 
   /**
@@ -80,7 +81,7 @@ class AboutWidget : public QWidget
   */
   void setAboutText( const QString& text )
   {
-    about->setHtml( text );
+    m_about->setHtml( text );
   };
 
   /**
@@ -90,22 +91,36 @@ class AboutWidget : public QWidget
   */
   void setTeamText( const QString& text )
   {
-    team->setHtml( text );
+    m_team->setHtml( text );
+  };
+
+  /**
+  * Sets the passed text on the eula page. The text can be HTML formatted.
+  *
+  * \param text The text to be set on the eula page.
+  */
+  void setEulaText( const QString& text )
+  {
+    m_eula->setText( text );
   };
 
  private:
 
   /** The header icon widget. */
-  QLabel       *headerIcon;
+  QLabel       *m_headerIcon;
 
   /** The header text widget. */
-  QLabel       *headerText;
+  QLabel       *m_headerText;
 
   /** The about text browser page widget. */
-  QTextBrowser *about;
+  QTextBrowser *m_about;
 
   /** The team text browser page widget. */
-  QTextBrowser *team;
+  QTextBrowser *m_team;
+
+  /** The Eula browser page widget. */
+  QTextBrowser *m_eula;
+
 };
 
 #endif /* ABOUT_WIDGET_H */

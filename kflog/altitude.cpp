@@ -5,9 +5,7 @@
     copyright            : (C) 2002 by André Somers
                                2010 by Axel Pauli
 
-    email                : axel@kflog.org
-
-    This file is part of KFLog4.
+    This file is part of KFLog.
 
     $Id$
 

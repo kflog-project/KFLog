@@ -1,8 +1,11 @@
-<!-- $Id$ -->
-<!-- KFLog resource file, containing map and GUI icons. -->
+
+<!-- KFLog resource file, containing eula, map and GUI icons. -->
 
 <!DOCTYPE RCC><RCC version="1.0">
+
  <qresource>
+ 
+    <file>Eula/GNU_GPL_V2</file>
     <file>pics/airfield_32.png</file>
     <file>pics/airfield_48.png</file>
     <file>pics/centerflight_16.png</file>

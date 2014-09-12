@@ -2,14 +2,12 @@
 **
 **   coordedit.h
 **
-**   This file is part of KFLog4
+**   This file is part of KFLog
 **
 ************************************************************************
 **
 **   Copyright (c):  2001      by Harald Maier
 **                   2009-2011 by Axel Pauli complete redesign done
-**
-**   Email: axel@kflog.org
 **
 ************************************************************************
 **
