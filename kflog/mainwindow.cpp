@@ -1903,6 +1903,24 @@ void MainWindow::slotShowAbout()
       "<br></html>" ));
 
   aw->setTeamText( team );
+
+  QResource eula(":Eula/GNU_GPL_V2");
+
+  QFile eulaFile(eula.absoluteFilePath());
+
+  if( eulaFile.open(QIODevice::ReadOnly | QIODevice::Text) )
+    {
+      QTextStream in(&eulaFile);
+      QString content = in.readAll();
+      aw->setEulaText( content );
+    }
+  else
+    {
+      qWarning() << "Unable to open file: "
+                 << eulaFile.fileName() << " because of error "
+                 << eulaFile.errorString();
+    }
+
   aw->resize( 600, 550 );
   aw->setVisible( true );
 }
