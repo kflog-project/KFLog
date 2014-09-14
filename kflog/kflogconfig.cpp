@@ -789,7 +789,8 @@ void KFLogConfig::__addMapTab()
 
   elementGroupBox->setLayout( vbox );
 
-  QPushButton* defaultElements = new QPushButton( tr("Default") );
+  QPushButton* defaultElements = new QPushButton( tr("Defaults") );
+  defaultElements->setToolTip( tr("All map elements are set to their default values.") );
   defaultElements->setMaximumWidth(defaultElements->sizeHint().width() + 10);
   defaultElements->setMinimumHeight(defaultElements->sizeHint().height() + 2);
 
@@ -801,10 +802,13 @@ void KFLogConfig::__addMapTab()
   mapPage->setLayout( vboxAll );
 
   connect( defaultElements, SIGNAL(clicked()),
+           this, SLOT(slotSetMapElements2Default()) );
+
+  connect( this, SIGNAL(setMapElements2Default()),
            configDrawWidget, SLOT(slotDefaultElements()) );
 
-  connect( defaultElements, SIGNAL(clicked()),
-           configPrintWidget, SLOT(slotDefaultElements()));
+  connect( this, SIGNAL(setMapElements2Default()),
+           configPrintWidget, SLOT(slotDefaultElements()) );
 
   connect( elementSelect, SIGNAL( currentIndexChanged(int)),
            this, SLOT(slotSelectDrawElement(int)));
@@ -2378,4 +2382,22 @@ void KFLogConfig::slotAirfieldSourceChanged( int index )
       m_openAipGroup->setVisible( false );
       m_welt2000Group->setVisible( true );
     }
+}
+
+void KFLogConfig::slotSetMapElements2Default()
+{
+  if( QMessageBox::question( this,
+                             tr("Reset to Defaults?"),
+                             "<html>" +
+                             tr("Please note that all map elements are reset to their default values!") +
+                             "<br><br>" +
+                             tr("Do you really want that?") +
+                             "</html>",
+                             QMessageBox::Yes, QMessageBox::No) ==
+      QMessageBox::No )
+    {
+      return;
+    }
+
+  emit setMapElements2Default();
 }
