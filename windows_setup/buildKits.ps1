@@ -76,11 +76,8 @@ Catch {
   $Error[0]} 
 
 Get-Location
-dir "..\..\..\kflog\Release\"
 $kflogMakeDirectory = (get-location).Path + "\..\kflog\release"
 
   &"$makeNSIS" "/DMingwBinPath=$MinGwDirectory" "/DQtBinPath=$QtDirectory/bin" "/DExeSourcePath=$kflogMakeDirectory" "/NOCONFIG" "$myDir/setup.nsi" 
-  
-  #"/O$MakeDirectory\MakeKFlog.log"
 
 Move-Item -Verbose "$myDir/KflogSetup.exe" "$mydir\..\..\"
