@@ -384,7 +384,7 @@ void MapConfig::slotReadConfig()
         CTRD_BRUSH_STYLE_1, CTRD_BRUSH_STYLE_2,
         CTRD_BRUSH_STYLE_3, CTRD_BRUSH_STYLE_4,
         PRINT_CTRD_BRUSH_STYLE_1, PRINT_CTRD_BRUSH_STYLE_2);
-  __readAsOpacity(AS_CTR_D, ctrDOpacityList);
+  __readAsOpacity(AS_CTR_D, ctrDOpacityList, CTRD_OPACITY_1, CTRD_OPACITY_2, CTRD_OPACITY_3, CTRD_OPACITY_4);
 
   __readPenBrush(AS_DANGER, dangerPenList, dangerBorder, dangerBrushList,
         DNG_COLOR_1, DNG_COLOR_2, DNG_COLOR_3, DNG_COLOR_4,
@@ -1448,6 +1448,22 @@ void MapConfig::__readAsOpacity( QString group, QList<int> &opacityList )
   int o2 = _settings.value( "/Map/" + group + "/Opacity2", AS_OPACITY_2 ).toInt();
   int o3 = _settings.value( "/Map/" + group + "/Opacity3", AS_OPACITY_3 ).toInt();
   int o4 = _settings.value( "/Map/" + group + "/Opacity4", AS_OPACITY_4 ).toInt();
+
+  // first remove all old entries.
+  opacityList.clear();
+  opacityList << o1 << o2 << o3 << o4;
+}
+
+void MapConfig::__readAsOpacity( QString group, QList<int> &opacityList,
+                         int defaultOpacity1,
+                         int defaultOpacity2,
+                         int defaultOpacity3,
+                         int defaultOpacity4)
+{
+  int o1 = _settings.value( "/Map/" + group + "/Opacity1", defaultOpacity1 ).toInt();
+  int o2 = _settings.value( "/Map/" + group + "/Opacity2", defaultOpacity2 ).toInt();
+  int o3 = _settings.value( "/Map/" + group + "/Opacity3", defaultOpacity3 ).toInt();
+  int o4 = _settings.value( "/Map/" + group + "/Opacity4", defaultOpacity4 ).toInt();
 
   // first remove all old entries.
   opacityList.clear();

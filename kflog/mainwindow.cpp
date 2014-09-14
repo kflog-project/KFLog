@@ -1866,6 +1866,7 @@ void MainWindow::slotShowAbout()
           "KFLog %1, compiled at %2 with QT %3<br><br>"
           "Homepage: <a href=\"http://www.kflog.org/kflog/\">www.kflog.org/kflog/</a><br><br>"
           "GitHub Software Repository: <a href=\"https://github.com/kflog-project/KFLog\">https://github.com/kflog-project/KFLog</a><br><br>"
+          "Last <a href=\"https://github.com/kflog-project/KFLog/blob/master/ChangeLog\">ChangeLog</a><br><br>"
           "Report bugs to: <a href=\"https://github.com/kflog-project/KFLog/issues\">kflog-project/KFLog/issues</a><br><br>"
           "Published under the <a href=\"http://www.gnu.org/licenses/licenses.html#GPL\">GPL</a>"
           "</html>" ).arg( QCoreApplication::applicationVersion() )

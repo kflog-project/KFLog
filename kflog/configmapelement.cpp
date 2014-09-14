@@ -944,7 +944,7 @@ void ConfigMapElement::slotDefaultElements()
   __defaultAsOpacity( airFOpacityList );
   __defaultAsOpacity( airFirOpacityList );
   __defaultAsOpacity( ctrCOpacityList );
-  __defaultAsOpacity( ctrDOpacityList );
+  __defaultAsOpacity( ctrDOpacityList, CTRD_OPACITY_1, CTRD_OPACITY_2, CTRD_OPACITY_3, CTRD_OPACITY_4 );
   __defaultAsOpacity( lowFOpacityList );
   __defaultAsOpacity( dangerOpacityList );
   __defaultAsOpacity( restrOpacityList );
@@ -1109,6 +1109,7 @@ void ConfigMapElement::__readDefaultMapItems()
   __defaultPenBrush(ctrDPenList, ctrDBorder, ctrDBrushList,
       CTRD_COLOR_1, CTRD_COLOR_2, CTRD_COLOR_3, CTRD_COLOR_4,
       CTRD_PEN_1, CTRD_PEN_2, CTRD_PEN_3, CTRD_PEN_4,
+      CTRD_PEN_STYLE_1, CTRD_PEN_STYLE_2, CTRD_PEN_STYLE_3, CTRD_PEN_STYLE_4,
       CTRD_BRUSH_COLOR_1, CTRD_BRUSH_COLOR_2,
       CTRD_BRUSH_COLOR_3, CTRD_BRUSH_COLOR_4,
       CTRD_BRUSH_STYLE_1, CTRD_BRUSH_STYLE_2,
@@ -2211,6 +2212,41 @@ void ConfigMapElement::__defaultPen( QList<QPen> &penList,
                                       int defaultPenSize1,
                                       int defaultPenSize2,
                                       int defaultPenSize3,
+                                      int defaultPenSize4,
+                                      Qt::PenStyle defaultPenStyle1,
+                                      Qt::PenStyle defaultPenStyle2,
+                                      Qt::PenStyle defaultPenStyle3,
+                                      Qt::PenStyle defaultPenStyle4)
+{
+  penList[0].setColor( defaultColor1 );
+  penList[0].setWidth( defaultPenSize1 );
+  penList[0].setStyle( defaultPenStyle1 );
+  penList[1].setColor( defaultColor2 );
+  penList[1].setWidth( defaultPenSize2 );
+  penList[1].setStyle( defaultPenStyle2 );
+  penList[2].setColor( defaultColor3 );
+  penList[2].setWidth( defaultPenSize3 );
+  penList[2].setStyle( defaultPenStyle3 );
+  penList[3].setColor( defaultColor4 );
+  penList[3].setWidth( defaultPenSize4 );
+  penList[3].setStyle( defaultPenStyle4 );
+
+  b[0] = true;
+  b[1] = true;
+  b[2] = true;
+  b[3] = true;
+}
+
+
+void ConfigMapElement::__defaultPen( QList<QPen> &penList,
+                                      bool *b,
+                                      QColor defaultColor1,
+                                      QColor defaultColor2,
+                                      QColor defaultColor3,
+                                      QColor defaultColor4,
+                                      int defaultPenSize1,
+                                      int defaultPenSize2,
+                                      int defaultPenSize3,
                                       int defaultPenSize4 )
 {
   penList[0].setColor( defaultColor1 );
@@ -2226,6 +2262,43 @@ void ConfigMapElement::__defaultPen( QList<QPen> &penList,
   b[1] = true;
   b[2] = true;
   b[3] = true;
+}
+
+void ConfigMapElement::__defaultPenBrush( QList<QPen> &penList,
+                                           bool *b,
+                                           QList<QBrush> &brushList,
+                                           QColor defaultColor1,
+                                           QColor defaultColor2,
+                                           QColor defaultColor3,
+                                           QColor defaultColor4,
+                                           int defaultPenSize1,
+                                           int defaultPenSize2,
+                                           int defaultPenSize3,
+                                           int defaultPenSize4,
+                                           Qt::PenStyle defaultPenStyle1,
+                                           Qt::PenStyle defaultPenStyle2,
+                                           Qt::PenStyle defaultPenStyle3,
+                                           Qt::PenStyle defaultPenStyle4,                                           QColor defaultBrushColor1,
+                                           QColor defaultBrushColor2,
+                                           QColor defaultBrushColor3,
+                                           QColor defaultBrushColor4,
+                                           Qt::BrushStyle defaultBrushStyle1,
+                                           Qt::BrushStyle defaultBrushStyle2,
+                                           Qt::BrushStyle defaultBrushStyle3,
+                                           Qt::BrushStyle defaultBrushStyle4 )
+{
+  __defaultPen( penList, b, defaultColor1, defaultColor2, defaultColor3, defaultColor4,
+                defaultPenSize1, defaultPenSize2, defaultPenSize3, defaultPenSize4,
+                defaultPenStyle1, defaultPenStyle2, defaultPenStyle3, defaultPenStyle4);
+
+  brushList[0].setColor( defaultBrushColor1 );
+  brushList[0].setStyle( defaultBrushStyle1 );
+  brushList[1].setColor( defaultBrushColor2 );
+  brushList[1].setStyle( defaultBrushStyle2 );
+  brushList[2].setColor( defaultBrushColor3 );
+  brushList[2].setStyle( defaultBrushStyle3 );
+  brushList[3].setColor( defaultBrushColor4 );
+  brushList[3].setStyle( defaultBrushStyle4 );
 }
 
 void ConfigMapElement::__defaultPenBrush( QList<QPen> &penList,
@@ -2332,6 +2405,16 @@ void ConfigMapElement::__defaultAsOpacity( QList<int> &opacityList )
 {
   opacityList.clear();
   opacityList << AS_OPACITY_1 << AS_OPACITY_2 << AS_OPACITY_3 << AS_OPACITY_4;
+}
+
+void ConfigMapElement::__defaultAsOpacity( QList<int> &opacityList,
+                                           int defaultOpacity1,
+                                           int defaultOpacity2,
+                                           int defaultOpacity3,
+                                           int defaultOpacity4)
+{
+  opacityList.clear();
+  opacityList << defaultOpacity1 << defaultOpacity2 << defaultOpacity3 << defaultOpacity4;
 }
 
 void ConfigMapElement::__readPen( QString group,

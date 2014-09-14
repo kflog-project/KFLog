@@ -124,6 +124,11 @@ class KFLogConfig : public QDialog
    */
   void downloadOpenAipAirfields( bool askUser );
 
+  /**
+   * Emmitted, if the map elements should be set to their default values.
+   */
+  void setMapElements2Default();
+
  public slots:
 
   void slotPageClicked( QTreeWidgetItem * item, int column );
@@ -251,6 +256,11 @@ class KFLogConfig : public QDialog
   * Called if openAIP airfield files shall be downloaded.
   */
  void slotDownloadOpenAipAf();
+
+ /**
+  * Called to set all map elements to their default value.
+  */
+ void slotSetMapElements2Default();
 
  private:
 

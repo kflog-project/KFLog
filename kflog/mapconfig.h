@@ -347,7 +347,12 @@ private:
   /**
    * Reads the airspace opacity values, used for filling airspace structures.
    */
-  void __readAsOpacity( QString group, QList<int> &opacityList );
+  void __readAsOpacity(QString group, QList<int> &opacityList);
+  void __readAsOpacity( QString group, QList<int> &opacityList,
+                           int defaultOpacity1,
+                           int defaultOpacity2,
+                           int defaultOpacity3,
+                           int defaultOpacity4);
 
   QList<QColor> topographyColorList;
 

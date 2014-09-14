@@ -1,6 +1,11 @@
-﻿$myDir = (get-item $($myinvocation.InvocationName)).DirectoryName
-$makeNsis = 'C:\Program Files\NSIS\makensis.exe'
-$nsisScript = 
+﻿$makeNsis = 'C:\Program Files\NSIS\makensis.exe'
+$myDir = (get-item $($myinvocation.InvocationName)).DirectoryName
+$rootDevDir = (get-item $mydir).Parent.Parent.FullName
+$nsisScript = "$myDir/setup.nsi"
+$zipInstallFile = "$rootDevDir/PortableKFLog.zip"
+$exeInstallFile = "$rootDevDir/KflogSetup.exe"
+
+"hier: $rootDevDir"
 
 $QtFiles = "QtCore4.dll",
            "QtGui4.dll",
@@ -11,7 +16,7 @@ $QtFiles = "QtCore4.dll",
 $MinGwFiles = "libgcc_s_dw2-1.dll",
               "..\mingw32\opt\bin\libwinpthread-1.dll",
               "libstdc++-6.dll"
-$KflogFiles = "..\..\..\kflog\Release\kflog.exe"
+$KflogFiles = "kflog\Release\kflog.exe"
 
 if ($env:QT_DIR -eq $NULL) 
 {
@@ -35,6 +40,9 @@ else
     $MakeDirectory = $args
 }
 
+$kflogMakeDirectory = "$MakeDirectory/kflog/release"
+# C:\Users\peter\dev\build-kflog-Desktop-Release\kflog\release
+
 # create working directory if not existing
 $workDirectory = "$makeDirectory/tmp"
 if (-not (test-path $workDirectory))
@@ -47,7 +55,7 @@ Remove-Item -Recurse $workDirectory/*
 # copy the files to the working directory
 $QtFiles | %{Copy-Item -Verbose $QtDirectory/bin/$_ $workDirectory}
 $MinGwFiles | %{Copy-Item -Verbose $MinGwDirectory/$_ $workDirectory}
-$KflogFiles | %{Copy-Item -Verbose $MakeDirectory/Release/Bin/$_ $workDirectory}
+$KflogFiles | %{Copy-Item -Verbose $MakeDirectory/$_ $workDirectory}
 
 $zipfile = "$MakeDirectory/../../PortableKFLog.zip" 
 if ((test-path $zipfile))
@@ -75,12 +83,16 @@ Catch {
   "Zip File NOT created" 
   $Error[0]} 
 
-Get-Location
-dir "..\..\..\kflog\Release\"
-$kflogMakeDirectory = (get-location).Path + "\..\kflog\release"
+if ((Test-Path $zipInstallFile))
+{
+    Remove-Item $zipInstallFile
+}
+Move-Item -Verbose $zipfile $zipInstallFile
 
-  &"$makeNSIS" "/DMingwBinPath=$MinGwDirectory" "/DQtBinPath=$QtDirectory/bin" "/DExeSourcePath=$kflogMakeDirectory" "/NOCONFIG" "$myDir/setup.nsi" 
-  
-  #"/O$MakeDirectory\MakeKFlog.log"
+  &"$makeNSIS" "/DMingwBinPath=$MinGwDirectory" "/DQtBinPath=$QtDirectory/bin" "/DExeSourcePath=$kflogMakeDirectory" "/NOCONFIG" "$nsisScript" 
 
-Move-Item -Verbose "$myDir/KflogSetup.exe" "$mydir\..\..\"
+if ((Test-Path $exeInstallFile))
+{
+    Remove-Item $exeInstallFile
+}
+Move-Item -Verbose "$myDir/KflogSetup.exe" $exeInstallFile
