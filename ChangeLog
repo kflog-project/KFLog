@@ -3,6 +3,14 @@
 # KFLog Changelog file
 #
 ################################################################################
+2014-09-14 Peter Simon <psimon7v@gmail.com>
+
+  * License.rtf and License_beta.rtf updated for next Windows shipment
+
+  * Issue #22 partially fixed. Forest areas are now shown without attracting
+    attention. Forest areas still are inaccurate, caused by external map data.
+
+2014-09-14
 
   * Issue #20 fixed. Added a Eula Tab in the 'About KFLog' widget, which shows
     the GNU GPL V2 licence text.
