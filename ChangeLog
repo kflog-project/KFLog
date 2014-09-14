@@ -7,7 +7,7 @@
   * Issue #26 partly fixed. Added a message box and a tool tip text to inform the
     user about the consequences of the defaults button press.
 
-2014-09-12 Axel Pauli <kflog.cumulus@gmail.com>
+2014-09-15 Axel Pauli <kflog.cumulus@gmail.com>
 
   * Issue #20 fixed. Added a Eula Tab in the 'About KFLog' widget, which shows
     the GNU GPL V2 licence text.
