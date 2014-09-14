@@ -10,6 +10,8 @@ kflog (4.8.0) unstable, urgency=low
 
   * changes for Windows Setup and Windows portable installation
 
+  * changed defaults for Control-D and Forest map elements
+
  -- Axel Pauli <kflog.cumulus@gmail.com>  Tue, 05 Sep 2014 21:15:37 +0200
 
 kflog (4.7.3) unstable; urgency=low
