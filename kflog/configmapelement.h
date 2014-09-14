@@ -143,6 +143,43 @@ class ConfigMapElement : public QWidget
                      int defaultPenSize2,
                      int defaultPenSize3,
                      int defaultPenSize4);
+  void  __defaultPen( QList<QPen> &penList,
+                    bool *b,
+                    QColor defaultColor1,
+                    QColor defaultColor2,
+                    QColor defaultColor3,
+                    QColor defaultColor4,
+                    int defaultPenSize1,
+                    int defaultPenSize2,
+                    int defaultPenSize3,
+                    int defaultPenSize4,
+                    Qt::PenStyle defaultPenStyle1,
+                    Qt::PenStyle defaultPenStyle2,
+                    Qt::PenStyle defaultPenStyle3,
+                    Qt::PenStyle defaultPenStyle4);
+
+  void __defaultPenBrush( QList<QPen> &penList,
+                          bool *b,
+                          QList<QBrush> &brushList,
+                          QColor defaultColor1,
+                          QColor defaultColor2,
+                          QColor defaultColor3,
+                          QColor defaultColor4,
+                          int defaultPenSize1,
+                          int defaultPenSize2,
+                          int defaultPenSize3,
+                          int defaultPenSize4,
+                          Qt::PenStyle defaultPenStype1,
+                          Qt::PenStyle defaultPenStype2,
+                          Qt::PenStyle defaultPenStype3,
+                          Qt::PenStyle defaultPenStype4,                          QColor defaultBrushColor1,
+                          QColor defaultBrushColor2,
+                          QColor defaultBrushColor3,
+                          QColor defaultBrushColor4,
+                          Qt::BrushStyle defaultBrushStyle1,
+                          Qt::BrushStyle defaultBrushStyle2,
+                          Qt::BrushStyle defaultBrushStyle3,
+                          Qt::BrushStyle defaultBrushStyle4 );
 
   void __defaultPenBrush( QList<QPen> &penList,
                           bool *b,
@@ -217,6 +254,11 @@ class ConfigMapElement : public QWidget
   void __showAsOpacity( QList<int> &opacityList );
 
   void __defaultAsOpacity( QList<int> &opacityList );
+  void __defaultAsOpacity( QList<int> &opacityList,
+                             int defaultOpacity1,
+                             int defaultOpacity2,
+                             int defaultOpacity3,
+                             int defaultOpacity4);
 
   /**
    * Determines for which configuration the widget is used. We have to

@@ -388,28 +388,28 @@
 #define PRINT_CITY_BRUSH_COLOR_2 QColor(255,250,100)
 
 // [Forest]
-#define FRST_COLOR_1 QColor(12,86,35)
-#define FRST_COLOR_2 QColor(12,86,35)
-#define FRST_COLOR_3 QColor(12,86,35)
-#define FRST_COLOR_4 QColor(12,86,35)
+#define FRST_COLOR_1 QColor(00,170,127)
+#define FRST_COLOR_2 QColor(00,170,127)
+#define FRST_COLOR_3 QColor(00,170,127)
+#define FRST_COLOR_4 QColor(00,170,127)
 
-#define FRST_PEN_1 2
-#define FRST_PEN_2 2
-#define FRST_PEN_3 2
-#define FRST_PEN_4 2
+#define FRST_PEN_1 1
+#define FRST_PEN_2 1
+#define FRST_PEN_3 1
+#define FRST_PEN_4 1
 
 #define FRST_PEN_STYLE_1 Qt::SolidLine
 #define FRST_PEN_STYLE_2 Qt::SolidLine
 #define FRST_PEN_STYLE_3 Qt::SolidLine
 #define FRST_PEN_STYLE_4 Qt::SolidLine
 
-#define FRST_BRUSH_COLOR_1 QColor(12,86,35)
-#define FRST_BRUSH_COLOR_2 QColor(12,86,35)
-#define FRST_BRUSH_COLOR_3 QColor(12,86,35)
-#define FRST_BRUSH_COLOR_4 QColor(12,86,35)
+#define FRST_BRUSH_COLOR_1 QColor(130,233,147)
+#define FRST_BRUSH_COLOR_2 QColor(130,233,147)
+#define FRST_BRUSH_COLOR_3 QColor(130,233,147)
+#define FRST_BRUSH_COLOR_4 QColor(130,233,147)
 
-#define FRST_BRUSH_STYLE_1 Qt::Dense5Pattern
-#define FRST_BRUSH_STYLE_2 Qt::Dense5Pattern
+#define FRST_BRUSH_STYLE_1 Qt::Dense6Pattern
+#define FRST_BRUSH_STYLE_2 Qt::Dense6Pattern
 #define FRST_BRUSH_STYLE_3 Qt::Dense6Pattern
 #define FRST_BRUSH_STYLE_4 Qt::Dense6Pattern
 
@@ -948,15 +948,15 @@
 #define PRINT_CTRC_BRUSH_STYLE_2 Qt::SolidPattern
 
 // [Control D]
-#define CTRD_PEN_1 4
-#define CTRD_PEN_2 3
-#define CTRD_PEN_3 2
+#define CTRD_PEN_1 3
+#define CTRD_PEN_2 2
+#define CTRD_PEN_3 1
 #define CTRD_PEN_4 1
 
-#define CTRD_PEN_STYLE_1 Qt::SolidLine
-#define CTRD_PEN_STYLE_2 Qt::SolidLine
-#define CTRD_PEN_STYLE_3 Qt::SolidLine
-#define CTRD_PEN_STYLE_4 Qt::SolidLine
+#define CTRD_PEN_STYLE_1 Qt::DashLine
+#define CTRD_PEN_STYLE_2 Qt::DashLine
+#define CTRD_PEN_STYLE_3 Qt::DashLine
+#define CTRD_PEN_STYLE_4 Qt::DashLine
 
 #define CTRD_COLOR_1 QColor(0,0,128)
 #define CTRD_COLOR_2 QColor(0,0,128)
@@ -973,11 +973,16 @@
 #define CTRD_BRUSH_STYLE_3 Qt::SolidPattern
 #define CTRD_BRUSH_STYLE_4 Qt::SolidPattern
 
+#define CTRD_OPACITY_1 50
+#define CTRD_OPACITY_2 50
+#define CTRD_OPACITY_3 50
+#define CTRD_OPACITY_4 50
+
 #define PRINT_CTRD_PEN_1 4
 #define PRINT_CTRD_PEN_2 3
 
-#define PRINT_CTRD_PEN_STYLE_1 Qt::SolidLine
-#define PRINT_CTRD_PEN_STYLE_2 Qt::SolidLine
+#define PRINT_CTRD_PEN_STYLE_1 Qt::DashLine
+#define PRINT_CTRD_PEN_STYLE_2 Qt::DashLine
 
 #define PRINT_CTRD_COLOR_1 QColor(0,0,128)
 #define PRINT_CTRD_COLOR_2 QColor(0,0,128)
