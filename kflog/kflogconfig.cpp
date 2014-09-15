@@ -595,12 +595,34 @@ void KFLogConfig::slotSelectProjection( int index )
 
 void KFLogConfig::slotShowLowerLimit( int value )
 {
-  lLimitN->display( __setScaleValue( value ) );
+  // Check if upper limit is >= lower limit. Otherwise adjust upper limit too.
+  int upperlim = uLimit->value();
+  int lowerLim = lLimit->value();
+  int newValue = __setScaleValue( value );
+
+  lLimitN->display( newValue );
+
+  if( lowerLim > upperlim )
+    {
+      // Note, that calls the slot slotShowUpperLimit automatically
+      uLimit->setValue( lowerLim );
+    }
 }
 
 void KFLogConfig::slotShowUpperLimit( int value )
 {
-  uLimitN->display( __setScaleValue( value ) );
+  // Check if upper limit is >= lower limit. Otherwise adjust lower limit too.
+  int upperlim = uLimit->value();
+  int lowerlim = lLimit->value();
+  int newValue = __setScaleValue( value );
+
+  uLimitN->display( newValue );
+
+  if( upperlim < lowerlim )
+    {
+      // Note,  that calls the slot slotShowLowerLimit automatically
+      lLimit->setValue( upperlim );
+    }
 }
 
 void KFLogConfig::slotShowSwitchScale( int value )

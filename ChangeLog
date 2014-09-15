@@ -12,6 +12,8 @@
 ################################################################################
 
   * Issue #24 fixed. Bring airfield symbols on top of the image stack.
+  
+  * Issue #27 partly fixed. Map Scale Settings limits.
 
 2014-09-15 Axel Pauli <kflog.cumulus@gmail.com>
 
