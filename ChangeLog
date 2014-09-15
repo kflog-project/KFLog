@@ -2,15 +2,21 @@
 #
 # KFLog Changelog file
 #
+# Please make entries in the following way:
+#
+# 1. Add every change in a single paragrah beginning with an asterix.
+#
+# 2. Add as last line date, author and email of the worker under your change
+#    entries.
+#
 ################################################################################
-2014-09-14 Peter Simon <psimon7v@gmail.com>
 
   * License.rtf and License_beta.rtf updated for next Windows shipment
 
   * Issue #22 partially fixed. Forest areas are now shown without attracting
     attention. Forest areas still are inaccurate, caused by external map data.
 
-2014-09-14
+2014-09-15 Peter Simon <psimon7v@gmail.com>
 
   * Issue #26 partly fixed. Added a message box and a tool tip text to inform the
     user about the consequences of the defaults button press.
