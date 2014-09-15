@@ -20,7 +20,7 @@
   * Issue #22 partially fixed. Forest areas are now shown without attracting
     attention. Forest areas still are inaccurate, caused by external map data.
 
-2014-09-14 Peter Simon <psimon7v@gmail.com>
+2014-09-14 Peter Simon <psimon.kflog@gmail.com>
 
   * Issue #26 partly fixed. Added a message box and a tool tip text to inform the
     user about the consequences of the defaults button press.
@@ -60,7 +60,7 @@
 
   * Issue #21 fixed. Enable opening multiple files.
 
-2014-08-19 Peter Simon <psimon7v@gmail.com>
+2014-08-19 Peter Simon <psimon.kflog@gmail.com>
 
   * Map configuration extensions introduced for airspace FIR.
 
