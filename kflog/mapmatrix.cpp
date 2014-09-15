@@ -23,7 +23,7 @@
 
 // Projektions-Massstab
 // 5 Meter Auflösung pro Pixel ist die stärkste Vergrösserung.
-// Bei dieser Vergröerung erfolgt die eigentliche Projektion
+// Bei dieser Vergrösserung erfolgt die eigentliche Projektion
 #define MAX_SCALE double(BORDER_L)
 #define MIN_SCALE double(BORDER_U)
 
