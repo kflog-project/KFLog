@@ -1206,7 +1206,7 @@ void KFLogConfig::__addScaleTab()
   QLabel* uLimitText = new QLabel( tr( "Upper limit" ) + ":" );
 
   uLimit = new QSlider();
-  uLimit->setMinimum( 2 );
+  uLimit->setMinimum( 1 );
   uLimit->setMaximum( 105 );
   uLimit->setPageStep( 1 );
   uLimit->setOrientation( Qt::Horizontal );
