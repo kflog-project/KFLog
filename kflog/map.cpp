@@ -2,17 +2,15 @@
 **
 **   map.cpp
 **
-**   This file is part of KFLog4.
+**   This file is part of KFLog.
 **
 ************************************************************************
 **
 **   Copyright (c):  1999-2000 by Heiner Lamprecht, Florian Ehinger
-**                   2010-2013 by Axel Pauli
+**                   2010-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -1806,10 +1804,10 @@ void Map::__showLayer()
   QPainter buffer(&pixBuffer);
 
   buffer.drawPixmap(pixUnderMap.rect(), pixUnderMap);
-  buffer.drawPixmap(pixAero.rect(), pixAero);
   buffer.drawPixmap(pixAirspace.rect(), pixAirspace);
   buffer.drawPixmap(pixFlight.rect(), pixFlight);
   buffer.drawPixmap(pixPlan.rect(), pixPlan);
+  buffer.drawPixmap(pixAero.rect(), pixAero);
   buffer.drawPixmap(pixWaypoints.rect(), pixWaypoints);
   buffer.drawPixmap(pixGrid.rect(), pixGrid);
 

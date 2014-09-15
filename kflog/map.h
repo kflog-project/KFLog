@@ -2,17 +2,15 @@
 **
 **   map.h
 **
-**   This file is part of KFLog4.
+**   This file is part of KFLog.
 **
 ************************************************************************
 **
 **   Copyright (c):  1999, 2000 by Heiner Lamprecht, Florian Ehinger
-**                   2010-2011  by Axel Pauli
+**                   2010-2014  by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -25,7 +23,7 @@
  *
  * This class provides basic functions for displaying the map.
  *
- * \date 1999-2011
+ * \date 1999-2014
  *
  * \version $Id$
  */
