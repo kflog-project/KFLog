@@ -1181,7 +1181,7 @@ void KFLogConfig::__addScaleTab()
   configLayout->addWidget( scalePage, 0, 1, 1, 2 );
 
   //----------------------------------------------------------------------------
-  QGroupBox* scaleRangeGroup = new QGroupBox( tr( "Scale Range (Meters / Pixel)" ) );
+  QGroupBox* scaleRangeGroup = new QGroupBox( tr( "Scale Range (Meters per Pixel)" ) );
 
   QLabel* lLimitText = new QLabel( tr( "Lower limit" ) + ":" );
 
@@ -1232,7 +1232,7 @@ void KFLogConfig::__addScaleTab()
   scaleRangeGroup->setLayout( scaleRangeLayout );
 
   //----------------------------------------------------------------------------
-  QGroupBox* scaleThresholdGroup = new QGroupBox( tr( "Scale Thresholds (Meters / Pixel)" ) );
+  QGroupBox* scaleThresholdGroup = new QGroupBox( tr( "Scale Thresholds (Meters per Pixel)" ) );
 
   QLabel* switchText = new QLabel( tr( "Use small icons" ) + ":" );
 
