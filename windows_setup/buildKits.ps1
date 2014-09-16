@@ -17,6 +17,9 @@ $MinGwFiles = "libgcc_s_dw2-1.dll",
               "..\mingw32\opt\bin\libwinpthread-1.dll",
               "libstdc++-6.dll"
 $KflogFiles = "kflog\Release\kflog.exe"
+$LicenseFiles = "$myDir\License.rtf",
+                "$myDir\license_beta.rtf"
+
 
 if ($env:QT_DIR -eq $NULL) 
 {
@@ -56,6 +59,7 @@ Remove-Item -Recurse $workDirectory/*
 $QtFiles | %{Copy-Item -Verbose $QtDirectory/bin/$_ $workDirectory}
 $MinGwFiles | %{Copy-Item -Verbose $MinGwDirectory/$_ $workDirectory}
 $KflogFiles | %{Copy-Item -Verbose $MakeDirectory/$_ $workDirectory}
+$LicenseFiles | %{Copy-Item -Verbose $_ $workDirectory}
 
 $zipfile = "$MakeDirectory/../../PortableKFLog.zip" 
 if ((test-path $zipfile))
