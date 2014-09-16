@@ -17,6 +17,7 @@
 #include "AirfieldSelectionList.h"
 #include "configmapelement.h"
 #include "kflogconfig.h"
+#include "map.h"
 #include "mapcalc.h"
 #include "mapcontents.h"
 #include "mapdefaults.h"
@@ -89,8 +90,8 @@ KFLogConfig::KFLogConfig(QWidget* parent) :
 
   __addPersonalTab();
   __addPathTab();
-  __addScaleTab();
   __addMapTab();
+  __addScaleTab();
   __addFlightTab();
   __addProjectionTab();
   __addAirfieldTab();
@@ -595,12 +596,35 @@ void KFLogConfig::slotSelectProjection( int index )
 
 void KFLogConfig::slotShowLowerLimit( int value )
 {
-  lLimitN->display( __setScaleValue( value ) );
+  // Check if upper limit is >= lower limit. Otherwise adjust upper limit too.
+  int upperlim = uLimit->value();
+  int lowerLim = lLimit->value();
+  int newValue = __setScaleValue( value );
+
+  lLimitN->display( newValue );
+
+  if( lowerLim > upperlim )
+    {
+      // Note, that calls the slot slotShowUpperLimit automatically
+      uLimit->setValue( lowerLim );
+    }
 }
 
 void KFLogConfig::slotShowUpperLimit( int value )
 {
-  uLimitN->display( __setScaleValue( value ) );
+  // Check if upper limit is >= lower limit. Otherwise adjust lower limit too.
+  int upperlim = uLimit->value();
+  int lowerlim = lLimit->value();
+  int newValue = __setScaleValue( value );
+
+  uLimitN->display( newValue );
+  emit scaleThresholdChanged( 4, newValue );
+
+  if( upperlim < lowerlim )
+    {
+      // Note,  that calls the slot slotShowLowerLimit automatically
+      lLimit->setValue( upperlim );
+    }
 }
 
 void KFLogConfig::slotShowSwitchScale( int value )
@@ -615,17 +639,23 @@ void KFLogConfig::slotShowWpLabel( int value )
 
 void KFLogConfig::slotShowReduceScaleA( int value )
 {
-  reduce1N->display( __setScaleValue( value ) );
+  int value2Show = __setScaleValue( value );
+  reduce1N->display( value2Show );
+  emit scaleThresholdChanged( 1, value2Show );
 }
 
 void KFLogConfig::slotShowReduceScaleB( int value )
 {
-  reduce2N->display( __setScaleValue( value ) );
+  int value2Show = __setScaleValue( value );
+  reduce2N->display( value2Show );
+  emit scaleThresholdChanged( 2, value2Show );
 }
 
 void KFLogConfig::slotShowReduceScaleC( int value )
 {
-  reduce3N->display( __setScaleValue( value ) );
+  int value2Show = __setScaleValue( value );
+  reduce3N->display( value2Show );
+  emit scaleThresholdChanged( 3, value2Show );
 }
 
 void KFLogConfig::slotDefaultProjection()
@@ -815,6 +845,9 @@ void KFLogConfig::__addMapTab()
 
   connect( elementSelect, SIGNAL( currentIndexChanged(int)),
            this, SLOT(slotSelectPrintElement(int)));
+
+  connect( this, SIGNAL(scaleThresholdChanged(int, int)),
+           configDrawWidget, SLOT(slotScaleThresholdChanged(int, int)) );
 
   connect( this, SIGNAL(saveConfig()), configDrawWidget, SLOT(slotOk()) );
   connect( this, SIGNAL(saveConfig()), configPrintWidget, SLOT(slotOk()) );
@@ -1138,6 +1171,11 @@ void KFLogConfig::__addProjectionTab()
 
 void KFLogConfig::__addScaleTab()
 {
+  extern Map *_globalMap;
+
+  qDebug() << "KFLogConfig::__addScaleTab(): phyDpix=" << _globalMap->physicalDpiX()
+           << "logDpix=" << _globalMap->physicalDpiX();
+
   int ll = _settings.value( "/Scale/LowerLimit", BORDER_L ).toInt();
   int ul = _settings.value( "/Scale/UpperLimit", BORDER_U ).toInt();
   int sw = _settings.value( "/Scale/SwitchScale", BORDER_S ).toInt();
@@ -1159,7 +1197,7 @@ void KFLogConfig::__addScaleTab()
   configLayout->addWidget( scalePage, 0, 1, 1, 2 );
 
   //----------------------------------------------------------------------------
-  QGroupBox* scaleRangeGroup = new QGroupBox( tr( "Scale Range" ) );
+  QGroupBox* scaleRangeGroup = new QGroupBox( tr( "Scale Range (Meters per Pixel)" ) );
 
   QLabel* lLimitText = new QLabel( tr( "Lower limit" ) + ":" );
 
@@ -1184,7 +1222,7 @@ void KFLogConfig::__addScaleTab()
   QLabel* uLimitText = new QLabel( tr( "Upper limit" ) + ":" );
 
   uLimit = new QSlider();
-  uLimit->setMinimum( 2 );
+  uLimit->setMinimum( 1 );
   uLimit->setMaximum( 105 );
   uLimit->setPageStep( 1 );
   uLimit->setOrientation( Qt::Horizontal );
@@ -1197,6 +1235,7 @@ void KFLogConfig::__addScaleTab()
 
   uLimit->setValue( __getScaleValue( ul ) );
   uLimitN->display( ul );
+  emit scaleThresholdChanged( 4, ul );
 
   QGridLayout* scaleRangeLayout = new QGridLayout();
   scaleRangeLayout->setSpacing( 10 );
@@ -1210,7 +1249,7 @@ void KFLogConfig::__addScaleTab()
   scaleRangeGroup->setLayout( scaleRangeLayout );
 
   //----------------------------------------------------------------------------
-  QGroupBox* scaleThresholdGroup = new QGroupBox( tr( "Scale Thresholds" ) );
+  QGroupBox* scaleThresholdGroup = new QGroupBox( tr( "Scale Thresholds (Meters per Pixel)" ) );
 
   QLabel* switchText = new QLabel( tr( "Use small icons" ) + ":" );
 
@@ -1266,6 +1305,7 @@ void KFLogConfig::__addScaleTab()
 
   reduce1->setValue( __getScaleValue( b1 ) );
   reduce1N->display( b1 );
+  emit scaleThresholdChanged( 1, b1 );
 
   QLabel* reduce2Text = new QLabel( tr( "Threshold" ) + " #2:" );
 
@@ -1285,6 +1325,7 @@ void KFLogConfig::__addScaleTab()
 
   reduce2->setValue( __getScaleValue( b2 ) );
   reduce2N->display( b2 );
+  emit scaleThresholdChanged( 2, b2 );
 
   QLabel* reduce3Text = new QLabel( tr( "Threshold" ) + " #3:" );
 
@@ -1304,6 +1345,7 @@ void KFLogConfig::__addScaleTab()
 
   reduce3->setValue( __getScaleValue( b3 ) );
   reduce3N->display( b3 );
+  emit scaleThresholdChanged( 3, b3 );
 
   QGridLayout* scaleThresholdLayout = new QGridLayout();
   scaleThresholdLayout->setSpacing( 10 );
@@ -1996,13 +2038,22 @@ void KFLogConfig::slotSelectDefaultCatalog( int item )
 
 void KFLogConfig::slotSearchDefaultWaypoint()
 {
-  QString fileName = QFileDialog::getOpenFileName(
-                         this,
-                         tr("Select a waypoint catalog"),
-                         waypointPathE->text(),
-                         tr("KFLog Catalogs (*.kflogwp *.KFLOGWP)"));
+  QString filter;
+  filter.append(tr("All formats") + " (WELT2000.TXT *.da4 *.DA4 *.dat *.DAT *.dbt *.DBT *.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
+  filter.append(tr("KFLog") + " (*.kflogwp *.KFLOGWP);;");
+  filter.append(tr("Cumulus") + " (*.kwp *.KWP);;");
+  filter.append(tr("Cambridge") + " (*.dat *.DAT);;");
+  filter.append(tr("Filser txt") + " (*.txt *.TXT);;");
+  filter.append(tr("Filser da4") + " (*.da4 *.DA4);;");
+  filter.append(tr("SeeYou") + " (*.cup *.CUP);;");
+  filter.append(tr("Volkslogger") + " (*.dbt *.DBT);;" );
+  filter.append(tr("Welt2000") + " (WELT2000.TXT)");
 
-  if( ! fileName.isEmpty() && fileName.endsWith(".kflogwp", Qt::CaseInsensitive) )
+  QString fileName = QFileDialog::getOpenFileName( this,
+						   tr("Select a default catalog"),
+						   waypointPathE->text(),
+						   filter );
+  if( ! fileName.isEmpty() )
     {
       catalogPathE->setText( fileName );
     }

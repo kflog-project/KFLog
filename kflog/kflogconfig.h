@@ -12,7 +12,6 @@
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
 **
 ***********************************************************************/
 
@@ -90,7 +89,7 @@ class KFLogConfig : public QDialog
   /** */
   void scaleChanged(int min, int max);
 
-  /** Emitted, if the ok button was pressed and all new data have been saved. */
+  /** Emitted, if the Ok button was pressed and all new data have been saved. */
   void configOk();
 
   /** Emitted to subwidgets that their configuration should be saved. */
@@ -125,9 +124,18 @@ class KFLogConfig : public QDialog
   void downloadOpenAipAirfields( bool askUser );
 
   /**
-   * Emmitted, if the map elements should be set to their default values.
+   * Emitted, if the map elements should be set to their default values.
    */
   void setMapElements2Default();
+
+  /**
+   * Emitted, if the map scale threshold is changed.
+   *
+   * \param thresholdNumber The number of the threshold, which is changed
+   *
+   * \param newValue The new threshold value
+   */
+  void scaleThresholdChanged( int thresholdNumber, int newValue );
 
  public slots:
 

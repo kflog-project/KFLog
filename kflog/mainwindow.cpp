@@ -1059,20 +1059,6 @@ void MainWindow::saveOptions()
   _settings.setValue( "/MainWindow/State", saveState() );
   _settings.setValue( "/MainWindow/ShowToolbar", toolBar->isVisible() );
   _settings.setValue( "/MainWindow/ShowStatusbar", statusBar()->isVisible() );
-
-  if( _settings.value("/Waypoints/DefaultWaypointCatalog", KFLogConfig::LastUsed).toInt() ==
-      KFLogConfig::LastUsed && waypointTreeView->getCurrentCatalog() != static_cast<WaypointCatalog *> (0) )
-    {
-      // Only write the path, if a waypoint-catalog is opened.
-      _settings.setValue( "/Waypoints/DefaultCatalogName",
-                          waypointTreeView->getCurrentCatalog()->path );
-    }
-  else
-    {
-      // Reset the path, if no catalog is opened. Otherwise the next startup
-      // tries to open the last used catalog.
-      _settings.setValue( "/Waypoints/DefaultCatalogName", "" );
-    }
 }
 
 void MainWindow::slotCenterTo()
@@ -1866,7 +1852,7 @@ void MainWindow::slotShowAbout()
           "KFLog %1, compiled at %2 with QT %3<br><br>"
           "Homepage: <a href=\"http://www.kflog.org/kflog/\">www.kflog.org/kflog/</a><br><br>"
           "GitHub Software Repository: <a href=\"https://github.com/kflog-project/KFLog\">https://github.com/kflog-project/KFLog</a><br><br>"
-          "Last <a href=\"https://github.com/kflog-project/KFLog/blob/master/ChangeLog\">ChangeLog</a><br><br>"
+          "ChangeLog <a href=\"https://github.com/kflog-project/KFLog/blob/%1/ChangeLog\">%1</a><br><br>"
           "Report bugs to: <a href=\"https://github.com/kflog-project/KFLog/issues\">kflog-project/KFLog/issues</a><br><br>"
           "Published under the <a href=\"http://www.gnu.org/licenses/licenses.html#GPL\">GPL</a>"
           "</html>" ).arg( QCoreApplication::applicationVersion() )

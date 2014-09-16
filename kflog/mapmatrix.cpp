@@ -2,17 +2,15 @@
  **
  **   mapmatrix.cpp
  **
- **   This file is part of KFLog4.
+ **   This file is part of KFLog.
  **
  ************************************************************************
  **
  **   Copyright (c):  2001      by Heiner Lamprecht
- **                   2010-2011 by Axel Pauli
+ **                   2010-2014 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
- **
- **   $Id$
  **
  ***********************************************************************/
 
@@ -24,8 +22,8 @@
 #include "mapdefaults.h"
 
 // Projektions-Massstab
-// 10 Meter Höhe pro Pixel ist die stärkste Vergröerung.
-// Bei dieser Vergröerung erfolgt die eigentliche Projektion
+// 5 Meter Auflösung pro Pixel ist die stärkste Vergrösserung.
+// Bei dieser Vergrösserung erfolgt die eigentliche Projektion
 #define MAX_SCALE double(BORDER_L)
 #define MIN_SCALE double(BORDER_U)
 
@@ -373,6 +371,8 @@ QPoint MapMatrix::getHomeCoord() const
 
 void MapMatrix::createMatrix( const QSize& newSize )
 {
+  qDebug() << "MapMatrix::createMatrix(): size=" << newSize;
+
   mapViewSize = newSize;
 
   const QPoint tempPoint( wgsToMap( mapCenterLat, mapCenterLon ) );
@@ -524,24 +524,24 @@ void MapMatrix::slotMoveMapSE() { MATRIX_MOVE( MapMatrix::South | MapMatrix::Eas
 
 void MapMatrix::slotZoomIn( double factor )
 {
-  if( cScale <= MAX_SCALE )
+  if( cScale <= scaleBorders[LowerLimit] )
     {
       return;
     }
 
-  cScale = qMax( (cScale / (1.25 * factor)), MAX_SCALE );
+  cScale = qMax( (cScale / (1.25 * factor)), double(scaleBorders[LowerLimit]));
   createMatrix( mapViewSize );
   emit matrixChanged();
 }
 
 void MapMatrix::slotZoomOut( double factor )
 {
-  if( cScale >= MIN_SCALE )
+  if( cScale >= scaleBorders[UpperLimit] )
     {
       return;
     }
 
-  cScale = qMin( (cScale * 1.25 * factor), MIN_SCALE );
+  cScale = qMin( (cScale * 1.25 * factor), double(scaleBorders[UpperLimit]));
   createMatrix( mapViewSize );
   emit matrixChanged();
 }

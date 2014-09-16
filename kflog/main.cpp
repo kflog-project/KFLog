@@ -2,17 +2,15 @@
 **
 **   main.cpp
 **
-**   This file is part of KFLog4.
+**   This file is part of KFLog.
 **
 ************************************************************************
 **
 **   Copyright (c):  2001      by Heiner Lamprecht
-**                   2010-2013 by Axel Pauli
+**                   2010-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -29,7 +27,7 @@
  *
  * KFLog is built with the release 4.8.x.
  *
- * \date 2001-2013
+ * \date 2001-2014
  *
  * \version $Id$
  */
@@ -54,27 +52,6 @@ MainWindow *_mainWindow = static_cast<MainWindow *> (0);
  */
 QSettings _settings( QSettings::UserScope, "KFLog", "kflog" );
 
-/**
- * List of command line-options
- */
-
-//static KCmdLineOptions options[] =
-//{
-//  { "e", 0, 0 },
-//  { "export-png ", I18N_NOOP("export to png graphics file"), "file:out.png" },
-//  { "w", 0, 0 },
-//  { "width ", I18N_NOOP("width of pixmap"), "640" },
-//  { "h", 0, 0 },
-//  { "height ", I18N_NOOP("height of pixmap"), "480" },
-//  { "c", 0, 0 },
-//  { "nocomment", I18N_NOOP("suppress comment"), 0 },
-//  { "b", 0, 0 },
-//  { "batch", I18N_NOOP("quit after export (batch mode)"), 0 },
-//  { "waypoints ", I18N_NOOP("waypoint-catalog to open"), 0 },
-//  { "+[File]", I18N_NOOP("igc-file to open"), 0 },
-//  { 0, 0, 0 }
-//};
-
 /*************************************************************************
  *
  * Okay, now let's start :-)
@@ -92,10 +69,8 @@ int main(int argc, char **argv)
   // Set the compile date of the application.
   _settings.setValue( "/Main/CompileDate", __DATE__ );
 
-#ifndef _WIN32
   // Reset the locale that is used for number formatting to "C" locale.
-  setenv( "LC_NUMERIC", "C", 1 );
-#endif
+  QLocale::setDefault(QLocale::C);
 
   // Make sure the application uses utf8 encoding for translated widgets
   QTextCodec::setCodecForTr( QTextCodec::codecForName ("UTF-8") );
@@ -185,26 +160,13 @@ int main(int argc, char **argv)
         }
     }
 
-  if( !waypointsOptionArg.isEmpty() )
+  if( ! waypointsOptionArg.isEmpty() )
     {
-      qWarning() << "WaypointCatalog specified at startup"
-                 << waypointsOptionArg;
+      qDebug() << "WaypointCatalog"
+               << waypointsOptionArg
+               << "specified at startup, trying to open it.";
 
       _mainWindow->slotSetWaypointCatalog( waypointsOptionArg );
-    }
-  else
-    {
-      // read the user configuration
-      int useCatalog = _settings.value("/Waypoints/DefaultWaypointCatalog", KFLogConfig::LastUsed ).toInt();
-
-      switch( useCatalog )
-        {
-        case KFLogConfig::LastUsed:
-          // no break;
-        case KFLogConfig::Specific:
-          waypointsOptionArg = _settings.value( "/Waypoints/DefaultCatalogName", "" ).toString();
-          _mainWindow->slotSetWaypointCatalog( waypointsOptionArg );
-        }
     }
 
   if( fileOpen )

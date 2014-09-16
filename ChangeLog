@@ -2,20 +2,36 @@
 #
 # KFLog Changelog file
 #
+# Please make entries in the following way:
+#
+# 1. Add every change in a single paragrah beginning with an asterix.
+#
+# 2. Add as last line date, author and email of the worker under your change
+#    entries.
+#
 ################################################################################
-2014-09-14 Peter Simon <psimon.kflog@gmail.com>
+
+  * Issue #27 fixed. Threshold #1.. should be named in Map Elements.
+
+2014-09-16 Axel Pauli <kflog.cumulus@gmail.com>
+
+  * Issue #24 fixed. Bring airfield symbols on top of the image stack.
+  
+  * Issue #27 fixed. Map Scale Settings limits and units.
+
+2014-09-15 Axel Pauli <kflog.cumulus@gmail.com>
 
   * License.rtf and License_beta.rtf updated for next Windows shipment
 
   * Issue #22 partially fixed. Forest areas are now shown without attracting
     attention. Forest areas still are inaccurate, caused by external map data.
 
-2014-09-14
+2014-09-14 Peter Simon <psimon.kflog@gmail.com>
 
   * Issue #26 partly fixed. Added a message box and a tool tip text to inform the
     user about the consequences of the defaults button press.
 
-2014-09-15 Axel Pauli <kflog.cumulus@gmail.com>
+2014-09-14 Axel Pauli <kflog.cumulus@gmail.com>
 
   * Issue #20 fixed. Added a Eula Tab in the 'About KFLog' widget, which shows
     the GNU GPL V2 licence text.
@@ -50,7 +66,7 @@
 
   * Issue #21 fixed. Enable opening multiple files.
 
-2014-08-19 Peter Simon
+2014-08-19 Peter Simon <psimon.kflog@gmail.com>
 
   * Map configuration extensions introduced for airspace FIR.
 

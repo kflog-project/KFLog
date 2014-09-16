@@ -2,7 +2,7 @@
 **
 **   configmapelement.h
 **
-**   This file is part of KFLog4.
+**   This file is part of KFLog.
 **
 ************************************************************************
 **
@@ -11,8 +11,6 @@
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -90,6 +88,16 @@ class ConfigMapElement : public QWidget
   void slotSetForth();
   /** */
   void slotOk();
+
+  /**
+   * Called, if the map scale threshold is changed. It updates the threshold
+   * value in this widget.
+   *
+   * \param thresholdNumber The number of the threshold, which is changed
+   *
+   * \param newValue The new threshold value
+   */
+  void slotScaleThresholdChanged( int thresholdNumber, int newValue );
 
   private slots:
 
@@ -273,6 +281,11 @@ class ConfigMapElement : public QWidget
   QCheckBox* border2;
   QCheckBox* border3;
   QCheckBox* border4;
+
+  QString checkBox1Label;
+  QString checkBox2Label;
+  QString checkBox3Label;
+  QString checkBox4Label;
 
   QColor border1Color;
   QPushButton* border1ColorButton;

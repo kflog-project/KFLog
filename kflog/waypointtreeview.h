@@ -1,22 +1,18 @@
 /***************************************************************************
-                          waypointtreeview.h
+
+   waypointtreeview.h
+
+   This file is part of KFLog.
+
                              -------------------
     begin                : Fri Nov 30 2001
     copyright            : (C) 2001 by Harald Maier
-                               2011 by Axel Pauli
+                               2011-2014 by Axel Pauli
 
-    email                : harry@kflog.org
+    This file is distributed under the terms of the General Public
+    License. See the file COPYING for more information.
 
 ***************************************************************************/
-
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
 
 /**
  * \class WaypointTreeView
@@ -27,7 +23,7 @@
  *
  * Waypoint tree widget for display of waypoints and their management.
  *
- * \date 2001-2011
+ * \date 2001-2014
  *
  * \version $Id$
  */
@@ -93,6 +89,13 @@ private: // Private methods
   /** Update label about the number of waypoint items. */
   void updateWpListItems();
 
+  /**
+   * Checks, if a default waypoint catalog is defined.
+   *
+   * \return true in case of success otherwise false
+   */
+  bool existsDefaultWaypointCatalog();
+
  private: // Private attributes
 
   /** Combobox with waypoint catalogs */
@@ -110,6 +113,7 @@ private: // Private methods
   QMenu *catalogMoveSubMenu;
 
   /** actions of menu items */
+  QAction *ActionWaypointOpenDefaultCatalog;
   QAction *ActionWaypointCatalogSave;
   QAction *ActionWaypointCatalogSaveAs;
   QAction *ActionWaypointCatalogImport;
@@ -161,6 +165,7 @@ private: // Private methods
   /** create a new catalog */
   void slotNewWaypointCatalog();
   /** open a catalog and set it active */
+  void slotOpenDefaultWaypointCatalog();
   void slotOpenWaypointCatalog();
   void slotSaveWaypointCatalog();
   void slotSaveWaypointCatalogAs();
