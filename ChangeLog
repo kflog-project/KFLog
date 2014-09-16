@@ -12,6 +12,9 @@
 ################################################################################
 
   * Issue #27 fixed. Threshold #1.. should be named in Map Elements.
+  
+  * Issue #7 fixed. Two different places to select a waypoint catalog with
+    different file types supported.
 
 2014-09-16 Axel Pauli <kflog.cumulus@gmail.com>
 
