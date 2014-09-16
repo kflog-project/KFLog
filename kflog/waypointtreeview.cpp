@@ -326,10 +326,9 @@ void WaypointTreeView::slotMove2Catalog( QAction* action )
 
 void WaypointTreeView::slotOpenDefaultWaypointCatalog()
 {
-  if( existsDefaultWaypointCatalog() == true )
+  if( KFLogConfig::existsDefaultWaypointCatalog() == true )
     {
-      QString catalog = _settings.value("/Waypoints/DefaultCatalogName",
-                                        "").toString();
+      QString catalog = KFLogConfig::getDefaultWaypointCatalog();
       openCatalog( catalog );
     }
 }
@@ -366,7 +365,7 @@ void WaypointTreeView::slotShowWaypointMenu( QTreeWidgetItem* item, const QPoint
   Q_UNUSED( position )
 
   // enable and disable the correct menu items
-  ActionWaypointOpenDefaultCatalog->setEnabled( existsDefaultWaypointCatalog() );
+  ActionWaypointOpenDefaultCatalog->setEnabled( KFLogConfig::existsDefaultWaypointCatalog() );
   ActionWaypointCatalogSave->setEnabled(waypointCatalogs.count() && currentWaypointCatalog->modified);
   ActionWaypointCatalogSaveAs->setEnabled(waypointCatalogs.count() > 0);
   ActionWaypointCatalogClose->setEnabled( waypointCatalogs.count() > 0 );
@@ -1363,6 +1362,9 @@ void WaypointTreeView::openCatalog( QString &catalog )
       catalogBox->addItem( wc->path );
       catalogBox->setCurrentIndex( newItem );
 
+      // store catalog as last opened one.
+      KFLogConfig::setLastUsedWaypointCatalog( catalog );
+
       QFile f( catalog );
 
       if( f.exists() )
@@ -1395,22 +1397,6 @@ void WaypointTreeView::slotSetWaypointCatalogName( QString& catalog )
 WaypointCatalog *WaypointTreeView::getCurrentCatalog()
 {
   return currentWaypointCatalog;
-}
-
-bool WaypointTreeView::existsDefaultWaypointCatalog()
-{
-  int catalogType     = _settings.value("/Waypoints/DefaultWaypointCatalog",
-                                        KFLogConfig::LastUsed).toInt();
-  QString catalogName = _settings.value("/Waypoints/DefaultCatalogName",
-                                        "").toString();
-
-  if( catalogType != KFLogConfig::Empty && catalogName.isEmpty() == false &&
-      QFileInfo(catalogName).exists() )
-    {
-      return true;
-    }
-
-  return false;
 }
 
 void WaypointTreeView::slotAddCatalog(WaypointCatalog *w)

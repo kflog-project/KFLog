@@ -305,9 +305,27 @@ void KFLogConfig::slotOk()
   _settings.setValue( "/PersonalData/SurName", surNameE->text() );
   _settings.setValue( "/PersonalData/Birthday", dateOfBirthE->text() );
 
-  _settings.setValue( "/Waypoints/DefaultWaypointCatalog",
-                      waypointButtonGroup->id(waypointButtonGroup->checkedButton()) );
-  _settings.setValue( "/Waypoints/DefaultCatalogName", catalogPathE->text() );
+  int newCatSelection = waypointButtonGroup->id(waypointButtonGroup->checkedButton());
+  int oldCatSelection = _settings.value("/Waypoints/DefaultWaypointCatalog",
+                                        LastUsed).toInt();
+
+  _settings.setValue( "/Waypoints/DefaultWaypointCatalog", newCatSelection );
+
+  if( newCatSelection == Empty )
+    {
+      // Empty catalog
+      _settings.setValue( "/Waypoints/DefaultCatalogName", "" );
+    }
+  else if( newCatSelection == LastUsed && oldCatSelection != LastUsed )
+    {
+      // Last used catalog
+      _settings.setValue( "/Waypoints/DefaultCatalogName", "" );
+    }
+  else if( newCatSelection == Specific )
+    {
+      // Special catalog selected by the user
+      _settings.setValue( "/Waypoints/DefaultCatalogName", catalogPathE->text() );
+    }
 
   _settings.setValue( "/Airspace/Countries",
                       asOpenAipCountries->text().trimmed().toLower() );
@@ -1921,6 +1939,7 @@ void KFLogConfig::__addWaypointTab()
   catalogPathE->setText( catalogName );
 
   catalogPathSearch = new QPushButton();
+  catalogPathSearch->setToolTip( tr("Press button to make a specific catalog selection.") );
   catalogPathSearch->setIcon( _mainWindow->getPixmap( "kde_fileopen_16.png" ) );
   catalogPathSearch->setMinimumWidth( catalogPathSearch->sizeHint().width() + 5 );
   catalogPathSearch->setMinimumHeight( catalogPathSearch->sizeHint().height() + 5 );
@@ -2019,8 +2038,17 @@ void KFLogConfig::__addUnitTab()
 
 void KFLogConfig::slotDefaultWaypoint()
 {
-  catalogPathE->setText(QString::null);
-  slotSelectDefaultCatalog(LastUsed);
+  if( _settings.value("/Waypoints/DefaultWaypointCatalog", LastUsed).toInt() != LastUsed )
+    {
+      catalogPathE->setText("");
+    }
+  else
+    {
+      // restore last catalog
+      catalogPathE->setText( _settings.value("/Waypoints/DefaultCatalogName", "").toString() );
+    }
+
+  slotSelectDefaultCatalog( LastUsed );
 }
 
 void KFLogConfig::slotSelectDefaultCatalog( int item )
@@ -2451,4 +2479,44 @@ void KFLogConfig::slotSetMapElements2Default()
     }
 
   emit setMapElements2Default();
+}
+
+bool KFLogConfig::existsDefaultWaypointCatalog()
+{
+  int catalogType = _settings.value("/Waypoints/DefaultWaypointCatalog",
+                                     LastUsed).toInt();
+  QString catalogName = _settings.value("/Waypoints/DefaultCatalogName",
+                                        "").toString();
+
+  if( catalogType != KFLogConfig::Empty && catalogName.isEmpty() == false &&
+      QFileInfo(catalogName).exists() )
+    {
+      return true;
+    }
+
+  return false;
+}
+
+QString KFLogConfig::getDefaultWaypointCatalog()
+{
+  return _settings.value("/Waypoints/DefaultCatalogName", "").toString();
+}
+
+/**
+ * Sets the passed catalog as last used catalog, if the user has selected
+ * that in its settings.
+ *
+ * \param catalog Path to catalog.
+ */
+void KFLogConfig::setLastUsedWaypointCatalog( QString& catalog )
+{
+  int catalogType = _settings.value("/Waypoints/DefaultWaypointCatalog",
+                                     LastUsed).toInt();
+
+  if( catalogType != LastUsed )
+    {
+      return;
+    }
+
+  _settings.setValue( "/Waypoints/DefaultCatalogName", catalog );
 }

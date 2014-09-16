@@ -89,13 +89,6 @@ private: // Private methods
   /** Update label about the number of waypoint items. */
   void updateWpListItems();
 
-  /**
-   * Checks, if a default waypoint catalog is defined.
-   *
-   * \return true in case of success otherwise false
-   */
-  bool existsDefaultWaypointCatalog();
-
  private: // Private attributes
 
   /** Combobox with waypoint catalogs */

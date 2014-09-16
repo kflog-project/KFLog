@@ -80,6 +80,28 @@ class KFLogConfig : public QDialog
 
   static QByteArray rot47( const QByteArray& input );
 
+  /**
+   * Checks, if a default waypoint catalog is defined.
+   *
+   * \return true in case of success otherwise false
+   */
+  static bool existsDefaultWaypointCatalog();
+
+  /**
+   * Gets the path to the default waypoint catalog.
+   *
+   * \return Path to catalog or empty string, if catalog is undefined.
+   */
+  static QString getDefaultWaypointCatalog();
+
+  /**
+   * Sets the passed catalog as last used catalog, if the user has selected
+   * that in its settings.
+   *
+   * \param catalog Path to catalog.
+   */
+  static void setLastUsedWaypointCatalog( QString& catalog );
+
  protected:
 
   void showEvent( QShowEvent *event );
