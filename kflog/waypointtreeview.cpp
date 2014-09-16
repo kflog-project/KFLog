@@ -1,32 +1,23 @@
 /***************************************************************************
-**                     waypointtreeview.cpp
-**
-**   This file is part of KFLog.
-**
-****************************************************************************
 
+   waypointtreeview.cpp
+
+   This file is part of KFLog.
+
+                             -------------------
     begin                : Fri Nov 30 2001
     copyright            : (C) 2001 by Harald Maier
                                2011-2014 by Axel Pauli
 
-    email                : harry@kflog.org
-
-    $Id$
+    This file is distributed under the terms of the General Public
+    License. See the file COPYING for more information.
 
 ***************************************************************************/
-
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
 
 #include <QtGui>
 
 #include "airfield.h"
+#include "kflogconfig.h"
 #include "map.h"
 #include "mapcalc.h"
 #include "mapconfig.h"
@@ -191,6 +182,12 @@ void WaypointTreeView::createMenu()
                                              this,
                                              SLOT(slotNewWaypointCatalog()) );
 
+  ActionWaypointOpenDefaultCatalog =
+    wayPointMenu->addAction( _mainWindow->getPixmap("kde_fileopen_16.png"),
+					       QObject::tr("&Open default catalog"),
+					       this,
+					       SLOT(slotOpenDefaultWaypointCatalog()) );
+
   wayPointMenu->addAction( _mainWindow->getPixmap("kde_fileopen_16.png"),
                                              QObject::tr("&Open catalog"),
                                              this,
@@ -327,6 +324,16 @@ void WaypointTreeView::slotMove2Catalog( QAction* action )
   emit waypointCatalogChanged(currentWaypointCatalog);
 }
 
+void WaypointTreeView::slotOpenDefaultWaypointCatalog()
+{
+  if( existsDefaultWaypointCatalog() == true )
+    {
+      QString catalog = _settings.value("/Waypoints/DefaultCatalogName",
+                                        "").toString();
+      openCatalog( catalog );
+    }
+}
+
 /** open a catalog and set it active */
 void WaypointTreeView::slotOpenWaypointCatalog()
 {
@@ -358,7 +365,8 @@ void WaypointTreeView::slotShowWaypointMenu( QTreeWidgetItem* item, const QPoint
 {
   Q_UNUSED( position )
 
-  //enable and disable the correct menu items
+  // enable and disable the correct menu items
+  ActionWaypointOpenDefaultCatalog->setEnabled( existsDefaultWaypointCatalog() );
   ActionWaypointCatalogSave->setEnabled(waypointCatalogs.count() && currentWaypointCatalog->modified);
   ActionWaypointCatalogSaveAs->setEnabled(waypointCatalogs.count() > 0);
   ActionWaypointCatalogClose->setEnabled( waypointCatalogs.count() > 0 );
@@ -1373,7 +1381,7 @@ void WaypointTreeView::openCatalog( QString &catalog )
 /* slot to set name of catalog and open it without a file selection dialog */
 void WaypointTreeView::slotSetWaypointCatalogName( QString& catalog )
 {
-  if( !catalog.isEmpty() )
+  if( ! catalog.isEmpty() )
     {
       openCatalog( catalog );
     }
@@ -1387,6 +1395,22 @@ void WaypointTreeView::slotSetWaypointCatalogName( QString& catalog )
 WaypointCatalog *WaypointTreeView::getCurrentCatalog()
 {
   return currentWaypointCatalog;
+}
+
+bool WaypointTreeView::existsDefaultWaypointCatalog()
+{
+  int catalogType     = _settings.value("/Waypoints/DefaultWaypointCatalog",
+                                        KFLogConfig::LastUsed).toInt();
+  QString catalogName = _settings.value("/Waypoints/DefaultCatalogName",
+                                        "").toString();
+
+  if( catalogType != KFLogConfig::Empty && catalogName.isEmpty() == false &&
+      QFileInfo(catalogName).exists() )
+    {
+      return true;
+    }
+
+  return false;
 }
 
 void WaypointTreeView::slotAddCatalog(WaypointCatalog *w)

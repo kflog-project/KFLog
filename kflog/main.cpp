@@ -160,26 +160,13 @@ int main(int argc, char **argv)
         }
     }
 
-  if( !waypointsOptionArg.isEmpty() )
+  if( ! waypointsOptionArg.isEmpty() )
     {
-      qWarning() << "WaypointCatalog specified at startup"
-                 << waypointsOptionArg;
+      qDebug() << "WaypointCatalog"
+               << waypointsOptionArg
+               << "specified at startup, trying to open it.";
 
       _mainWindow->slotSetWaypointCatalog( waypointsOptionArg );
-    }
-  else
-    {
-      // read the user configuration
-      int useCatalog = _settings.value("/Waypoints/DefaultWaypointCatalog", KFLogConfig::LastUsed ).toInt();
-
-      switch( useCatalog )
-        {
-        case KFLogConfig::LastUsed:
-          // no break;
-        case KFLogConfig::Specific:
-          waypointsOptionArg = _settings.value( "/Waypoints/DefaultCatalogName", "" ).toString();
-          _mainWindow->slotSetWaypointCatalog( waypointsOptionArg );
-        }
     }
 
   if( fileOpen )

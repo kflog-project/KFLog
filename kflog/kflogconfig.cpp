@@ -17,6 +17,7 @@
 #include "AirfieldSelectionList.h"
 #include "configmapelement.h"
 #include "kflogconfig.h"
+#include "map.h"
 #include "mapcalc.h"
 #include "mapcontents.h"
 #include "mapdefaults.h"
@@ -1170,6 +1171,11 @@ void KFLogConfig::__addProjectionTab()
 
 void KFLogConfig::__addScaleTab()
 {
+  extern Map *_globalMap;
+
+  qDebug() << "KFLogConfig::__addScaleTab(): phyDpix=" << _globalMap->physicalDpiX()
+           << "logDpix=" << _globalMap->physicalDpiX();
+
   int ll = _settings.value( "/Scale/LowerLimit", BORDER_L ).toInt();
   int ul = _settings.value( "/Scale/UpperLimit", BORDER_U ).toInt();
   int sw = _settings.value( "/Scale/SwitchScale", BORDER_S ).toInt();
@@ -2032,13 +2038,22 @@ void KFLogConfig::slotSelectDefaultCatalog( int item )
 
 void KFLogConfig::slotSearchDefaultWaypoint()
 {
-  QString fileName = QFileDialog::getOpenFileName(
-                         this,
-                         tr("Select a waypoint catalog"),
-                         waypointPathE->text(),
-                         tr("KFLog Catalogs (*.kflogwp *.KFLOGWP)"));
+  QString filter;
+  filter.append(tr("All formats") + " (WELT2000.TXT *.da4 *.DA4 *.dat *.DAT *.dbt *.DBT *.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
+  filter.append(tr("KFLog") + " (*.kflogwp *.KFLOGWP);;");
+  filter.append(tr("Cumulus") + " (*.kwp *.KWP);;");
+  filter.append(tr("Cambridge") + " (*.dat *.DAT);;");
+  filter.append(tr("Filser txt") + " (*.txt *.TXT);;");
+  filter.append(tr("Filser da4") + " (*.da4 *.DA4);;");
+  filter.append(tr("SeeYou") + " (*.cup *.CUP);;");
+  filter.append(tr("Volkslogger") + " (*.dbt *.DBT);;" );
+  filter.append(tr("Welt2000") + " (WELT2000.TXT)");
 
-  if( ! fileName.isEmpty() && fileName.endsWith(".kflogwp", Qt::CaseInsensitive) )
+  QString fileName = QFileDialog::getOpenFileName( this,
+						   tr("Select a default catalog"),
+						   waypointPathE->text(),
+						   filter );
+  if( ! fileName.isEmpty() )
     {
       catalogPathE->setText( fileName );
     }
