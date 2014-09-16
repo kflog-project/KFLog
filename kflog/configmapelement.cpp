@@ -2,7 +2,7 @@
 **
 **   configmapelement.cpp
 **
-**   This file is part of KFLog4.
+**   This file is part of KFLog.
 **
 ************************************************************************
 **
@@ -11,8 +11,6 @@
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -37,14 +35,12 @@ ConfigMapElement::ConfigMapElement( QWidget* parent, bool configMap ) :
    * or print item configuration. In the print item configuration all border2
    * and border3 widgets are not visible.
    */
-  QString checkBox1Label;
-  QString checkBox2Label;
-
   if( configureMap )
     {
       itemPrefix = "/";
       checkBox1Label = tr( "Threshold #1" );
       checkBox2Label = tr( "Threshold #2" );
+      checkBox3Label = tr( "Threshold #3" );
       __readMapItems();
     }
   else
@@ -55,12 +51,14 @@ ConfigMapElement::ConfigMapElement( QWidget* parent, bool configMap ) :
       __readPrintItems();
     }
 
+  checkBox4Label = tr( "Scale limit" ) ;
+
   __createBrushStyleIcons();
 
   border1 = new QCheckBox( checkBox1Label );
   border2 = new QCheckBox( checkBox2Label );
-  border3 = new QCheckBox( tr( "Threshold #3" ) );
-  border4 = new QCheckBox( tr( "Scale limit" ) );
+  border3 = new QCheckBox( checkBox3Label );
+  border4 = new QCheckBox( checkBox4Label );
 
   connect(border1, SIGNAL(toggled(bool)), SLOT(slotToggleFirst(bool)));
   connect(border2, SIGNAL(toggled(bool)), SLOT(slotToggleSecond(bool)));
@@ -2686,4 +2684,34 @@ void ConfigMapElement::__createBrushStyleIcons()
       painter.setBrush( QBrush( Qt::black, brushStyles[i] ));
       painter.drawRect( 2, 2, iconSize-4, iconSize-4 );
     }
+}
+
+void ConfigMapElement::slotScaleThresholdChanged( int thresholdNumber, int newValue )
+{
+  if( configureMap == false )
+    {
+      return;
+    }
+
+  switch( thresholdNumber )
+  {
+    case 1:
+      border1->setText( QString("%1 (%2 m/px)").arg(checkBox1Label).arg(newValue));
+      break;
+
+    case 2:
+      border2->setText( QString("%1 (%2 m/px)").arg(checkBox2Label).arg(newValue));
+      break;
+
+    case 3:
+      border3->setText( QString("%1 (%2 m/px)").arg(checkBox3Label).arg(newValue));
+      break;
+
+    case 4:
+      border4->setText( QString("%1 (%2 m/px)").arg(checkBox4Label).arg(newValue));
+      break;
+
+    default:
+      break;
+  }
 }

@@ -11,6 +11,10 @@
 #
 ################################################################################
 
+  * Issue #27 fixed. Threshold #1.. should be named in Map Elements.
+
+2014-09-16 Axel Pauli <kflog.cumulus@gmail.com>
+
   * Issue #24 fixed. Bring airfield symbols on top of the image stack.
   
   * Issue #27 fixed. Map Scale Settings limits and units.

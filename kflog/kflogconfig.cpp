@@ -89,8 +89,8 @@ KFLogConfig::KFLogConfig(QWidget* parent) :
 
   __addPersonalTab();
   __addPathTab();
-  __addScaleTab();
   __addMapTab();
+  __addScaleTab();
   __addFlightTab();
   __addProjectionTab();
   __addAirfieldTab();
@@ -617,6 +617,7 @@ void KFLogConfig::slotShowUpperLimit( int value )
   int newValue = __setScaleValue( value );
 
   uLimitN->display( newValue );
+  emit scaleThresholdChanged( 4, newValue );
 
   if( upperlim < lowerlim )
     {
@@ -637,17 +638,23 @@ void KFLogConfig::slotShowWpLabel( int value )
 
 void KFLogConfig::slotShowReduceScaleA( int value )
 {
-  reduce1N->display( __setScaleValue( value ) );
+  int value2Show = __setScaleValue( value );
+  reduce1N->display( value2Show );
+  emit scaleThresholdChanged( 1, value2Show );
 }
 
 void KFLogConfig::slotShowReduceScaleB( int value )
 {
-  reduce2N->display( __setScaleValue( value ) );
+  int value2Show = __setScaleValue( value );
+  reduce2N->display( value2Show );
+  emit scaleThresholdChanged( 2, value2Show );
 }
 
 void KFLogConfig::slotShowReduceScaleC( int value )
 {
-  reduce3N->display( __setScaleValue( value ) );
+  int value2Show = __setScaleValue( value );
+  reduce3N->display( value2Show );
+  emit scaleThresholdChanged( 3, value2Show );
 }
 
 void KFLogConfig::slotDefaultProjection()
@@ -837,6 +844,9 @@ void KFLogConfig::__addMapTab()
 
   connect( elementSelect, SIGNAL( currentIndexChanged(int)),
            this, SLOT(slotSelectPrintElement(int)));
+
+  connect( this, SIGNAL(scaleThresholdChanged(int, int)),
+           configDrawWidget, SLOT(slotScaleThresholdChanged(int, int)) );
 
   connect( this, SIGNAL(saveConfig()), configDrawWidget, SLOT(slotOk()) );
   connect( this, SIGNAL(saveConfig()), configPrintWidget, SLOT(slotOk()) );
@@ -1219,6 +1229,7 @@ void KFLogConfig::__addScaleTab()
 
   uLimit->setValue( __getScaleValue( ul ) );
   uLimitN->display( ul );
+  emit scaleThresholdChanged( 4, ul );
 
   QGridLayout* scaleRangeLayout = new QGridLayout();
   scaleRangeLayout->setSpacing( 10 );
@@ -1288,6 +1299,7 @@ void KFLogConfig::__addScaleTab()
 
   reduce1->setValue( __getScaleValue( b1 ) );
   reduce1N->display( b1 );
+  emit scaleThresholdChanged( 1, b1 );
 
   QLabel* reduce2Text = new QLabel( tr( "Threshold" ) + " #2:" );
 
@@ -1307,6 +1319,7 @@ void KFLogConfig::__addScaleTab()
 
   reduce2->setValue( __getScaleValue( b2 ) );
   reduce2N->display( b2 );
+  emit scaleThresholdChanged( 2, b2 );
 
   QLabel* reduce3Text = new QLabel( tr( "Threshold" ) + " #3:" );
 
@@ -1326,6 +1339,7 @@ void KFLogConfig::__addScaleTab()
 
   reduce3->setValue( __getScaleValue( b3 ) );
   reduce3N->display( b3 );
+  emit scaleThresholdChanged( 3, b3 );
 
   QGridLayout* scaleThresholdLayout = new QGridLayout();
   scaleThresholdLayout->setSpacing( 10 );
