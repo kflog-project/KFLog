@@ -25,6 +25,7 @@
 #include "mainwindow.h"
 #include "rowdelegate.h"
 
+extern Map          *_globalMap;
 extern MapContents  *_globalMapContents;
 extern MainWindow   *_mainWindow;
 extern QSettings    _settings;
@@ -620,6 +621,9 @@ void KFLogConfig::slotShowLowerLimit( int value )
   int newValue = __setScaleValue( value );
 
   lLimitN->display( newValue );
+  lLimitL->setText( _globalMap->calculateRealMapScale( newValue ) );
+
+  emit scaleThresholdChanged( 0, newValue );
 
   if( lowerLim > upperlim )
     {
@@ -636,6 +640,8 @@ void KFLogConfig::slotShowUpperLimit( int value )
   int newValue = __setScaleValue( value );
 
   uLimitN->display( newValue );
+  uLimitL->setText( _globalMap->calculateRealMapScale( newValue ) );
+
   emit scaleThresholdChanged( 4, newValue );
 
   if( upperlim < lowerlim )
@@ -647,18 +653,23 @@ void KFLogConfig::slotShowUpperLimit( int value )
 
 void KFLogConfig::slotShowSwitchScale( int value )
 {
-  switchScaleN->display( __setScaleValue( value ) );
+  int value2Show = __setScaleValue( value );
+  switchScaleN->display( value2Show );
+  switchScaleL->setText( _globalMap->calculateRealMapScale( value2Show ) );
 }
 
 void KFLogConfig::slotShowWpLabel( int value )
 {
-  wpLabelN->display( __setScaleValue( value ) );
+  int value2Show = __setScaleValue( value );
+  wpLabelN->display( value2Show );
+  wpLabelL->setText( _globalMap->calculateRealMapScale( value2Show ) );
 }
 
 void KFLogConfig::slotShowReduceScaleA( int value )
 {
   int value2Show = __setScaleValue( value );
   reduce1N->display( value2Show );
+  reduce1L->setText( _globalMap->calculateRealMapScale( value2Show ) );
   emit scaleThresholdChanged( 1, value2Show );
 }
 
@@ -666,6 +677,7 @@ void KFLogConfig::slotShowReduceScaleB( int value )
 {
   int value2Show = __setScaleValue( value );
   reduce2N->display( value2Show );
+  reduce2L->setText( _globalMap->calculateRealMapScale( value2Show ) );
   emit scaleThresholdChanged( 2, value2Show );
 }
 
@@ -673,6 +685,7 @@ void KFLogConfig::slotShowReduceScaleC( int value )
 {
   int value2Show = __setScaleValue( value );
   reduce3N->display( value2Show );
+  reduce3L->setText( _globalMap->calculateRealMapScale( value2Show ) );
   emit scaleThresholdChanged( 3, value2Show );
 }
 
@@ -1189,11 +1202,6 @@ void KFLogConfig::__addProjectionTab()
 
 void KFLogConfig::__addScaleTab()
 {
-  extern Map *_globalMap;
-
-  qDebug() << "KFLogConfig::__addScaleTab(): phyDpix=" << _globalMap->physicalDpiX()
-           << "logDpix=" << _globalMap->physicalDpiX();
-
   int ll = _settings.value( "/Scale/LowerLimit", BORDER_L ).toInt();
   int ul = _settings.value( "/Scale/UpperLimit", BORDER_U ).toInt();
   int sw = _settings.value( "/Scale/SwitchScale", BORDER_S ).toInt();
@@ -1237,6 +1245,9 @@ void KFLogConfig::__addScaleTab()
   lLimit->setValue( __getScaleValue( ll ) );
   lLimitN->display( ll );
 
+  lLimitL = new QLabel;
+  lLimitL->setText( _globalMap->calculateRealMapScale(ll) );
+
   QLabel* uLimitText = new QLabel( tr( "Upper limit" ) + ":" );
 
   uLimit = new QSlider();
@@ -1253,6 +1264,10 @@ void KFLogConfig::__addScaleTab()
 
   uLimit->setValue( __getScaleValue( ul ) );
   uLimitN->display( ul );
+
+  uLimitL = new QLabel;
+  uLimitL->setText( _globalMap->calculateRealMapScale(ul) );
+
   emit scaleThresholdChanged( 4, ul );
 
   QGridLayout* scaleRangeLayout = new QGridLayout();
@@ -1260,9 +1275,13 @@ void KFLogConfig::__addScaleTab()
   scaleRangeLayout->addWidget( lLimitText, 0, 0 );
   scaleRangeLayout->addWidget( lLimit, 0, 1 );
   scaleRangeLayout->addWidget( lLimitN, 0, 2 );
+  scaleRangeLayout->addWidget( lLimitL, 0, 3 );
+
   scaleRangeLayout->addWidget( uLimitText, 1, 0 );
   scaleRangeLayout->addWidget( uLimit, 1, 1 );
   scaleRangeLayout->addWidget( uLimitN, 1, 2 );
+  scaleRangeLayout->addWidget( uLimitL, 1, 3 );
+
   scaleRangeLayout->setColumnStretch( 1, 10 );
   scaleRangeGroup->setLayout( scaleRangeLayout );
 
@@ -1286,6 +1305,9 @@ void KFLogConfig::__addScaleTab()
   switchScale->setValue( __getScaleValue( sw ) );
   switchScaleN->display( sw );
 
+  switchScaleL = new QLabel;
+  switchScaleL->setText( _globalMap->calculateRealMapScale(sw) );
+
   QLabel* wpLabelText = new QLabel( tr( "Draw waypoint labels" ) + ":" );
 
   wpLabel = new QSlider();
@@ -1305,6 +1327,9 @@ void KFLogConfig::__addScaleTab()
   wpLabel->setValue( __getScaleValue( wl ) );
   wpLabelN->display( wl );
 
+  wpLabelL = new QLabel;
+  wpLabelL->setText( _globalMap->calculateRealMapScale(wl) );
+
   QLabel* reduce1Text = new QLabel( tr( "Threshold" ) + " #1:" );
 
   reduce1 = new QSlider();
@@ -1323,6 +1348,10 @@ void KFLogConfig::__addScaleTab()
 
   reduce1->setValue( __getScaleValue( b1 ) );
   reduce1N->display( b1 );
+
+  reduce1L = new QLabel;
+  reduce1L->setText( _globalMap->calculateRealMapScale(b1) );
+
   emit scaleThresholdChanged( 1, b1 );
 
   QLabel* reduce2Text = new QLabel( tr( "Threshold" ) + " #2:" );
@@ -1343,6 +1372,10 @@ void KFLogConfig::__addScaleTab()
 
   reduce2->setValue( __getScaleValue( b2 ) );
   reduce2N->display( b2 );
+
+  reduce2L = new QLabel;
+  reduce2L->setText( _globalMap->calculateRealMapScale(b2) );
+
   emit scaleThresholdChanged( 2, b2 );
 
   QLabel* reduce3Text = new QLabel( tr( "Threshold" ) + " #3:" );
@@ -1363,6 +1396,10 @@ void KFLogConfig::__addScaleTab()
 
   reduce3->setValue( __getScaleValue( b3 ) );
   reduce3N->display( b3 );
+
+  reduce3L = new QLabel;
+  reduce3L->setText( _globalMap->calculateRealMapScale(b3) );
+
   emit scaleThresholdChanged( 3, b3 );
 
   QGridLayout* scaleThresholdLayout = new QGridLayout();
@@ -1372,26 +1409,31 @@ void KFLogConfig::__addScaleTab()
   scaleThresholdLayout->addWidget( switchText, row, 0 );
   scaleThresholdLayout->addWidget( switchScale, row, 1 );
   scaleThresholdLayout->addWidget( switchScaleN, row, 2 );
+  scaleThresholdLayout->addWidget( switchScaleL, row, 3 );
   row++;
 
   scaleThresholdLayout->addWidget( wpLabelText, row, 0 );
   scaleThresholdLayout->addWidget( wpLabel, row, 1 );
   scaleThresholdLayout->addWidget( wpLabelN, row, 2 );
+  scaleThresholdLayout->addWidget( wpLabelL, row, 3 );
   row++;
 
   scaleThresholdLayout->addWidget( reduce1Text, row, 0 );
   scaleThresholdLayout->addWidget( reduce1, row, 1 );
   scaleThresholdLayout->addWidget( reduce1N, row, 2 );
+  scaleThresholdLayout->addWidget( reduce1L, row, 3 );
   row++;
 
   scaleThresholdLayout->addWidget( reduce2Text, row, 0 );
   scaleThresholdLayout->addWidget( reduce2, row, 1 );
   scaleThresholdLayout->addWidget( reduce2N, row, 2 );
+  scaleThresholdLayout->addWidget( reduce2L, row, 3 );
   row++;
 
   scaleThresholdLayout->addWidget( reduce3Text, row, 0 );
   scaleThresholdLayout->addWidget( reduce3, row, 1 );
   scaleThresholdLayout->addWidget( reduce3N, row, 2 );
+  scaleThresholdLayout->addWidget( reduce3L, row, 3 );
   row++;
 
   scaleThresholdLayout->setColumnStretch( 1, 10 );

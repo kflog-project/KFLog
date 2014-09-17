@@ -18,10 +18,12 @@
 
 #include "configmapelement.h"
 #include "kflogconfig.h"
+#include "map.h"
 #include "mapdefaults.h"
 #include "mainwindow.h"
 
-extern MainWindow* _mainWindow;
+extern MainWindow  *_mainWindow;
+extern Map         *_globalMap;
 extern QSettings   _settings;
 
 ConfigMapElement::ConfigMapElement( QWidget* parent, bool configMap ) :
@@ -2693,22 +2695,25 @@ void ConfigMapElement::slotScaleThresholdChanged( int thresholdNumber, int newVa
       return;
     }
 
+  // calculate the real map scale from meter per pixel
+  QString rms = _globalMap->calculateRealMapScale( newValue );
+
   switch( thresholdNumber )
   {
     case 1:
-      border1->setText( QString("%1 (%2 m/px)").arg(checkBox1Label).arg(newValue));
+      border1->setText( QString("%1 (%2)").arg(checkBox1Label).arg(rms));
       break;
 
     case 2:
-      border2->setText( QString("%1 (%2 m/px)").arg(checkBox2Label).arg(newValue));
+      border2->setText( QString("%1 (%2)").arg(checkBox2Label).arg(rms));
       break;
 
     case 3:
-      border3->setText( QString("%1 (%2 m/px)").arg(checkBox3Label).arg(newValue));
+      border3->setText( QString("%1 (%2)").arg(checkBox3Label).arg(rms));
       break;
 
     case 4:
-      border4->setText( QString("%1 (%2 m/px)").arg(checkBox4Label).arg(newValue));
+      border4->setText( QString("%1 (%2)").arg(checkBox4Label).arg(rms));
       break;
 
     default:

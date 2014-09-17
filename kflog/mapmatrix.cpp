@@ -21,7 +21,7 @@
 #include "mapmatrix.h"
 #include "mapdefaults.h"
 
-// Projektions-Massstab
+// Projektions Massstab
 // 5 Meter Auflösung pro Pixel ist die stärkste Vergrösserung.
 // Bei dieser Vergrösserung erfolgt die eigentliche Projektion
 #define MAX_SCALE double(BORDER_L)
@@ -371,8 +371,6 @@ QPoint MapMatrix::getHomeCoord() const
 
 void MapMatrix::createMatrix( const QSize& newSize )
 {
-  qDebug() << "MapMatrix::createMatrix(): size=" << newSize;
-
   mapViewSize = newSize;
 
   const QPoint tempPoint( wgsToMap( mapCenterLat, mapCenterLon ) );

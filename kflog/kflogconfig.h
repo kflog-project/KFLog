@@ -38,6 +38,7 @@
 #include <QCheckBox>
 #include <QGroupBox>
 #include <QDialog>
+#include <QLabel>
 #include <QLayout>
 #include <QLCDNumber>
 #include <QLineEdit>
@@ -443,6 +444,7 @@ class KFLogConfig : public QDialog
   QSlider* reduce1;
   QSlider* reduce2;
   QSlider* reduce3;
+
   QLCDNumber* lLimitN;
   QLCDNumber* uLimitN;
   QLCDNumber* switchScaleN;
@@ -450,6 +452,16 @@ class KFLogConfig : public QDialog
   QLCDNumber* reduce1N;
   QLCDNumber* reduce2N;
   QLCDNumber* reduce3N;
+
+  // Displays for real map scale
+  QLabel* lLimitL;
+  QLabel* uLimitL;
+  QLabel* switchScaleL;
+  QLabel* wpLabelL;
+  QLabel* reduce1L;
+  QLabel* reduce2L;
+  QLabel* reduce3L;
+
   QComboBox* elementSelect;
   QComboBox* projectionSelect;
   LatEdit* firstParallel;

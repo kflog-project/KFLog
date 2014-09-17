@@ -3255,3 +3255,27 @@ void Map::__drawScale( QPixmap& scalePixmap )
                    txtRect.width()+4, txtRect.height(), Qt::AlignCenter,
                    scaleText );
 }
+
+QString Map::calculateRealMapScale( const int metersPerPixel )
+{
+  QString rms;
+
+  int dpiX = physicalDpiX();
+
+  if( dpiX <= 0 )
+    {
+      return rms;
+    }
+
+  // Calculate the size of a screen pixel in mm
+  double spxSizeMM = 25.4 / dpiX;
+
+  if( spxSizeMM <= 0.0 )
+    {
+      return rms;
+    }
+
+  double crms = metersPerPixel * 1000 / spxSizeMM;
+
+  return QString("1:%1").arg(crms, 0, 'f', 0);
+}

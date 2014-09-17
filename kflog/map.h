@@ -79,6 +79,17 @@ private:
      */
     QList<Flight *> getFlightList();
 
+    /**
+     * Calculate the real map scale according to the display resolution from
+     * a meters per pixel value.
+     *
+     * \param metersPerPixel Map scale as meters per pixel
+     *
+     * \return Real map scale as 1:x or empty string, if real map scale is not
+     * calculable.
+     */
+    QString calculateRealMapScale( const int metersPerPixel );
+
   public slots:
 
     /**  */
