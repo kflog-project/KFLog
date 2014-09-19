@@ -12,8 +12,11 @@
 **   License. See the file COPYING for more information.
 **
 ***********************************************************************/
-
-#include <QtGui>
+#ifdef QT_5
+    #include <QtWidgets>
+#else
+    #include <QtGui>
+#endif
 
 #include "AirfieldSelectionList.h"
 #include "mapcontents.h"

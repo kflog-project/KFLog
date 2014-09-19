@@ -14,7 +14,11 @@
 **
 ***********************************************************************/
 
-#include <QtGui>
+#ifdef QT_5
+    #include <QtWidgets>
+#else
+    #include <QtGui>
+#endif
 
 #include "configmapelement.h"
 #include "kflogconfig.h"
@@ -2339,17 +2343,17 @@ void ConfigMapElement::__fillStyle( QComboBox *pen, QComboBox *brush )
   QPixmap pixmap = _mainWindow->getPixmap("solid.png");
   pen->setIconSize( pixmap.size() );
 
-  pen->addItem(_mainWindow->getPixmap("solid.png"), "", Qt::SolidLine);
-  pen->addItem(_mainWindow->getPixmap("dashed.png"), "", Qt::DashLine);
-  pen->addItem(_mainWindow->getPixmap("dotted.png"), "", Qt::DotLine);
-  pen->addItem(_mainWindow->getPixmap("dashdot.png"), "", Qt::DashDotLine);
-  pen->addItem(_mainWindow->getPixmap("dashdotdot.png"), "", Qt::DashDotDotLine);
+  pen->addItem(_mainWindow->getPixmap("solid.png"), "", (int)Qt::SolidLine);
+  pen->addItem(_mainWindow->getPixmap("dashed.png"), "", (int)Qt::DashLine);
+  pen->addItem(_mainWindow->getPixmap("dotted.png"), "", (int)Qt::DotLine);
+  pen->addItem(_mainWindow->getPixmap("dashdot.png"), "", (int)Qt::DashDotLine);
+  pen->addItem(_mainWindow->getPixmap("dashdotdot.png"), "", (int)Qt::DashDotDotLine);
 
   brush->setIconSize( brushStyleIcons[0].size() );
 
   for( int i = 0; i < 15; i++ )
     {
-      brush->addItem( brushStyleIcons[i], "", brushStyles[i] );
+      brush->addItem( brushStyleIcons[i], "", (int)brushStyles[i] );
     }
 }
 
@@ -2445,10 +2449,10 @@ void ConfigMapElement::__readPen( QString group,
   int ps3 = _settings.value( "/Map/" + group + itemPrefix + "PenSize3", defaultPenSize2 ).toInt();
   int ps4 = _settings.value( "/Map/" + group + itemPrefix + "PenSize4", defaultPenSize2 ).toInt();
 
-  Qt::PenStyle pst1 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + itemPrefix + "PenStyle1", defaultPenStyle1).toInt());
-  Qt::PenStyle pst2 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + itemPrefix + "PenStyle2", defaultPenStyle2).toInt());
-  Qt::PenStyle pst3 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + itemPrefix + "PenStyle3", defaultPenStyle3).toInt());
-  Qt::PenStyle pst4 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + itemPrefix + "PenStyle4", defaultPenStyle4).toInt());
+  Qt::PenStyle pst1 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + itemPrefix + "PenStyle1", (int)defaultPenStyle1).toInt());
+  Qt::PenStyle pst2 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + itemPrefix + "PenStyle2", (int)defaultPenStyle2).toInt());
+  Qt::PenStyle pst3 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + itemPrefix + "PenStyle3", (int)defaultPenStyle3).toInt());
+  Qt::PenStyle pst4 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + itemPrefix + "PenStyle4", (int)defaultPenStyle4).toInt());
 
   QPen pen1(c1);
   QPen pen2(c2);
@@ -2487,10 +2491,10 @@ void ConfigMapElement::__readBrush( QString group,
   QColor c3( _settings.value( "/Map/" + group + itemPrefix + "BrushColor3", defaultBrushColor3.name() ).value<QColor>() );
   QColor c4( _settings.value( "/Map/" + group + itemPrefix + "BrushColor4", defaultBrushColor4.name() ).value<QColor>() );
 
-  Qt::BrushStyle bs1 = (Qt::BrushStyle) _settings.value( "/Map/" + group + itemPrefix + "BrushStyle1", defaultBrushStyle1 ).toInt();
-  Qt::BrushStyle bs2 = (Qt::BrushStyle) _settings.value( "/Map/" + group + itemPrefix + "BrushStyle2", defaultBrushStyle2 ).toInt();
-  Qt::BrushStyle bs3 = (Qt::BrushStyle) _settings.value( "/Map/" + group + itemPrefix + "BrushStyle3", defaultBrushStyle3 ).toInt();
-  Qt::BrushStyle bs4 = (Qt::BrushStyle) _settings.value( "/Map/" + group + itemPrefix + "BrushStyle4", defaultBrushStyle4 ).toInt();
+  Qt::BrushStyle bs1 = (Qt::BrushStyle) _settings.value( "/Map/" + group + itemPrefix + "BrushStyle1", (int)defaultBrushStyle1 ).toInt();
+  Qt::BrushStyle bs2 = (Qt::BrushStyle) _settings.value( "/Map/" + group + itemPrefix + "BrushStyle2", (int)defaultBrushStyle2 ).toInt();
+  Qt::BrushStyle bs3 = (Qt::BrushStyle) _settings.value( "/Map/" + group + itemPrefix + "BrushStyle3", (int)defaultBrushStyle3 ).toInt();
+  Qt::BrushStyle bs4 = (Qt::BrushStyle) _settings.value( "/Map/" + group + itemPrefix + "BrushStyle4", (int)defaultBrushStyle4 ).toInt();
 
   brushList.append( QBrush( c1, bs1 ) );
   brushList.append( QBrush( c2, bs2 ) );
@@ -2551,25 +2555,25 @@ void ConfigMapElement::__showBrush( QList<QBrush> &brushList )
   buttonPixmap.fill(border1BrushColor);
   border1BrushColorButton->setIcon(buttonPixmap);
   border1BrushColorButton->setIconSize( buttonPixmap.size() );
-  border1BrushStyle->setCurrentIndex(border1BrushStyle->findData(brushList[0].style()));
+  border1BrushStyle->setCurrentIndex(border1BrushStyle->findData((int)brushList[0].style()));
 
   border2BrushColor = brushList[1].color();
   buttonPixmap.fill(border1BrushColor);
   border2BrushColorButton->setIcon(buttonPixmap);
   border2BrushColorButton->setIconSize( buttonPixmap.size() );
-  border2BrushStyle->setCurrentIndex(border2BrushStyle->findData(brushList[1].style()));
+  border2BrushStyle->setCurrentIndex(border2BrushStyle->findData((int)brushList[1].style()));
 
   border3BrushColor = brushList[2].color();
   buttonPixmap.fill(border3BrushColor);
   border3BrushColorButton->setIcon(buttonPixmap);
   border3BrushColorButton->setIconSize( buttonPixmap.size() );
-  border3BrushStyle->setCurrentIndex(border3BrushStyle->findData(brushList[2].style()));
+  border3BrushStyle->setCurrentIndex(border3BrushStyle->findData((int)brushList[2].style()));
 
   border4BrushColor = brushList[3].color();
   buttonPixmap.fill(border4BrushColor);
   border4BrushColorButton->setIcon(buttonPixmap);
   border4BrushColorButton->setIconSize( buttonPixmap.size() );
-  border4BrushStyle->setCurrentIndex(border4BrushStyle->findData(brushList[3].style()));
+  border4BrushStyle->setCurrentIndex(border4BrushStyle->findData((int)brushList[3].style()));
 }
 
 void ConfigMapElement::__showPen(QList<QPen> &penList, bool *b)
@@ -2582,7 +2586,7 @@ void ConfigMapElement::__showPen(QList<QPen> &penList, bool *b)
   border1ColorButton->setIcon(buttonPixmap);
   border1ColorButton->setIconSize( buttonPixmap.size() );
   border1Pen->setValue(penList[0].width());
-  border1PenStyle->setCurrentIndex(border1PenStyle->findData(penList[0].style()));
+  border1PenStyle->setCurrentIndex(border1PenStyle->findData((int)penList[0].style()));
 
   border2->setChecked(b[1]);
   border2Color = penList[1].color();
@@ -2590,7 +2594,7 @@ void ConfigMapElement::__showPen(QList<QPen> &penList, bool *b)
   border2ColorButton->setIcon(buttonPixmap);
   border2ColorButton->setIconSize( buttonPixmap.size() );
   border2Pen->setValue(penList[1].width());
-  border2PenStyle->setCurrentIndex(border2PenStyle->findData(penList[1].style()));
+  border2PenStyle->setCurrentIndex(border2PenStyle->findData((int)penList[1].style()));
 
   border3->setChecked(b[2]);
   border3Color = penList[2].color();
@@ -2598,7 +2602,7 @@ void ConfigMapElement::__showPen(QList<QPen> &penList, bool *b)
   border3ColorButton->setIcon(buttonPixmap);
   border3ColorButton->setIconSize( buttonPixmap.size() );
   border3Pen->setValue(penList[2].width());
-  border3PenStyle->setCurrentIndex(border3PenStyle->findData(penList[2].style()));
+  border3PenStyle->setCurrentIndex(border3PenStyle->findData((int)penList[2].style()));
 
   border4->setChecked(b[3]);
   border4Color = penList[3].color();
@@ -2606,7 +2610,7 @@ void ConfigMapElement::__showPen(QList<QPen> &penList, bool *b)
   border4ColorButton->setIcon(buttonPixmap);
   border4ColorButton->setIconSize( buttonPixmap.size() );
   border4Pen->setValue(penList[3].width());
-  border4PenStyle->setCurrentIndex(border4PenStyle->findData(penList[3].style()));
+  border4PenStyle->setCurrentIndex(border4PenStyle->findData((int)penList[3].style()));
 }
 
 void ConfigMapElement::__writeBrush(QString group, QList<QBrush> &brushList, QList<QPen> &penList, bool *b)
@@ -2615,15 +2619,15 @@ void ConfigMapElement::__writeBrush(QString group, QList<QBrush> &brushList, QLi
 
   _settings.setValue("/Map/" + group + itemPrefix + "BrushColor1", brushList.at(0).color().name());
   _settings.setValue("/Map/" + group + itemPrefix + "BrushColor2", brushList.at(1).color().name());
-  _settings.setValue("/Map/" + group + itemPrefix + "BrushStyle1", brushList.at(0).style());
-  _settings.setValue("/Map/" + group + itemPrefix + "BrushStyle2", brushList.at(1).style());
+  _settings.setValue("/Map/" + group + itemPrefix + "BrushStyle1", (int)brushList.at(0).style());
+  _settings.setValue("/Map/" + group + itemPrefix + "BrushStyle2", (int)brushList.at(1).style());
 
   if( configureMap )
     {
       _settings.setValue("/Map/" + group + itemPrefix + "BrushColor3", brushList.at(2).color().name());
       _settings.setValue("/Map/" + group + itemPrefix + "BrushColor4", brushList.at(3).color().name());
-      _settings.setValue("/Map/" + group + itemPrefix + "BrushStyle3", brushList.at(2).style());
-      _settings.setValue("/Map/" + group + itemPrefix + "BrushStyle4", brushList.at(3).style());
+      _settings.setValue("/Map/" + group + itemPrefix + "BrushStyle3", (int)brushList.at(2).style());
+      _settings.setValue("/Map/" + group + itemPrefix + "BrushStyle4", (int)brushList.at(3).style());
     }
 }
 
@@ -2633,8 +2637,8 @@ void ConfigMapElement::__writePen(QString group, QList<QPen> &penList, bool *b)
   _settings.setValue("/Map/" + group + itemPrefix + "Color2", penList.at(1).color().name());
   _settings.setValue("/Map/" + group + itemPrefix + "PenSize1", (int) penList.at(0).width());
   _settings.setValue("/Map/" + group + itemPrefix + "PenSize2", (int) penList.at(1).width());
-  _settings.setValue("/Map/" + group + itemPrefix + "PenStyle1", penList.at(0).style());
-  _settings.setValue("/Map/" + group + itemPrefix + "PenStyle2", penList.at(1).style());
+  _settings.setValue("/Map/" + group + itemPrefix + "PenStyle1", (int)penList.at(0).style());
+  _settings.setValue("/Map/" + group + itemPrefix + "PenStyle2", (int)penList.at(1).style());
   _settings.setValue("/Map/" + group + itemPrefix + "Border1", b[0]);
   _settings.setValue("/Map/" + group + itemPrefix + "Border2", ( b[1] && b[0] ) );
 
@@ -2644,8 +2648,8 @@ void ConfigMapElement::__writePen(QString group, QList<QPen> &penList, bool *b)
       _settings.setValue("/Map/" + group + itemPrefix + "Color4", penList.at(3).color().name());
       _settings.setValue("/Map/" + group + itemPrefix + "PenSize3", (int) penList.at(2).width());
       _settings.setValue("/Map/" + group + itemPrefix + "PenSize4", (int) penList.at(3).width());
-      _settings.setValue("/Map/" + group + itemPrefix + "PenStyle3", penList.at(2).style());
-      _settings.setValue("/Map/" + group + itemPrefix + "PenStyle4", penList.at(3).style());
+      _settings.setValue("/Map/" + group + itemPrefix + "PenStyle3", (int)penList.at(2).style());
+      _settings.setValue("/Map/" + group + itemPrefix + "PenStyle4", (int)penList.at(3).style());
       _settings.setValue("/Map/" + group + itemPrefix + "Border3", ( b[2] && b[1] && b[0] ) );
       _settings.setValue("/Map/" + group + itemPrefix + "Border4", ( b[3] && b[2] && b[1] && b[0] ) );
     }

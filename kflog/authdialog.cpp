@@ -20,8 +20,11 @@
  * data on request.
  *
  */
-
-#include <QtGui>
+#ifdef QT_5
+    #include <QtWidgets>
+#else
+    #include <QtGui>
+#endif
 
 #include "authdialog.h"
 

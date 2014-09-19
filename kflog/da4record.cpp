@@ -106,7 +106,7 @@ BaseMapElement::objectType DA4WPRecord::type () const
 void DA4WPRecord::setName (const QString& name)
 {
   qstrncpy ( _buffer->name,
-             name.toUpper().leftJustified(8, QChar(' '), true).toAscii().data(),
+             name.toUpper().leftJustified(8, QChar(' '), true).toLatin1().data(),
              9 );
 }
 

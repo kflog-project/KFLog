@@ -156,7 +156,7 @@ void DownloadManager::slotFinished( QString &urlIn, QNetworkReply::NetworkError 
       blackList.insert( urlIn );
 
       qWarning( "DownloadManager(%d): URL %s put into black list due to ERROR %d!",
-                __LINE__, urlIn.toAscii().data(), codeIn );
+                __LINE__, urlIn.toLatin1().data(), codeIn );
     }
   else
     {

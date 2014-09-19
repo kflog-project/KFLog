@@ -16,8 +16,11 @@
 **   $Id$
 **
 ***********************************************************************/
-
-#include <QtGui>
+#ifdef QT_5
+    #include <QtWidgets>
+#else
+    #include <QtGui>
+#endif
 
 #include "evaluationdialog.h"
 #include "evaluationframe.h"
@@ -318,11 +321,11 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
 
           //text.sprintf("%i", state_list.at(n)->f_state);
           htmlText += (QString) "<TR><TD align=\"left\"><pre>" + text + "</pre></TD>";
-          text.sprintf("%s", printTime(state_list.at(n)->start_time, true).toAscii().data());
+          text.sprintf("%s", printTime(state_list.at(n)->start_time, true).toLatin1().data());
           htmlText += (QString) "<TD align='right'>" + text + "</TD>";
-          text.sprintf("%s", printTime(state_list.at(n)->end_time, true).toAscii().data());
+          text.sprintf("%s", printTime(state_list.at(n)->end_time, true).toLatin1().data());
           htmlText += (QString) "<TD align='right'>" + text + "</TD>";
-          text.sprintf("%s", printTime(state_list.at(n)->duration, true, true, true).toAscii().data());
+          text.sprintf("%s", printTime(state_list.at(n)->duration, true, true, true).toLatin1().data());
           htmlText += (QString) "<TD align='right'>" + text + "</TD>";
           text.sprintf("%i", state_list.at(n)->dH_pos);
           htmlText += (QString) "<TD align='right'>" + text + " m</TD>";
