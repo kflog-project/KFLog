@@ -11,6 +11,10 @@
 #
 ################################################################################
 
+  * KFLog 4.8.0 released for Ubuntu, Debian and MS Windows.
+
+2014-09-18 Axel Pauli <kflog.cumulus@gmail.com>
+
   * Issue #28 Real map scales added to windows in settings map scales and
     settings map elements.
 
