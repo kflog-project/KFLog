@@ -16,7 +16,12 @@
 **
 ***********************************************************************/
 
-#include <QtGui>
+#ifdef QT_5
+    #include <QtWidgets>
+    #include <QFileDialog>
+#else
+    #include <QtGui>
+#endif
 #include <QtXml>
 
 #include "flightgrouplistviewitem.h"

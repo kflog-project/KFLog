@@ -30,7 +30,11 @@
 #include <cmath>
 #include <unistd.h>
 
-#include <QtGui>
+#ifdef QT_5
+    #include <QtWidgets>
+#else
+    #include <QtGui>
+#endif
 #include <QtXml>
 
 #include "altitude.h"
@@ -84,7 +88,7 @@ public:
     }
     char* getUserName()
     {
-        return m_UserName.toAscii().data();
+        return m_UserName.toLatin1().data();
     }
 };
 
@@ -801,7 +805,7 @@ bool WaypointCatalog::readFilserTXT(const QString& catalog)
 
                   QChar surface = list[9].toUpper()[0];
 
-                  switch (surface.toAscii())
+                  switch (surface.toLatin1())
                     {
                     case 'G':
                       rwy.m_surface = Runway::Grass;
@@ -1392,7 +1396,7 @@ bool WaypointCatalog::readCup (const QString& catalog)
       if( ! ok )
         {
           qWarning("CUP Read (%d): Invalid waypoint type '%s'. Ignoring it.",
-                   lineNo, list[6].toAscii().data() );
+                   lineNo, list[6].toLatin1().data() );
           delete w;
           continue;
         }

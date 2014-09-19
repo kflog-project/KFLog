@@ -19,7 +19,12 @@
 #include "mapcontents.h"
 #include "waypointimpfilterdialog.h"
 
-#include <QtGui>
+#ifdef QT_5
+    #include <QtWidgets>
+    #include <QFileDialog>
+#else
+    #include <QtGui>
+#endif
 
 extern MapContents *_globalMapContents;
 

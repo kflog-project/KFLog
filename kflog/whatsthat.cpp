@@ -15,7 +15,12 @@
 **
 ***********************************************************************/
 
-#include <QtGui>
+#ifdef QT_5
+    #include <QtWidgets>
+    #include <QApplication>
+#else
+    #include <QtGui>
+#endif
 
 #include "whatsthat.h"
 

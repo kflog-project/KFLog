@@ -125,7 +125,7 @@ int main(int argc, char **argv)
   bool batch = false, comment = true, exportPNG = false, fileOpen = false;
 
 #ifdef QT_5
-#warning argument handling in QT 5 needs adoption from .argv --> arguments()
+#warning argument handling in QT5 needs adoption from .argv --> arguments()
 #else
   for( int i = 0; i < app.argc(); i++ )
     {

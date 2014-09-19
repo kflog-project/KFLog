@@ -255,7 +255,7 @@ void OpenAirParser::parseLine(QString& line)
 
   //unknown record type
   qDebug( "OAP::parseLine: unknown type at line (%d): %s", _lineNumber,
-          line.toAscii().data());
+          line.toLatin1().data());
 }
 
 

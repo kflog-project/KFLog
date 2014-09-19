@@ -15,7 +15,11 @@
 **
 ****************************************************************************/
 
-#include <QtGui>
+#ifdef QT_5
+    #include <QtWidgets>
+#else
+    #include <QtGui>
+#endif
 
 #include "mainwindow.h"
 #include "optimizationwizard.h"

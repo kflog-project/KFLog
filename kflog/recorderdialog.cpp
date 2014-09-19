@@ -1585,7 +1585,7 @@ bool RecorderDialog::__openLib( const QString& libN )
 
   QString libPath = getLibraryPath() + "/" + libN;
 
-  libHandle = dlopen( libPath.toAscii().data(), RTLD_NOW );
+  libHandle = dlopen( libPath.toLatin1().data(), RTLD_NOW );
 
   char *error = (char *) dlerror();
 

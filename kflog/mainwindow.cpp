@@ -1303,7 +1303,7 @@ void MainWindow::slotOpenFile()
   filter.append(tr("IGC") + " (*.igc)");
   filter.append(tr("Garmin") + " (*.trk *.gdn)");
 #ifdef QT_5
-  fd->setFilter( filter );
+  fd->setNameFilters( filter );
 #else
   fd->setFilters( filter );
 #endif
@@ -1398,7 +1398,12 @@ void MainWindow::slotOpenTask()
 
   QStringList filters;
   filters.append( tr( "KFLog tasks" ) + "(*.kflogtsk *.KFLOGTSK)" );
+
+#ifdef QT_5
+  fd->setNameFilters( filters );
+#else
   fd->setFilters( filters );
+#endif
 
   // We need this to sort the file names alphabetically
   QSortFilterProxyModel *sorter = new QSortFilterProxyModel();

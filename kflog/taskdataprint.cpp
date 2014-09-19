@@ -16,7 +16,13 @@
 **
 ***********************************************************************/
 
-#include <QtGui>
+#ifdef QT_5
+    #include <QtWidgets>
+    #include <QPrinter>
+    #include <QPrintDialog>
+#else
+    #include <QtGui>
+#endif
 
 #include "mapcalc.h"
 #include "mainwindow.h"

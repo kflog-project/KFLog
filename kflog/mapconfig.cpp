@@ -1340,12 +1340,12 @@ void MapConfig::__readPen( QString group,
   int ps5 = _settings.value( "/Map/" + group + "/PrintPenSize1", defaultPenSize5 ).toInt();
   int ps6 = _settings.value( "/Map/" + group + "/PrintPenSize2", defaultPenSize6 ).toInt();
 
-  Qt::PenStyle pst1 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + "/PenStyle1", defaultPenStyle1).toInt());
-  Qt::PenStyle pst2 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + "/PenStyle2", defaultPenStyle2).toInt());
-  Qt::PenStyle pst3 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + "/PenStyle3", defaultPenStyle3).toInt());
-  Qt::PenStyle pst4 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + "/PenStyle4", defaultPenStyle4).toInt());
-  Qt::PenStyle pst5 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + "/PrintPenStyle1", defaultPenStyle5).toInt());
-  Qt::PenStyle pst6 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + "/PrintPenStyle2", defaultPenStyle6).toInt());
+  Qt::PenStyle pst1 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + "/PenStyle1", (int)defaultPenStyle1).toInt());
+  Qt::PenStyle pst2 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + "/PenStyle2", (int)defaultPenStyle2).toInt());
+  Qt::PenStyle pst3 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + "/PenStyle3", (int)defaultPenStyle3).toInt());
+  Qt::PenStyle pst4 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + "/PenStyle4", (int)defaultPenStyle4).toInt());
+  Qt::PenStyle pst5 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + "/PrintPenStyle1", (int)defaultPenStyle5).toInt());
+  Qt::PenStyle pst6 = static_cast<Qt::PenStyle> (_settings.value("/Map/" + group + "/PrintPenStyle2", (int)defaultPenStyle6).toInt());
 
   QPen pen1(c1);
   QPen pen2(c2);
@@ -1425,12 +1425,12 @@ void MapConfig::__readPenBrush( QString group,
   QColor c5( _settings.value( "/Map/" + group + "/PrintBrushColor1", defaultBrushColor5.name() ).value<QColor>() );
   QColor c6( _settings.value( "/Map/" + group + "/PrintBrushColor2", defaultBrushColor6.name() ).value<QColor>() );
 
-  Qt::BrushStyle bs1 = (Qt::BrushStyle) _settings.value( "/Map/" + group + "/BrushStyle1", defaultBrushStyle1 ).toInt();
-  Qt::BrushStyle bs2 = (Qt::BrushStyle) _settings.value( "/Map/" + group + "/BrushStyle2", defaultBrushStyle2 ).toInt();
-  Qt::BrushStyle bs3 = (Qt::BrushStyle) _settings.value( "/Map/" + group + "/BrushStyle3", defaultBrushStyle3 ).toInt();
-  Qt::BrushStyle bs4 = (Qt::BrushStyle) _settings.value( "/Map/" + group + "/BrushStyle4", defaultBrushStyle4 ).toInt();
-  Qt::BrushStyle bs5 = (Qt::BrushStyle) _settings.value( "/Map/" + group + "/PrintBrushStyle1", defaultBrushStyle5 ).toInt();
-  Qt::BrushStyle bs6 = (Qt::BrushStyle) _settings.value( "/Map/" + group + "/PrintBrushStyle2", defaultBrushStyle6 ).toInt();
+  Qt::BrushStyle bs1 = (Qt::BrushStyle) _settings.value( "/Map/" + group + "/BrushStyle1", (int)defaultBrushStyle1 ).toInt();
+  Qt::BrushStyle bs2 = (Qt::BrushStyle) _settings.value( "/Map/" + group + "/BrushStyle2", (int)defaultBrushStyle2 ).toInt();
+  Qt::BrushStyle bs3 = (Qt::BrushStyle) _settings.value( "/Map/" + group + "/BrushStyle3", (int)defaultBrushStyle3 ).toInt();
+  Qt::BrushStyle bs4 = (Qt::BrushStyle) _settings.value( "/Map/" + group + "/BrushStyle4", (int)defaultBrushStyle4 ).toInt();
+  Qt::BrushStyle bs5 = (Qt::BrushStyle) _settings.value( "/Map/" + group + "/PrintBrushStyle1", (int)defaultBrushStyle5 ).toInt();
+  Qt::BrushStyle bs6 = (Qt::BrushStyle) _settings.value( "/Map/" + group + "/PrintBrushStyle2", (int)defaultBrushStyle6 ).toInt();
 
   // first remove all old entries.
   brushList.clear();
