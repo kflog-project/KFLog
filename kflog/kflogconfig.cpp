@@ -12,7 +12,11 @@
 **
 ***********************************************************************/
 
-#include <QtGui>
+#ifdef QT_5
+    #include <QtWidgets>
+#else
+    #include <QtGui>
+#endif
 
 #include "AirfieldSelectionList.h"
 #include "configmapelement.h"

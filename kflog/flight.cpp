@@ -25,7 +25,11 @@
 #include <cmath>
 #include <cstdlib>
 
-#include <QtGui>
+#ifdef QT_5
+    #include <QtWidgets>
+#else
+    #include <QtGui>
+#endif
 
 #include "airspace.h"
 #include "airspacewarningdistance.h"
@@ -651,22 +655,22 @@ QStringList Flight::getFlightValues(unsigned int start, unsigned int end)
   // Kreisflug / Circling
   //index: 0 right turn time
   text.sprintf("%s <small>(%.1f%%)</small>",
-               printTime(kurbel_r, true, true, true).toAscii().data(),
+               printTime(kurbel_r, true, true, true).toLatin1().data(),
                (float) kurbel_r / (float)(kurbel_r + kurbel_l + kurbel_v) * 100.0);
   result.append(text);
   //index: 1 left turn time
   text.sprintf("%s <small>(%.1f%%)</small>",
-               printTime(kurbel_l, true, true, true).toAscii().data(),
+               printTime(kurbel_l, true, true, true).toLatin1().data(),
                (float) kurbel_l / (float)(kurbel_r + kurbel_l + kurbel_v) * 100.0);
   result.append(text);
   //index: 2 mixed turn time
   text.sprintf("%s <small>(%.1f%%)</small>",
-               printTime(kurbel_v, true, true, true).toAscii().data(),
+               printTime(kurbel_v, true, true, true).toLatin1().data(),
                (float) kurbel_v / (float)(kurbel_r + kurbel_l + kurbel_v) * 100.0);
   result.append(text);
   //index: 3 total turn time
   text.sprintf("%s <small>(%.1f%%)</small>",
-               printTime((kurbel_r + kurbel_l + kurbel_v), true, true, true).toAscii().data(),
+               printTime((kurbel_r + kurbel_l + kurbel_v), true, true, true).toLatin1().data(),
                (float)(kurbel_r + kurbel_l + kurbel_v) / (float)( route.at(end)->time - route.at(start)->time ) * 100.0);
   result.append(text);
 
@@ -746,14 +750,14 @@ QStringList Flight::getFlightValues(unsigned int start, unsigned int end)
   result.append(text);
   //index: 26 straight time
   text.sprintf("%s <small>(%.1f%%)</small>",
-               printTime( (int)( route.at(end)->time - route.at(start)->time - ( kurbel_r + kurbel_l + kurbel_v ) ) , true, true, true).toAscii().data(),
+               printTime( (int)( route.at(end)->time - route.at(start)->time - ( kurbel_r + kurbel_l + kurbel_v ) ) , true, true, true).toLatin1().data(),
                (float)( route.at(end)->time - route.at(start)->time - ( kurbel_r + kurbel_l + kurbel_v ) ) / (float)( route.at(end)->time - route.at(start)->time ) * 100.0);
   result.append(text);
 
   //Total
   //index: 27 total time
   text.sprintf("%s",
-      printTime((int)(route.at(end)->time - route.at(start)->time), true, true, true).toAscii().data());
+      printTime((int)(route.at(end)->time - route.at(start)->time), true, true, true).toLatin1().data());
   result.append(text);
   //index: 28 total dH
   text.sprintf("%.0f m",s_height_pos   + k_height_pos_r

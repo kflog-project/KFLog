@@ -15,7 +15,11 @@
 **
 ***********************************************************************/
 
-#include <QtGui>
+#ifdef QT_5
+    #include <QtWidgets>
+#else
+    #include <QtGui>
+#endif
 
 #include "igc3ddialog.h"
 #include "mapcalc.h"

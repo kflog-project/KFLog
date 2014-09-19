@@ -22,7 +22,11 @@
 #define M_BUTTON Qt::MiddleButton
 #endif
 
-#include <QtGui>
+#ifdef QT_5
+    #include <QtWidgets>
+#else
+    #include <QtGui>
+#endif
 
 #include "evaluationdialog.h"
 #include "evaluationview.h"

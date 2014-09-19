@@ -19,7 +19,15 @@
 #include <dlfcn.h>
 #endif
 
-#include <QtGui>
+#ifdef QT_5
+    #include <QtWidgets>
+    #include <QApplication>
+    #include <QPrinter>
+    #include <QFileDialog>
+    #include <QPrintDialog>
+#else
+    #include <QtGui>
+#endif
 #include <QSortFilterProxyModel>
 
 #include "aboutwidget.h"
@@ -1108,7 +1116,7 @@ void MainWindow::slotFlightViewIgcOpenGL()
 
   QString libPath = root + "/lib/libopengl_igc.so";
 
-  void* libHandle = dlopen( libPath.toAscii().data(), RTLD_NOW );
+  void* libHandle = dlopen( libPath.toLatin1().data(), RTLD_NOW );
 
   char *error = (char *) dlerror();
 
@@ -1294,7 +1302,11 @@ void MainWindow::slotOpenFile()
   filter.append(tr("All types") + " (*.igc *.flightgear *.trk *.gdn)");
   filter.append(tr("IGC") + " (*.igc)");
   filter.append(tr("Garmin") + " (*.trk *.gdn)");
+#ifdef QT_5
+  fd->setFilter( filter );
+#else
   fd->setFilters( filter );
+#endif
 
   // We need this to sort the file names alphabetically
   QSortFilterProxyModel *sorter = new QSortFilterProxyModel();

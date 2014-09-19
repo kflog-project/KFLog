@@ -399,15 +399,15 @@ void Igc3DFlightData::load(Flight* flight)
 
           //time
           t = printTime( cP.time, false, true );
-          sscanf( t.toAscii().data(), "%02f:%02f:%02f", &hh, &mm, &ss );
+          sscanf( t.toLatin1().data(), "%02f:%02f:%02f", &hh, &mm, &ss );
 
           r = WGSPoint::printPos( cP.origP.lat(), true );
 
-          sscanf( r.toAscii().data(), "%2f%c %2f%c %2f%c %c", &lat, &AV, &latmin,
+          sscanf( r.toLatin1().data(), "%2f%c %2f%c %2f%c %c", &lat, &AV, &latmin,
                   &AV, &latsec, &AV, &NS );
           s = WGSPoint::printPos( cP.origP.lon(), false );
 
-          sscanf( s.toAscii().data(), "%3f%c %2f%c %2f%c %c", &lon, &AV, &lonmin,
+          sscanf( s.toLatin1().data(), "%3f%c %2f%c %2f%c %c", &lon, &AV, &lonmin,
                   &AV, &lonsec, &AV, &EW );
 
           if( firstDataPoint == 0 )

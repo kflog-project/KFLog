@@ -18,7 +18,11 @@
 
 #include <cmath>
 
-#include <QtGui>
+#ifdef QT_5
+    #include <QtWidgets>
+#else
+    #include <QtGui>
+#endif
 
 #include "flighttask.h"
 #include "mapcalc.h"

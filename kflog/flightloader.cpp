@@ -17,7 +17,11 @@
 **
 ***********************************************************************/
 
-#include <QtGui>
+#ifdef QT_5
+    #include <QtWidgets>
+#else
+    #include <QtGui>
+#endif
 
 #include "altitude.h"
 #include "elevationfinder.h"
@@ -300,7 +304,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
               continue;
             }
 
-          sscanf(s.mid(1,23).toAscii().data(), "%2d%2d%2d%2d%5d%1c%3d%5d%1c",
+          sscanf(s.mid(1,23).toLatin1().data(), "%2d%2d%2d%2d%5d%1c%3d%5d%1c",
               &hh, &mm, &ss, &lat, &latmin, &latChar, &lon, &lonmin, &lonChar);
           latTemp = lat * 600000 + latmin * 10;
           lonTemp = lon * 600000 + lonmin * 10;
@@ -308,7 +312,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
           if(latChar == 'S') latTemp = -latTemp;
           if(lonChar == 'W') lonTemp = -lonTemp;
 
-          sscanf(s.mid(25,10).toAscii().data(),"%5d%5d", &baroAltTemp, &gpsAltTemp);
+          sscanf(s.mid(25,10).toLatin1().data(),"%5d%5d", &baroAltTemp, &gpsAltTemp);
 
           // Scan the optional parts of the B record
           newPoint.engineNoise = -1;
@@ -320,7 +324,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
               if( strncasecmp((options.at(i)).mnemonic, "ENL", 3) == 0 )
 
               {
-                sscanf( s.mid( (options.at(i).begin), (options.at(i).length)).toAscii().data(),
+                sscanf( s.mid( (options.at(i).begin), (options.at(i).length)).toLatin1().data(),
                         "%d", &newPoint.engineNoise );
               }
            }
@@ -464,7 +468,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
 
           for (int i = 0; i < nrOfOpts; i++ )
           {
-            sscanf(s.mid(3+i*7, 7).toAscii().data(), "%2d%2d%3s", &opt.begin, &opt.length, opt.mnemonic);
+            sscanf(s.mid(3+i*7, 7).toLatin1().data(), "%2d%2d%3s", &opt.begin, &opt.length, opt.mnemonic);
             opt.begin -= 1; // B record starts with 1!
             opt.length = opt.length - opt.begin;
             options.append(opt);
@@ -476,7 +480,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
                 ( ( s.mid(17,1) == "W" ) || ( s.mid(17,1) == "E" ) ) ))
             {
               // We have a waypoint
-              sscanf(s.mid(1,17).toAscii().data(), "%2d%5d%1c%3d%5d%1c",
+              sscanf(s.mid(1,17).toLatin1().data(), "%2d%5d%1c%3d%5d%1c",
                   &lat, &latmin, &latChar, &lon, &lonmin, &lonChar);
 
               latTemp = lat * 600000 + latmin * 10;
@@ -661,9 +665,9 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo)
           fLon = 0;
 
           // file is ok, now read data from line
-          sscanf(s.mid(3,11).toAscii().data(),  "%1c%2d %f", &latChar, &lat, &fLat);
-          sscanf(s.mid(15,12).toAscii().data(), "%1c%3d %f", &lonChar, &lon, &fLon);
-          sscanf(s.mid(28,9).toAscii().data(), "%2d-%*3s-%2d", &day, &year);
+          sscanf(s.mid(3,11).toLatin1().data(),  "%1c%2d %f", &latChar, &lat, &fLat);
+          sscanf(s.mid(15,12).toLatin1().data(), "%1c%3d %f", &lonChar, &lon, &fLon);
+          sscanf(s.mid(28,9).toLatin1().data(), "%2d-%*3s-%2d", &day, &year);
 
           if ( year > 70 )
             year += 1900;
@@ -673,9 +677,9 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo)
           month = 0;
 
           timeOfFlightDay = timeToDay(year, month, day, s.mid(31, 3).toLatin1().data());
-          sscanf(s.mid(38, 8).toAscii().data(), "%2d:%2d:%2d", &hh, &mm, &ss);
+          sscanf(s.mid(38, 8).toLatin1().data(), "%2d:%2d:%2d", &hh, &mm, &ss);
           curTime = timeOfFlightDay + 3600 * hh + 60 * mm + ss;
-          sscanf(s.mid(47, 5).toAscii().data(), "%d", &height);
+          sscanf(s.mid(47, 5).toLatin1().data(), "%d", &height);
           if ( height < 0 )
             height = 0;
 

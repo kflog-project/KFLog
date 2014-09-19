@@ -15,7 +15,11 @@
 **
 ***********************************************************************/
 
-#include <QtGui>
+#ifdef QT_5
+    #include <QtWidgets>
+#else
+    #include <QtGui>
+#endif
 
 #include "kflogtreewidget.h"
 #include "rowdelegate.h"
@@ -31,8 +35,12 @@ KFLogTreeWidget::KFLogTreeWidget( const char *name, QWidget *parent ) :
   menuActionGroup( 0 )
 {
   setObjectName( "KFLogTreeWidget" );
-
+#ifdef QT_5
+#pragma warning - need functional review here
+  header()->setSectionResizeMode( QHeaderView::Interactive );
+#else
   header()->setResizeMode( QHeaderView::Interactive );
+#endif
 }
 
 KFLogTreeWidget::~KFLogTreeWidget()

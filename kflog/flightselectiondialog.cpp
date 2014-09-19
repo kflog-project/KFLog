@@ -16,7 +16,11 @@
 **
 ***********************************************************************/
 
-#include <QtGui>
+#ifdef QT_5
+    #include <QtWidgets>
+#else
+    #include <QtGui>
+#endif
 
 #include "flightselectiondialog.h"
 #include "mainwindow.h"

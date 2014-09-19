@@ -18,7 +18,11 @@
 /**
  * This class is a simple HTTP download client.
  */
-#include <QtGui>
+#ifdef QT_5
+    #include <QtWidgets>
+#else
+    #include <QtGui>
+#endif
 #include <QtNetwork>
 
 #include "httpclient.h"
@@ -150,7 +154,7 @@ bool HttpClient::downloadFile( QString &urlIn, QString &destinationIn )
                  " (Qt" + QT_VERSION_STR + "/X11)";
 
   request.setUrl( QUrl( _url, QUrl::TolerantMode ));
-  request.setRawHeader( "User-Agent", appl.toAscii() );
+  request.setRawHeader( "User-Agent", appl.toLatin1() );
 
   reply = manager->get(request);
 

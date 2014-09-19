@@ -16,7 +16,9 @@ contains(QT_VERSION, ^4\\.[78]\\..*) {
 
 # Qt5 needs the QtWidgets library
 greaterThan(QT_MAJOR_VERSION, 4) {
-QT += widgets
+QT += widgets \
+    printsupport
+
 DEFINES += QT_5
 }
 

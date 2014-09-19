@@ -35,7 +35,12 @@
 #include <unistd.h>
 #include <libgen.h>
 
-#include <QtGui>
+#ifdef QT_5
+    #include <QtWidgets>
+    #include <QApplication>
+#else
+    #include <QtGui>
+#endif
 
 #include "kflogconfig.h"
 #include "mainwindow.h"
@@ -72,9 +77,11 @@ int main(int argc, char **argv)
   // Reset the locale that is used for number formatting to "C" locale.
   QLocale::setDefault(QLocale::C);
 
+// if I understand the documentation right - QT5 is only working with UTF8
+#ifndef QT_5
   // Make sure the application uses utf8 encoding for translated widgets
   QTextCodec::setCodecForTr( QTextCodec::codecForName ("UTF-8") );
-
+#endif
   // Make install root of KFLog available for other modules via
   // QSettings. The assumption is that KFLog is installed at
   // <root>/bin/kflog. The <root> path will be passed to QSettings.
@@ -117,6 +124,9 @@ int main(int argc, char **argv)
 
   bool batch = false, comment = true, exportPNG = false, fileOpen = false;
 
+#ifdef QT_5
+#warning argument handling in QT 5 needs adoption from .argv --> arguments()
+#else
   for( int i = 0; i < app.argc(); i++ )
     {
       argument = QString( app.argv()[i] );
@@ -159,7 +169,7 @@ int main(int argc, char **argv)
           fileOpenIGC = QString( app.argv()[i] );
         }
     }
-
+#endif
   if( ! waypointsOptionArg.isEmpty() )
     {
       qDebug() << "WaypointCatalog"
