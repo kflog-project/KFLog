@@ -1,5 +1,4 @@
-# KFLog4 qmake project file
-# $Id$
+# KFLog qmake project file
 
 TEMPLATE = lib
 
