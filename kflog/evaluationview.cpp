@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
-**                   2011-2013 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -15,12 +15,6 @@
 **   $Id$
 **
 ***********************************************************************/
-
-#ifdef QT_4_6
-#define M_BUTTON Qt::MidButton
-#else
-#define M_BUTTON Qt::MiddleButton
-#endif
 
 #ifdef QT_5
     #include <QtWidgets>
@@ -142,8 +136,8 @@ void EvaluationView::mouseReleaseEvent(QMouseEvent* event)
 
   if (flight)
     {
-      if(mouseB == (M_BUTTON | Reached) ||
-         mouseB == (M_BUTTON | NotReached))
+      if(mouseB == (Qt::MiddleButton | Reached) ||
+         mouseB == (Qt::MiddleButton | NotReached))
         {
           cursor = 1;
         }
@@ -242,8 +236,8 @@ void EvaluationView::mouseMoveEvent(QMouseEvent* event)
 
       int movedCursor = 1;
 
-      if(mouseB == (M_BUTTON | Reached) ||
-         mouseB == (M_BUTTON | NotReached))
+      if(mouseB == (Qt::MiddleButton | Reached) ||
+         mouseB == (Qt::MiddleButton | NotReached))
         {
           cursor_1 = cursor;
         }

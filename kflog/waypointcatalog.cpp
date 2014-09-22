@@ -16,11 +16,7 @@
 **
 ***********************************************************************/
 
-#ifdef QT_4_6
-#define DATA_STREAM QDataStream::Qt_4_6
-#else
 #define DATA_STREAM QDataStream::Qt_4_7
-#endif
 
 #ifdef _WIN32
 #include <windows.h>
