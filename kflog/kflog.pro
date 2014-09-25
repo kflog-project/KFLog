@@ -50,6 +50,9 @@ win32 {
       warn_on
 }
 
+
+TRANSLATIONS += kflog-de.ts
+
 # Map and GUI icons are handled by the Qt resource system
 RESOURCES = kflog.qrc
 

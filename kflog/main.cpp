@@ -66,17 +66,23 @@ int main(int argc, char **argv)
 {
   QApplication app( argc, argv );
 
+
   QCoreApplication::setOrganizationName("KFLog");
   QCoreApplication::setOrganizationDomain("www.kflog.org");
   QCoreApplication::setApplicationName("kflog");
   QCoreApplication::setApplicationVersion( KFLOG_VERSION );
+
 
   // Set the compile date of the application.
   _settings.setValue( "/Main/CompileDate", __DATE__ );
 
   // Reset the locale that is used for number formatting to "C" locale.
   QLocale::setDefault(QLocale::C);
+  QTranslator translator;
+  translator.load(QLocale::system(),"kflog-");
+  app.installTranslator(&translator);
 
+  qDebug() << QLocale::system();
 // if I understand the documentation right - QT5 is only working with UTF8
 #ifndef QT_5
   // Make sure the application uses utf8 encoding for translated widgets
@@ -124,21 +130,18 @@ int main(int argc, char **argv)
 
   bool batch = false, comment = true, exportPNG = false, fileOpen = false;
 
-#ifdef QT_5
-#warning argument handling in QT5 needs adoption from .argv --> arguments()
-#else
-  for( int i = 0; i < app.argc(); i++ )
+  for( int i = 0; i < app.arguments().size(); i++ )
     {
-      argument = QString( app.argv()[i] );
+      argument = QString( app.arguments().at(i) );
 
       if( argument == "--batch" || argument == "-b" )
         {
           batch = true;
         }
-      else if( (argument == "--export-png" || argument == "-e") && i + 2 < app.argc() )
+      else if( (argument == "--export-png" || argument == "-e") && i + 2 < app.arguments().size() )
         {
           exportPNG = true;
-          fileExportPNG = QString( app.argv()[i++] );
+          fileExportPNG = QString( app.arguments().at(i++) );
         }
       else if( argument == "--export-png" || argument == "-e" )
         {
@@ -147,29 +150,29 @@ int main(int argc, char **argv)
         }
       else if( argument == "--height" || argument == "-h" )
         {
-          if( i + 2 < app.argc() )
-            height = QString( app.argv()[i++] );
+          if( i + 2 < app.arguments().size() )
+            height = QString( app.arguments().at(i++) );
         }
       else if( argument == "--width" || argument == "-w" )
         {
-          if( i + 2 < app.argc() )
-            width = QString( app.argv()[i++] );
+          if( i + 2 < app.arguments().size() )
+            width = QString( app.arguments().at(i++) );
         }
       else if( argument == "--nocomment" || argument == "-c" )
         {
           comment = false;
         }
-      else if( argument == "--waypoints" && i + 1 < app.argc() )
+      else if( argument == "--waypoints" && i + 1 < app.arguments().size() )
         {
-          waypointsOptionArg = app.argv()[i++];
+          waypointsOptionArg = app.arguments().at(i++);
         }
       else if( i != 0 )
         {
           fileOpen = true;
-          fileOpenIGC = QString( app.argv()[i] );
+          fileOpenIGC = QString( app.arguments().at(i) );
         }
     }
-#endif
+
   if( ! waypointsOptionArg.isEmpty() )
     {
       qDebug() << "WaypointCatalog"

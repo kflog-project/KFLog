@@ -22,6 +22,9 @@ moc_*.cpp
 *.out
 *.app
 
+# compiled language files
+*.qm
+
 # Directories
 .obj/*
 /release
