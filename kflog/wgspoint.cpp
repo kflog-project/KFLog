@@ -219,14 +219,14 @@ QString WGSPoint::printPos( int coord, bool isLat )
 
       if (isLat)
         {
-          // posDeg.sprintf("%02d\260 ", (degree < 0)  ? -degree : degree);
+          // posDeg.sprintf("%02d° ", (degree < 0)  ? -degree : degree);
           posDeg = QString("%1%2 ")
                       .arg( ((degree < 0)  ? -degree : degree), 2, 10, QChar('0') )
                       .arg( degreeChar );
         }
       else
         {
-          // posDeg.sprintf("%03d\260 ", (degree < 0)  ? -degree : degree);
+          // posDeg.sprintf("%03d° ", (degree < 0)  ? -degree : degree);
           posDeg = QString("%1%2 ")
                       .arg( ((degree < 0)  ? -degree : degree), 3, 10, QChar('0') )
                       .arg( degreeChar );
@@ -247,14 +247,14 @@ QString WGSPoint::printPos( int coord, bool isLat )
 
       if (isLat)
         {
-          // posDeg.sprintf("%02d\260 ", (degree < 0)  ? -degree : degree);
+          // posDeg.sprintf("%02d° ", (degree < 0)  ? -degree : degree);
           posDeg = QString("%1%2 ")
                       .arg( ((degree < 0)  ? -degree : degree), 2, 10, QChar('0') )
                       .arg( degreeChar );
         }
       else
         {
-          // posDeg.sprintf("%03d\260 ", (degree < 0)  ? -degree : degree);
+          // posDeg.sprintf("%03d° ", (degree < 0)  ? -degree : degree);
           posDeg = QString("%1%2 ")
                       .arg( ((degree < 0)  ? -degree : degree), 3, 10, QChar('0') )
                       .arg( degreeChar );
@@ -277,7 +277,7 @@ QString WGSPoint::printPos( int coord, bool isLat )
       // decimal degrees
       calcPos (coord, decDegree);
 
-      // posDeg.sprintf("%.5f\260", (decDegree < 0)  ? -decDegree : decDegree);
+      // posDeg.sprintf("%.5f°", (decDegree < 0)  ? -decDegree : decDegree);
       posDeg = QString("%1%2")
                   .arg( ((decDegree < 0)  ? -decDegree : decDegree), 0, 'f', 5 )
                   .arg( degreeChar );

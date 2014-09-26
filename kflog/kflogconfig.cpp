@@ -2053,9 +2053,9 @@ void KFLogConfig::__addUnitTab()
   m_unitPosition = new QComboBox;
   m_unitPosition->setObjectName("UnitPosition");
   m_unitPosition->setEditable(false);
-  m_unitPosition->addItem("ddd\260mm'ss\"",  WGSPoint::DMS);
-  m_unitPosition->addItem("ddd\260mm.mmm'",  WGSPoint::DDM);
-  m_unitPosition->addItem("ddd.ddddd\260",   WGSPoint::DDD);
+  m_unitPosition->addItem("ddd°mm'ss\"",  WGSPoint::DMS);
+  m_unitPosition->addItem("ddd°mm.mmm'",  WGSPoint::DDM);
+  m_unitPosition->addItem(tr("ddd.ddddd°"),   WGSPoint::DDD);
 
   QFormLayout* unitLayout = new QFormLayout();
   unitLayout->setSpacing( 10 );

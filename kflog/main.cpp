@@ -83,10 +83,12 @@ int main(int argc, char **argv)
   app.installTranslator(&translator);
 
   qDebug() << QLocale::system();
-// if I understand the documentation right - QT5 is only working with UTF8
+// QT5: strings in c++ sources have to be UTF-8
 #ifndef QT_5
   // Make sure the application uses utf8 encoding for translated widgets
+  // and program constant strings
   QTextCodec::setCodecForTr( QTextCodec::codecForName ("UTF-8") );
+  QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 #endif
   // Make install root of KFLog available for other modules via
   // QSettings. The assumption is that KFLog is installed at

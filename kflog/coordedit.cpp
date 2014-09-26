@@ -58,7 +58,7 @@ CoordEdit::CoordEdit(QWidget *parent) : QWidget( parent )
   degreeBox->setAlignment( Qt::AlignRight | Qt::AlignVCenter );
   hbox->addWidget( degreeBox );
   hbox->addSpacing( spaceItem1 );
-  label = new QLabel( "\260", this );
+  label = new QLabel( "°", this );
   hbox->addWidget( label );
   hbox->addSpacing( spaceItem2 );
 
