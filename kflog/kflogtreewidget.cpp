@@ -36,7 +36,6 @@ KFLogTreeWidget::KFLogTreeWidget( const char *name, QWidget *parent ) :
 {
   setObjectName( "KFLogTreeWidget" );
 #ifdef QT_5
-#pragma warning - need functional review here
   header()->setSectionResizeMode( QHeaderView::Interactive );
 #else
   header()->setResizeMode( QHeaderView::Interactive );
