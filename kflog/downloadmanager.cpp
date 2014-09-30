@@ -107,7 +107,7 @@ bool DownloadManager::downloadRequest( QString &url, QString &destination )
         }
 
       QString destFile = QFileInfo(destination).fileName();
-      emit status( tr("downloading ") + destFile );
+      emit status( tr("downloading %1").arg(destFile) );
       downloadRunning = true;
     }
 
@@ -209,7 +209,7 @@ void DownloadManager::slotFinished( QString &urlIn, QNetworkReply::NetworkError 
 #ifndef _WIN32
   sleep(1); // make a short break
 #else
-  Sleep(1); // make a short break
+  Sleep(1000); // make a short break - Sleep() takes milliseconds
 #endif
 
   // Start the next download.
@@ -228,7 +228,7 @@ void DownloadManager::slotFinished( QString &urlIn, QNetworkReply::NetworkError 
     }
 
   QString destFile = QFileInfo(destination).fileName();
-  emit status( tr("downloading ") + destFile );
+  emit status( tr("downloading %1").arg(destFile) );
 
   mutex.unlock();
   return;

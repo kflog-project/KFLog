@@ -297,13 +297,13 @@
     <message>
         <location filename="downloadmanager.cpp" line="110"/>
         <location filename="downloadmanager.cpp" line="231"/>
-        <source>downloading </source>
-        <translation type="unfinished">lade</translation>
+        <source>downloading %1</source>
+        <translation>lade %1 herunter</translation>
     </message>
     <message>
         <location filename="downloadmanager.cpp" line="180"/>
         <source>Downloads finished</source>
-        <translation type="unfinished"></translation>
+        <translation>herunterladen beendet</translation>
     </message>
 </context>
 <context>
@@ -314,12 +314,12 @@
         <location filename="evaluationdialog.cpp" line="415"/>
         <location filename="evaluationdialog.cpp" line="423"/>
         <source>Flight Evaluation</source>
-        <translation type="unfinished"></translation>
+        <translation>Flugauswertung</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="90"/>
         <source>You can move the begin and end flags in the flight diagram by using the left mouse button. Position the mouse pointer over the vertical bar under the flag, press the left mouse button and move the bar to a new position. Release the mouse button at the new position. The flag in the diagram is moved to this new position. In parallel the flag at the map is moved too. &lt;p&gt;Another move possibility is to use the middle or right mouse button. If you click in the diagram by using the middle mouse button, the begin flag is moved to this new position. Using the right mouse button will do the same with the end flag.&lt;/p&gt;&lt;p&gt;If you move the mouse pointer at the map along the drawn flight, an orange triangle shows you the position in the flight diagram.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sie können die Anfangs- und Ende-Markierungen im Flugdiagramm durchr das Klicken des linken MausButtons verändern. Positioniere den Mauszeiger über dem senkrechten Strich</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="137"/>
@@ -1072,7 +1072,7 @@
     <message>
         <location filename="kflogconfig.cpp" line="1616"/>
         <source>Pilot</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pilot</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1629"/>
@@ -1108,12 +1108,12 @@
     <message>
         <location filename="kflogconfig.cpp" line="1661"/>
         <source>Latitude</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Breitengrad</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1662"/>
         <source>Longitude</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Längengrad</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1665"/>
@@ -1285,6 +1285,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="kflogconfig.cpp" line="2058"/>
+        <source>ddd.ddddd°</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="kflogconfig.cpp" line="2063"/>
         <source>Distance</source>
         <translation type="unfinished"></translation>
@@ -1401,17 +1406,17 @@
 <context>
     <name>KFLogTreeWidget</name>
     <message>
-        <location filename="kflogtreewidget.cpp" line="149"/>
+        <location filename="kflogtreewidget.cpp" line="148"/>
         <source>Toggle columns</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="kflogtreewidget.cpp" line="150"/>
+        <location filename="kflogtreewidget.cpp" line="149"/>
         <source>Toggle visibility of table columns</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="kflogtreewidget.cpp" line="155"/>
+        <location filename="kflogtreewidget.cpp" line="154"/>
         <source>Show all columns</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2218,7 +2223,7 @@ All downloads are canceled!</source>
         <location filename="objecttree.cpp" line="79"/>
         <location filename="objecttree.cpp" line="465"/>
         <source>Flights</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Flüge</translation>
     </message>
     <message>
         <location filename="objecttree.cpp" line="84"/>
@@ -2461,12 +2466,12 @@ All downloads are canceled!</source>
     <message>
         <location filename="optimizationwizard.cpp" line="249"/>
         <source>Latitude</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Breitengrad</translation>
     </message>
     <message>
         <location filename="optimizationwizard.cpp" line="249"/>
         <source>Longitude</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Längengrad</translation>
     </message>
     <message>
         <location filename="optimizationwizard.cpp" line="250"/>
@@ -2570,7 +2575,7 @@ All downloads are canceled!</source>
         <location filename="airfield.cpp" line="118"/>
         <location filename="map.cpp" line="546"/>
         <source>unknown</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">unbekannt</translation>
     </message>
     <message>
         <location filename="airfield.cpp" line="135"/>
@@ -3068,25 +3073,25 @@ All downloads are canceled!</source>
     <message>
         <location filename="flightdataprint.cpp" line="92"/>
         <source>File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Datei</translation>
     </message>
     <message>
         <location filename="flightdataprint.cpp" line="96"/>
         <location filename="flightlistviewitem.cpp" line="83"/>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Datum</translation>
     </message>
     <message>
         <location filename="flightdataprint.cpp" line="98"/>
         <location filename="flightlistviewitem.cpp" line="69"/>
         <source>Pilot</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pilot</translation>
     </message>
     <message>
         <location filename="flightdataprint.cpp" line="100"/>
         <location filename="flightlistviewitem.cpp" line="89"/>
         <source>Glider</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Segelflugzeug</translation>
     </message>
     <message>
         <location filename="flightdataprint.cpp" line="109"/>
@@ -3128,7 +3133,7 @@ All downloads are canceled!</source>
         <location filename="flightdataprint.cpp" line="152"/>
         <location filename="taskdataprint.cpp" line="93"/>
         <source>Task</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aufgabe</translation>
     </message>
     <message>
         <location filename="flightdataprint.cpp" line="158"/>
@@ -3151,7 +3156,7 @@ All downloads are canceled!</source>
     <message>
         <location filename="flightgrouplistviewitem.cpp" line="64"/>
         <source>Flights</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Flüge</translation>
     </message>
     <message>
         <location filename="flightlistviewitem.cpp" line="76"/>
@@ -3172,7 +3177,7 @@ All downloads are canceled!</source>
         <location filename="flightlistviewitem.cpp" line="113"/>
         <location filename="tasklistviewitem.cpp" line="80"/>
         <source>Points</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Punkte</translation>
     </message>
     <message>
         <location filename="flightlistviewitem.cpp" line="121"/>
@@ -3520,7 +3525,7 @@ F:          toggle front
     <message>
         <location filename="map.cpp" line="683"/>
         <source>Begin of task</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Beginn der Aufgabe</translation>
     </message>
     <message>
         <location filename="map.cpp" line="686"/>
@@ -3647,12 +3652,12 @@ F:          toggle front
     <message>
         <location filename="taskdataprint.cpp" line="83"/>
         <source>Total Distance</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gesamtdistanz</translation>
     </message>
     <message>
         <location filename="taskdataprint.cpp" line="86"/>
         <source>Task Distance</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aufgabelänge</translation>
     </message>
     <message>
         <location filename="tasklistviewitem.cpp" line="76"/>
@@ -4032,7 +4037,7 @@ F:          toggle front
     <message>
         <location filename="recorderdialog.cpp" line="526"/>
         <source>Flights</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Flüge</translation>
     </message>
     <message>
         <location filename="recorderdialog.cpp" line="553"/>
@@ -4045,17 +4050,17 @@ F:          toggle front
     <message>
         <location filename="recorderdialog.cpp" line="554"/>
         <source>Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Datum</translation>
     </message>
     <message>
         <location filename="recorderdialog.cpp" line="555"/>
         <source>Pilot</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pilot</translation>
     </message>
     <message>
         <location filename="recorderdialog.cpp" line="556"/>
         <source>Glider</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Segelflugzeug</translation>
     </message>
     <message>
         <location filename="recorderdialog.cpp" line="557"/>
@@ -4118,13 +4123,13 @@ F:          toggle front
         <location filename="recorderdialog.cpp" line="656"/>
         <location filename="recorderdialog.cpp" line="899"/>
         <source>Latitude</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Breitengrad</translation>
     </message>
     <message>
         <location filename="recorderdialog.cpp" line="657"/>
         <location filename="recorderdialog.cpp" line="900"/>
         <source>Longitude</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Längengrad</translation>
     </message>
     <message>
         <location filename="recorderdialog.cpp" line="674"/>
@@ -5270,12 +5275,12 @@ Please check connections and settings.</source>
     <message>
         <location filename="waypointtreeview.cpp" line="83"/>
         <source>Latitude</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Breitengrad</translation>
     </message>
     <message>
         <location filename="waypointtreeview.cpp" line="84"/>
         <source>Longitude</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Längengrad</translation>
     </message>
     <message>
         <location filename="waypointtreeview.cpp" line="85"/>
