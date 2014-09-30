@@ -319,7 +319,7 @@
     <message>
         <location filename="evaluationdialog.cpp" line="90"/>
         <source>You can move the begin and end flags in the flight diagram by using the left mouse button. Position the mouse pointer over the vertical bar under the flag, press the left mouse button and move the bar to a new position. Release the mouse button at the new position. The flag in the diagram is moved to this new position. In parallel the flag at the map is moved too. &lt;p&gt;Another move possibility is to use the middle or right mouse button. If you click in the diagram by using the middle mouse button, the begin flag is moved to this new position. Using the right mouse button will do the same with the end flag.&lt;/p&gt;&lt;p&gt;If you move the mouse pointer at the map along the drawn flight, an orange triangle shows you the position in the flight diagram.&lt;/p&gt;</source>
-        <translation type="unfinished">Sie können die Anfangs- und Ende-Markierungen im Flugdiagramm durchr das Klicken des linken MausButtons verändern. Positioniere den Mauszeiger über dem senkrechten Strich</translation>
+        <translation type="unfinished">Sie können die Anfangs- und Ende-Markierungen im Flugdiagramm durch das Klicken des linken MausButtons verändern. Positioniere den Mauszeiger über dem senkrechten Strich</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="137"/>
