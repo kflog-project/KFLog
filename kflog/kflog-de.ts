@@ -303,7 +303,7 @@
     <message>
         <location filename="downloadmanager.cpp" line="180"/>
         <source>Downloads finished</source>
-        <translation>herunterladen beendet</translation>
+        <translation>Herunterladen beendet</translation>
     </message>
 </context>
 <context>
@@ -319,172 +319,173 @@
     <message>
         <location filename="evaluationdialog.cpp" line="90"/>
         <source>You can move the begin and end flags in the flight diagram by using the left mouse button. Position the mouse pointer over the vertical bar under the flag, press the left mouse button and move the bar to a new position. Release the mouse button at the new position. The flag in the diagram is moved to this new position. In parallel the flag at the map is moved too. &lt;p&gt;Another move possibility is to use the middle or right mouse button. If you click in the diagram by using the middle mouse button, the begin flag is moved to this new position. Using the right mouse button will do the same with the end flag.&lt;/p&gt;&lt;p&gt;If you move the mouse pointer at the map along the drawn flight, an orange triangle shows you the position in the flight diagram.&lt;/p&gt;</source>
-        <translation type="unfinished">Sie können die Anfangs- und Ende-Markierungen im Flugdiagramm durchr das Klicken des linken MausButtons verändern. Positioniere den Mauszeiger über dem senkrechten Strich</translation>
+        <translation>&lt;p&gt;So verschieben sie die Anfangs- und Ende-Marken im Diagramm-Fenster: Positionieren Sie den Mauszeiger über dem senkrechten grünen oder roten Balken unter dem Fahnensymbol, klicken die linke Maustaste und ziehen den Balken an die gewünschte Position. Die Anfangs- und Ende Marken auf der Karte werden ebenso aktualisiert.&lt;/p&gt; &lt;p&gt;Alternativ kann der grüne Marker durch das Drücken des mittleren Maus Buttons, der rote Marker mit dem rechten Maus Button direkt an der Maus-Position gesetzt werden.&lt;/p&gt;&lt;p&gt;Wenn sie auf der Karte die Maus in Nähe des Flugwegs bewegen, markiert das gelbe Dreieck im Auswertungsfenster die Flugdaten an der aktuellen Position des Flugwegs.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="137"/>
         <location filename="evaluationdialog.cpp" line="164"/>
         <source>Time=</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeit=</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="138"/>
         <location filename="evaluationdialog.cpp" line="165"/>
         <source> MSL=</source>
-        <translation type="unfinished"></translation>
+        <translation>MSL=</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="139"/>
         <location filename="evaluationdialog.cpp" line="166"/>
         <source> Vario=</source>
-        <translation type="unfinished"></translation>
+        <translation>Vario=</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="150"/>
         <location filename="evaluationdialog.cpp" line="177"/>
         <source> Speed=</source>
-        <translation type="unfinished"></translation>
+        <translation>Geschwindigkeit=</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="199"/>
         <source>Circling</source>
-        <translation type="unfinished"></translation>
+        <translation>Kreisflug</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="200"/>
         <location filename="evaluationdialog.cpp" line="244"/>
         <location filename="evaluationdialog.cpp" line="293"/>
         <source>Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeit</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="201"/>
         <location filename="evaluationdialog.cpp" line="300"/>
         <source>Vario</source>
-        <translation type="unfinished"></translation>
+        <translation>Vario</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="202"/>
         <location filename="evaluationdialog.cpp" line="246"/>
         <location filename="evaluationdialog.cpp" line="294"/>
         <source>Alt. Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Höhengewinn</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="203"/>
         <location filename="evaluationdialog.cpp" line="247"/>
         <location filename="evaluationdialog.cpp" line="295"/>
         <source>Alt. Loss</source>
-        <translation type="unfinished"></translation>
+        <translation>Höhenverlust</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="204"/>
         <location filename="evaluationdialog.cpp" line="248"/>
         <location filename="evaluationdialog.cpp" line="296"/>
         <source>Alt. Netto</source>
-        <translation type="unfinished"></translation>
+        <translation>Höhe netto</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="208"/>
         <source>total:</source>
-        <translation type="unfinished"></translation>
+        <translation>gesamt:</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="217"/>
         <source>right:</source>
-        <translation type="unfinished"></translation>
+        <translation>rechts:</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="225"/>
         <source>left:</source>
-        <translation type="unfinished"></translation>
+        <translation>links:</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="233"/>
         <source>mixed:</source>
-        <translation type="unfinished"></translation>
+        <translation>gemischt:</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="243"/>
         <source>Straight</source>
-        <translation type="unfinished"></translation>
+        <translation>Geradeaus</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="245"/>
         <location filename="evaluationdialog.cpp" line="297"/>
         <source>Distance</source>
-        <translation type="unfinished"></translation>
+        <translation>Distanz</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="249"/>
         <location filename="evaluationdialog.cpp" line="298"/>
         <source>Speed</source>
-        <translation type="unfinished"></translation>
+        <translation>Geschwindigkeit</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="250"/>
         <source>L/D ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>Gleitverhältnis</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="263"/>
         <source>Total</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamt
+</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="277"/>
         <source>Flight sections</source>
-        <translation type="unfinished"></translation>
+        <translation>Flugauswahl</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="290"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Typ</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="291"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>Start</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="292"/>
         <source>End</source>
-        <translation type="unfinished"></translation>
+        <translation>Ende</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="299"/>
         <source>L/D</source>
-        <translation type="unfinished"></translation>
+        <translation>Gleitzahl</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="306"/>
         <source>Circling (%1 right)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kurvend (%1 rechts)</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="310"/>
         <source>Circling (%1 left)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kurvend (%1 links)</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="314"/>
         <source>Circling (%1 mixed)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kurvend (%1 gemischt)</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="353"/>
         <source>inf</source>
-        <translation type="unfinished"></translation>
+        <translation>∞</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="376"/>
         <source>Cannot evaluate task</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Aufgabe nicht prüfen</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="381"/>
         <source>Cannot (yet) evaluate a flight group</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Aufgabe (noch) nicht prüfen</translation>
     </message>
 </context>
 <context>
@@ -492,88 +493,88 @@
     <message>
         <location filename="evaluationframe.cpp" line="64"/>
         <source>Time Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitskala</translation>
     </message>
     <message>
         <location filename="evaluationframe.cpp" line="73"/>
         <source>Time distance between two drawing points in seconds.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitabstand zwischen zwei Zeichenpunkten in Sekunden.</translation>
     </message>
     <message>
         <location filename="evaluationframe.cpp" line="76"/>
         <source>Vario Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Variometerskala</translation>
     </message>
     <message>
         <location filename="evaluationframe.cpp" line="85"/>
         <location filename="evaluationframe.cpp" line="98"/>
         <source>Auto</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatisch</translation>
     </message>
     <message>
         <location filename="evaluationframe.cpp" line="86"/>
         <source>Adjusts variometer scale.</source>
-        <translation type="unfinished"></translation>
+        <translation>Setzt die Variometer Skala.</translation>
     </message>
     <message>
         <location filename="evaluationframe.cpp" line="89"/>
         <source>Speed Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Geschwindigkeistskala</translation>
     </message>
     <message>
         <location filename="evaluationframe.cpp" line="99"/>
         <source>Adjusts speed scale.</source>
-        <translation type="unfinished"></translation>
+        <translation>Setzt die Geschwindigkeitsskala.</translation>
     </message>
     <message>
         <location filename="evaluationframe.cpp" line="108"/>
         <source>Smoothness</source>
-        <translation type="unfinished"></translation>
+        <translation>Glättung</translation>
     </message>
     <message>
         <location filename="evaluationframe.cpp" line="116"/>
         <source>Changes the altitude smoothness.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ändert die Glättung der Barogramms.</translation>
     </message>
     <message>
         <location filename="evaluationframe.cpp" line="123"/>
         <source>Changes the variometer smoothness.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ändert die Glättung des Variogramms.</translation>
     </message>
     <message>
         <location filename="evaluationframe.cpp" line="130"/>
         <source>Changes the speed smoothness.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ändert die Gättung des Geschwindigkeitsdiagramms.</translation>
     </message>
     <message>
         <location filename="evaluationframe.cpp" line="134"/>
         <source>Switches on/off altitude drawing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Barogramm an/aus.</translation>
     </message>
     <message>
         <location filename="evaluationframe.cpp" line="138"/>
         <source>Switches on/off variometer drawing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Variogramm an/aus.</translation>
     </message>
     <message>
         <location filename="evaluationframe.cpp" line="142"/>
         <source>Switches on/off speed drawing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Geschwindigkeitsdiagramm an/aus.</translation>
     </message>
     <message>
         <location filename="evaluationframe.cpp" line="145"/>
         <source>A</source>
-        <translation type="unfinished"></translation>
+        <translation>H</translation>
     </message>
     <message>
         <location filename="evaluationframe.cpp" line="148"/>
         <source>V</source>
-        <translation type="unfinished"></translation>
+        <translation>V-vert</translation>
     </message>
     <message>
         <location filename="evaluationframe.cpp" line="151"/>
         <source>S</source>
-        <translation type="unfinished"></translation>
+        <translation>V-hor</translation>
     </message>
 </context>
 <context>
