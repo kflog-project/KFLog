@@ -23,9 +23,13 @@
 *.nsi text eol=crlf
 *.ps1 text eol=crlf
 
+# files need to keep in LF only format - also on windows
+*.ts text eol=lf
+
 # Denote all files that are truly binary and should not be modified.
 # (binary is a macro for -text -diff)
 *.png binary
 *.jpg binary
 *.pdf binary
 *.rtf binary
+

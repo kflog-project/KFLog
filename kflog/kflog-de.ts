@@ -1427,12 +1427,12 @@
     <message>
         <location filename="mainwindow.cpp" line="118"/>
         <source>Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Werkzeugleiste</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="296"/>
         <source>Flight Data</source>
-        <translation type="unfinished"></translation>
+        <translation>Flugdaten</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="304"/>
