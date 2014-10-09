@@ -1603,43 +1603,43 @@
     <message>
         <location filename="mainwindow.cpp" line="560"/>
         <source>Move map NW</source>
-        <translation type="unfinished"></translation>
+        <translation>Schiebe Karte NM</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="567"/>
         <source>Move map N</source>
-        <translation type="unfinished"></translation>
+        <translation>Schiebe Karte N</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="574"/>
         <source>Move map NE</source>
-        <translation type="unfinished"></translation>
+        <translation>Schiebe Karte NE</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="581"/>
         <location filename="mainwindow.cpp" line="588"/>
         <source>Move map W</source>
-        <translation type="unfinished"></translation>
+        <translation>Schiebe Karte W</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="595"/>
         <source>Move map SW</source>
-        <translation type="unfinished"></translation>
+        <translation>Schiebe Karte SW</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="602"/>
         <source>Move map S</source>
-        <translation type="unfinished"></translation>
+        <translation>Schiebe Karte S</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="609"/>
         <source>Move map SO</source>
-        <translation type="unfinished"></translation>
+        <translation>Schiebe Karte SO</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="615"/>
         <source>Show map data touched by Mouse</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Kartendaten unter Mauszeiger</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="628"/>
@@ -1649,12 +1649,12 @@
     <message>
         <location filename="mainwindow.cpp" line="643"/>
         <source>Move map</source>
-        <translation type="unfinished"></translation>
+        <translation>Schiebe Karte</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="657"/>
         <source>Show &amp;Evaluation Window</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Bewertungsfenster</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="667"/>
@@ -1664,37 +1664,37 @@
     <message>
         <location filename="mainwindow.cpp" line="674"/>
         <source>Optimize</source>
-        <translation type="unfinished"></translation>
+        <translation>Optimiere</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="680"/>
         <source>Optimize for OLC</source>
-        <translation type="unfinished"></translation>
+        <translation>Optimiere für OLC</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="686"/>
         <source>Altitude</source>
-        <translation type="unfinished">Höhe</translation>
+        <translation>Höhe</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="690"/>
         <source>Cycling</source>
-        <translation type="unfinished">kreisend</translation>
+        <translation>Kreisflug</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="694"/>
         <source>Speed</source>
-        <translation type="unfinished">Geschwindigkeit</translation>
+        <translation>Geschwindigkeit</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="698"/>
         <source>Vario</source>
-        <translation type="unfinished">Vario</translation>
+        <translation>Vario</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="702"/>
         <source>Airspace Violations</source>
-        <translation type="unfinished"></translation>
+        <translation>Luftraumverletzungen</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="706"/>
@@ -1957,12 +1957,12 @@
     <message>
         <location filename="mainwindow.cpp" line="1895"/>
         <source>&lt;html&gt;KFLog %1, compiled at %2 with QT %3&lt;br&gt;&lt;br&gt;Homepage: &lt;a href=&quot;http://www.kflog.org/kflog/&quot;&gt;www.kflog.org/kflog/&lt;/a&gt;&lt;br&gt;&lt;br&gt;GitHub Software Repository: &lt;a href=&quot;https://github.com/kflog-project/KFLog&quot;&gt;https://github.com/kflog-project/KFLog&lt;/a&gt;&lt;br&gt;&lt;br&gt;ChangeLog &lt;a href=&quot;https://github.com/kflog-project/KFLog/blob/%1/ChangeLog&quot;&gt;%1&lt;/a&gt;&lt;br&gt;&lt;br&gt;Report bugs to: &lt;a href=&quot;https://github.com/kflog-project/KFLog/issues&quot;&gt;kflog-project/KFLog/issues&lt;/a&gt;&lt;br&gt;&lt;br&gt;Published under the &lt;a href=&quot;http://www.gnu.org/licenses/licenses.html#GPL&quot;&gt;GPL&lt;/a&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;KFLog %1, gebaut am %2 mit QT %3&lt;br&gt;&lt;br&gt;Internet Adresse: &lt;a href=&quot;http://www.kflog.org/kflog/&quot;&gt;www.kflog.org/kflog/&lt;/a&gt;&lt;br&gt;&lt;br&gt;GitHub Software Archiv: &lt;a href=&quot;https://github.com/kflog-project/KFLog&quot;&gt;https://github.com/kflog-project/KFLog&lt;/a&gt;&lt;br&gt;&lt;br&gt;ChangeLog &lt;a href=&quot;https://github.com/kflog-project/KFLog/blob/%1/ChangeLog&quot;&gt;%1&lt;/a&gt;&lt;br&gt;&lt;br&gt;Melde Fehler an: &lt;a href=&quot;https://github.com/kflog-project/KFLog/issues&quot;&gt;kflog-project/KFLog/issues&lt;/a&gt;&lt;br&gt;&lt;br&gt;Veröffentlicht unter der &lt;a href=&quot;http://www.gnu.org/licenses/licenses.html#GPL&quot;&gt;GPL&lt;/a&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="1909"/>
         <source>&lt;html&gt;&lt;b&gt;Temporarily Maintainer&lt;/b&gt;&lt;blockquote&gt;Axel Pauli &amp;lt;&lt;a href=&quot;mailto:kflog.cumulus&amp;#64;gmail.com&quot;&gt;kflog.cumulus&amp;#64;gmail.com&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;&lt;b&gt;Developers, Maintainers&lt;/b&gt;&lt;blockquote&gt;Axel Pauli (Developer, Portage to Qt4)&lt;br&gt;Constantijn Neeteson (Maintenance, Core-developer)&lt;br&gt;Florian Ehinger (Maintenance, Core-developer, Mapdata)&lt;br&gt;Heiner Lamprecht (Maintenance, Core-developer)&lt;br&gt;Andr&amp;eacute; Somers (Developer, Waypoint-handling, Plugin architecture, ...)&lt;br&gt;Christof Bodner (Developer, OLC Optimization)&lt;br&gt;Eggert Ehmke (Developer)&lt;br&gt;Harald Maier (Developer, Waypoint-Dialog, Task-handling)&lt;br&gt;Thomas Nielsen (Developer, 3D-Dialog)&lt;br&gt;Jan Kr&amp;uuml;ger (Developer, 3D-Dialog)&lt;br&gt;Matthias Degenkolb (Developer, MS-Windows portage)&lt;br&gt;Peter Simon (Developer, MS-Windows portage)&lt;/blockquote&gt;&lt;b&gt;Server Sponsor&lt;/b&gt;&lt;blockquote&gt;Heiner Lamprecht &amp;lt;&lt;a href=&quot;mailto:heiner&amp;#64;kflog.org&quot;&gt;heiner&amp;#64;kflog.org&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;Thanks to all, who have made available this software!&lt;br&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;b&gt;Augenblickliche Wartung durch&lt;/b&gt;&lt;blockquote&gt;Axel Pauli &amp;lt;&lt;a href=&quot;mailto:kflog.cumulus&amp;#64;gmail.com&quot;&gt;kflog.cumulus&amp;#64;gmail.com&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;&lt;b&gt;Entwickler und Instandhalter&lt;/b&gt;&lt;blockquote&gt;Axel Pauli (Entwickler, Portierung zu Qt4)&lt;br&gt;Constantijn Neeteson (Instandhalter, Kernentwickler)&lt;br&gt;Florian Ehinger (Instandhalter, Kernentwickler, Kartendaten)&lt;br&gt;Heiner Lamprecht (Instandhalter, Kernentwickler)&lt;br&gt;Andr&amp;eacute; Somers (Entwickler, Wegpunkte, Plugin Architektur, ...)&lt;br&gt;Christof Bodner (Entwickler, OLC Optimierung)&lt;br&gt;Eggert Ehmke (Entwickler)&lt;br&gt;Harald Maier (Entwickler, Wegpunkt-Dialog, Aufgaben)&lt;br&gt;Thomas Nielsen (Entwickler, 3D-Dialog)&lt;br&gt;Jan Kr&amp;uuml;ger (Entwickler, 3D-Dialog)&lt;br&gt;Matthias Degenkolb (Entwickler, MS-Windows Portierung)&lt;br&gt;Peter Simon (Entwickler, MS-Windows Portierung)&lt;/blockquote&gt;&lt;b&gt;Server Sponsor&lt;/b&gt;&lt;blockquote&gt;Heiner Lamprecht &amp;lt;&lt;a href=&quot;mailto:heiner&amp;#64;kflog.org&quot;&gt;heiner&amp;#64;kflog.org&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;Danke an alle, die diese Software entstehen lassen haben und am Leben erhalten!&lt;br&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -1975,40 +1975,40 @@
     <message>
         <location filename="map.cpp" line="758"/>
         <source>Airspace&amp;nbsp;Structure</source>
-        <translation type="unfinished"></translation>
+        <translation>Luftraum&amp;nbsp;Struktur</translation>
     </message>
     <message>
         <location filename="map.cpp" line="799"/>
         <location filename="map.cpp" line="1793"/>
         <source>Task planning on</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="map.cpp" line="829"/>
         <location filename="map.cpp" line="845"/>
         <source>Task Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgaben Menü</translation>
     </message>
     <message>
         <location filename="map.cpp" line="835"/>
         <source>Create waypoint here</source>
-        <translation type="unfinished"></translation>
+        <translation>Erzeuge Wegpunkt hier</translation>
     </message>
     <message>
         <location filename="map.cpp" line="840"/>
         <location filename="map.cpp" line="874"/>
         <source>End task planning</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgabenplanungsende</translation>
     </message>
     <message>
         <location filename="map.cpp" line="856"/>
         <source>Add waypoint 1x</source>
-        <translation type="unfinished"></translation>
+        <translation>Wegpunkt 1x hinzufügen</translation>
     </message>
     <message>
         <location filename="map.cpp" line="860"/>
         <source>Add waypoint 2x</source>
-        <translation type="unfinished"></translation>
+        <translation>Wegpunkt 2x hinzufügen</translation>
     </message>
     <message>
         <location filename="map.cpp" line="864"/>
@@ -2018,14 +2018,14 @@
     <message>
         <location filename="map.cpp" line="869"/>
         <source>Delete all waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Wegpunkte löschen</translation>
     </message>
     <message>
         <location filename="map.cpp" line="948"/>
         <location filename="map.cpp" line="986"/>
         <location filename="map.cpp" line="1043"/>
         <source>Ready.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fertig.</translation>
     </message>
     <message>
         <location filename="map.cpp" line="1072"/>
@@ -2051,12 +2051,12 @@
     <message>
         <location filename="map.cpp" line="2895"/>
         <source>Map Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Karten Menü</translation>
     </message>
     <message>
         <location filename="map.cpp" line="3115"/>
         <source>Create a new Waypoint</source>
-        <translation type="unfinished"></translation>
+        <translation>Erzeuge neuen Wegpunkt</translation>
     </message>
 </context>
 <context>
@@ -2066,12 +2066,12 @@
         <location filename="mapcontents.cpp" line="464"/>
         <location filename="mapcontents.cpp" line="562"/>
         <source>%1 download(s) with %2 error(s) done.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Download(s) mit %2 Fehler(n) beendet.</translation>
     </message>
     <message>
         <location filename="mapcontents.cpp" line="251"/>
         <source>Downloads finished</source>
-        <translation type="unfinished">Herunterladen beendet</translation>
+        <translation>Herunterladen beendet</translation>
     </message>
     <message>
         <location filename="mapcontents.cpp" line="264"/>
@@ -2079,14 +2079,15 @@
         <location filename="mapcontents.cpp" line="583"/>
         <source>Network error occurred.
 All downloads are canceled!</source>
-        <translation type="unfinished"></translation>
+        <translation>Netwerk Fehlerr aufgetreten.
+Alle Downloads verworfen!</translation>
     </message>
     <message>
         <location filename="mapcontents.cpp" line="267"/>
         <location filename="mapcontents.cpp" line="488"/>
         <location filename="mapcontents.cpp" line="586"/>
         <source>Network Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Netzwerk Fehler</translation>
     </message>
     <message>
         <location filename="mapcontents.cpp" line="276"/>
