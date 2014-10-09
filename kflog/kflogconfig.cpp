@@ -34,6 +34,9 @@ extern MapContents  *_globalMapContents;
 extern MainWindow   *_mainWindow;
 extern QSettings    _settings;
 
+QTranslator* KFLogConfig::s_guiTranslator = static_cast<QTranslator *>(0);
+QTranslator* KFLogConfig::s_qtTranslator  = static_cast<QTranslator *>(0);
+
 KFLogConfig::KFLogConfig(QWidget* parent) :
   QDialog( parent ),
   m_wel2000HomeRadiusValue(0),
@@ -163,6 +166,7 @@ void KFLogConfig::slotPageClicked( QTreeWidgetItem* item, int column )
     }
   else if( itemText == "Identity" )
     {
+      __setLanguageEntriesInBox();
       activePage->setVisible( false );
       personalPage->setVisible( true );
       activePage = personalPage;
@@ -1618,9 +1622,10 @@ void KFLogConfig::__addPersonalTab()
   QFormLayout* pilotLayout = new QFormLayout();
   pilotLayout->setSpacing(10);
 
-  preNameE     = new QLineEdit();
-  surNameE     = new QLineEdit();
-  dateOfBirthE = new QLineEdit();
+  preNameE     = new QLineEdit;
+  surNameE     = new QLineEdit;
+  dateOfBirthE = new QLineEdit;
+  languageBox  = new QComboBox;
 
   preNameE->setMinimumWidth( minLen );
   surNameE->setMinimumWidth( minLen );
@@ -1629,6 +1634,7 @@ void KFLogConfig::__addPersonalTab()
   pilotLayout->addRow( tr("Forename") + ":", preNameE );
   pilotLayout->addRow( tr("Surname") + ":", surNameE );
   pilotLayout->addRow( tr("Birthday") + ":", dateOfBirthE );
+  pilotLayout->addRow( tr("Language") + ":", languageBox );
 
   pilotGroup->setLayout( pilotLayout );
 
@@ -1689,6 +1695,68 @@ void KFLogConfig::__addPersonalTab()
   preNameE->setText(_settings.value("/PersonalData/PreName", "").toString());
   surNameE->setText(_settings.value("/PersonalData/SurName", "").toString());
   dateOfBirthE->setText(_settings.value("/PersonalData/Birthday", "").toString());
+  __setLanguageEntriesInBox();
+}
+
+void KFLogConfig::__setLanguageEntriesInBox()
+{
+  languageBox->clear();
+
+  QString langDir = _settings.value( "/Path/InstallRoot", "" ).toString() +
+                    "/translations";
+
+  QString lang = _settings.value( "/PersonalData/Language", "en" ).toString();
+
+  QDir transDir(langDir);
+
+  if( transDir.exists() == false )
+    {
+      // Set language to default language English
+      languageBox->addItem( "en" );
+      return;
+    }
+
+  QStringList filters; filters << "kflog_*.qm";
+  transDir.setNameFilters(filters);
+  transDir.setFilter( QDir::Files|QDir::Readable);
+  transDir.setSorting( QDir::Name );
+
+  QStringList transList = transDir.entryList();
+
+  if( transList.isEmpty() )
+    {
+      // Set language to default language English
+      languageBox->addItem( "en" );
+      return;
+    }
+
+  // extract language identifier
+  QStringList langList;
+
+  // set the default language in the list
+  langList << "en";
+
+  for( int i = 0; i < transList.size(); i++ )
+    {
+      const QString& langId = transList.at(i);
+
+      qDebug() << "langId" << langId;
+
+      if( langId.size() == 11 )
+	{
+	  langList << langId.mid( 6, 2);
+	}
+    }
+
+  langList.sort();
+
+  languageBox->addItems( langList );
+  int idx = languageBox->findText( lang );
+
+  if( idx != -1 )
+    {
+      languageBox->setCurrentIndex( idx );
+    }
 }
 
 void KFLogConfig::slotTakeThisPoint( const SinglePoint* sp )
@@ -2565,4 +2633,87 @@ void KFLogConfig::setLastUsedWaypointCatalog( QString& catalog )
     }
 
   _settings.setValue( "/Waypoints/DefaultCatalogName", catalog );
+}
+
+/**
+ * Sets the language for the GUI and for the Qt libraries.
+ * This was a helpful link :-) concerning that:
+ *
+ * http://flylib.com/books/en/2.18.1.93/1/
+ *
+ */
+bool KFLogConfig::setGuiLanguage( QString newLanguage )
+{
+  qDebug() << "KFLogConfig::setGuiLanguage" << newLanguage;
+
+  bool ok = false;
+
+  if( newLanguage.isEmpty() || newLanguage == "en" )
+    {
+      // That is a reset to the default language English.
+      if( s_guiTranslator )
+        {
+          QCoreApplication::removeTranslator( s_guiTranslator );
+        }
+
+      if( s_qtTranslator )
+        {
+          QCoreApplication::removeTranslator( s_qtTranslator );
+        }
+
+      return true;
+    }
+
+  QString langFile = "kflog_" + newLanguage + ".qm";
+  QString langDir = _settings.value( "/Path/InstallRoot", "" ).toString() +
+                    "/translations";
+
+  // Load GUI translation file
+  if( ! s_guiTranslator )
+    {
+      s_guiTranslator = new QTranslator;
+    }
+
+  if( s_guiTranslator->load( langFile, langDir ) )
+    {
+      QCoreApplication::installTranslator( s_guiTranslator );
+      qDebug() << "Using GUI translation file"
+	       << langFile
+	       << "for language"
+	       << newLanguage;
+
+      ok = true;
+    }
+  else
+    {
+      qWarning() << "No GUI translation file found in" << langDir;
+      ok = false;
+    }
+
+  // Load Qt library translation file, e.g. qt_de.qm
+  langFile = "qt_" + newLanguage + ".qm";
+
+  // Load library translation file
+  if( ! s_qtTranslator )
+    {
+      s_qtTranslator = new QTranslator;
+    }
+
+  if( s_qtTranslator->load( langFile, langDir ) )
+    {
+      QCoreApplication::installTranslator( s_qtTranslator );
+      qDebug() << "Using Library translation file"
+	       << langFile
+	       << "for language"
+	       << newLanguage;
+
+      ok &= true;
+    }
+  else
+    {
+      qWarning() << "No Library translation file found in" << langDir;
+      ok &= false;
+    }
+
+  return ok;
 }

@@ -24,7 +24,10 @@ ARCHITECTURE=$(shell dpkg --print-architecture)
 KFLOG_DEB_ROOT=dpkg/$(DIST_NAME)
 KFLOG_DEB=$(KFLOG_DEB_ROOT)/$(KFLOG_REL)
 
-QTVERSION=$(shell qmake -query QT_VERSION)
+QT_VERSION=$(shell qmake -query QT_VERSION)
+QT_BINS=$(shell qmake -query QT_INSTALL_BINS)
+QT_LRELEASE=$(QT_BINS)/lrelease
+QT_TRANSLATIONS=$(shell qmake -query QT_INSTALL_TRANSLATIONS)
 
 # Reset language environment because the date can be formatted according
 # to local rules. That does not like dpkg-buildpackage.
@@ -42,9 +45,9 @@ endif
 
 usage:
 	@echo ""
-	@echo "KFLog build environment for Linux/X11 and Qt$(QTVERSION)"
+	@echo "KFLog build environment for Linux/X11 and Qt$(QT_VERSION)"
 	@echo ""
-	@echo "Installed Qt version $(QTVERSION)"
+	@echo "Installed Qt version $(QT_VERSION)"
 	@echo ""
 	@echo "Call \"make -f Makfile.qmake ...\" with one of the listed targets"
 	@echo "  all          - build all KFLog parts"
@@ -67,6 +70,16 @@ qmake:
   
 install_test: all
 	make INSTALL_ROOT=`pwd`/release -f Makefile install
+	make INSTALL_ROOT=`pwd`/release -f Makefile.qmake install_lang
+
+.PHONY : install_lang
+install_lang:
+	@echo "===== Installing KFLog $(VERSION) languages ====="
+	@install -d $(INSTALL_ROOT)/translations
+	@cd kflog; \
+		$(QT_LRELEASE) -silent -removeidentical -nounfinished kflog_de.ts -qm $(INSTALL_ROOT)/translations/kflog_de.qm
+	@chmod 644 $(INSTALL_ROOT)/translations/kflog_de.qm
+	@install --mode=644 $(QT_TRANSLATIONS)/qt_de.qm $(INSTALL_ROOT)/translations/qt_de.qm
 	
 clean:	qmake
 	make -f Makefile clean
@@ -133,6 +146,7 @@ dpkg_install:
 	install --mode=755 release/bin/kflog $(DESTDIR)/$(INSTALL_ROOT)/bin
 	cp -d release/lib/* $(DESTDIR)/$(INSTALL_ROOT)/lib
 	$(MAKE) INSTALL_ROOT=$(DESTDIR)/$(INSTALL_ROOT) -f Makefile install
+	$(MAKE) INSTALL_ROOT=$(DESTDIR)/$(INSTALL_ROOT) -f Makefile.qmake install_lang
 
 # create a tar file from the kflog tree in $Home
 .PHONY : make_tar

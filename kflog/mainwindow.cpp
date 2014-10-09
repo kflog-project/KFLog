@@ -102,6 +102,14 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   Distance::setUnit( static_cast<enum Distance::distanceUnit>(distUnit) );
   WGSPoint::setFormat( static_cast<enum WGSPoint::Format>(posUnit) );
 
+  QString lang = _settings.value( "/PersonalData/Language", "en" ).toString();
+
+  if( lang.isEmpty() == false && lang == "en" )
+    {
+      // Initialize GUI translator for user defined language
+      KFLogConfig::setGuiLanguage( lang );
+    }
+
   createApplicationDataDirectory();
 
   _globalMapMatrix   = new MapMatrix(this);

@@ -47,6 +47,7 @@
 #include <QSpinBox>
 #include <QTreeWidget>
 #include <QTableWidget>
+#include <QTranslator>
 #include <QWidget>
 
 #include "coordedit.h"
@@ -102,6 +103,18 @@ class KFLogConfig : public QDialog
    * \param catalog Path to catalog.
    */
   static void setLastUsedWaypointCatalog( QString& catalog );
+
+  /**
+   * Sets the language for the GUI surface to the new passed country code.
+   * If the passed argument is an empty string the language is reset to
+   * the default language English.
+   *
+   * \param newLanguage two letter coutry code for the new language to be
+   *        selected. If empty, English is set as default.
+   *
+   * \return True in case of success, otherwise false.
+   */
+  static bool setGuiLanguage( QString newLanguage="" );
 
  protected:
 
@@ -353,6 +366,11 @@ class KFLogConfig : public QDialog
    */
   bool __checkWelt2000Input( QString& input );
 
+  /**
+   * Sets the entries in the language combo box.
+   */
+  void __setLanguageEntriesInBox();
+
   QGridLayout *configLayout;
 
   QTreeWidget *setupTree;
@@ -394,6 +412,7 @@ class KFLogConfig : public QDialog
   QLineEdit* preNameE;
   QLineEdit* surNameE;
   QLineEdit* dateOfBirthE;
+  QComboBox* languageBox;
 
   QSpinBox* altitudePenWidth;
   QSpinBox* cyclingPenWidth;
@@ -528,6 +547,11 @@ class KFLogConfig : public QDialog
 
   /** Widget with a airfield list. */
   AirfieldSelectionList* m_airfieldSelectionList;
+
+  /** Qt translator for the GUI surface. */
+  static QTranslator* s_guiTranslator;
+
+  static QTranslator* s_qtTranslator;
 };
 
 #endif

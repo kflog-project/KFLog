@@ -66,23 +66,17 @@ int main(int argc, char **argv)
 {
   QApplication app( argc, argv );
 
-
   QCoreApplication::setOrganizationName("KFLog");
   QCoreApplication::setOrganizationDomain("www.kflog.org");
   QCoreApplication::setApplicationName("kflog");
   QCoreApplication::setApplicationVersion( KFLOG_VERSION );
-
 
   // Set the compile date of the application.
   _settings.setValue( "/Main/CompileDate", __DATE__ );
 
   // Reset the locale that is used for number formatting to "C" locale.
   QLocale::setDefault(QLocale::C);
-  QTranslator translator;
-  translator.load(QLocale::system(),"kflog-");
-  app.installTranslator(&translator);
 
-  qDebug() << QLocale::system();
 // QT5: strings in c++ sources have to be UTF-8
 #ifndef QT_5
   // Make sure the application uses utf8 encoding for translated widgets
@@ -206,7 +200,6 @@ int main(int argc, char **argv)
           qDebug() << "Exiting.";
           return 0;
         }
-
     }
 
   // start window manager event processing loop
