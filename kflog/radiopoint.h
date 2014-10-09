@@ -2,7 +2,7 @@
  **
  **   radiopoint.h
  **
- **   This file is part of Cumulus.
+ **   This file is part of KFLog.
  **
  ************************************************************************
  **
@@ -19,25 +19,12 @@
 #ifndef RADIO_POINT_H
 #define RADIO_POINT_H
 
+#include <climits>
+
+#include <QPoint>
+#include <QString>
+
 #include "singlepoint.h"
-
-/**
- * \struct radioContact
- *
- * \brief This structure contains the data of one frequency;
- *
- * \date 2000-2008
- */
-struct radioContact
-{
-  /** Frequency as string. */
-  QString frequency;
-
-  /** Call sign as string. */
-  QString callSign;
-
-  unsigned int type;
-};
 
 /**
  * \class RadioPoint
@@ -50,22 +37,24 @@ struct radioContact
  * derived from \ref SinglePoint. This class is used for: VOR, VORDME, VORTAC,
  * NDB and CompPoint.
  *
- * \see BaseMapElement#objectType
+ * @see BaseMapElement#objectType
  *
  * \date 2000-2014
- *
- * \version $Id$
  */
 
 class RadioPoint : public SinglePoint
 {
- public:
+  public:
 
   /**
    * Default constructor
    */
-  RadioPoint() : SinglePoint(),
-  m_frequency(0.0)
+  RadioPoint() :
+    SinglePoint(),
+    m_frequency(0.0),
+    m_range(0.0),
+    m_declination(SHRT_MIN),
+    m_aligned2TrueNorth(false)
    {
    };
 
@@ -81,7 +70,10 @@ class RadioPoint : public SinglePoint
    * @param  frequency  The frequency.
    * @param  channel The channel.
    * @param  elevation The elevation.
-   * @param  comment An additional comment related to the radio point
+   * @param  country The country location.
+   * @param  range The service range in meters.
+   * @param  declination The declination
+   * @param  aligned2TrueNorth Alignment to true north
    */
   RadioPoint( const QString& name,
               const QString& icao,
@@ -89,10 +81,13 @@ class RadioPoint : public SinglePoint
               BaseMapElement::objectType typeID,
               const WGSPoint& wgsPos,
               const QPoint& pos,
-              const float frequency = 0.0,
+              const float frequency,
               const QString channel = "",
-              float elevation = 0.0,
-              const QString& country = "" );
+              const float elevation = 0.0,
+              const QString country = "",
+              const float range = 0.0,
+              const float declination = SHRT_MIN,
+              const bool aligned2TrueNorth = false );
 
   /**
    * Destructor
@@ -109,33 +104,30 @@ class RadioPoint : public SinglePoint
     */
    virtual void printMapElement( QPainter* printPainter, bool isText );
 
-   /**
-    * @return The frequency
-    */
-   QString frequencyAsString() const
-     {
-       return (m_frequency > 0) ? QString("%1").arg(m_frequency, 0, 'f', 3) : QString("");
-     };
-
   /**
    * @return The frequency
    */
-  virtual float getFrequency() const
+  QString frequencyAsString() const
+    {
+      return (m_frequency > 0) ? QString("%1").arg(m_frequency, 0, 'f', 3) : QString("");
+    };
+
+  float getFrequency() const
     {
       return m_frequency;
     };
 
-  virtual void setFrequency( const float value)
+  void setFrequency( const float value)
     {
       m_frequency = value;
     };
 
-  virtual QString getChannel() const
+  QString getChannel() const
     {
       return m_channel;
     };
 
-  virtual void setChannel( const QString& value )
+  void setChannel( const QString& value )
     {
       m_channel = value;
     };
@@ -143,7 +135,7 @@ class RadioPoint : public SinglePoint
   /**
    * @return ICAO name
    */
-  virtual QString getICAO() const
+  QString getICAO() const
     {
       return m_icao;
     };
@@ -151,10 +143,47 @@ class RadioPoint : public SinglePoint
   /**
    * @param value ICAO name
    */
-  virtual void setICAO( const QString& value )
+  void setICAO( const QString& value )
     {
       m_icao = value;
-    };
+    }
+
+  bool isAligned2TrueNorth () const
+    {
+      return m_aligned2TrueNorth;
+    }
+
+  void setAligned2TrueNorth (bool aligned2TrueNorth)
+    {
+      m_aligned2TrueNorth = aligned2TrueNorth;
+    }
+
+  float getDeclination () const
+    {
+      return m_declination;
+    }
+
+  void setDeclination (float declination)
+    {
+      m_declination = declination;
+    }
+
+  float getRange () const
+    {
+      return m_range;
+    }
+
+  void setRange (float range)
+    {
+      m_range = range;
+    }
+
+  /**
+   * Combines channel, range, declination and north alignment as text string.
+   *
+   * \return additional items of radio point as text.
+   */
+  QString getAdditionalText() const;
 
  protected:
   /**
@@ -171,6 +200,21 @@ class RadioPoint : public SinglePoint
    * The icao name
    */
   QString m_icao;
+
+  /**
+   * Range of service in meters. 0 means unknown.
+   */
+  float m_range;
+
+  /**
+   * Declination, SHRT_MIN means undefined.
+   */
+  float m_declination;
+
+  /**
+   * Aligned to true north.
+   */
+  bool m_aligned2TrueNorth;
 };
 
 #endif
