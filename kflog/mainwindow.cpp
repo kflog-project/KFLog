@@ -102,12 +102,29 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   Distance::setUnit( static_cast<enum Distance::distanceUnit>(distUnit) );
   WGSPoint::setFormat( static_cast<enum WGSPoint::Format>(posUnit) );
 
-  QString lang = _settings.value( "/PersonalData/Language", "en" ).toString();
+  QString langSet = _settings.value( "/PersonalData/Language", "??" ).toString();
 
-  if( lang.isEmpty() == false && lang == "en" )
+  if( langSet == "??" )
     {
-      // Initialize GUI translator for user defined language
-      KFLogConfig::setGuiLanguage( lang );
+      // The GUI language is not configured. Try to get it from the $LANG
+      // environment variable.
+      QString langSys = qgetenv("LANG");
+
+      if( langSys.isEmpty() == false && langSys.size() >= 2 )
+	{
+	  langSys = langSys.left(2).toLower();
+
+	  if( KFLogConfig::setGuiLanguage( langSys ) )
+	    {
+	      // Save language settings as new default
+	      _settings.setValue( "/PersonalData/Language", langSys );
+	    }
+	}
+    }
+  else if( langSet.isEmpty() == false && langSet != "en" )
+    {
+      // Initialize GUI translator with user defined language
+      KFLogConfig::setGuiLanguage( langSet );
     }
 
   createApplicationDataDirectory();

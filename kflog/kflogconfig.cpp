@@ -314,6 +314,25 @@ void KFLogConfig::slotOk()
   _settings.setValue( "/PersonalData/SurName", surNameE->text() );
   _settings.setValue( "/PersonalData/Birthday", dateOfBirthE->text() );
 
+  QString oldLang = _settings.value( "/PersonalData/Language", "en" ).toString();
+  QString newLang = languageBox->currentText();
+
+  if( oldLang != newLang )
+    {
+      // Save and set new selected language
+      _settings.setValue( "/PersonalData/Language", newLang );
+      setGuiLanguage( newLang );
+
+      QMessageBox::information( this,
+				tr("Restart KFLog"),
+				"<html>" +
+				tr("You have changed the GUI language.") +
+				"<br><br>" +
+				tr("Please restart KFLog to make the new language available.") +
+				"</html>",
+				QMessageBox::Ok );
+    }
+
   int newCatSelection = waypointButtonGroup->id(waypointButtonGroup->checkedButton());
   int oldCatSelection = _settings.value("/Waypoints/DefaultWaypointCatalog",
                                         LastUsed).toInt();
@@ -1740,8 +1759,6 @@ void KFLogConfig::__setLanguageEntriesInBox()
     {
       const QString& langId = transList.at(i);
 
-      qDebug() << "langId" << langId;
-
       if( langId.size() == 11 )
 	{
 	  langList << langId.mid( 6, 2);
@@ -2644,8 +2661,6 @@ void KFLogConfig::setLastUsedWaypointCatalog( QString& catalog )
  */
 bool KFLogConfig::setGuiLanguage( QString newLanguage )
 {
-  qDebug() << "KFLogConfig::setGuiLanguage" << newLanguage;
-
   bool ok = false;
 
   if( newLanguage.isEmpty() || newLanguage == "en" )
