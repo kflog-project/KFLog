@@ -106,20 +106,19 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
 
   if( langSet == "??" )
     {
-      // The GUI language is not configured. Try to get it from the $LANG
-      // environment variable.
-      QString langSys = qgetenv("LANG");
+      // The GUI language is not configured. Try to get it from the OS
+      QString langSys = QLocale::system().name();
 
       if( langSys.isEmpty() == false && langSys.size() >= 2 )
-	{
-	  langSys = langSys.left(2).toLower();
+        {
+          langSys = langSys.left(2).toLower();
 
-	  if( KFLogConfig::setGuiLanguage( langSys ) )
-	    {
-	      // Save language settings as new default
-	      _settings.setValue( "/PersonalData/Language", langSys );
-	    }
-	}
+          if( KFLogConfig::setGuiLanguage( langSys ) )
+            {
+              // Save language settings as new default
+              _settings.setValue( "/PersonalData/Language", langSys );
+            }
+        }
     }
   else if( langSet.isEmpty() == false && langSet != "en" )
     {
