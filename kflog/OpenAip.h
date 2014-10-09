@@ -1,6 +1,6 @@
 /***********************************************************************
 **
-**   openaip.h
+**   OpenAip.h
 **
 **   This file is part of KFLog.
 **
@@ -11,8 +11,6 @@
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
 /**
@@ -20,9 +18,9 @@
  *
  * \author Axel Pauli
  *
- * \brief A class for reading data from openAip XML files.
+ * \brief A class for reading data from openAIP XML files.
  *
- * A class for reading data from openAip XML files provided by Butterfly
+ * A class for reading data from openAIP XML files provided by Butterfly
  * Avionics GmbH. The data are licensed under the CC BY-NC-SA license.
  *
  * See here for more info: http://www.openaip.net
@@ -90,7 +88,7 @@ class OpenAip
    *
    * \param filename File containing airfield definitions
    *
-   * \param airfieldList List in which the read airfields are stored
+   * \param airfieldList List in which the read data are stored
    *
    * \param errorInfo Info about read errors
    *
@@ -155,6 +153,8 @@ class OpenAip
   bool readGeoLocation( QXmlStreamReader& xml, SinglePoint& sp );
 
   bool readRadio( QXmlStreamReader& xml, RadioPoint& rp );
+
+  bool readParams( QXmlStreamReader& xml, RadioPoint& rp );
 
   bool readHotspotRecord( QXmlStreamReader& xml, SinglePoint& sp );
 
@@ -233,13 +233,13 @@ class OpenAip
   QPoint m_homePosition;
 
   /**
-   * Radius in Km to be used for filtering. If set to <= 0, radius
-   * filter is ignored.
+   * Radius in Km to be used for filtering around the home position.
+   *  If set to <= 0, the radius filter is ignored.
    */
   double m_filterRadius;
 
   /**
-   * Runway length filter in meters. If set to <= 0, filter is switched off.
+   * Runway length filter in meters. If set to <= 0, the filter is switched off.
    */
   float m_filterRunwayLength;
 

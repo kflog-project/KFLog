@@ -21,7 +21,7 @@
 
 #include "AirspaceHelper.h"
 #include "mapcontents.h"
-#include "openaip.h"
+#include "OpenAip.h"
 #include "openairparser.h"
 #include "resource.h"
 

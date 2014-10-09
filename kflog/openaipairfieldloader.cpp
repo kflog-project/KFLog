@@ -18,7 +18,7 @@
 #include <QtCore>
 
 #include "mapcontents.h"
-#include "openaip.h"
+#include "OpenAip.h"
 #include "openaipairfieldloader.h"
 
 extern QSettings _settings;
