@@ -1,0 +1,5 @@
+This directory is used for the GUI labels and text translations. Per country
+two files have to be installed here.
+
+1. KFLog GUI text translations
+2. QT text translations

@@ -1,0 +1,6 @@
+This directory is used for the airspace files.
+
+Two airspace file formats are suopprted:
+
+  1. OpenAir format, files with the extension .txt
+  2. openAIP format, files with the extension .aip

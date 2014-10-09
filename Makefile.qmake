@@ -126,6 +126,7 @@ dpkg_install:
 	install -d $(DESTDIR)/$(INSTALL_ROOT)/lib
 	install -d $(DESTDIR)/$(INSTALL_ROOT)/logger
 	install -d $(DESTDIR)/$(INSTALL_ROOT)/pics
+	install -d $(DESTDIR)/$(INSTALL_ROOT)/translations
 	install -d $(DESTDIR)/usr/share/applications
 	install --mode=644 kflog/pics/pilot_48.png $(DESTDIR)/$(INSTALL_ROOT)/pics
 	install --mode=644 kflog/kflog.desktop $(DESTDIR)/usr/share/applications

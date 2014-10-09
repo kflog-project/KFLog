@@ -1,19 +1,19 @@
-This directory is used for the airfield files.
+This directory is used for the point data, such as airfields, navaids, ...
 
-KFLog supports two different airfield sources:
+KFLog supports two different point data sources:
 
-1. WELT2000. The latest file is to find here:
+ 1. WELT2000. The latest file is to find here:
 
-   http://www.segelflug.de/vereine/welt2000/download/WELT2000.TXT
+    http://www.segelflug.de/vereine/welt2000/download/WELT2000.TXT
 
-   More information about WELT2000 is available at:
+    More information about WELT2000 is available at:
 
-   http://www.segelflug.de/vereine/welt2000/
+    http://www.segelflug.de/vereine/welt2000/
 
-2. openAIP airfields from http://www.openaip.net/. See there
-   for more information.
+ 2. openAIP point data from http://www.openaip.net/. See there
+    for more information.
 
-KFLog downloads airfield files automatically for you in the settings
-airfields page. Please define on that page, which airfield source
-(Welt2000 or openAIP) do you want to use and for which countries airfield
+KFLog downloads point data files automatically for you in the settings
+airfields page. Please define on that page, which point data source
+(Welt2000 or openAIP) do you want to use and for which countries point
 data should be loaded.

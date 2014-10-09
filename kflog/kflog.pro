@@ -50,7 +50,6 @@ win32 {
       warn_on
 }
 
-
 TRANSLATIONS += kflog-de.ts
 
 # Map and GUI icons are handled by the Qt resource system
@@ -225,15 +224,18 @@ HEADERS = \
 # prefix to it.
 
 landscape.path  = /mapdata/landscape
-landscape.files = ../README-MAP
+landscape.files = ../README-LANDSCAPE
 
 airfields.path  = /mapdata/airfields
 airfields.files = ../README-AIRFIELDS
 
 airspaces.path  = /mapdata/airspaces
-airspaces.files = ../README-AIRSPACE
+airspaces.files = ../README-AIRSPACES
 
-INSTALLS += landscape airfields airspaces
+translations.path  = /mapdata/translations
+translations.files = ../README-TRANSLATIONS
+
+INSTALLS += landscape airfields airspaces translations
 
 !win32 {
 DESTDIR = ../release/bin
