@@ -2,7 +2,7 @@
  **
  **   baseflightelement.h
  **
- **   This file is part of KFLog4.
+ **   This file is part of KFLog.
  **
  ************************************************************************
  **
@@ -10,8 +10,6 @@
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
- **
- **   $Id$
  **
  ***********************************************************************/
 
@@ -27,8 +25,6 @@
 
 /**
  * @author Harald Maier
- *
- * @version $Id$
  */
 class BaseFlightElement : public BaseMapElement
 {

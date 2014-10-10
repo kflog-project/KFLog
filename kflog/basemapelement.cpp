@@ -12,8 +12,6 @@
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
 #include <QtCore>
@@ -139,13 +137,6 @@ void BaseMapElement::loadTranslations()
 bool BaseMapElement::drawMapElement(QPainter* targetP)
 {
   Q_UNUSED( targetP )
-  return true;
-}
-
-bool BaseMapElement::drawMapElement(QPainter* targetP, QPainter* maskP)
-{
-  Q_UNUSED( targetP )
-  Q_UNUSED( maskP )
   return true;
 }
 

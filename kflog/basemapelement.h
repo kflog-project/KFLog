@@ -2,7 +2,7 @@
 **
 **   basemapelement.h
 **
-**   This file is part of KFLog4
+**   This file is part of KFLog
 **
 ************************************************************************
 **
@@ -11,8 +11,6 @@
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -134,17 +132,6 @@ public:
    * Destructor
    */
   virtual ~BaseMapElement();
-
-  /**
-   * virtual function for drawing the element into the given painter.
-   *
-   * The function must be implemented in the child-classes.
-   * @param  targetP  The painter to draw the element into.
-   * @param  maskP    The maskpainter for targetP
-   * @return true, if element was drawn otherwise false.
-   */
-  // FIXME: do remove this function if maskP is completely removed
-  virtual bool drawMapElement(QPainter* targetP, QPainter* maskP);
 
   /**
    * virtual function for drawing the element into the given painter.
