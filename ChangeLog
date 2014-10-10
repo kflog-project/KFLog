@@ -11,6 +11,12 @@
 #
 ################################################################################
 
+  * Issue #17 Provide GUI surface translations for other languages has been
+    realised in the code. KFLog can load such translation data files now, if
+    they are provided.
+
+2014-10-10 Axel Pauli <kflog.cumulus@gmail.com>
+
   * KFLog 4.8.0 released for Ubuntu, Debian and MS Windows.
 
 2014-09-18 Axel Pauli <kflog.cumulus@gmail.com>
