@@ -43,7 +43,7 @@
 #include "mapcontents.h"
 #include "mapmatrix.h"
 #include "mapcalc.h"
-#include "openaipairfieldloader.h"
+#include "OpenAipPoiLoader.h"
 #include "openairparser.h"
 #include "radiopoint.h"
 #include "singlepoint.h"
@@ -107,7 +107,7 @@ MapContents::MapContents( QObject* object ) :
   m_downloadManger(0),
   m_downloadMangerW2000(0),
   m_downloadOpenAipAsManger(0),
-  m_downloadOpenAipAfManger(0),
+  m_downloadOpenAipPoiManger(0),
   m_currentFlightListIndex(-1)
 {
   // Setup a hash used as reverse mapping from isoLine value to array index to
@@ -398,6 +398,7 @@ void MapContents::slotReloadAirfieldData()
   airfieldList.clear();
   gliderfieldList.clear();
   outLandingList.clear();
+  navaidsList.clear();
 
   loadAirfields = true;
   emit contentsChanged();
@@ -501,33 +502,33 @@ void MapContents::slotReloadAirspaceData()
   emit contentsChanged();
 }
 
-void MapContents::slotDownloadOpenAipAirfieldFiles( bool askUser )
+void MapContents::slotDownloadOpenAipPointFiles( bool askUser )
 {
   if( askUser == true && __askUserForDownload(tr("openAIP airfield") ) != Automatic )
     {
-      qDebug() << "openAipAirfields: Auto Download Inhibited";
+      qDebug() << "openAipPoiFiles: Auto Download Inhibited";
       return;
     }
 
-  QString countries = _settings.value("/Airfield/Countries", "").toString();
+  QString countries = _settings.value("/Points/Countries", "").toString();
 
   if( countries.isEmpty() )
     {
-      qWarning() << "MapContents::slotDownloadOpenAipAirfieldFiles(): No countries defined!";
+      qWarning() << "MapContents::slotDownloadOpenAipPointFiles(): No countries defined!";
       return;
     }
 
-  if( m_downloadOpenAipAfManger == static_cast<DownloadManager *> (0) )
+  if( m_downloadOpenAipPoiManger == static_cast<DownloadManager *> (0) )
     {
-      m_downloadOpenAipAfManger = new DownloadManager(this);
+      m_downloadOpenAipPoiManger = new DownloadManager(this);
 
-      connect( m_downloadOpenAipAfManger, SIGNAL(finished( int, int )),
-               this, SLOT(slotOpenAipAfDownloadsFinished( int, int )) );
+      connect( m_downloadOpenAipPoiManger, SIGNAL(finished( int, int )),
+               this, SLOT(slotOpenAipPoiDownloadsFinished( int, int )) );
 
-      connect( m_downloadOpenAipAfManger, SIGNAL(networkError()),
-               this, SLOT(slotOpenAipAfNetworkError()) );
+      connect( m_downloadOpenAipPoiManger, SIGNAL(networkError()),
+               this, SLOT(slotOpenAipPoiNetworkError()) );
 
-      connect( m_downloadOpenAipAfManger, SIGNAL(status(const QString&)),
+      connect( m_downloadOpenAipPoiManger, SIGNAL(status(const QString&)),
                _mainWindow, SLOT(slotSetStatusMsg(const QString &)) );
     }
 
@@ -543,15 +544,21 @@ void MapContents::slotDownloadOpenAipAirfieldFiles( bool askUser )
       QString url  = urlPrefix + file;
       QString dest = destPrefix + file;
 
-      m_downloadOpenAipAfManger->downloadRequest( url, dest );
+      m_downloadOpenAipPoiManger->downloadRequest( url, dest );
+
+      // Navaids file name format: <country-code>_nav.aip, example: de_nav.aip
+      file = countryList.at(i).toLower() + "_nav.aip";
+      url  = urlPrefix + file;
+      dest = destPrefix + file;
+      m_downloadOpenAipPoiManger->downloadRequest( url, dest );
     }
 }
 
-void MapContents::slotOpenAipAfDownloadsFinished( int requests, int errors )
+void MapContents::slotOpenAipPoiDownloadsFinished( int requests, int errors )
 {
   // All has finished, free not more needed resources
-  m_downloadOpenAipAfManger->deleteLater();
-  m_downloadOpenAipAfManger = static_cast<DownloadManager *> (0);
+  m_downloadOpenAipPoiManger->deleteLater();
+  m_downloadOpenAipPoiManger = static_cast<DownloadManager *> (0);
 
   // initiate a reload of all airfield data
   slotReloadAirfieldData();
@@ -562,22 +569,22 @@ void MapContents::slotOpenAipAfDownloadsFinished( int requests, int errors )
       msg = QString(tr("%1 download(s) with %2 error(s) done.")).arg(requests).arg(errors);
 
       QMessageBox::warning( _mainWindow,
-			    tr("openAIP Airfield Downloads finished"),
+			    tr("openAIP Point Data Downloads finished"),
 			    msg );
     }
 
-  emit airfieldsDownloaded();
+  emit pointsDownloaded();
 }
 
 /**
  * Called, if a network error occurred during the openAIP airspace file
  * downloads.
  */
-void MapContents::slotOpenAipAfNetworkError()
+void MapContents::slotOpenAipPoiNetworkError()
 {
   // A network error has occurred. We do stop all further downloads.
-  m_downloadOpenAipAfManger->deleteLater();
-  m_downloadOpenAipAfManger = static_cast<DownloadManager *> (0);
+  m_downloadOpenAipPoiManger->deleteLater();
+  m_downloadOpenAipPoiManger = static_cast<DownloadManager *> (0);
 
   QString msg;
   msg = QString(tr("Network error occurred.\nAll downloads are canceled!"));
@@ -1358,14 +1365,15 @@ void MapContents::proofeSection(bool isPrint)
     {
       loadAirfields = false;
 
-      int afSourceIndex = _settings.value( "/Airfield/Source", 0 ).toInt();
+      int pointSource = _settings.value( "/Points/Source", 0 ).toInt();
 
-      if( afSourceIndex == 0 )
+      if( pointSource == 0 )
 	{
-          OpenAipAirfieldLoader afl;
-          afl.load( airfieldList );
+          OpenAipPoiLoader poiLoader;
+          poiLoader.load( airfieldList );
+          poiLoader.load( navaidsList );
 	}
-      else if( afSourceIndex == 1 )
+      else if( pointSource == 1 )
 	{
 	  // At first try a load of welt2000, that airfield data are available
 	  Welt2000 welt2000;
@@ -1394,8 +1402,8 @@ int MapContents::getListLength(int listIndex) const
         return gliderfieldList.count();
       case OutLandingList:
         return outLandingList.count();
-      case NavList:
-        return navList.count();
+      case NavaidsList:
+        return navaidsList.count();
       case AirspaceList:
         return airspaceList.count();
       case ObstacleList:
@@ -1458,8 +1466,8 @@ BaseMapElement* MapContents::getElement(int listIndex, uint index)
       return &gliderfieldList[index];
     case OutLandingList:
       return &outLandingList[index];
-    case NavList:
-      return &navList[index];
+    case NavaidsList:
+      return &navaidsList[index];
     case AirspaceList:
       return &airspaceList[index];
     case ObstacleList:
@@ -1502,8 +1510,8 @@ SinglePoint* MapContents::getSinglePoint(int listIndex, uint index)
     return &gliderfieldList[index];
   case OutLandingList:
     return &outLandingList[index];
-  case NavList:
-    return &navList[index];
+  case NavaidsList:
+    return &navaidsList[index];
   case ObstacleList:
     return &obstacleList[index];
   case ReportList:
@@ -1528,9 +1536,8 @@ void MapContents::slotReloadMapData()
 
   airfieldList.clear();
   gliderfieldList.clear();
-  addSitesList.clear();
   outLandingList.clear();
-  navList.clear();
+  navaidsList.clear();
   obstacleList.clear();
   reportList.clear();
   cityList.clear();
@@ -1597,8 +1604,8 @@ void MapContents::printContents(QPainter* targetPainter, bool isText)
   for (int i = 0; i < airspaceList.size(); i++)
     airspaceList[i].printMapElement(targetPainter, isText);
 
-  for (int i = 0; i < navList.size(); i++)
-    navList[i].printMapElement(targetPainter, isText);
+  for (int i = 0; i < navaidsList.size(); i++)
+    navaidsList[i].printMapElement(targetPainter, isText);
 
   for (int i = 0; i < airfieldList.size(); i++)
     airfieldList[i].printMapElement(targetPainter, isText);
@@ -1630,19 +1637,14 @@ void MapContents::drawList( QPainter* targetPainter,
           gliderfieldList[i].drawMapElement(targetPainter);
         break;
 
-      case AddSitesList:
-        for (int i = 0; i < addSitesList.size(); i++)
-          addSitesList[i].drawMapElement(targetPainter);
-        break;
-
       case OutLandingList:
         for (int i = 0; i < outLandingList.size(); i++)
           outLandingList[i].drawMapElement(targetPainter);
         break;
 
-      case NavList:
-        for (int i = 0; i < navList.size(); i++)
-          navList[i].drawMapElement(targetPainter);
+      case NavaidsList:
+        for (int i = 0; i < navaidsList.size(); i++)
+          navaidsList[i].drawMapElement(targetPainter);
         break;
 
       case AirspaceList:

@@ -105,6 +105,16 @@ class RadioPoint : public SinglePoint
    virtual void printMapElement( QPainter* printPainter, bool isText );
 
   /**
+  * Return a short html-info-string about the navaid, containing the
+  * name, the alias, the elevation and the frequency as well as a small
+  * icon of the navaid type.
+  *
+  * Reimplemented from SinglePoint (@ref SinglePoint#getInfoString).
+  * @return the info string
+  */
+  QString getInfoString();
+
+  /**
    * @return The frequency
    */
   QString frequencyAsString() const

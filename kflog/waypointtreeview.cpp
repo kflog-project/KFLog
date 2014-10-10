@@ -1022,11 +1022,6 @@ void WaypointTreeView::slotImportWaypointFromMap()
           searchList.append( MapContents::GliderfieldList );
         }
 
-      if( currentWaypointCatalog->showAll || currentWaypointCatalog->showOtherSites )
-        {
-          searchList.append( MapContents::AddSitesList );
-        }
-
       if( currentWaypointCatalog->showAll || currentWaypointCatalog->showObstacles )
         {
           searchList.append( MapContents::ObstacleList );

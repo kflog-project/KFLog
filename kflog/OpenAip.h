@@ -70,9 +70,16 @@ class OpenAip
    *
    * \param filename File containing navigation aid definitions
    *
+   * \param errorInfo Info about read errors
+   *
+   * \param useFiltering If enabled, filter rules will apply
+  *
    * \return true as success otherwise false
    */
-  bool readNavAids( QString fileName, QList<RadioPoint>& navAidList, QString& errorInfo );
+  bool readNavAids( QString fileName,
+                    QList<RadioPoint>& navAidList,
+                    QString& errorInfo,
+                    bool useFiltering=false );
 
   /**
    * Reads in a hotspot file provided as open aip xml format.
@@ -92,11 +99,12 @@ class OpenAip
    *
    * \param errorInfo Info about read errors
    *
-   * \param useFiltering If enabled, different filter rules will apply
+   * \param useFiltering If enabled, filter rules will apply
    *
    * \return true as success otherwise false
    */
-  bool readAirfields( QString fileName, QList<Airfield>& airfieldList,
+  bool readAirfields( QString fileName,
+                      QList<Airfield>& airfieldList,
                       QString& errorInfo,
                       bool useFiltering=false );
 

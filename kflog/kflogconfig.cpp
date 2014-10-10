@@ -102,7 +102,7 @@ KFLogConfig::KFLogConfig(QWidget* parent) :
   __addScaleTab();
   __addFlightTab();
   __addProjectionTab();
-  __addAirfieldTab();
+  __addPointsTab();
   __addAirspaceTab();
   __addWaypointTab();
   __addUnitTab();
@@ -142,12 +142,12 @@ void KFLogConfig::slotPageClicked( QTreeWidgetItem* item, int column )
 
   QString itemText = item->data( 0, Qt::UserRole ).toString();
 
-  if( itemText == "Airfields" )
+  if( itemText == "Points" )
     {
-      slotLoadAirfieldFilesIntoTable();
+      slotLoadOpenAipPointFilesIntoTable();
       activePage->setVisible( false );
-      airfieldPage->setVisible( true );
-      activePage = airfieldPage;
+      pointsPage->setVisible( true );
+      activePage = pointsPage;
     }
   else if( itemText == "Airspaces" )
     {
@@ -229,7 +229,7 @@ void KFLogConfig::slotOk()
       return;
     }
 
-  input = afOpenAipCountries->text().trimmed();
+  input = pointsOpenAipCountries->text().trimmed();
 
   if( input.isEmpty() == false && __checkOpenAipCountryInput( input ) == false )
     {
@@ -252,7 +252,7 @@ void KFLogConfig::slotOk()
 
   // Check for airfield source change
   bool airfieldSourceHasChanged =
-      ( _settings.value( "/Airfield/Source", 0 ).toInt() != afSourceBox->currentIndex() );
+      ( _settings.value( "/Points/Source", 0 ).toInt() != pointsSourceBox->currentIndex() );
 
   // check for home latitude and longitude change
   bool homeLatitudeChanged =
@@ -282,9 +282,9 @@ void KFLogConfig::slotOk()
   _settings.setValue( "/Homesite/Longitude", homeLonE->KFLogDegree() );
   _settings.setValue( "/MapData/ProjectionType", projectionSelect->currentIndex() );
 
-  _settings.setValue( "/Airfield/Source", afSourceBox->currentIndex() );
-  _settings.setValue( "/Airfield/Countries", afOpenAipCountries->text().trimmed().toLower() );
-  _settings.setValue( "/Airfield/HomeRadius", afOpenAipHomeRadius->value() );
+  _settings.setValue( "/Points/Source", pointsSourceBox->currentIndex() );
+  _settings.setValue( "/Points/Countries", pointsOpenAipCountries->text().trimmed().toLower() );
+  _settings.setValue( "/Points/HomeRadius", pointsOpenAipHomeRadius->value() );
 
   _settings.setValue( "/Welt2000/CountryFilter", welt2000CountryFilter->text().trimmed().toUpper() );
   _settings.setValue( "/Welt2000/HomeRadius", welt2000HomeRadius->value() );
@@ -397,14 +397,14 @@ void KFLogConfig::slotOk()
       emit reloadAirfieldData();
     }
   // Check, if openAIP airfields must be updated
-  else if( afSourceBox->currentIndex() == 0 &&
-      ( m_afOpenAipHomeRadiusValue !=  afOpenAipHomeRadius->value() ||
-        m_afOpenAipCountryValue != afOpenAipCountries->text() ) )
+  else if( pointsSourceBox->currentIndex() == 0 &&
+      ( m_afOpenAipHomeRadiusValue !=  pointsOpenAipHomeRadius->value() ||
+        m_afOpenAipCountryValue != pointsOpenAipCountries->text() ) )
     {
       emit reloadAirfieldData();
     }
   // Check, if Welt2000 airfields must be updated
-  else if( afSourceBox->currentIndex() == 1 &&
+  else if( pointsSourceBox->currentIndex() == 1 &&
           ( m_wel2000HomeRadiusValue !=  welt2000HomeRadius->value() ||
             m_welt2000CountryFilterValue != welt2000CountryFilter->text() ||
             m_welt2000ReadOlValue != welt2000ReadOl->isChecked()) )
@@ -478,7 +478,7 @@ void KFLogConfig::__checkAirspaceFileTable()
 
 bool KFLogConfig::__checkAirfieldFileTable()
 {
-  QTableWidgetItem* asItem = m_afFileTable->item( 0, 0 );
+  QTableWidgetItem* asItem = m_pointFileTable->item( 0, 0 );
 
   bool changed = false;
 
@@ -496,9 +496,9 @@ bool KFLogConfig::__checkAirfieldFileTable()
       else
         {
           // Store only checked file items.
-          for( int i = 1; i < m_afFileTable->rowCount(); i++ )
+          for( int i = 1; i < m_pointFileTable->rowCount(); i++ )
             {
-              QTableWidgetItem* item = m_afFileTable->item( i, 0 );
+              QTableWidgetItem* item = m_pointFileTable->item( i, 0 );
 
               if( item->checkState() == Qt::Checked )
                 {
@@ -507,10 +507,10 @@ bool KFLogConfig::__checkAirfieldFileTable()
             }
         }
 
-      QStringList oldFiles = _settings.value( "/Airfield/FileList", QStringList(QString("All"))).toStringList();
+      QStringList oldFiles = _settings.value( "/Points/FileList", QStringList(QString("All"))).toStringList();
 
       // save the new file list
-      _settings.setValue( "/Airfield/FileList", files );
+      _settings.setValue( "/Points/FileList", files );
 
       // Check, if file list has been modified
       if( oldFiles.size() != files.size() )
@@ -533,7 +533,7 @@ bool KFLogConfig::__checkAirfieldFileTable()
             }
         }
 
-      if( changed == true && _settings.value( "/Airfield/Source", 0 ).toInt() == 0 )
+      if( changed == true && _settings.value( "/Points/Source", 0 ).toInt() == 0 )
 	{
 	  // Return true, if this source is selected.
 	  return true;
@@ -1808,20 +1808,20 @@ int KFLogConfig::__getScaleValue(double scale)
   else return (((int) scale - 2000) / 100 + 125);
 }
 
-/** Add a tab for airfield (Welt2000) configuration.*/
-void KFLogConfig::__addAirfieldTab()
+/** Add a tab for point data configuration.*/
+void KFLogConfig::__addPointsTab()
 {
   QTreeWidgetItem* item = new QTreeWidgetItem;
-  item->setText( 0, tr("Airfields") );
-  item->setData( 0, Qt::UserRole, "Airfields" );
+  item->setText( 0, tr("Point Data") );
+  item->setData( 0, Qt::UserRole, "Points" );
   item->setIcon( 0, _mainWindow->getPixmap("airfield_32.png") );
   setupTree->addTopLevelItem( item );
 
-  airfieldPage = new QWidget(this);
-  airfieldPage->setObjectName( "AirfieldPage" );
-  airfieldPage->setVisible( false );
+  pointsPage = new QWidget(this);
+  pointsPage->setObjectName( "PointsPage" );
+  pointsPage->setVisible( false );
 
-  configLayout->addWidget( airfieldPage, 0, 1, 1, 2 );
+  configLayout->addWidget( pointsPage, 0, 1, 1, 2 );
 
   // Check country input with a validator. Country codes are consist of 2 letters
   // and are separated by space, comma or semicolon.
@@ -1881,35 +1881,46 @@ void KFLogConfig::__addAirfieldTab()
 
   oaipLayout->addWidget(new QLabel( tr("Countries:") ), grow, 1);
 
-  afOpenAipCountries = new QLineEdit;
-  afOpenAipCountries->setMinimumWidth( 150 );
-  afOpenAipCountries->setValidator( new QRegExpValidator(rx, this) );
-  afOpenAipCountries->setToolTip( toolTip );
-  oaipLayout->addWidget( afOpenAipCountries, grow, 2 );
+  pointsOpenAipCountries = new QLineEdit;
+  pointsOpenAipCountries->setMinimumWidth( 150 );
+  pointsOpenAipCountries->setValidator( new QRegExpValidator(rx, this) );
+  pointsOpenAipCountries->setToolTip( toolTip );
+  oaipLayout->addWidget( pointsOpenAipCountries, grow, 2 );
   grow++;
 
   oaipLayout->addWidget( new QLabel( tr("Home Radius:") ), grow, 0 );
 
-  afOpenAipHomeRadius = new QSpinBox();
-  afOpenAipHomeRadius->setRange( 0, 10000 );
-  afOpenAipHomeRadius->setSingleStep( 10 );
-  afOpenAipHomeRadius->setButtonSymbols( QSpinBox::PlusMinus );
-  afOpenAipHomeRadius->setSuffix( " Km" );
-  afOpenAipHomeRadius->setSpecialValueText(tr("Off"));
-  afOpenAipHomeRadius->setToolTip( toolTip1 );
-  oaipLayout->addWidget( afOpenAipHomeRadius, grow, 1 );
+  pointsOpenAipHomeRadius = new QSpinBox();
+  pointsOpenAipHomeRadius->setRange( 0, 10000 );
+  pointsOpenAipHomeRadius->setSingleStep( 10 );
+  pointsOpenAipHomeRadius->setButtonSymbols( QSpinBox::PlusMinus );
+  pointsOpenAipHomeRadius->setSuffix( " Km" );
+  pointsOpenAipHomeRadius->setSpecialValueText(tr("Off"));
+  pointsOpenAipHomeRadius->setToolTip( toolTip1 );
+  oaipLayout->addWidget( pointsOpenAipHomeRadius, grow, 1 );
   grow++;
 
-  m_afFileTable = new QTableWidget( 0, 1, this );
-  m_afFileTable->setToolTip( tr("Uncheck All to enable loading of single airfield files.") );
-  m_afFileTable->setSelectionBehavior( QAbstractItemView::SelectRows );
-  m_afFileTable->setShowGrid( true );
-  oaipLayout->addWidget( m_afFileTable, grow, 0, 1, 3 );
+  oaipLayout->setRowMinimumHeight ( grow, 20 );
+  grow++;
 
-  connect( m_afFileTable, SIGNAL(cellClicked ( int, int )),
+  QLabel* hint = new QLabel( tr("Select point data files to be loaded in the table") );
+  oaipLayout->addWidget( hint, grow, 0, 1, 3 );
+  grow++;
+
+  QString tip = tr("Uncheck All to enable loading of single files.") + "\n\n" +
+                tr("*_nav.api containing Navaids points") + "\n\n" +
+                tr("*_wpt.api containing Airfield points");
+
+  m_pointFileTable = new QTableWidget( 0, 1, this );
+  m_pointFileTable->setToolTip( tip );
+  m_pointFileTable->setSelectionBehavior( QAbstractItemView::SelectRows );
+  m_pointFileTable->setShowGrid( true );
+  oaipLayout->addWidget( m_pointFileTable, grow, 0, 1, 3 );
+
+  connect( m_pointFileTable, SIGNAL(cellClicked ( int, int )),
            SLOT(slotToggleAfCheckBox( int, int )) );
 
-  QHeaderView* hHeader = m_afFileTable->horizontalHeader();
+  QHeaderView* hHeader = m_pointFileTable->horizontalHeader();
   hHeader->setStretchLastSection( true );
 
   oaipLayout->setRowStretch( grow, 5 );
@@ -1920,14 +1931,14 @@ void KFLogConfig::__addAirfieldTab()
   QVBoxLayout* afLayout = new QVBoxLayout;
 
   QGridLayout *sourceLayout = new QGridLayout;
-  sourceLayout->addWidget( new QLabel( tr("Airfield source:") ), 0, 0 );
-  afSourceBox = new QComboBox;
-  afSourceBox->addItem("OpenAIP");
-  afSourceBox->addItem("Welt2000");
-  sourceLayout->addWidget( afSourceBox, 0, 1 );
+  sourceLayout->addWidget( new QLabel( tr("Point data source:") ), 0, 0 );
+  pointsSourceBox = new QComboBox;
+  pointsSourceBox->addItem("OpenAIP");
+  pointsSourceBox->addItem("Welt2000");
+  sourceLayout->addWidget( pointsSourceBox, 0, 1 );
   sourceLayout->setColumnStretch( 2, 10 );
 
-  connect( afSourceBox, SIGNAL(currentIndexChanged(int)),
+  connect( pointsSourceBox, SIGNAL(currentIndexChanged(int)),
            this, SLOT(slotAirfieldSourceChanged(int)) );
 
   afLayout->addLayout( sourceLayout );
@@ -1936,10 +1947,10 @@ void KFLogConfig::__addAirfieldTab()
   afLayout->addWidget( m_openAipGroup, 100 );
   afLayout->addStretch( 1 );
 
-  airfieldPage->setLayout( afLayout );
+  pointsPage->setLayout( afLayout );
 
-  int afSourceIndex = _settings.value( "/Airfield/Source", 0 ).toInt();
-  afSourceBox->setCurrentIndex( afSourceIndex );
+  int afSourceIndex = _settings.value( "/Points/Source", 0 ).toInt();
+  pointsSourceBox->setCurrentIndex( afSourceIndex );
   slotAirfieldSourceChanged( afSourceIndex );
 
   m_wel2000HomeRadiusValue     = _settings.value( "/Welt2000/HomeRadius", 0 ).toInt();
@@ -1950,11 +1961,11 @@ void KFLogConfig::__addAirfieldTab()
   welt2000CountryFilter->setText( m_welt2000CountryFilterValue );
   welt2000ReadOl->setChecked( m_welt2000ReadOlValue );
 
-  m_afOpenAipHomeRadiusValue = _settings.value( "/Airfield/HomeRadius", 0 ).toInt();
-  m_afOpenAipCountryValue    = _settings.value( "/Airfield/Countries", "" ).toString();
+  m_afOpenAipHomeRadiusValue = _settings.value( "/Points/HomeRadius", 0 ).toInt();
+  m_afOpenAipCountryValue    = _settings.value( "/Points/Countries", "" ).toString();
 
-  afOpenAipHomeRadius->setValue( m_afOpenAipHomeRadiusValue );
-  afOpenAipCountries->setText( m_afOpenAipCountryValue );
+  pointsOpenAipHomeRadius->setValue( m_afOpenAipHomeRadiusValue );
+  pointsOpenAipCountries->setText( m_afOpenAipCountryValue );
 }
 
 /** Add a tab for airspace file management.*/
@@ -2271,17 +2282,17 @@ void KFLogConfig::slotDownloadOpenAipAs()
 
 void KFLogConfig::slotDownloadOpenAipAf()
 {
-  QString input = afOpenAipCountries->text().trimmed();
+  QString input = pointsOpenAipCountries->text().trimmed();
 
   if( __checkOpenAipCountryInput( input ) == false )
     {
       return;
     }
 
-  _settings.setValue( "/Airfield/Countries",
-                      afOpenAipCountries->text().trimmed().toLower() );
+  _settings.setValue( "/Points/Countries",
+                      pointsOpenAipCountries->text().trimmed().toLower() );
 
-  emit downloadOpenAipAirfields( false );
+  emit downloadOpenAipPointFiles( false );
 }
 
 /**
@@ -2319,9 +2330,9 @@ void KFLogConfig::slotToggleAsCheckBox( int row, int column )
  */
 void KFLogConfig::slotToggleAfCheckBox( int row, int column )
 {
-  QTableWidgetItem* item = m_afFileTable->item( row, column );
+  QTableWidgetItem* item = m_pointFileTable->item( row, column );
 
-  if( row > 0 && m_afFileTable->item( 0, 0 )->checkState() == Qt::Checked )
+  if( row > 0 && m_pointFileTable->item( 0, 0 )->checkState() == Qt::Checked )
     {
       // All is checked, do not changed other items
       return;
@@ -2335,9 +2346,9 @@ void KFLogConfig::slotToggleAfCheckBox( int row, int column )
       Qt::CheckState newState = item->checkState();
 
       // All other items are toggled too
-      for( int i = m_afFileTable->rowCount() - 1; i > 0; i-- )
+      for( int i = m_pointFileTable->rowCount() - 1; i > 0; i-- )
 	{
-	  m_afFileTable->item( i, 0 )->setCheckState( newState );
+	  m_pointFileTable->item( i, 0 )->setCheckState( newState );
 	}
     }
 }
@@ -2419,14 +2430,14 @@ void KFLogConfig::slotLoadAirspaceFilesIntoTable()
   m_asFileTable->resizeColumnsToContents();
 }
 
-void KFLogConfig::slotLoadAirfieldFilesIntoTable()
+void KFLogConfig::slotLoadOpenAipPointFilesIntoTable()
 {
-  m_afFileTable->clear();
+  m_pointFileTable->clear();
 
   QString mapDir = _globalMapContents->getMapRootDirectory() + "/airfields";
 
-  QTableWidgetItem *hrItem = new QTableWidgetItem( tr("Airfield Files in ") + mapDir );
-  m_afFileTable->setHorizontalHeaderItem( 0, hrItem );
+  QTableWidgetItem *hrItem = new QTableWidgetItem( tr("Point Files in ") + mapDir );
+  m_pointFileTable->setHorizontalHeaderItem( 0, hrItem );
 
   QDir dir( mapDir );
   QStringList filters; filters << "*.aip";
@@ -2437,27 +2448,27 @@ void KFLogConfig::slotLoadAirfieldFilesIntoTable()
   QStringList preselect = dir.entryList();
 
   int row = 0;
-  m_afFileTable->setRowCount( row + 1 );
+  m_pointFileTable->setRowCount( row + 1 );
 
   QTableWidgetItem* item = new QTableWidgetItem( tr("Check/Uncheck all"), 0 );
   item->setFlags( Qt::ItemIsEnabled );
   item->setCheckState( Qt::Unchecked );
-  m_afFileTable->setItem( row, 0, item );
+  m_pointFileTable->setItem( row, 0, item );
   row++;
 
   for( int i = 0; i < preselect.size(); i++ )
     {
-      m_afFileTable->setRowCount( row + 1 );
+      m_pointFileTable->setRowCount( row + 1 );
 
       QString file = QFileInfo( preselect.at(i) ).fileName();
       item = new QTableWidgetItem( file, row );
       item->setFlags( Qt::ItemIsEnabled );
       item->setCheckState( Qt::Unchecked );
-      m_afFileTable->setItem( row, 0, item );
+      m_pointFileTable->setItem( row, 0, item );
       row++;
     }
 
-  QStringList files = _settings.value( "/Airfield/FileList", QStringList(QString("All"))).toStringList();
+  QStringList files = _settings.value( "/Points/FileList", QStringList(QString("All"))).toStringList();
 
   if( files.isEmpty() )
     {
@@ -2468,32 +2479,32 @@ void KFLogConfig::slotLoadAirfieldFilesIntoTable()
     {
       // Set all items to checked, if All is contained in the list at the first
       // position.
-      for( int i = 0; i < m_afFileTable->rowCount(); i++ )
+      for( int i = 0; i < m_pointFileTable->rowCount(); i++ )
         {
-          m_afFileTable->item( i, 0 )->setCheckState( Qt::Checked );
+          m_pointFileTable->item( i, 0 )->setCheckState( Qt::Checked );
         }
     }
   else
     {
       // Set the All item to unchecked.
-      m_afFileTable->item( 0, 0 )->setCheckState( Qt::Unchecked );
+      m_pointFileTable->item( 0, 0 )->setCheckState( Qt::Unchecked );
 
-      for( int i = 1; i < m_afFileTable->rowCount(); i++ )
+      for( int i = 1; i < m_pointFileTable->rowCount(); i++ )
         {
-          QTableWidgetItem* item = m_afFileTable->item( i, 0 );
+          QTableWidgetItem* item = m_pointFileTable->item( i, 0 );
 
           if( files.contains( item->text()) )
             {
-              m_afFileTable->item( i, 0 )->setCheckState( Qt::Checked );
+              m_pointFileTable->item( i, 0 )->setCheckState( Qt::Checked );
             }
           else
             {
-              m_afFileTable->item( i, 0 )->setCheckState( Qt::Unchecked );
+              m_pointFileTable->item( i, 0 )->setCheckState( Qt::Unchecked );
             }
         }
     }
 
-  m_afFileTable->resizeColumnsToContents();
+  m_pointFileTable->resizeColumnsToContents();
 }
 
 bool KFLogConfig::__checkOpenAipCountryInput( QString& input )

@@ -110,7 +110,7 @@ SOURCES = \
     mapmatrix.cpp \
     objecttree.cpp \
     OpenAip.cpp \
-    openaipairfieldloader.cpp \
+    OpenAipPoiLoader.cpp \
     openairparser.cpp \
     optimization.cpp \
     optimizationwizard.cpp \
@@ -192,7 +192,7 @@ HEADERS = \
     mapmatrix.h \
     objecttree.h \
     OpenAip.h \
-    openaipairfieldloader.h \
+    OpenAipPoiLoader.h \
     openairparser.h \
     optimization.h \
     optimizationwizard.h \

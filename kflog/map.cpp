@@ -628,6 +628,29 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
         }
     }
 
+  // As next we look for single navaids objects
+  QList<RadioPoint>& navList = _globalMapContents->getNavaidList();
+
+  for( int i = 0; i < navList.size(); i++ )
+    {
+      RadioPoint& hitElement = navList[i];
+
+      sitePos = hitElement.getMapPosition();
+
+      double dX = abs( sitePos.x() - current.x() );
+      double dY = abs( sitePos.y() - current.y() );
+
+      // Abstand entspricht der Icon-Grösse.
+      if( (dX < delta) && (dY < delta) )
+	{
+	  text += hitElement.getInfoString();
+	  // Text anzeigen
+	  WhatsThat* box = new WhatsThat( this, text, timeout, mapToGlobal( current ) );
+	  box->setVisible( true );
+	  return;
+	}
+    }
+
   BaseFlightElement *baseFlight = _globalMapContents->getFlight();
 
   if(baseFlight && baseFlight->getTypeID() == BaseMapElement::Flight)
@@ -1483,8 +1506,6 @@ void Map::__drawMap()
 
   emit setStatusBarProgress(60);
 
-  _globalMapContents->drawList(&aeroP, MapContents::NavList, drawnElements);
-
   uMapP.end();
 
   if( _globalMapMatrix->getScale( MapMatrix::CurrentScale ) <= 100.0 )
@@ -1498,15 +1519,13 @@ void Map::__drawMap()
 
   emit setStatusBarProgress(70);
 
+  _globalMapContents->drawList(&aeroP, MapContents::NavaidsList, drawnElements);
+
   emit setStatusBarProgress(75);
 
   _globalMapContents->drawList(&aeroP, MapContents::AirfieldList, drawnElements);
 
   emit setStatusBarProgress(80);
-
-  _globalMapContents->drawList(&aeroP, MapContents::AddSitesList, drawnElements);
-
-  emit setStatusBarProgress(85);
 
   _globalMapContents->drawList(&aeroP, MapContents::GliderfieldList, drawnElements);
 

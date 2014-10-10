@@ -150,14 +150,14 @@ class KFLogConfig : public QDialog
   void airspaceFileListChanged();
 
   /**
-   * Emitted to request a openAIP airspace file download.
+   * Emitted to request an openAIP airspace file download.
    */
   void downloadOpenAipAirspaces( bool askUser );
 
   /**
-   * Emitted to request a openAIP airfield file download.
+   * Emitted to request an openAIP point data file download.
    */
-  void downloadOpenAipAirfields( bool askUser );
+  void downloadOpenAipPointFiles( bool askUser );
 
   /**
    * Emitted, if the map elements should be set to their default values.
@@ -250,7 +250,7 @@ class KFLogConfig : public QDialog
    * Loads the content of the current airfield file directory into the
    * file table.
    */
-  void slotLoadAirfieldFilesIntoTable();
+  void slotLoadOpenAipPointFilesIntoTable();
 
   /**
    * Takes this point as new homesite position.
@@ -325,7 +325,7 @@ class KFLogConfig : public QDialog
   /** */
   int __getScaleValue(double value);
   /** */
-  void __addAirfieldTab();
+  void __addPointsTab();
   /** */
   void __addAirspaceTab();
   /** */
@@ -391,7 +391,7 @@ class KFLogConfig : public QDialog
   /** */
   QWidget* scalePage;
   /** */
-  QWidget* airfieldPage;
+  QWidget* pointsPage;
   /** */
   QWidget* airspacePage;
   /** */
@@ -425,9 +425,9 @@ class KFLogConfig : public QDialog
   QSpinBox*  welt2000HomeRadius;
   QCheckBox* welt2000ReadOl;
 
-  QComboBox* afSourceBox;
-  QLineEdit* afOpenAipCountries;
-  QSpinBox*  afOpenAipHomeRadius;
+  QComboBox* pointsSourceBox;
+  QLineEdit* pointsOpenAipCountries;
+  QSpinBox*  pointsOpenAipHomeRadius;
 
   QLineEdit* asOpenAipCountries;
 
@@ -536,8 +536,8 @@ class KFLogConfig : public QDialog
   /** Table for airspace files to be loaded. */
   QTableWidget* m_asFileTable;
 
-  /** Table for openAIP airfield files to be loaded. */
-  QTableWidget* m_afFileTable;
+  /** Table for openAIP point files to be loaded. */
+  QTableWidget* m_pointFileTable;
 
   /** Group box for Welt2000 airfield configuration widget. */
   QGroupBox* m_welt2000Group;

@@ -12,8 +12,6 @@
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
 /**
@@ -81,9 +79,8 @@ class MapContents : public QObject
   enum MapContentsListID { NotSet = 0,
                            AirfieldList,
                            GliderfieldList,
-                           AddSitesList,
                            OutLandingList,
-                           NavList,
+                           NavaidsList,
                            AirspaceList,
                            ObstacleList,
                            ReportList,
@@ -235,6 +232,14 @@ class MapContents : public QObject
   };
 
   /**
+   * @returns the navaid list.
+   */
+  QList<RadioPoint>& getNavaidList()
+  {
+    return navaidsList;
+  };
+
+  /**
    * @param flight adds a flight to flightList
    */
   void appendFlight(Flight* flight);
@@ -369,9 +374,9 @@ class MapContents : public QObject
   void slotReloadAirspaceData();
 
   /*
-   * Called, if openAIP airfield files shall be downloaded.
+   * Called, if openAIP point data files shall be downloaded.
    */
-  void slotDownloadOpenAipAirfieldFiles(bool askUser);
+  void slotDownloadOpenAipPointFiles(bool askUser);
 
  private slots:
 
@@ -393,14 +398,14 @@ class MapContents : public QObject
    */
   void slotOpenAipAsNetworkError();
 
-  /** Called, if all openAIP airfield file downloads are finished. */
-  void slotOpenAipAfDownloadsFinished( int requests, int errors );
+  /** Called, if all openAIP point data file downloads are finished. */
+  void slotOpenAipPoiDownloadsFinished( int requests, int errors );
 
   /**
-   * Called, if a network error occurred during the openAIP airfield file
+   * Called, if a network error occurred during the openAIP point data file
    * downloads.
    */
-  void slotOpenAipAfNetworkError();
+  void slotOpenAipPoiNetworkError();
 
  signals:
   /**
@@ -467,9 +472,9 @@ class MapContents : public QObject
   void airspacesDownloaded();
 
   /**
-   * Emitted, if openAIP airfields have been downloaded.
+   * Emitted, if openAIP point data have been downloaded.
    */
-  void airfieldsDownloaded();
+  void pointsDownloaded();
 
  private:
 
@@ -513,15 +518,9 @@ class MapContents : public QObject
   QList<Airfield> outLandingList;
 
   /**
-   * addSitesList contains all
-   * hang-glider-sites, free-balloon-sites, parachute-jumping-sites.
+   * navaidsList contains all radio navigation facilities.
    */
-  QList<SinglePoint> addSitesList;
-
-  /**
-   * navList contains all radio navigation facilities.
-   */
-  QList<RadioPoint> navList;
+  QList<RadioPoint> navaidsList;
 
   /**
    * airspaceList contains all airspaces. The sort function on this
@@ -704,8 +703,8 @@ class MapContents : public QObject
   /** Manager to handle downloads of requested openAIP airspace files. */
   DownloadManager *m_downloadOpenAipAsManger;
 
-  /** Manager to handle downloads of requested openAIP airfield files. */
-  DownloadManager *m_downloadOpenAipAfManger;
+  /** Manager to handle downloads of requested openAIP point data files. */
+  DownloadManager *m_downloadOpenAipPoiManger;
 
   /**
    * index of the current flight in flightList
