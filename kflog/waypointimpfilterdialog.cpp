@@ -48,7 +48,7 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
   airfields    = new QCheckBox(tr("&Airfields"));
   gliderfields = new QCheckBox(tr("&Gliderfields"));
   outlandings  = new QCheckBox(tr("Ou&tlandings"));
-  otherSites   = new QCheckBox(tr("&Other sites"));
+  navaids      = new QCheckBox(tr("&Navaids"));
   obstacles    = new QCheckBox(tr("O&bstacles"));
   landmarks    = new QCheckBox(tr("&Landmarks"));
   stations     = new QCheckBox(tr("&Stations"));
@@ -62,7 +62,7 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
   typeLayout->addWidget( airfields );
   typeLayout->addWidget( gliderfields );
   typeLayout->addWidget( outlandings );
-  typeLayout->addWidget( otherSites );
+  typeLayout->addWidget( navaids );
   typeLayout->addWidget( obstacles );
   typeLayout->addWidget( landmarks );
   typeLayout->addWidget( stations );
@@ -238,8 +238,7 @@ void WaypointImpFilterDialog::showEvent( QShowEvent *event )
   saveValues();
 }
 
-enum WaypointCatalog::FilterType
-WaypointImpFilterDialog::getFilter()
+enum WaypointCatalog::FilterType WaypointImpFilterDialog::getFilter()
 {
   if( rbf0->isChecked() )
     {
@@ -276,16 +275,16 @@ void WaypointImpFilterDialog::slotOk()
 
       // Check the area coordinates for correctness
       if( fLat == 00 || tLat == 00 ||
-	  fLat == tLat || fLon == tLon )
-	{
-	  QMessageBox::warning( this, QObject::tr("Error in coordinates"),
-	                        "<html>" + QObject::tr("Please enter valid coordinates for the Area filter!") +
-	                        "<br><br>" +
-	                        QObject::tr("Latitudes maybe not zero and from-to coordinates should be different.") +
-	                        "</html>", QMessageBox::Ok);
+	        fLat == tLat || fLon == tLon )
+        {
+          QMessageBox::warning( this, QObject::tr("Error in coordinates"),
+                                "<html>" + QObject::tr("Please enter valid coordinates for the Area filter!") +
+                                "<br><br>" +
+                                QObject::tr("Latitudes maybe not zero and from-to coordinates should be different.") +
+                                "</html>", QMessageBox::Ok);
 
-	  return;
-	}
+          return;
+        }
     }
 
   QDialog::accept();
@@ -305,7 +304,7 @@ void WaypointImpFilterDialog::slotChangeUseAll()
 
   airfields->setChecked(show);
   gliderfields->setChecked(show);
-  otherSites->setChecked(show);
+  navaids->setChecked(show);
   outlandings->setChecked(show);
   obstacles->setChecked(show);
   landmarks->setChecked(show);
@@ -318,7 +317,7 @@ void WaypointImpFilterDialog::slotClear()
   useAll->setChecked( true );
   airfields->setChecked( false );
   gliderfields->setChecked( false );
-  otherSites->setChecked( false );
+  navaids->setChecked( false );
   outlandings->setChecked( false );
   obstacles->setChecked( false );
   landmarks->setChecked( false );
@@ -468,7 +467,7 @@ void WaypointImpFilterDialog::saveValues()
   save.useAll = useAll->isChecked();
   save.airfields = airfields->isChecked();
   save.gliderfields = gliderfields->isChecked();
-  save.otherSites = otherSites->isChecked();
+  save.navaids = navaids->isChecked();
   save.outlandings = outlandings->isChecked();
   save.obstacles = obstacles->isChecked();
   save.landmarks = landmarks->isChecked();
@@ -594,7 +593,7 @@ void WaypointImpFilterDialog::restoreValues()
   useAll->setChecked( save.useAll );
   airfields->setChecked( save.airfields );
   gliderfields->setChecked( save.gliderfields );
-  otherSites->setChecked( save.otherSites );
+  navaids->setChecked( save.navaids );
   outlandings->setChecked( save.outlandings );
   obstacles->setChecked( save.obstacles );
   landmarks->setChecked( save.landmarks );

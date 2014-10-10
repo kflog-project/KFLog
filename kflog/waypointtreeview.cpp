@@ -26,6 +26,7 @@
 #include "mapcalc.h"
 #include "mapconfig.h"
 #include "mapcontents.h"
+#include "radiopoint.h"
 #include "runway.h"
 #include "wgspoint.h"
 #include "waypointtreeview.h"
@@ -749,7 +750,7 @@ void WaypointTreeView::slotFillWaypoints()
             case BaseMapElement::Parachute:
             case BaseMapElement::Balloon:
 
-              if( !currentWaypointCatalog->showOtherSites )
+              if( !currentWaypointCatalog->showNavaids )
                 {
                   continue;
                 }
@@ -995,12 +996,8 @@ void WaypointTreeView::slotCloseWaypointCatalog()
 
 void WaypointTreeView::slotImportWaypointFromMap()
 {
-  SinglePoint *s;
-  Airfield *a;
-  Waypoint *w;
   QList<Waypoint*> wl = currentWaypointCatalog->wpList;
   int loop;
-  WGSPoint p;
   QString tmp;
   QRegExp blank("[ ]");
   QList<int> searchList;
@@ -1020,6 +1017,11 @@ void WaypointTreeView::slotImportWaypointFromMap()
       if( currentWaypointCatalog->showAll || currentWaypointCatalog->showGliderfields )
         {
           searchList.append( MapContents::GliderfieldList );
+        }
+
+      if( currentWaypointCatalog->showAll || currentWaypointCatalog->showNavaids )
+        {
+          searchList.append( MapContents::NavaidsList );
         }
 
       if( currentWaypointCatalog->showAll || currentWaypointCatalog->showObstacles )
@@ -1045,98 +1047,94 @@ void WaypointTreeView::slotImportWaypointFromMap()
       enum WaypointCatalog::FilterType ft = importFilterDlg->getFilter();
 
       if( ft == WaypointCatalog::Radius )
-	{
-	  filterRadius = ( currentWaypointCatalog->getCenterPoint().lat() != 0  ||
-			   currentWaypointCatalog->getCenterPoint().lon() != 0);
-	}
+        {
+          filterRadius = ( currentWaypointCatalog->getCenterPoint().lat() != 0  ||
+               currentWaypointCatalog->getCenterPoint().lon() != 0);
+        }
       else if( ft == WaypointCatalog::Area )
       	{
-	  filterArea = ( currentWaypointCatalog->areaLat2 != 0 &&
-			 currentWaypointCatalog->areaLong2 != 0 && !filterRadius );
+          filterArea = ( currentWaypointCatalog->areaLat2 != 0 &&
+          currentWaypointCatalog->areaLong2 != 0 && !filterRadius );
       	}
 
-    for( int k = 0; k < searchList.size(); k++ )
-      {
-      for (int i = 0; i < _globalMapContents->getListLength(searchList.at(k) ); i++)
+      for( int k = 0; k < searchList.size(); k++ )
         {
-
-        s = (SinglePoint *)_globalMapContents->getElement(searchList.at(k), i);
-        p = s->getWGSPosition();
-
-        // check area
-        if (filterArea)
-          {
-          if (p.lon() < currentWaypointCatalog->areaLong1 || p.lon() > currentWaypointCatalog->areaLong2 ||
-              p.lat() < currentWaypointCatalog->areaLat1 || p.lat() > currentWaypointCatalog->areaLat2)
+          for (int i = 0; i < _globalMapContents->getListLength(searchList.at(k) ); i++)
             {
-             continue;
-            }
+              SinglePoint *s = dynamic_cast<SinglePoint *>(_globalMapContents->getElement(searchList.at(k), i));
+
+              if( s == 0 )
+                {
+                  continue;
+                }
+
+              WGSPoint p = s->getWGSPosition();
+
+              // check area
+              if (filterArea)
+                {
+                if (p.lon() < currentWaypointCatalog->areaLong1 || p.lon() > currentWaypointCatalog->areaLong2 ||
+                    p.lat() < currentWaypointCatalog->areaLat1 || p.lat() > currentWaypointCatalog->areaLat2)
+                  {
+                   continue;
+                  }
+                }
+              else if ( filterRadius && currentWaypointCatalog->radiusSize > 0.0 )
+                {
+                  // We have to consider the user chosen distance unit.
+                  double catalogDist = Distance::convertToMeters( currentWaypointCatalog->radiusSize ) / 1000.;
+
+                  // This distance is calculated im kilometers.
+                  double radiusDist = dist( currentWaypointCatalog->getCenterPoint().lat(),
+                                            currentWaypointCatalog->getCenterPoint().lon(),
+                                            p.lat(),
+                                            p.lon());
+
+                  if ( radiusDist > catalogDist )
+                    {
+                      continue;
+                    }
+                }
+
+              Waypoint* w = new Waypoint;
+
+              QString name = s->getName();
+              w->name = name.replace(blank, "").left(8).toUpper();
+              loop = 0;
+              int idx;
+
+              while(currentWaypointCatalog->findWaypoint(w->name, idx) && loop < 100000)
+                {
+                  tmp.setNum(loop++);
+                  w->name = w->name.left(w->name.size() - tmp.length()) + tmp;
+                }
+
+              w->description = s->getName();
+              w->country = s->getCountry();
+              w->type = s->getTypeID();
+              w->origP = s->getWGSPosition();
+              w->elevation = s->getElevation();
+              w->comment = s->getComment();
+
+              Airfield *af   = dynamic_cast<Airfield *>(s); // try casting to an airfield
+              RadioPoint *rp = dynamic_cast<RadioPoint *>(s); // try casting to a navaid
+
+              if( af )
+                {
+                  w->icao = af->getICAO();
+                  w->frequency = af->getFrequency();
+                  w->rwyList = af->getRunwayList();
+                }
+              else if( rp )
+                {
+                  w->icao = rp->getICAO();
+                  w->frequency = rp->getFrequency();
+                  w->comment = rp->getAdditionalText();
+                }
+
+              currentWaypointCatalog->wpList.append(w);
           }
-        else if ( filterRadius && currentWaypointCatalog->radiusSize > 0.0 )
-          {
-            // We have to consider the user chosen distance unit.
-            double catalogDist = Distance::convertToMeters( currentWaypointCatalog->radiusSize ) / 1000.;
-
-            // This distance is calculated im kilometers.
-            double radiusDist = dist( currentWaypointCatalog->getCenterPoint().lat(),
-                                      currentWaypointCatalog->getCenterPoint().lon(),
-                                      p.lat(),
-                                      p.lon());
-
-            if ( radiusDist > catalogDist )
-              {
-                continue;
-              }
-          }
-
-        w = new Waypoint;
-
-        QString name = s->getName();
-        w->name = name.replace(blank, "").left(8).toUpper();
-        loop = 0;
-        int idx;
-
-        while(currentWaypointCatalog->findWaypoint(w->name, idx) && loop < 100000)
-          {
-            tmp.setNum(loop++);
-            w->name = w->name.left(w->name.size() - tmp.length()) + tmp;
-          }
-
-        w->description = s->getName();
-        w->country = s->getCountry();
-        w->type = s->getTypeID();
-        w->origP = s->getWGSPosition();
-        w->elevation = s->getElevation();
-        w->comment = s->getComment();
-
-        switch(w->type)
-        {
-        case BaseMapElement::IntAirport:
-        case BaseMapElement::Airport:
-        case BaseMapElement::MilAirport:
-        case BaseMapElement::CivMilAirport:
-        case BaseMapElement::Airfield:
-        case BaseMapElement::Gliderfield:
-
-          w->icao = ((Airfield *) s)->getICAO();
-          w->frequency = ((Airfield *) s)->getFrequency();
-          a = dynamic_cast<Airfield*>(s); // try casting to an airfield
-
-          if( a )
-            {
-              w->rwyList = a->getRunwayList();
-            }
-
-          break;
-
-        default:
-
-          break;
-        }
-
-        currentWaypointCatalog->wpList.append(w);
       }
-    }
 
     currentWaypointCatalog->modified = true;
     slotFillWaypoints();
@@ -1252,7 +1250,7 @@ void WaypointTreeView::setFilterDataInCatalog( WaypointCatalog* catalog )
   catalog->showAll = importFilterDlg->useAll->isChecked();
   catalog->showAirfields = importFilterDlg->airfields->isChecked();
   catalog->showGliderfields = importFilterDlg->gliderfields->isChecked();
-  catalog->showOtherSites = importFilterDlg->otherSites->isChecked();
+  catalog->showNavaids = importFilterDlg->navaids->isChecked();
   catalog->showObstacles = importFilterDlg->obstacles->isChecked();
   catalog->showLandmarks = importFilterDlg->landmarks->isChecked();
   catalog->showOutlandings = importFilterDlg->outlandings->isChecked();
@@ -1322,7 +1320,7 @@ void WaypointTreeView::setFilterDataFromCatalog()
   importFilterDlg->useAll->setChecked(currentWaypointCatalog->showAll);
   importFilterDlg->airfields->setChecked(currentWaypointCatalog->showAirfields);
   importFilterDlg->gliderfields->setChecked(currentWaypointCatalog->showGliderfields);
-  importFilterDlg->otherSites->setChecked(currentWaypointCatalog->showOtherSites);
+  importFilterDlg->navaids->setChecked(currentWaypointCatalog->showNavaids);
   importFilterDlg->obstacles->setChecked(currentWaypointCatalog->showObstacles);
   importFilterDlg->landmarks->setChecked(currentWaypointCatalog->showLandmarks);
   importFilterDlg->outlandings->setChecked(currentWaypointCatalog->showOutlandings);

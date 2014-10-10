@@ -12,8 +12,6 @@
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
 /**
@@ -98,11 +96,10 @@ public:
    */
   void setFilter( enum WaypointCatalog::FilterType newFilter );
 
-
   QCheckBox *useAll;
   QCheckBox *airfields;
   QCheckBox *gliderfields;
-  QCheckBox *otherSites;
+  QCheckBox *navaids;
   QCheckBox *outlandings;
   QCheckBox *obstacles;
   QCheckBox *landmarks;
@@ -204,7 +201,7 @@ private:
       bool useAll;
       bool airfields;
       bool gliderfields;
-      bool otherSites;
+      bool navaids;
       bool outlandings;
       bool obstacles;
       bool landmarks;

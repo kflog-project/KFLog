@@ -157,7 +157,7 @@ WaypointCatalog::WaypointCatalog(const QString& name) :
   showAll = true;
   showAirfields = false;
   showGliderfields = false;
-  showOtherSites = false;
+  showNavaids = false;
   showObstacles = false;
   showLandmarks = false;
   showOutlandings = false;

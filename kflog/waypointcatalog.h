@@ -150,7 +150,7 @@ public:
   bool showAll;
   bool showAirfields;
   bool showGliderfields;
-  bool showOtherSites;
+  bool showNavaids;
   bool showObstacles;
   bool showLandmarks;
   bool showOutlandings;

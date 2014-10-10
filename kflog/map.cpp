@@ -2800,7 +2800,7 @@ void Map::slotWaypointCatalogChanged(WaypointCatalog* c)
               case BaseMapElement::Parachute:
               case BaseMapElement::Balloon:
 
-                if( !c->showOtherSites )
+                if( !c->showNavaids )
                   {
                     continue;
                   }

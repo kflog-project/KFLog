@@ -219,7 +219,7 @@ QString RadioPoint::getAdditionalText() const
       text += ", ";
     }
 
-  if( isAligned2TrueNorth() )
+  if( isAligned2TrueNorth() == false )
     {
       text += QObject::tr("Not ");
     }
