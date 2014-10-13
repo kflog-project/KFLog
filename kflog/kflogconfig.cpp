@@ -1903,7 +1903,7 @@ void KFLogConfig::__addPointsTab()
   oaipLayout->setRowMinimumHeight ( grow, 20 );
   grow++;
 
-  QLabel* hint = new QLabel( tr("Select point data files to be loaded in the table") );
+  QLabel* hint = new QLabel( tr("Select point data files to be used in the table") );
   oaipLayout->addWidget( hint, grow, 0, 1, 3 );
   grow++;
 
@@ -2022,8 +2022,16 @@ void KFLogConfig::__addAirspaceTab()
 
   topLayout->addWidget( openAipGroup );
 
+  topLayout->addSpacing( 20 );
+  QLabel* hint = new QLabel( tr("Select airspace files to be used in the table") );
+  topLayout->addWidget( hint );
+
+  QString tip = tr("Uncheck All to enable loading of single files.") + "\n\n" +
+                tr("*.txt containing OpenAir data") + "\n\n" +
+                tr("*.aip containing openAIP data");
+
   m_asFileTable = new QTableWidget( 0, 1, this );
-  m_asFileTable->setToolTip( tr("Uncheck All to enable loading of single airspace files.") );
+  m_asFileTable->setToolTip( tip );
   m_asFileTable->setSelectionBehavior( QAbstractItemView::SelectRows );
   m_asFileTable->setShowGrid( true );
 
