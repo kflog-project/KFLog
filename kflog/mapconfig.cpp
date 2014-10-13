@@ -12,8 +12,6 @@
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
 #include <QtGui>
@@ -1177,6 +1175,10 @@ QString MapConfig::getPixmapName( unsigned int typeID,
         iconName = "vordme";
         break;
       case BaseMapElement::VorTac:
+        iconName = "vortac";
+        break;
+      case BaseMapElement::Tacan:
+	// TODO provide an icon for TACAN
         iconName = "vortac";
         break;
       case BaseMapElement::Ndb:

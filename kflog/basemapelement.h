@@ -70,6 +70,7 @@ public:
     Vor = VOR,
     VorDme = VORDME,
     VorTac = VORTAC,
+    Tacan = TACAN,
     Ndb = NDB,
     CompPoint = COMPPOINT,
     AirA = AIR_A,

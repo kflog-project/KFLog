@@ -29,9 +29,9 @@
  *
  * \author Heiner Lamprecht, Florian Ehinger, Axel Pauli
  *
- * \brief This class provides a map element for radio-navigation-facilities.
+ * \brief This class provides a map element for radio navigation aids.
  *
- * This class provides a map element for radio navigation facilities. It is
+ * This class provides a map element for radio navigation aids. It is
  * derived from \ref SinglePoint. This class is used for: VOR, VORDME, VORTAC,
  * NDB and CompPoint.
  *

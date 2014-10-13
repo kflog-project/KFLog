@@ -103,14 +103,14 @@ QString RadioPoint::getInfoString()
     }
   else
     {
-      text += "<b>" + QObject::tr("unknown") +"</b></td>";
+      text += "<b>-</b></td>";
     }
 
   text += "<td>" + QObject::tr("Channel:") + "</td><td>";
 
   if( m_channel.isEmpty() )
     {
-      text += "<b>" + QObject::tr("unknown") +"</b></td>";
+      text += "<b>-</b></td>";
     }
   else
     {
@@ -128,7 +128,7 @@ QString RadioPoint::getInfoString()
     }
   else
     {
-      text += "<b>" + QObject::tr("unknown") +"</b></td>";
+      text += "<b>-</b></td>";
     }
 
   text += "<td>" + QObject::tr("True N aligned:") + "</td><td>";
@@ -150,7 +150,7 @@ QString RadioPoint::getInfoString()
     }
   else
     {
-      text += "<b>" + QObject::tr("unknown") +"</b></td>";
+      text += "<b>-</b></td>";
     }
 
   // save current unit
