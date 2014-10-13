@@ -137,6 +137,7 @@
 #define WAVE_WINDOW      69
 #define AIR_FIR          70 // Flight Information Region
 #define AIR_UKN          71 // unknown airspace
+#define TACAN            72 // Tactical Air Navigation (TACAN)
 /*
  * In einigen ASCII-Dateien taucht der Typ 71 für Kanäle auf,
  * ausserdem gibt es einen Typ für Grenzen in Seen!

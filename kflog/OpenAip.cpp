@@ -307,10 +307,13 @@ bool OpenAip::readNavAidRecord( QXmlStreamReader& xml, RadioPoint& rp )
         {
           rp.setTypeID( BaseMapElement::Vor );
         }
-      else if( type == "DVOR-DME" || type == "VOR-DME" ||
-	       type == "TACAN" || type == "DME" )
+      else if( type == "DVOR-DME" || type == "VOR-DME" || type == "DME" )
         {
           rp.setTypeID( BaseMapElement::VorDme );
+        }
+      else if( type == "TACAN" )
+        {
+          rp.setTypeID( BaseMapElement::Tacan );
         }
       else if( type == "DVORTAC" || type == "VORTAC" )
         {
