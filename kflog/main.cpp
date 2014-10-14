@@ -121,6 +121,8 @@ int main(int argc, char **argv)
       _mainWindow->setVisible( true );
     }
 
+  _mainWindow->showWelcome();
+
   QString argument, fileOpenIGC, fileExportPNG, width = "640", height = "480";
   QString waypointsOptionArg;
 

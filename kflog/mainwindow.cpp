@@ -222,6 +222,46 @@ MainWindow::~MainWindow()
 {
 }
 
+void MainWindow::showWelcome()
+{
+  if( _settings.value( "/GeneralOptions/ShowWelcome", true ).toBool() == false )
+    {
+      return;
+    }
+
+  QString welcome = "<html>" +
+                    tr(
+                	"Welcome to KFLog, the Linux flight analyser."
+                	"<br><br>"
+                	"After a first start you should open the setup menu and configure the following things:"
+                	"<p><table><tr><td>"
+                	"<b>Airspaces:</b></td><td>"
+                	"Define the countries to be downloaded and used."
+                	"</td></tr><tr><td>"
+                	"<b>Point Data:</b></td><td>"
+                	"Define the source and the countries to be downloaded and used."
+                	"</td></tr><tr><td>"
+                	"<b>Identity:</b></td><td>"
+                	"Define your personal data and your home airfield."
+                	"</td></tr></table></p><br>"
+                	"Have fun with KFLog ;-)"
+                	"<br><br>"
+                	"Show this message again?"
+                      ) +
+                    "</html>";
+
+  int button = QMessageBox::information( this,
+					 tr("Welcome to KFLog"),
+					 welcome,
+					 QMessageBox::Yes|QMessageBox::No,
+					 QMessageBox::Yes );
+
+  if( button == QMessageBox::No )
+    {
+      _settings.setValue( "/GeneralOptions/ShowWelcome", false );
+    }
+}
+
 MainWindow* MainWindow::instance()
 {
   return _mainWindow;

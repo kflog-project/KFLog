@@ -12,8 +12,6 @@
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
  **
- **   $Id$
- **
  ***********************************************************************/
 
 /**
@@ -74,6 +72,11 @@ public:
   static MainWindow* instance();
 
   /**
+   * Show a welcome message
+   */
+  void showWelcome();
+
+  /**
    * \return The requested pixmap.
    */
   QPixmap getPixmap( const QString& pixmapName );
@@ -108,7 +111,10 @@ public:
    */
   void selectFlightDataAction( const int index );
 
-  inline EvaluationDialog* getEvaluationWindow(){return evaluationWindow;}
+  EvaluationDialog* getEvaluationWindow()
+  {
+    return evaluationWindow;
+  }
 
 signals:
 
