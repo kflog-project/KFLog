@@ -29,6 +29,13 @@ QT_BINS=$(shell qmake -query QT_INSTALL_BINS)
 QT_LRELEASE=$(QT_BINS)/lrelease
 QT_TRANSLATIONS=$(shell qmake -query QT_INSTALL_TRANSLATIONS)
 
+QT5_TL_FILES= \
+  qtbase_de.qm \
+  qtscript_de.qm \
+  qtquick1_de.qm \
+  qtmultimedia_de.qm \
+  qtxmlpatterns_de.qm
+
 # Reset language environment because the date can be formatted according
 # to local rules. That does not like dpkg-buildpackage.
 LANG=
@@ -79,7 +86,13 @@ install_lang:
 	@cd kflog; \
 		$(QT_LRELEASE) -silent -removeidentical -nounfinished kflog_de.ts -qm $(INSTALL_ROOT)/translations/kflog_de.qm
 	@chmod 644 $(INSTALL_ROOT)/translations/kflog_de.qm
+	@echo "===== Installing QT translations ====="
 	@install --mode=644 $(QT_TRANSLATIONS)/qt_de.qm $(INSTALL_ROOT)/translations/qt_de.qm
+ifneq ($(word 1,$(subst ., ,$(QT_VERSION))),4)
+	# Install Qt5 translation files
+	@cd $(QT_TRANSLATIONS); \
+	install --mode=644 $(QT5_TL_FILES) $(INSTALL_ROOT)/translations
+endif
 	
 clean:	qmake
 	make -f Makefile clean
