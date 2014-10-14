@@ -1,10 +1,8 @@
 ################################################################################
-# Makefile to build a KFLog release based on X11 and Qt4.8.x
+# Makefile to build a KFLog release based on X11 and Qt4.8.x or Qt5.x
 #
 # Copyright (c): 2010-2014 by Axel Pauli (kflog.cumulus@gmail.com)
 # 
-# $Id$
-#
 # This file is distributed under the terms of the General Public License.
 # See the file COPYING for more information.
 #
@@ -29,6 +27,7 @@ QT_BINS=$(shell qmake -query QT_INSTALL_BINS)
 QT_LRELEASE=$(QT_BINS)/lrelease
 QT_TRANSLATIONS=$(shell qmake -query QT_INSTALL_TRANSLATIONS)
 
+# Qt5 translation files, which are referenced by qt_de.qm.
 QT5_TL_FILES= \
   qtbase_de.qm \
   qtscript_de.qm \
