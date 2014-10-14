@@ -622,15 +622,24 @@ void KFLogConfig::slotSelectProjection( int index )
     {
       case ProjectionBase::Cylindric:
 
-        secondParallel->setEnabled(false);
-        originLongitude->setEnabled(false);
+	secondParallelLabel->setVisible(false);
+	originLongitudeLabel->setVisible(false);
+
+        secondParallel->setVisible(false);
+        originLongitude->setVisible(false);
+
+
         firstParallel->setKFLogDegree(m_cylinPar);
         break;
 
       case ProjectionBase::Lambert:
 
-        secondParallel->setEnabled(true);
-        originLongitude->setEnabled(true);
+	secondParallelLabel->setVisible(true);
+	originLongitudeLabel->setVisible(true);
+
+        secondParallel->setVisible(true);
+        originLongitude->setVisible(true);
+
         firstParallel->setKFLogDegree(m_lambertV1);
         secondParallel->setKFLogDegree(m_lambertV2);
         originLongitude->setKFLogDegree(m_lambertOrigin);
@@ -1194,9 +1203,12 @@ void KFLogConfig::__addProjectionTab()
   secondParallel->setMinimumWidth( minLen );
   originLongitude->setMinimumWidth( minLen );
 
+  secondParallelLabel  = new QLabel( tr( "2. Standard Parallel" ) + ":" );
+  originLongitudeLabel = new QLabel( tr( "Origin Longitude" ) + ":" );
+
   projConfLayout->addRow( tr( "1. Standard Parallel" ) + ":", firstParallel );
-  projConfLayout->addRow( tr( "2. Standard Parallel" ) + ":", secondParallel );
-  projConfLayout->addRow( tr( "Origin Longitude" ) + ":", originLongitude );
+  projConfLayout->addRow( secondParallelLabel, secondParallel );
+  projConfLayout->addRow( originLongitudeLabel, originLongitude );
 
   projConfGroup->setLayout( projConfLayout );
 
@@ -1908,7 +1920,7 @@ void KFLogConfig::__addPointsTab()
   grow++;
 
   QString tip = tr("Uncheck All to enable loading of single files.") + "\n\n" +
-                tr("*_nav.api containing Navaids points") + "\n\n" +
+                tr("*_nav.api containing Navaid points") + "\n\n" +
                 tr("*_wpt.api containing Airfield points");
 
   m_pointFileTable = new QTableWidget( 0, 1, this );
