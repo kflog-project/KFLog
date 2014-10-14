@@ -2724,7 +2724,7 @@ bool KFLogConfig::setGuiLanguage( QString newLanguage )
     {
       QCoreApplication::installTranslator( s_guiTranslator );
       qDebug() << "Using GUI translation file"
-	       << langFile
+           << langDir + "/" + langFile
 	       << "for language"
 	       << newLanguage;
 
@@ -2732,7 +2732,7 @@ bool KFLogConfig::setGuiLanguage( QString newLanguage )
     }
   else
     {
-      qWarning() << "No GUI translation file found in" << langDir;
+      qWarning() << "GUI translation file not found:" << langDir + "/" + langFile;
       ok = false;
     }
 
@@ -2749,7 +2749,7 @@ bool KFLogConfig::setGuiLanguage( QString newLanguage )
     {
       QCoreApplication::installTranslator( s_qtTranslator );
       qDebug() << "Using Library translation file"
-	       << langFile
+           << langDir + "/" + langFile
 	       << "for language"
 	       << newLanguage;
 
@@ -2757,7 +2757,7 @@ bool KFLogConfig::setGuiLanguage( QString newLanguage )
     }
   else
     {
-      qWarning() << "No Library translation file found in" << langDir;
+      qWarning() << "Library translation file not found:" << langDir + "/" + langFile;
       ok &= false;
     }
 
