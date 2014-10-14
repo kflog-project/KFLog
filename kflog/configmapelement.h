@@ -180,7 +180,8 @@ class ConfigMapElement : public QWidget
                           Qt::PenStyle defaultPenStype1,
                           Qt::PenStyle defaultPenStype2,
                           Qt::PenStyle defaultPenStype3,
-                          Qt::PenStyle defaultPenStype4,                          QColor defaultBrushColor1,
+                          Qt::PenStyle defaultPenStype4,
+                          QColor defaultBrushColor1,
                           QColor defaultBrushColor2,
                           QColor defaultBrushColor3,
                           QColor defaultBrushColor4,
@@ -262,11 +263,12 @@ class ConfigMapElement : public QWidget
   void __showAsOpacity( QList<int> &opacityList );
 
   void __defaultAsOpacity( QList<int> &opacityList );
+
   void __defaultAsOpacity( QList<int> &opacityList,
-                             int defaultOpacity1,
-                             int defaultOpacity2,
-                             int defaultOpacity3,
-                             int defaultOpacity4);
+			   int defaultOpacity1,
+			   int defaultOpacity2,
+			   int defaultOpacity3,
+			   int defaultOpacity4);
 
   /**
    * Determines for which configuration the widget is used. We have to
@@ -414,14 +416,18 @@ class ConfigMapElement : public QWidget
   QList<QPen> ppl_5PenList;
 
   QList<QPen> forestPenList;
-  QList<QPen> glacierPenList;
-  QList<QPen> packicePenList;
   QList<QBrush> forestBrushList;
+  QList<int> forestOpacityList;
+
+  QList<QPen> glacierPenList;
   QList<QBrush> glacierBrushList;
+
+  QList<QPen> packicePenList;
   QList<QBrush> packiceBrushList;
 
   QList<QPen>   faiAreaLow500PenList;
   QList<QBrush> faiAreaLow500BrushList;
+
   QList<QPen>   faiAreaHigh500PenList;
   QList<QBrush> faiAreaHigh500BrushList;
 
