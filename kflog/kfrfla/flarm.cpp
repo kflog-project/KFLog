@@ -2,7 +2,7 @@
 **
 **   flarm.cpp
 **
-**   This file is part of KFLog4.
+**   This file is part of KFLog.
 **
 ************************************************************************
 **
@@ -29,15 +29,18 @@
 
 #include <fcntl.h>
 #include <sys/ioctl.h>
-#include <signal.h>
+#include <csignal>
 #include <unistd.h>
 #include <cstdlib>
 #include <ctype.h>
 #include <cmath>
-#include <string.h>
+#include <cstring>
 
-#include <QtCore>
-#include <QFileDialog>
+#ifdef QT_5
+    #include <QtWidgets>
+#else
+    #include <QtGui>
+#endif
 
 #include "flarm.h"
 
@@ -71,7 +74,8 @@ void releaseTTY(int /* signal*/)
   tcsetattr(portID, TCSANOW, &oldTermEnv);
 }
 
-Flarm::Flarm( QObject *parent ) : FlightRecorderPluginBase( parent )
+Flarm::Flarm( QObject *parent ) : FlightRecorderPluginBase( parent ),
+  _speed(B0)
 {
   //Set flight recorders capabilities. Defaults are 0 and false.
   //_capabilities.maxNrTasks = TASK_MAX;             //maximum number of tasks
@@ -423,7 +427,7 @@ ushort Flarm::calcCheckSum (int pos, const QString& sentence)
   ushort sum = 0;
 
   for( int i=1; i < pos; i++ ) {
-    ushort c = (sentence[i]).toAscii();
+    ushort c = (sentence[i]).toLatin1();
 
     if( c == '$' ) // Start sign will not be considered
       continue;

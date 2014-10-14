@@ -167,7 +167,8 @@ void releaseTTY(int /* signal*/)
   tcsetattr(portID, TCSANOW, &oldTermEnv);
 }
 
-Filser::Filser( QObject *parent ) : FlightRecorderPluginBase( parent )
+Filser::Filser( QObject *parent ) : FlightRecorderPluginBase( parent ),
+  _speed(B0)
 {
   //Set flight recorders capabilities. Defaults are 0 and false.
   _capabilities.maxNrTasks = TASK_MAX;             //maximum number of tasks
@@ -392,7 +393,7 @@ int Filser::getFlightDir( QList<FRDirEntry *>* dirList )
           }
       }
 
-    remove( tmpFile.toAscii().data() );
+    remove( tmpFile.toLatin1().data() );
   }
 
   _keepalive->blockSignals(false);

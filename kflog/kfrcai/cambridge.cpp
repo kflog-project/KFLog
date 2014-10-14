@@ -2,12 +2,12 @@
 **
 **   cambridge.cpp
 **
-**   This file is part of KFLog2.
+**   This file is part of KFLog.
 **
 ************************************************************************
 **
 **   Copyright (c):  2007 by Hendrik Hoeth
-**                   2011 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -608,14 +608,14 @@ int Cambridge::getFlightDir(QList<FRDirEntry*>* dirList)
                                  c36[dirList->at(i)->firstTime.tm_mon + 1],
                                  c36[dirList->at(i)->firstTime.tm_mday],
                                  'c',
-                                 _basicData.serialNumber.toAscii().data(),
+                                 _basicData.serialNumber.toLatin1().data(),
                                  c36[dayflightcounter]);
     dirList->at(i)->longFileName.sprintf("%d-%.2d-%.2d-%s-%s-%.2d.igc",
                                  dirList->at(i)->firstTime.tm_year + 1900,
                                  dirList->at(i)->firstTime.tm_mon + 1,
                                  dirList->at(i)->firstTime.tm_mday,
                                  "cam",
-                                 _basicData.serialNumber.toAscii().data(),
+                                 _basicData.serialNumber.toLatin1().data(),
                                  c36[dayflightcounter]);
 
     qDebug("%s   %s", dirList->at(i)->longFileName.toLatin1().data(),
@@ -672,7 +672,7 @@ int Cambridge::downloadFlight(int flightID, int /*secMode*/, const QString& file
 
   if (f.open(QIODevice::WriteOnly))
   {
-    f.write(igcdata.toAscii().data(), igcdata.length());
+    f.write(igcdata.toLatin1().data(), igcdata.length());
     f.close();
     return FR_OK;
   }
@@ -777,10 +777,10 @@ int Cambridge::readWaypoints(QList<Waypoint*> *waypoints)
     // qDebug ("name = "+name);
     // qDebug ("remark = "+remark);
     int type = BaseMapElement::NotSelected;
-    bool landable = false;
+    // bool landable = false;
     if (att & CAI_AIRFIELD) {
       type = BaseMapElement::Airfield;
-      landable = true;
+      // landable = true;
     } else {
       type = BaseMapElement::Landmark;
     }
@@ -912,7 +912,7 @@ int Cambridge::sendCommand(QString cmd)
 {
   // flush the buffer and send the command
   tcflush(portID, TCIOFLUSH);
-  ssize_t ret = write(portID, cmd.toAscii().data(), cmd.length());
+  ssize_t ret = write(portID, cmd.toLatin1().data(), cmd.length());
   wb('\r');
 
   if( ret == -1 )
@@ -997,7 +997,7 @@ int Cambridge::readReply(QString cmd, int mode, unsigned char *reply)
   for (int i=start ; i<XX+cmd.length() ; i++)
     reply[i-start]=buf[i];
 
-  int cmd_checksum = calcChecksum8((unsigned char *) cmd.toAscii().data(), cmd.length());
+  int cmd_checksum = calcChecksum8((unsigned char *) cmd.toLatin1().data(), cmd.length());
   int reply_checksum = 0;
   if (mode==UPS_MODE || mode==DN_MODE)
     reply_checksum = calcChecksum8(reply, XX);
