@@ -54,9 +54,6 @@ KFLogConfig::KFLogConfig(QWidget* parent) :
   setModal( true );
   setSizeGripEnabled( true );
 
-  _settings.setValue( "/OpenAip/Link",
-                      "9EEAi^^HHH]@A6?2:A]?6E^<7=@806IA@CE097uwab`987" );
-
   configLayout = new QGridLayout(this);
 
   setupTree = new QTreeWidget( this );

@@ -25,7 +25,7 @@
  *
  * http://qt-project.org/
  *
- * KFLog is built with the release 4.8.x.
+ * KFLog is built with the Qt release 4.8.x and 5.x
  *
  * \date 2001-2014
  *

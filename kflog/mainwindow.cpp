@@ -102,6 +102,11 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   Distance::setUnit( static_cast<enum Distance::distanceUnit>(distUnit) );
   WGSPoint::setFormat( static_cast<enum WGSPoint::Format>(posUnit) );
 
+  // Initialize the openAIP link
+  _settings.setValue( "/OpenAip/Link",
+                      "9EEAi^^HHH]@A6?2:A]?6E^<7=@806IA@CE097uwab`987" );
+
+  // Initialize the GUI language
   QString langSet = _settings.value( "/PersonalData/Language", "??" ).toString();
 
   if( langSet == "??" )
