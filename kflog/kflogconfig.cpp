@@ -1821,7 +1821,7 @@ int KFLogConfig::__getScaleValue(double scale)
 void KFLogConfig::__addPointsTab()
 {
   QTreeWidgetItem* item = new QTreeWidgetItem;
-  item->setText( 0, tr("Point Data") );
+  item->setText( 0, tr("Points") );
   item->setData( 0, Qt::UserRole, "Points" );
   item->setIcon( 0, _mainWindow->getPixmap("airfield_32.png") );
   setupTree->addTopLevelItem( item );

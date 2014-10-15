@@ -504,9 +504,9 @@ void MapContents::slotReloadAirspaceData()
 
 void MapContents::slotDownloadOpenAipPointFiles( bool askUser )
 {
-  if( askUser == true && __askUserForDownload(tr("openAIP airfield") ) != Automatic )
+  if( askUser == true && __askUserForDownload(tr("openAIP points") ) != Automatic )
     {
-      qDebug() << "openAipPoiFiles: Auto Download Inhibited";
+      qDebug() << "openAipPointFiles: Auto Download Inhibited";
       return;
     }
 
