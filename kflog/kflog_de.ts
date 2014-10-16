@@ -851,10 +851,6 @@
         <translation>Auswahl Heimatflugplatz</translation>
     </message>
     <message>
-        <source>Airfields</source>
-        <translation type="obsolete">Flugplätze</translation>
-    </message>
-    <message>
         <source>Add countries to be loaded as 2 letter code according to ISO 3166-1.</source>
         <translation>Ländercode der zu ladenden Objekte (2 Zeichen nach ISO 3166-1).</translation>
     </message>
@@ -899,18 +895,6 @@
         <translation>Heimatflugplatz-Radius:</translation>
     </message>
     <message>
-        <source>Uncheck All to enable loading of single airfield files.</source>
-        <translation type="obsolete">Entferne Markierung All um alle Flugplatzdaten zu laden.</translation>
-    </message>
-    <message>
-        <source>Airfield source:</source>
-        <translation type="obsolete">Fluplatzdaten-Quelle:</translation>
-    </message>
-    <message>
-        <source>Airspace Management</source>
-        <translation type="obsolete">Luftraumverwaltung</translation>
-    </message>
-    <message>
         <source>openAIP Airspaces: www.openaip.net</source>
         <translation>openAIP Lufträume: www.openaip.net</translation>
     </message>
@@ -925,10 +909,6 @@
     <message>
         <source>Countries</source>
         <translation>Länder</translation>
-    </message>
-    <message>
-        <source>Uncheck All to enable loading of single airspace files.</source>
-        <translation type="obsolete">Entferne Markierung All um einzelne Luftraum Dateien zu laden.</translation>
     </message>
     <message>
         <source>Waypoint Catalog</source>
@@ -997,10 +977,6 @@
     <message>
         <source>Check/Uncheck all</source>
         <translation>Alle Ein/Aus Schalten</translation>
-    </message>
-    <message>
-        <source>Airfield Files in </source>
-        <translation type="obsolete">Flugplatz-Dateien in</translation>
     </message>
     <message>
         <source>Wrong country entries</source>
@@ -1573,10 +1549,6 @@
         <translation>Willkommen bei KFLog</translation>
     </message>
     <message>
-        <source>Welcome to KFLog, the Linux flight analyser.&lt;br&gt;&lt;br&gt;After a first start you should open the setup menu and configure the following things:&lt;p&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Airspaces:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Define the countries to be downloaded and used.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Points:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Define the point source and the countries to be downloaded and used.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Identity:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Define your personal data and your home airfield.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/p&gt;&lt;br&gt;Have fun with KFLog ;-)&lt;br&gt;&lt;br&gt;Show this message again?</source>
-        <translation type="obsolete">Willkommen bei KFLog, dem Linux Flug Analysator.&lt;br&gt;&lt;br&gt;Nach einem ersten Start, öffne das Einstellungsmenü und konfiguriere die folgenden Dinge:&lt;p&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Lufträume:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Definiere die Länder, die du runter laden und benutzen möchtest.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Punkte:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Definiere die Punkt Quelle und die Länder, die du runter laden und benutzen möchtest.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Identität:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Definiere deine persönlichen Daten und deinen Heimatflugplatz.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/p&gt;&lt;br&gt;Habe Spaß an KFLog ;-)&lt;br&gt;&lt;br&gt;Diese Meldung wieder zeigen?</translation>
-    </message>
-    <message>
         <source>Welcome to KFLog, the Linux flight analyser.&lt;br&gt;&lt;br&gt;After a first installation you should open the setup menu and configure the following things:&lt;p&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Airspaces:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Define the countries to be downloaded and used.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Points:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Define the point source and the countries to be downloaded and used.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Identity:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Define your personal data and your home airfield.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/p&gt;&lt;br&gt;Have fun with KFLog ;-)&lt;br&gt;&lt;br&gt;Show this message again?</source>
         <translation>Willkommen bei KFLog, dem Linux Flug Analysator.&lt;br&gt;&lt;br&gt;Nach einer Erstinstallation, öffne das Einstellungsmenü und konfiguriere die folgenden Dinge:&lt;p&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Lufträume:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Definiere die Länder, die du runter laden und benutzen möchtest.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Punkte:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Definiere die Punkt Quelle und die Länder, die du runter laden und benutzen möchtest.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Identität:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Definiere deine persönlichen Daten und deinen Heimatflugplatz.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/p&gt;&lt;br&gt;Habe Spaß an KFLog ;-)&lt;br&gt;&lt;br&gt;Diese Meldung wieder zeigen?</translation>
     </message>
@@ -1689,10 +1661,6 @@ Alle Downloads verworfen!</translation>
         <translation>openAIP Punkt Daten Downloads beendet</translation>
     </message>
     <message>
-        <source>KFLog map</source>
-        <translation>KFLog Karte</translation>
-    </message>
-    <message>
         <source>Automatic data download?</source>
         <translation>Automatischer Daten Download?</translation>
     </message>
@@ -1763,6 +1731,10 @@ Alle Downloads verworfen!</translation>
     <message>
         <source>openAIP points</source>
         <translation>openAIP Punkte</translation>
+    </message>
+    <message>
+        <source>KFLog maps</source>
+        <translation>KFLog Karten</translation>
     </message>
 </context>
 <context>
@@ -1907,30 +1879,30 @@ Alle Downloads verworfen!</translation>
     </message>
     <message>
         <source>Sorry optimization fault. Report error (including IGC-File) to &lt;christof.bodner@gmx.net&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>OptimizationWizard</name>
     <message>
         <source>Time</source>
-        <translation type="unfinished">Zeit</translation>
+        <translation>Zeit</translation>
     </message>
     <message>
         <source>Latitude</source>
-        <translation type="unfinished">Breitengrad</translation>
+        <translation>Breite</translation>
     </message>
     <message>
         <source>Longitude</source>
-        <translation type="unfinished">Längengrad</translation>
+        <translation>Länge</translation>
     </message>
     <message>
         <source>OLC Optimization</source>
-        <translation type="unfinished"></translation>
+        <translation>OLC Optimierung</translation>
     </message>
     <message>
         <source>Task start and end times</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgabe Start- und Endezeit</translation>
     </message>
     <message>
         <source>Define start and end point of flight by using the mouse buttons.</source>
@@ -2053,83 +2025,83 @@ Alle Downloads verworfen!</translation>
     <name>QObject</name>
     <message>
         <source>unknown</source>
-        <translation type="unfinished">unbekannt</translation>
+        <translation>unbekannt</translation>
     </message>
     <message>
         <source>Restricted</source>
-        <translation type="unfinished">Beschränkt</translation>
+        <translation>Beschränkt</translation>
     </message>
     <message>
         <source>Glider Sector</source>
-        <translation type="unfinished">Segelflugsektor</translation>
+        <translation>Segelflugsektor</translation>
     </message>
     <message>
         <source>End</source>
-        <translation type="unfinished">Ende</translation>
+        <translation>Ende</translation>
     </message>
     <message>
         <source>City</source>
-        <translation type="unfinished">Stadt</translation>
+        <translation>Stadt</translation>
     </message>
     <message>
         <source>Railway</source>
-        <translation type="unfinished">Eisenbahnline</translation>
+        <translation>Eisenbahnline</translation>
     </message>
     <message>
         <source>Road</source>
-        <translation type="unfinished">Straße</translation>
+        <translation>Straße</translation>
     </message>
     <message>
         <source>File</source>
-        <translation type="unfinished">Datei</translation>
+        <translation>Datei</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished">Datum</translation>
+        <translation>Datum</translation>
     </message>
     <message>
         <source>Pilot</source>
-        <translation type="unfinished">Pilot</translation>
+        <translation>Pilot</translation>
     </message>
     <message>
         <source>Glider</source>
-        <translation type="unfinished">Segelflugzeug</translation>
+        <translation>Segelflugzeug</translation>
     </message>
     <message>
         <source>Task</source>
-        <translation type="unfinished">Aufgabe</translation>
+        <translation>Aufgabe</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Typ</translation>
+        <translation>Typ</translation>
     </message>
     <message>
         <source>Flights</source>
-        <translation type="unfinished">Flüge</translation>
+        <translation>Flüge</translation>
     </message>
     <message>
         <source>Points</source>
-        <translation type="unfinished">Punkte</translation>
+        <translation>Punkte</translation>
     </message>
     <message>
         <source>Begin of task</source>
-        <translation type="unfinished">Beginn der Aufgabe</translation>
+        <translation>Beginn der Aufgabe</translation>
     </message>
     <message>
         <source>Total Distance</source>
-        <translation type="unfinished">Gesamtdistanz</translation>
+        <translation>Gesamtdistanz</translation>
     </message>
     <message>
         <source>Task Distance</source>
-        <translation type="unfinished">Aufgabelänge</translation>
+        <translation>Aufgabelänge</translation>
     </message>
     <message>
         <source>Start</source>
-        <translation type="unfinished">Start</translation>
+        <translation>Start</translation>
     </message>
     <message>
         <source>All formats</source>
-        <translation type="unfinished">Alle Formate</translation>
+        <translation>Alle Formate</translation>
     </message>
     <message>
         <source>Cannot open file</source>
@@ -3780,43 +3752,43 @@ Please check connections and settings.</source>
     <name>TaskDialog</name>
     <message>
         <source>&amp;Ok</source>
-        <translation type="unfinished">&amp;OK</translation>
+        <translation>&amp;OK</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
-        <translation type="unfinished">&amp;Abbrechen</translation>
+        <translation>&amp;Abbrechen</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Typ</translation>
+        <translation>Typ</translation>
     </message>
     <message>
         <source>Country</source>
-        <translation type="unfinished">Land</translation>
+        <translation>Land</translation>
     </message>
     <message>
         <source>Task Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgaben Editor</translation>
     </message>
     <message>
         <source>Task selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgaben Auswahl</translation>
     </message>
     <message>
         <source>&amp;Name</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Name</translation>
     </message>
     <message>
         <source>Task T&amp;ype</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgaben T&amp;yp</translation>
     </message>
     <message>
         <source>&amp;left</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;links</translation>
     </message>
     <message>
         <source>ri&amp;ght</source>
-        <translation type="unfinished"></translation>
+        <translation>rechts</translation>
     </message>
     <message>
         <source>Side of FAI area</source>
@@ -3824,19 +3796,19 @@ Please check connections and settings.</source>
     </message>
     <message>
         <source>Taskpoint</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgaben Punkt</translation>
     </message>
     <message>
         <source>Length</source>
-        <translation type="unfinished"></translation>
+        <translation>Länge</translation>
     </message>
     <message>
         <source>Course</source>
-        <translation type="unfinished"></translation>
+        <translation>Kurs</translation>
     </message>
     <message>
         <source>&amp;Task</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Aufgabe</translation>
     </message>
     <message>
         <source>Moves selected task point up</source>
@@ -3860,19 +3832,19 @@ Please check connections and settings.</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished">Deschreibung</translation>
+        <translation>Deschreibung</translation>
     </message>
     <message>
         <source>ICAO</source>
-        <translation type="unfinished"></translation>
+        <translation>ICAO</translation>
     </message>
     <message>
         <source>&amp;Waypoint&apos;s</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Wegpunkte</translation>
     </message>
     <message>
         <source>&lt;b&gt;Task Type FAI Area:&lt;/b&gt;&lt;br&gt;&lt;br&gt;You can define a FAI task with either Takeoff, Start, End and Landing or Takeoff, Start, End, Landing and &lt;b&gt;one&lt;/b&gt; additional Route point.&lt;br&gt;The points &lt;i&gt;Takeoff&lt;/i&gt;, &lt;i&gt;Start&lt;/i&gt;, &lt;i&gt;End&lt;/i&gt; and &lt;i&gt;Landing&lt;/i&gt;are &lt;b&gt;mandatory!&lt;/b&gt;&lt;br&gt;&lt;br&gt;The FAI area calculation will be made with Start and End point or Start and Route point, depending weather the Route point is defined or not.&lt;br&gt;&lt;br&gt;New waypoints are inserted after the selected one.</source>
@@ -3888,35 +3860,35 @@ Please check connections and settings.</source>
     </message>
     <message>
         <source>Take Off</source>
-        <translation type="unfinished"></translation>
+        <translation>Start</translation>
     </message>
     <message>
         <source>Begin of Task</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgaben Beginn</translation>
     </message>
     <message>
         <source>Route Point</source>
-        <translation type="unfinished"></translation>
+        <translation>Route Punkt</translation>
     </message>
     <message>
         <source>End of Task</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgaben Ende</translation>
     </message>
     <message>
         <source>Free Point</source>
-        <translation type="unfinished"></translation>
+        <translation>Freier Punkt</translation>
     </message>
     <message>
         <source>Landing</source>
-        <translation type="unfinished"></translation>
+        <translation>Landung</translation>
     </message>
     <message>
         <source>Unkown</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannt</translation>
     </message>
     <message>
         <source>Task name in use</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgabenname in Benutzung</translation>
     </message>
     <message>
         <source>&lt;html&gt;The chosen task name is already in use!&lt;br&gt;&lt;br&gt;Please enter another one.&lt;/html&gt;</source>
@@ -3924,15 +3896,15 @@ Please check connections and settings.</source>
     </message>
     <message>
         <source>Task is incomplete</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgabe unvollkommen</translation>
     </message>
     <message>
         <source>&lt;htlm&gt;A task consist of at least four waypoints!&lt;br&gt;&lt;br&gt;Please add the missing points.&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;htlm&gt;Eine Aufgabe besteht aus mind. 4 Wegpunkten!&lt;br&gt;&lt;br&gt;Bitte fehlende Punkte hinzufügen.&lt;/html&gt;</translation>
     </message>
     <message>
         <source>FAI area task violation</source>
-        <translation type="unfinished"></translation>
+        <translation>FAI Flächen Aufgaben Verletzung</translation>
     </message>
     <message>
         <source>&lt;htlm&gt;A FAI area task can have one additional route point only!&lt;br&gt;&lt;br&gt;Please remove all not needed other points.&lt;/html&gt;</source>

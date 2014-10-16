@@ -1248,6 +1248,8 @@ void Map::paintEvent( QPaintEvent* event )
       return;
     }
 
+  qDebug() << "Map::paintEvent: drawPixmap";
+
   QPainter painter(this);
 
   painter.drawPixmap( event->rect().left(),
@@ -1636,7 +1638,7 @@ void Map::resizeEvent(QResizeEvent* event)
 
   if( ! event->size().isEmpty() )
     {
-      //__redrawMap();
+      // __redrawMap();
       slotScheduleRedrawMap();
     }
 }
