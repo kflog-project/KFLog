@@ -1236,6 +1236,18 @@ void Map::paintEvent( QPaintEvent* event )
       return;
     }
 
+  if( isDrawing )
+    {
+      qDebug() << "Map::paintEvent: map is drawing!";
+      // return;
+    }
+
+  if( event->rect() != pixBuffer.rect() )
+    {
+      qWarning() << "Map::paintEvent: pixBuffer Rect != paintEvent Rect!";
+      return;
+    }
+
   QPainter painter(this);
 
   painter.drawPixmap( event->rect().left(),
@@ -1620,9 +1632,12 @@ void Map::__drawPlannedTask( bool solid )
 
 void Map::resizeEvent(QResizeEvent* event)
 {
+  qDebug() << "Map::resizeEvent" << event->size();
+
   if( ! event->size().isEmpty() )
     {
-      __redrawMap();
+      //__redrawMap();
+      slotScheduleRedrawMap();
     }
 }
 
@@ -1647,6 +1662,8 @@ void Map::dropEvent( QDropEvent* event )
 void Map::__redrawMap()
 {
   static QSize lastSize;
+
+  qDebug() << "Map::__redrawMap(): isDrawing" << isDrawing << "redrawRequest" << redrawRequest;
 
   if( isDrawing )
     {
