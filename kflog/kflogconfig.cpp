@@ -1912,7 +1912,7 @@ void KFLogConfig::__addPointsTab()
   oaipLayout->setRowMinimumHeight ( grow, 20 );
   grow++;
 
-  QLabel* hint = new QLabel( tr("Select point data files to be used in the table") );
+  QLabel* hint = new QLabel( tr("Select point data files to be used") );
   oaipLayout->addWidget( hint, grow, 0, 1, 3 );
   grow++;
 
@@ -1981,7 +1981,7 @@ void KFLogConfig::__addPointsTab()
 void KFLogConfig::__addAirspaceTab()
 {
   QTreeWidgetItem* item = new QTreeWidgetItem;
-  item->setText( 0, tr("Airspace Management") );
+  item->setText( 0, tr("Airspaces") );
   item->setData( 0, Qt::UserRole, "Airspaces" );
   item->setIcon( 0, _mainWindow->getPixmap("kde_move_16.png") );
   setupTree->addTopLevelItem( item );
@@ -2032,7 +2032,7 @@ void KFLogConfig::__addAirspaceTab()
   topLayout->addWidget( openAipGroup );
 
   topLayout->addSpacing( 20 );
-  QLabel* hint = new QLabel( tr("Select airspace files to be used in the table") );
+  QLabel* hint = new QLabel( tr("Select airspace files to be used") );
   topLayout->addWidget( hint );
 
   QString tip = tr("Uncheck All to enable loading of single files.") + "\n\n" +
@@ -2168,7 +2168,7 @@ void KFLogConfig::__addUnitTab()
   m_unitPosition->setEditable(false);
   m_unitPosition->addItem("ddd°mm'ss\"",  WGSPoint::DMS);
   m_unitPosition->addItem("ddd°mm.mmm'",  WGSPoint::DDM);
-  m_unitPosition->addItem(tr("ddd.ddddd°"),   WGSPoint::DDD);
+  m_unitPosition->addItem("ddd.ddddd°",   WGSPoint::DDD);
 
   QFormLayout* unitLayout = new QFormLayout();
   unitLayout->setSpacing( 10 );

@@ -1314,6 +1314,12 @@ QString MapContents::getMapRootDirectory()
 
 void MapContents::proofeSection(bool isPrint)
 {
+  static int calls = 0;
+
+  calls++;
+
+  qDebug() << "MapContents::proofeSection(): calls=" << calls;
+
   extern MainWindow *_mainWindow;
   extern MapMatrix  *_globalMapMatrix;
   QRect mapBorder;
@@ -1489,6 +1495,8 @@ void MapContents::proofeSection(bool isPrint)
 	    }
 	}
     }
+
+  calls--;
 }
 
 int MapContents::getListLength(int listIndex) const

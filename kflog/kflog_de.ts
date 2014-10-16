@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="de_DE">
+<TS version="2.0" language="de_DE" sourcelanguage="en_US">
 <context>
     <name>AboutWidget</name>
     <message>
@@ -40,14 +40,14 @@
     </message>
     <message>
         <source>Click Set to take over the selected list entry.</source>
-        <translation>Auswahl klicken um den ausgewählten List-Eintrag zu verwenden.</translation>
+        <translation>Auswahl klicken um den ausgewählten Listeneintrag zu verwenden.</translation>
     </message>
 </context>
 <context>
     <name>AuthDialog</name>
     <message>
         <source>User:</source>
-        <translation>Benutzer</translation>
+        <translation>Benutzer:</translation>
     </message>
     <message>
         <source>Password:</source>
@@ -58,15 +58,15 @@
     <name>CenterToDialog</name>
     <message>
         <source>Center to ...</source>
-        <translation>Zentrieren</translation>
+        <translation>Zentrieren auf ...</translation>
     </message>
     <message>
         <source>Latitude</source>
-        <translation>Breitengrad</translation>
+        <translation>Breite</translation>
     </message>
     <message>
         <source>Longitude</source>
-        <translation>Längengrad</translation>
+        <translation>Länge</translation>
     </message>
 </context>
 <context>
@@ -93,23 +93,23 @@
     </message>
     <message>
         <source>Select your desired pen color.</source>
-        <translation>gewünschte Stiftfarbe wählen</translation>
+        <translation>Gewünschte Stiftfarbe wählen.</translation>
     </message>
     <message>
         <source>Select your desired pen width.</source>
-        <translation>gewünschte Stiftbreite wählen</translation>
+        <translation>Gewünschte Stiftbreite wählen.</translation>
     </message>
     <message>
         <source>Select your desired pen style.</source>
-        <translation>gewünschten Stift-Stil wählen</translation>
+        <translation>Gewünschten Stift-Stil wählen.</translation>
     </message>
     <message>
         <source>Pen</source>
-        <translation>Pen</translation>
+        <translation>Stift</translation>
     </message>
     <message>
         <source>Select your desired brush color.</source>
-        <translation>gewünschten Pinsel wählen.</translation>
+        <translation>Gewünschte Pinsel Farbe wählen.</translation>
     </message>
     <message>
         <source>Select solid pattern brush to enable airspace structure filling.</source>
@@ -168,7 +168,7 @@
     </message>
     <message>
         <source>Task-Type: </source>
-        <translation>Aufgabentyp</translation>
+        <translation>Aufgabentyp: </translation>
     </message>
     <message>
         <source>Please select the &lt;b&gt;start point&lt;/b&gt; of the task at the map!</source>
@@ -250,15 +250,15 @@
     </message>
     <message>
         <source> MSL=</source>
-        <translation>MSL=</translation>
+        <translation> MSL=</translation>
     </message>
     <message>
         <source> Vario=</source>
-        <translation>Vario=</translation>
+        <translation> Vario=</translation>
     </message>
     <message>
         <source> Speed=</source>
-        <translation>Geschwindigkeit=</translation>
+        <translation> Geschwindigkeit=</translation>
     </message>
     <message>
         <source>Circling</source>
@@ -318,8 +318,7 @@
     </message>
     <message>
         <source>Total</source>
-        <translation>Gesamt
-</translation>
+        <translation>Gesamt</translation>
     </message>
     <message>
         <source>Flight sections</source>
@@ -343,15 +342,15 @@
     </message>
     <message>
         <source>Circling (%1 right)</source>
-        <translation>Kurvend (%1 rechts)</translation>
+        <translation>Kreisend (%1 rechts)</translation>
     </message>
     <message>
         <source>Circling (%1 left)</source>
-        <translation>Kurvend (%1 links)</translation>
+        <translation>Kreisend (%1 links)</translation>
     </message>
     <message>
         <source>Circling (%1 mixed)</source>
-        <translation>Kurvend (%1 gemischt)</translation>
+        <translation>Kreisend (%1 gemischt)</translation>
     </message>
     <message>
         <source>inf</source>
@@ -402,7 +401,7 @@
     </message>
     <message>
         <source>Changes the altitude smoothness.</source>
-        <translation>Ändert die Glättung der Barogramms.</translation>
+        <translation>Ändert die Glättung des Barogramms.</translation>
     </message>
     <message>
         <source>Changes the variometer smoothness.</source>
@@ -521,7 +520,7 @@
     </message>
     <message>
         <source>Select a directory for the IGC-Files</source>
-        <translation>Wähle ein Verzeichnis für IGC-Dateien</translation>
+        <translation>Wähle ein Verzeichnis für IGC-Ablage</translation>
     </message>
     <message>
         <source>Select a directory for the Map-Files</source>
@@ -677,7 +676,7 @@
     </message>
     <message>
         <source>Flight Path Line Width</source>
-        <translation>Flugweg Liniebreite</translation>
+        <translation>Flugweg Linienbreite</translation>
     </message>
     <message>
         <source>Set pen line width in pixel.</source>
@@ -693,7 +692,7 @@
     </message>
     <message>
         <source>Cycling</source>
-        <translation>kreisend</translation>
+        <translation>Kreisend</translation>
     </message>
     <message>
         <source>Speed</source>
@@ -745,7 +744,7 @@
     </message>
     <message>
         <source>Setup Projection</source>
-        <translation>Einrichtung der Projektion</translation>
+        <translation>Konfiguration der Projektion</translation>
     </message>
     <message>
         <source>Origin Longitude</source>
@@ -841,11 +840,11 @@
     </message>
     <message>
         <source>Latitude</source>
-        <translation>Breitengrad</translation>
+        <translation>Breite</translation>
     </message>
     <message>
         <source>Longitude</source>
-        <translation>Längengrad</translation>
+        <translation>Länge</translation>
     </message>
     <message>
         <source>Homesite choice</source>
@@ -909,7 +908,7 @@
     </message>
     <message>
         <source>Airspace Management</source>
-        <translation>Luftraumverwaltung</translation>
+        <translation type="obsolete">Luftraumverwaltung</translation>
     </message>
     <message>
         <source>openAIP Airspaces: www.openaip.net</source>
@@ -993,11 +992,11 @@
     </message>
     <message>
         <source>Airspace Files in </source>
-        <translation>Luftraum Dateien in</translation>
+        <translation>Luftraum Dateien in </translation>
     </message>
     <message>
         <source>Check/Uncheck all</source>
-        <translation>Markiere/Entmarkiere alle</translation>
+        <translation>Alle Ein/Aus Schalten</translation>
     </message>
     <message>
         <source>Airfield Files in </source>
@@ -1013,7 +1012,7 @@
     </message>
     <message>
         <source>The expected format is a two letter country code separated by spaces</source>
-        <translation>Das erwartete Format sind ein oder mehrere  zwei-Zeichen Ländercodes getrennt durch Leerzeichen</translation>
+        <translation>Das erwartete Format sind ein oder mehrere zwei-Zeichen Ländercodes getrennt durch Leerzeichen</translation>
     </message>
     <message>
         <source>Please check the Welt2000 country entries!</source>
@@ -1025,7 +1024,7 @@
     </message>
     <message>
         <source>Please note that all map elements are reset to their default values!</source>
-        <translation>Bitte beachten: die Werte aller Kartenelemente werden auf ihren Standardwert zurückgesetzt!</translation>
+        <translation>Bitte beachten: Die Werte aller Kartenelemente werden auf ihren Standardwert zurückgesetzt!</translation>
     </message>
     <message>
         <source>Do you really want that?</source>
@@ -1049,27 +1048,27 @@
     </message>
     <message>
         <source>Conical orthomorphic (Lambert)</source>
-        <translation></translation>
+        <translation>Lambert</translation>
     </message>
     <message>
         <source>1. Standard Parallel</source>
-        <translation></translation>
+        <translation>1. Standard Parallele</translation>
     </message>
     <message>
         <source>2. Standard Parallel</source>
-        <translation></translation>
+        <translation>1. Standard Parallele</translation>
     </message>
     <message>
         <source>Point Data</source>
-        <translation>Orte</translation>
+        <translation type="obsolete">Orte</translation>
     </message>
     <message>
         <source>Select point data files to be used in the table</source>
-        <translation>Wähle Orte Dateien, die in der Tabelle benutzt werden sollen </translation>
+        <translation type="obsolete">Wähle Orte Dateien, die in der Tabelle benutzt werden sollen </translation>
     </message>
     <message>
         <source>Uncheck All to enable loading of single files.</source>
-        <translation>Entferne Markierung auf Alle um einzelne Dateien laden zu können</translation>
+        <translation>Demakiere Alle, um einzelne Dateien laden zu können.</translation>
     </message>
     <message>
         <source>*_wpt.api containing Airfield points</source>
@@ -1081,7 +1080,7 @@
     </message>
     <message>
         <source>Select airspace files to be used in the table</source>
-        <translation>Wähle Luftraumdateien, die in der Tabelle benutzt werden sollen</translation>
+        <translation type="obsolete">Wähle Luftraumdateien, die in der Tabelle benutzt werden sollen</translation>
     </message>
     <message>
         <source>*.txt containing OpenAir data</source>
@@ -1129,19 +1128,31 @@
     </message>
     <message>
         <source>Point Files in </source>
-        <translation>Geodatendateien in</translation>
-    </message>
-    <message>
-        <source>Cylindrical Equidistant (Plate Carré)</source>
-        <translation></translation>
+        <translation>Punktdateien in </translation>
     </message>
     <message>
         <source>*_nav.api containing Navaid points</source>
-        <translation>*_nav.api mit Navaid Geodaten</translation>
+        <translation>*_nav.api mit Nav Hilfe Geodaten</translation>
     </message>
     <message>
-        <source>ddd.ddddd°</source>
-        <translation></translation>
+        <source>Cylindrical Equidistant (Plate CarrÃ©)</source>
+        <translation>Zylinder</translation>
+    </message>
+    <message>
+        <source>Points</source>
+        <translation>Punkte</translation>
+    </message>
+    <message>
+        <source>Airspaces</source>
+        <translation>Lufträume</translation>
+    </message>
+    <message>
+        <source>Select point data files to be used</source>
+        <translation>Wähle die zu benutzenden Punktdateien aus</translation>
+    </message>
+    <message>
+        <source>Select airspace files to be used</source>
+        <translation>Wähle die zu benutzenden Luftraumdateien aus</translation>
     </message>
 </context>
 <context>
@@ -1199,7 +1210,7 @@
     </message>
     <message>
         <source>Print Map</source>
-        <translation>Druck Karte</translation>
+        <translation>Drucke Karte</translation>
     </message>
     <message>
         <source>Print Flight Data</source>
@@ -1207,7 +1218,7 @@
     </message>
     <message>
         <source>Print Task Data</source>
-        <translation>Drucke Aufgaben Daten</translation>
+        <translation>Drucke Aufgabendaten</translation>
     </message>
     <message>
         <source>Open Recorder</source>
@@ -1387,195 +1398,199 @@
     </message>
     <message>
         <source>Center to &amp;Homesite</source>
-        <translation>Zentriere im &amp;Heimatflugplatz</translation>
+        <translation>Zentriere auf &amp;Heimatflugplatz</translation>
     </message>
     <message>
         <source>&amp;Center to...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Zentriere auf...</translation>
     </message>
     <message>
         <source>Zoom &amp;In</source>
-        <translation type="unfinished"></translation>
+        <translation>Vergrößern</translation>
     </message>
     <message>
         <source>Zoom &amp;Out</source>
-        <translation type="unfinished"></translation>
+        <translation>Verkleinern</translation>
     </message>
     <message>
         <source>&amp;Zoom into mouse rectangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Vergrößere Mausausschschnitt</translation>
     </message>
     <message>
         <source>&amp;Redraw</source>
-        <translation type="unfinished"></translation>
+        <translation>Neu Zeichnen</translation>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation type="unfinished"></translation>
+        <translation>Ansicht</translation>
     </message>
     <message>
         <source>Set QNH</source>
-        <translation type="unfinished"></translation>
+        <translation>Setze QNH</translation>
     </message>
     <message>
         <source>View flight in 3D</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Flug in 3D</translation>
     </message>
     <message>
         <source>View flight in 3D (OpenGL)</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Flug in 3D (OpenGL)</translation>
     </message>
     <message>
         <source>&amp;Start Flight Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Starten Flug Animation</translation>
     </message>
     <message>
         <source>&amp;Pause Flight Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pausieren Flug Animation</translation>
     </message>
     <message>
         <source>Stop Flight &amp;Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Stoppen Flug &amp;Animation</translation>
     </message>
     <message>
         <source>Next Flight Point</source>
-        <translation type="unfinished"></translation>
+        <translation>Nächster Flugpunkt</translation>
     </message>
     <message>
         <source>Prev Flight Point</source>
-        <translation type="unfinished"></translation>
+        <translation>Vorheriger Flugpunkt</translation>
     </message>
     <message>
         <source>Step +10 Flight Points</source>
-        <translation type="unfinished"></translation>
+        <translation>Spinge +10 Flugpunkte</translation>
     </message>
     <message>
         <source>Step -10 Flight Points</source>
-        <translation type="unfinished"></translation>
+        <translation>Spinge -10 Flugpunkte</translation>
     </message>
     <message>
         <source>First Flight Point</source>
-        <translation type="unfinished"></translation>
+        <translation>Erster Flugpunkt</translation>
     </message>
     <message>
         <source>Last Flight Point</source>
-        <translation type="unfinished"></translation>
+        <translation>Letzter Flugpunkt</translation>
     </message>
     <message>
         <source>F&amp;light</source>
-        <translation type="unfinished"></translation>
+        <translation>F&amp;lug</translation>
     </message>
     <message>
         <source>Show Flight Data</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Flug Daten</translation>
     </message>
     <message>
         <source>&amp;Flights</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Flüge</translation>
     </message>
     <message>
         <source>Show Flight &amp;Data</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Flug &amp;Daten</translation>
     </message>
     <message>
         <source>Show Help Window</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Hilfe Fenster</translation>
     </message>
     <message>
         <source>Show KFLog &amp;Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige KFLog &amp;Browser</translation>
     </message>
     <message>
         <source>Show Terrain Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Gelände Profil</translation>
     </message>
     <message>
         <source>Show &amp;Map</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Karte</translation>
     </message>
     <message>
         <source>Show Map&amp; Control</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Karten Kontrolle</translation>
     </message>
     <message>
         <source>Show Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Werkzeugleiste</translation>
     </message>
     <message>
         <source>Show Statusbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Statusleiste</translation>
     </message>
     <message>
         <source>Show &amp;Waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige &amp;Wegpunkte</translation>
     </message>
     <message>
         <source>&amp;Windows</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Fenster</translation>
     </message>
     <message>
         <source>&amp;Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Einstellungen</translation>
     </message>
     <message>
         <source>KFLog &amp;Setup...</source>
-        <translation type="unfinished"></translation>
+        <translation>KFLog Einstellungen</translation>
     </message>
     <message>
         <source>&amp;Help</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Hilfe</translation>
     </message>
     <message>
         <source>What&apos;s This?</source>
-        <translation type="unfinished"></translation>
+        <translation>Was ist das?</translation>
     </message>
     <message>
         <source>Cannot open plugin library:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Plugin nicht öffnen:</translation>
     </message>
     <message>
         <source>KFLog tasks</source>
-        <translation type="unfinished"></translation>
+        <translation>KFLog Aufgaben</translation>
     </message>
     <message>
         <source>Opening File...</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffne Datei...</translation>
     </message>
     <message>
         <source>Save map as image</source>
-        <translation type="unfinished"></translation>
+        <translation>Speichere Karte als Bild</translation>
     </message>
     <message>
         <source>Image (*.png)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bild (*.png)</translation>
     </message>
     <message>
         <source>Printing map ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Drucke Karte ...</translation>
     </message>
     <message>
         <source>Printing flight ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Drucke Flug ...</translation>
     </message>
     <message>
         <source>Printing task ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Drucke Aufgabe ...</translation>
     </message>
     <message>
         <source>Not yet available for type: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht verfügbar für Typ: %1</translation>
     </message>
     <message>
         <source>Type not available</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Welcome to KFLog, the Linux flight analyser.&lt;br&gt;&lt;br&gt;After a first start you should open the setup menu and configure the following things:&lt;p&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Airspaces:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Define the countries to be downloaded and used.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Point Data:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Define the source and the countries to be downloaded and used.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Identity:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Define your personal data and your home airfield.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/p&gt;&lt;br&gt;Have fun with KFLog ;-)&lt;br&gt;&lt;br&gt;Show this message again?</source>
-        <translation type="unfinished"></translation>
+        <translation>Typ nicht verfügbar</translation>
     </message>
     <message>
         <source>Welcome to KFLog</source>
-        <translation type="unfinished"></translation>
+        <translation>Willkommen bei KFLog</translation>
+    </message>
+    <message>
+        <source>Welcome to KFLog, the Linux flight analyser.&lt;br&gt;&lt;br&gt;After a first start you should open the setup menu and configure the following things:&lt;p&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Airspaces:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Define the countries to be downloaded and used.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Points:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Define the point source and the countries to be downloaded and used.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Identity:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Define your personal data and your home airfield.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/p&gt;&lt;br&gt;Have fun with KFLog ;-)&lt;br&gt;&lt;br&gt;Show this message again?</source>
+        <translation type="obsolete">Willkommen bei KFLog, dem Linux Flug Analysator.&lt;br&gt;&lt;br&gt;Nach einem ersten Start, öffne das Einstellungsmenü und konfiguriere die folgenden Dinge:&lt;p&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Lufträume:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Definiere die Länder, die du runter laden und benutzen möchtest.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Punkte:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Definiere die Punkt Quelle und die Länder, die du runter laden und benutzen möchtest.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Identität:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Definiere deine persönlichen Daten und deinen Heimatflugplatz.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/p&gt;&lt;br&gt;Habe Spaß an KFLog ;-)&lt;br&gt;&lt;br&gt;Diese Meldung wieder zeigen?</translation>
+    </message>
+    <message>
+        <source>Welcome to KFLog, the Linux flight analyser.&lt;br&gt;&lt;br&gt;After a first installation you should open the setup menu and configure the following things:&lt;p&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Airspaces:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Define the countries to be downloaded and used.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Points:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Define the point source and the countries to be downloaded and used.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Identity:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Define your personal data and your home airfield.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/p&gt;&lt;br&gt;Have fun with KFLog ;-)&lt;br&gt;&lt;br&gt;Show this message again?</source>
+        <translation>Willkommen bei KFLog, dem Linux Flug Analysator.&lt;br&gt;&lt;br&gt;Nach einer Erstinstallation, öffne das Einstellungsmenü und konfiguriere die folgenden Dinge:&lt;p&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Lufträume:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Definiere die Länder, die du runter laden und benutzen möchtest.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Punkte:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Definiere die Punkt Quelle und die Länder, die du runter laden und benutzen möchtest.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Identität:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Definiere deine persönlichen Daten und deinen Heimatflugplatz.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/p&gt;&lt;br&gt;Habe Spaß an KFLog ;-)&lt;br&gt;&lt;br&gt;Diese Meldung wieder zeigen?</translation>
     </message>
 </context>
 <context>
@@ -1626,11 +1641,11 @@
     </message>
     <message>
         <source>Task planning on</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgabenplanung ein</translation>
     </message>
     <message>
         <source>Delete waypoint 1x</source>
-        <translation type="unfinished"></translation>
+        <translation>Lösche Wegpunkt 1x</translation>
     </message>
     <message>
         <source>Drag zooming on</source>
@@ -1662,7 +1677,7 @@
     <message>
         <source>Network error occurred.
 All downloads are canceled!</source>
-        <translation>Netwerk Fehlerr aufgetreten.
+        <translation>Netwerk Fehler aufgetreten.
 Alle Downloads verworfen!</translation>
     </message>
     <message>
@@ -1671,55 +1686,51 @@ Alle Downloads verworfen!</translation>
     </message>
     <message>
         <source>Welt2000 airfield</source>
-        <translation type="unfinished"></translation>
+        <translation>Welt2000 Flugplatz</translation>
     </message>
     <message>
         <source>openAIP airspace</source>
-        <translation type="unfinished"></translation>
+        <translation>openAIP Luftraum</translation>
     </message>
     <message>
         <source>openAIP Airspace Downloads finished</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>openAIP airfield</source>
-        <translation type="unfinished"></translation>
+        <translation>openAIP Luftraum Downloads beendet</translation>
     </message>
     <message>
         <source>openAIP Point Data Downloads finished</source>
-        <translation type="unfinished"></translation>
+        <translation>openAIP Punkt Daten Downloads beendet</translation>
     </message>
     <message>
         <source>KFLog map</source>
-        <translation type="unfinished"></translation>
+        <translation>KFLog Karte</translation>
     </message>
     <message>
         <source>Automatic data download?</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatischer Daten Download?</translation>
     </message>
     <message>
         <source>&lt;html&gt;There are &lt;b&gt;%1&lt;/b&gt; data missing!&lt;br&gt;&lt;br&gt;Do you want to download these data from the Internet?&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;Es werden &lt;b&gt;%1&lt;/b&gt; Daten vermisst!&lt;br&gt;&lt;br&gt;Möchtest du diese Daten aus dem Internet holen?&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Map directories not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Karten Verzeichnisse nicht gefunden</translation>
     </message>
     <message>
         <source>The directories for the map files do not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Verzeichnisse für die Karten Dateien gibt es nicht.</translation>
     </message>
     <message>
         <source>Please select the map root directory.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitte wähle ein Karten Wurzelverzeichnis aus.</translation>
     </message>
     <message>
         <source>Select a map root directory!</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle ein Karten Wurzelverzeichnis aus!</translation>
     </message>
     <message>
         <source>Loading map data ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Karten Dateien ...</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;b&gt;Graphical Task Planning&lt;/b&gt;&lt;br&gt;&lt;br&gt;If a new task is created the graphical task planning is activated automatically. Press the left mouse button on a point at the map and you will get displayed a popup menu with the possible actions. Position the mouse pointer at an existing waypoint to add or delete it from the task. Position the mouse pointer at a free point at the map to create a new waypoint. The new created waypoint will be added to the task. Waypoints are always appended at the end of the task. If you need more flexibility, you should open the task in the task editor. With the editor you have more possibilities to modify the task.&lt;br&gt;&lt;br&gt;To finish the graphical task planning use the menu point &lt;b&gt;&lt;i&gt;End task planning&lt;/i&gt;&lt;/b&gt;. It is important to do that otherwise the task is not closed.&lt;/html&gt;</source>
@@ -1727,180 +1738,184 @@ Alle Downloads verworfen!</translation>
     </message>
     <message>
         <source>Group-%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Gruppe-%1</translation>
     </message>
     <message>
         <source>File does not exist</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei existiert nicht</translation>
     </message>
     <message>
         <source>The selected file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;does not exist!</source>
-        <translation type="unfinished"></translation>
+        <translation>Die ausgewählte Datei&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;existiert nicht!</translation>
     </message>
     <message>
         <source>File is empty</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei ist leer</translation>
     </message>
     <message>
         <source>The selected file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;is empty!</source>
-        <translation type="unfinished"></translation>
+        <translation>Die ausgewählte Datei&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;ist leer!</translation>
     </message>
     <message>
         <source>No permission</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Rechte</translation>
     </message>
     <message>
         <source>You don&apos;t have permission to access file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Du hast keine Zugriffsrechte auf die Datei&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;</translation>
     </message>
     <message>
         <source>Load task failed!</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgabe laden fehlgeschlagen!</translation>
     </message>
     <message>
         <source>Wrong XML task document type </source>
-        <translation type="unfinished"></translation>
+        <translation>Falscher XML Aufgaben Dokumenten Typ </translation>
+    </message>
+    <message>
+        <source>openAIP points</source>
+        <translation>openAIP Punkte</translation>
     </message>
 </context>
 <context>
     <name>MapControlView</name>
     <message>
         <source>Height/Width [km]:</source>
-        <translation type="unfinished"></translation>
+        <translation>Höhe/Breite [km]:</translation>
     </message>
     <message>
         <source>Scale:</source>
-        <translation type="unfinished"></translation>
+        <translation>Skala:</translation>
     </message>
     <message>
         <source>Change Scale:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ändere Skale:</translation>
     </message>
 </context>
 <context>
     <name>ObjectTree</name>
     <message>
         <source>Flights</source>
-        <translation type="unfinished">Flüge</translation>
+        <translation>Flüge</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Name</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Deschreibung</translation>
     </message>
     <message>
         <source>All your read flights are to find under this node.</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle deine Flüge sind unter diesem Knoten zu finden.</translation>
     </message>
     <message>
         <source>Grouped single flights are to find under this node.</source>
-        <translation type="unfinished"></translation>
+        <translation>Gruppierte Einzelflüge sind unter diesem Knoten zu finden.</translation>
     </message>
     <message>
         <source>Groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Gruppen</translation>
     </message>
     <message>
         <source>All yours tasks are to find under this node.</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle deine Aufgaben sind unter diesem Konten zu finden.</translation>
     </message>
     <message>
         <source>Tasks</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgaben</translation>
     </message>
     <message>
         <source>Close flight</source>
-        <translation type="unfinished"></translation>
+        <translation>Schließe Flug</translation>
     </message>
     <message>
         <source>Close flight group</source>
-        <translation type="unfinished"></translation>
+        <translation>Schließe Flug Gruppe</translation>
     </message>
     <message>
         <source>&amp;Open flight</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Öffne Flug</translation>
     </message>
     <message>
         <source>New flight &amp;group</source>
-        <translation type="unfinished"></translation>
+        <translation>Neue Flug&amp;gruppe</translation>
     </message>
     <message>
         <source>Edit flight group</source>
-        <translation type="unfinished"></translation>
+        <translation>Editiere Fluggruppe</translation>
     </message>
     <message>
         <source>O&amp;ptimize flight</source>
-        <translation type="unfinished"></translation>
+        <translation>O&amp;ptimiere Flug</translation>
     </message>
     <message>
         <source>Set &amp;QNH</source>
-        <translation type="unfinished"></translation>
+        <translation>Setze &amp;QNH</translation>
     </message>
     <message>
         <source>O&amp;ptimize flight for OLC</source>
-        <translation type="unfinished"></translation>
+        <translation>O&amp;ptimiere Flug für OLC</translation>
     </message>
     <message>
         <source>&amp;Close flight or flight group</source>
-        <translation type="unfinished"></translation>
+        <translation>S&amp;chließe Flug oder Fluggruppe</translation>
     </message>
     <message>
         <source>&amp;New task</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Neue Aufgabe</translation>
     </message>
     <message>
         <source>Open &amp;task</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffne Aufgabe</translation>
     </message>
     <message>
         <source>&amp;Edit task</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Editiere Aufgabe</translation>
     </message>
     <message>
         <source>&amp;Close task</source>
-        <translation type="unfinished"></translation>
+        <translation>S&amp;chließe Aufgabe</translation>
     </message>
     <message>
         <source>&amp;Save this task</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Speicher diese Aufgabe</translation>
     </message>
     <message>
         <source>Save &amp;all task&apos;s</source>
-        <translation type="unfinished"></translation>
+        <translation>Speicher &amp;alle Aufgaben</translation>
     </message>
     <message>
         <source>Save task</source>
-        <translation type="unfinished"></translation>
+        <translation>Speicher Aufgabe</translation>
     </message>
     <message>
         <source>KFLOG tasks (*.kflogtsk *.KFLOGTSK)</source>
-        <translation type="unfinished"></translation>
+        <translation>KFLOG Aufgaben (*.kflogtsk *.KFLOGTSK)</translation>
     </message>
     <message>
         <source>No permission</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein Zugriff</translation>
     </message>
     <message>
         <source>&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;permission denied!</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;Zugriff verweigert!</translation>
     </message>
     <message>
         <source>Save all tasks</source>
-        <translation type="unfinished"></translation>
+        <translation>Speicher alle Aufgaben</translation>
     </message>
     <message>
         <source>Permission denied</source>
-        <translation type="unfinished"></translation>
+        <translation>Zugriff verweigert</translation>
     </message>
 </context>
 <context>
     <name>Optimization</name>
     <message>
         <source>Optimization fault</source>
-        <translation type="unfinished"></translation>
+        <translation>Optimierungsfehler</translation>
     </message>
     <message>
         <source>Sorry optimization fault. Report error (including IGC-File) to &lt;christof.bodner@gmx.net&gt;</source>
@@ -2270,7 +2285,7 @@ Alle Downloads verworfen!</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Name</translation>
     </message>
     <message>
         <source>Range</source>
@@ -2632,15 +2647,15 @@ Alle Downloads verworfen!</translation>
     </message>
     <message>
         <source>File does not exist</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Datei existiert nicht</translation>
     </message>
     <message>
         <source>The selected file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;does not exist!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Die ausgewählte Datei&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;existiert nicht!</translation>
     </message>
     <message>
         <source>File is empty</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Datei ist leer</translation>
     </message>
     <message>
         <source>Cannot open the selected file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;directly. Please open the flight file instead.</source>
@@ -2648,7 +2663,7 @@ Alle Downloads verworfen!</translation>
     </message>
     <message>
         <source>The selected file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;is empty!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Die ausgewählte Datei&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;ist leer!</translation>
     </message>
     <message>
         <source>No permission to file</source>
@@ -2656,7 +2671,7 @@ Alle Downloads verworfen!</translation>
     </message>
     <message>
         <source>You don&apos;t have permission to access file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Du hast keine Zugriffsrechte auf die Datei&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;</translation>
     </message>
     <message>
         <source>Unknown file extension</source>
@@ -2880,11 +2895,11 @@ F:          toggle front
     </message>
     <message>
         <source>Zoom &amp;In</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vergrößern</translation>
     </message>
     <message>
         <source>Zoom &amp;Out</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Verkleinern</translation>
     </message>
     <message>
         <source>Channel:</source>
@@ -3311,7 +3326,7 @@ F:          toggle front
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Name</translation>
     </message>
     <message>
         <source>Task:</source>
@@ -3339,11 +3354,11 @@ F:          toggle front
     </message>
     <message>
         <source>Tasks</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aufgaben</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Deschreibung</translation>
     </message>
     <message>
         <source>Distance</source>
@@ -3505,7 +3520,7 @@ Please check connections and settings.
     </message>
     <message>
         <source>Cannot open plugin library:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kann Plugin nicht öffnen:</translation>
     </message>
     <message>
         <source>Download task</source>
@@ -3857,11 +3872,11 @@ Please check connections and settings.</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Name</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Deschreibung</translation>
     </message>
     <message>
         <source>ICAO</source>
@@ -4213,11 +4228,11 @@ Please check connections and settings.</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Name</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Deschreibung</translation>
     </message>
     <message>
         <source>ICAO</source>

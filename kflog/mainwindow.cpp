@@ -238,7 +238,7 @@ void MainWindow::showWelcome()
                     tr(
                 	"Welcome to KFLog, the Linux flight analyser."
                 	"<br><br>"
-                	"After a first start you should open the setup menu and configure the following things:"
+                	"After a first installation you should open the setup menu and configure the following things:"
                 	"<p><table><tr><td>"
                 	"<b>Airspaces:</b></td><td>"
                 	"Define the countries to be downloaded and used."
