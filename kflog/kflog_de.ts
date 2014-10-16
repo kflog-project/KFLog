@@ -1056,15 +1056,7 @@
     </message>
     <message>
         <source>2. Standard Parallel</source>
-        <translation>1. Standard Parallele</translation>
-    </message>
-    <message>
-        <source>Point Data</source>
-        <translation type="obsolete">Orte</translation>
-    </message>
-    <message>
-        <source>Select point data files to be used in the table</source>
-        <translation type="obsolete">Wähle Orte Dateien, die in der Tabelle benutzt werden sollen </translation>
+        <translation>2. Standard Parallele</translation>
     </message>
     <message>
         <source>Uncheck All to enable loading of single files.</source>
@@ -1077,10 +1069,6 @@
     <message>
         <source>Point data source:</source>
         <translation>Orte Datenquelle:</translation>
-    </message>
-    <message>
-        <source>Select airspace files to be used in the table</source>
-        <translation type="obsolete">Wähle Luftraumdateien, die in der Tabelle benutzt werden sollen</translation>
     </message>
     <message>
         <source>*.txt containing OpenAir data</source>
