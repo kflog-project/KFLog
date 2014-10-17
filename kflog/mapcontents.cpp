@@ -1173,8 +1173,6 @@ void MapContents::appendFlight(Flight* flight)
 
 int MapContents::__askUserForDownload( QString what )
 {
-  qDebug() << "__askUserForDownload rein" << what;
-
   extern MainWindow *_mainWindow;
 
   int result = _settings.value( "/Internet/AutomaticMapDownload", ADT_NotSet ).toInt();
@@ -1213,8 +1211,6 @@ int MapContents::__askUserForDownload( QString what )
             break;
         }
     }
-
-  qDebug() << "__askUserForDownload raus" << result;
 
   return result;
 }
@@ -1318,12 +1314,6 @@ QString MapContents::getMapRootDirectory()
 
 void MapContents::proofeSection(bool isPrint)
 {
-  static int calls = 0;
-
-  calls++;
-
-  qDebug() << "MapContents::proofeSection() rein: calls=" << calls;
-
   extern MainWindow *_mainWindow;
   extern MapMatrix  *_globalMapMatrix;
   QRect mapBorder;
@@ -1499,10 +1489,6 @@ void MapContents::proofeSection(bool isPrint)
             }
         }
     }
-
-  calls--;
-
-  qDebug() << "MapContents::proofeSection() raus: calls=" << calls;
 }
 
 int MapContents::getListLength(int listIndex) const
