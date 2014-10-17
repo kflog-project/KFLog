@@ -1225,16 +1225,25 @@ void Map::mousePressEvent(QMouseEvent* event)
 }
 
 /**
- * Please note! Qt4 allows only to draw at the widget's paint engine inside
- * a paint event. Otherwise you will get displayed warnings.
+ * Please note! Beginning with Qt4 it is allowed only to draw at the widget's
+ * paint engine inside a paint event. Otherwise you will get displayed warnings.
  */
 void Map::paintEvent( QPaintEvent* event )
 {
   if( pixBuffer.isNull() )
     {
-      qWarning() << "Map::paintEvent: Reject paintEvent pixBuffer is Null!";
+      // qWarning() << "Map::paintEvent: Reject paintEvent pixBuffer is Null!";
       return;
     }
+
+#if 0
+  // Seems not to be necessary to check that
+  if( event->rect() != pixBuffer.rect() )
+    {
+      // qWarning() << "Map::paintEvent: pixBuffer Rect != paintEvent Rect!";
+      //return;
+    }
+#endif
 
   QPainter painter(this);
 
@@ -1620,9 +1629,13 @@ void Map::__drawPlannedTask( bool solid )
 
 void Map::resizeEvent(QResizeEvent* event)
 {
-  if( ! event->size().isEmpty() )
+  // Note that a resize event initiates afterwards a paint event.
+  if( event && ! event->size().isEmpty() )
     {
-      __redrawMap();
+      // Finish event handling here, otherwise a crash can happen later,
+      // if the event is blocked by a message box and a new resize event is
+      // coming in.
+      QTimer::singleShot(0, this, SLOT(slotRedrawMap()));
     }
 }
 

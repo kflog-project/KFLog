@@ -88,7 +88,6 @@ class MapContents : public QObject
                            VillageList,
                            LandmarkList,
                            HighwayList,
-                           HighwayEntryList,
                            RoadList,
                            RailList,
                            StationList,
@@ -97,7 +96,6 @@ class MapContents : public QObject
                            TopoList,
                            IsohypseList,
                            WaypointList,
-                           DigitList,
                            FlightList };
 
   /**
@@ -407,6 +405,16 @@ class MapContents : public QObject
    */
   void slotOpenAipPoiNetworkError();
 
+  /**
+   * Tries to get openAIP data on request from the Internet.
+   */
+  void slotGetOpenAipPoints();
+
+  /**
+   * Tries to get openAIP airspaces on request from the Internet.
+   */
+  void slotGetOpenAipAirspaces();
+
  signals:
   /**
    * emitted during map loading to display a message f.e. in the
@@ -501,6 +509,14 @@ class MapContents : public QObject
    * @return "true", when the file has successfully been loaded
    */
   bool __readTerrainFile(const int fileSecID, const int fileTypeID);
+
+  /**
+   * Returns the GUI language as two letter country code or ??
+   * if no language could be found.
+   *
+   * \return GUI language as two letter country code or ??
+   */
+  QString __getGuiLanguage();
 
   /**
    * airfieldList contains airports, airfields, ultralight sites

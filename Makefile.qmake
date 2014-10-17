@@ -1,11 +1,10 @@
 ################################################################################
-# Makefile to build a KFLog release based on X11 and Qt4.8.x
+# Makefile to build a KFLog release based on Linux and Qt4.8.x or Qt5.x
 #
 # Copyright (c): 2010-2014 by Axel Pauli (kflog.cumulus@gmail.com)
 # 
-# $Id$
-#
 # This file is distributed under the terms of the General Public License.
+#
 # See the file COPYING for more information.
 #
 ################################################################################
@@ -13,7 +12,7 @@
 # Version is determined from the header file target.h
 VERSION=$(shell cat kflog/target.h | grep KFLOG_VERSION | cut -d '"' -f 2)
 
-# current Linux release, used in package name
+# Current Linux release, used in package name
 DIST_NAME=$(shell lsb_release -s -i)
 DIST_REL=$(shell lsb_release -s -r)
 KFLOG_REL=kflog-$(VERSION)
@@ -29,11 +28,19 @@ QT_BINS=$(shell qmake -query QT_INSTALL_BINS)
 QT_LRELEASE=$(QT_BINS)/lrelease
 QT_TRANSLATIONS=$(shell qmake -query QT_INSTALL_TRANSLATIONS)
 
+# Qt5 translation files, which are referenced by qt_de.qm.
+QT5_TL_FILES= \
+  qtbase_de.qm \
+  qtscript_de.qm \
+  qtquick1_de.qm \
+  qtmultimedia_de.qm \
+  qtxmlpatterns_de.qm
+
 # Reset language environment because the date can be formatted according
 # to local rules. That does not like dpkg-buildpackage.
 LANG=
 
-DATE=`date +'%a, %d %b %Y %H:%M:%S %z'`
+DATE=$(shell date +'%a, %d %b %Y %H:%M:%S %z')
 
 # adapt install path to your needs if necessary
 INSTALL_ROOT = /opt/kflog
@@ -69,17 +76,23 @@ qmake:
 	qmake -Wall -nocache kflog.pro
   
 install_test: all
-	make INSTALL_ROOT=`pwd`/release -f Makefile install
-	make INSTALL_ROOT=`pwd`/release -f Makefile.qmake install_lang
+	make INSTALL_ROOT=$(shell pwd)/release -f Makefile install
+	make INSTALL_ROOT=$(shell pwd)/release -f Makefile.qmake install_lang
 
 .PHONY : install_lang
 install_lang:
 	@echo "===== Installing KFLog $(VERSION) languages ====="
-	@install -d $(INSTALL_ROOT)/translations
+	@install --mode=755 -d $(INSTALL_ROOT)/translations
 	@cd kflog; \
 		$(QT_LRELEASE) -silent -removeidentical -nounfinished kflog_de.ts -qm $(INSTALL_ROOT)/translations/kflog_de.qm
 	@chmod 644 $(INSTALL_ROOT)/translations/kflog_de.qm
+	@echo "===== Installing QT translations ====="
 	@install --mode=644 $(QT_TRANSLATIONS)/qt_de.qm $(INSTALL_ROOT)/translations/qt_de.qm
+ifneq ($(word 1,$(subst ., ,$(QT_VERSION))),4)
+	# Installing Qt5 translation files
+	@cd $(QT_TRANSLATIONS); \
+	  install --mode=644 $(QT5_TL_FILES) $(INSTALL_ROOT)/translations
+endif
 	
 clean:	qmake
 	make -f Makefile clean
@@ -135,12 +148,12 @@ dpkg_build:
 
 dpkg_install:
 	@echo '===== Installing KFLog $(VERSION) under $(DESTDIR)/$(INSTALL_ROOT)'
-	install -d $(DESTDIR)/$(INSTALL_ROOT)/bin
-	install -d $(DESTDIR)/$(INSTALL_ROOT)/lib
-	install -d $(DESTDIR)/$(INSTALL_ROOT)/logger
-	install -d $(DESTDIR)/$(INSTALL_ROOT)/pics
-	install -d $(DESTDIR)/$(INSTALL_ROOT)/translations
-	install -d $(DESTDIR)/usr/share/applications
+	install --mode=755 -d $(DESTDIR)/$(INSTALL_ROOT)/bin
+	install --mode=755 -d $(DESTDIR)/$(INSTALL_ROOT)/lib
+	install --mode=755 -d $(DESTDIR)/$(INSTALL_ROOT)/logger
+	install --mode=755 -d $(DESTDIR)/$(INSTALL_ROOT)/pics
+	install --mode=755 -d $(DESTDIR)/$(INSTALL_ROOT)/translations
+	install --mode=755 -d $(DESTDIR)/usr/share/applications
 	install --mode=644 kflog/pics/pilot_48.png $(DESTDIR)/$(INSTALL_ROOT)/pics
 	install --mode=644 kflog/kflog.desktop $(DESTDIR)/usr/share/applications
 	install --mode=755 release/bin/kflog $(DESTDIR)/$(INSTALL_ROOT)/bin

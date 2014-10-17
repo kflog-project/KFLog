@@ -486,6 +486,8 @@ class KFLogConfig : public QDialog
   LatEdit* firstParallel;
   LatEdit* secondParallel;
   LongEdit* originLongitude;
+  QLabel* secondParallelLabel;
+  QLabel* originLongitudeLabel;
 
   QButtonGroup *waypointButtonGroup;
   QPushButton* catalogPathSearch;

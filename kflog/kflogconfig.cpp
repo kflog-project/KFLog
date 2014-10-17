@@ -54,9 +54,6 @@ KFLogConfig::KFLogConfig(QWidget* parent) :
   setModal( true );
   setSizeGripEnabled( true );
 
-  _settings.setValue( "/OpenAip/Link",
-                      "9EEAi^^HHH]@A6?2:A]?6E^<7=@806IA@CE097uwab`987" );
-
   configLayout = new QGridLayout(this);
 
   setupTree = new QTreeWidget( this );
@@ -622,15 +619,24 @@ void KFLogConfig::slotSelectProjection( int index )
     {
       case ProjectionBase::Cylindric:
 
-        secondParallel->setEnabled(false);
-        originLongitude->setEnabled(false);
+	secondParallelLabel->setVisible(false);
+	originLongitudeLabel->setVisible(false);
+
+        secondParallel->setVisible(false);
+        originLongitude->setVisible(false);
+
+
         firstParallel->setKFLogDegree(m_cylinPar);
         break;
 
       case ProjectionBase::Lambert:
 
-        secondParallel->setEnabled(true);
-        originLongitude->setEnabled(true);
+	secondParallelLabel->setVisible(true);
+	originLongitudeLabel->setVisible(true);
+
+        secondParallel->setVisible(true);
+        originLongitude->setVisible(true);
+
         firstParallel->setKFLogDegree(m_lambertV1);
         secondParallel->setKFLogDegree(m_lambertV2);
         originLongitude->setKFLogDegree(m_lambertOrigin);
@@ -1194,9 +1200,12 @@ void KFLogConfig::__addProjectionTab()
   secondParallel->setMinimumWidth( minLen );
   originLongitude->setMinimumWidth( minLen );
 
+  secondParallelLabel  = new QLabel( tr( "2. Standard Parallel" ) + ":" );
+  originLongitudeLabel = new QLabel( tr( "Origin Longitude" ) + ":" );
+
   projConfLayout->addRow( tr( "1. Standard Parallel" ) + ":", firstParallel );
-  projConfLayout->addRow( tr( "2. Standard Parallel" ) + ":", secondParallel );
-  projConfLayout->addRow( tr( "Origin Longitude" ) + ":", originLongitude );
+  projConfLayout->addRow( secondParallelLabel, secondParallel );
+  projConfLayout->addRow( originLongitudeLabel, originLongitude );
 
   projConfGroup->setLayout( projConfLayout );
 
@@ -1812,7 +1821,7 @@ int KFLogConfig::__getScaleValue(double scale)
 void KFLogConfig::__addPointsTab()
 {
   QTreeWidgetItem* item = new QTreeWidgetItem;
-  item->setText( 0, tr("Point Data") );
+  item->setText( 0, tr("Points") );
   item->setData( 0, Qt::UserRole, "Points" );
   item->setIcon( 0, _mainWindow->getPixmap("airfield_32.png") );
   setupTree->addTopLevelItem( item );
@@ -1903,12 +1912,12 @@ void KFLogConfig::__addPointsTab()
   oaipLayout->setRowMinimumHeight ( grow, 20 );
   grow++;
 
-  QLabel* hint = new QLabel( tr("Select point data files to be used in the table") );
+  QLabel* hint = new QLabel( tr("Select point data files to be used") );
   oaipLayout->addWidget( hint, grow, 0, 1, 3 );
   grow++;
 
   QString tip = tr("Uncheck All to enable loading of single files.") + "\n\n" +
-                tr("*_nav.api containing Navaids points") + "\n\n" +
+                tr("*_nav.api containing Navaid points") + "\n\n" +
                 tr("*_wpt.api containing Airfield points");
 
   m_pointFileTable = new QTableWidget( 0, 1, this );
@@ -1972,7 +1981,7 @@ void KFLogConfig::__addPointsTab()
 void KFLogConfig::__addAirspaceTab()
 {
   QTreeWidgetItem* item = new QTreeWidgetItem;
-  item->setText( 0, tr("Airspace Management") );
+  item->setText( 0, tr("Airspaces") );
   item->setData( 0, Qt::UserRole, "Airspaces" );
   item->setIcon( 0, _mainWindow->getPixmap("kde_move_16.png") );
   setupTree->addTopLevelItem( item );
@@ -2023,7 +2032,7 @@ void KFLogConfig::__addAirspaceTab()
   topLayout->addWidget( openAipGroup );
 
   topLayout->addSpacing( 20 );
-  QLabel* hint = new QLabel( tr("Select airspace files to be used in the table") );
+  QLabel* hint = new QLabel( tr("Select airspace files to be used") );
   topLayout->addWidget( hint );
 
   QString tip = tr("Uncheck All to enable loading of single files.") + "\n\n" +
@@ -2159,7 +2168,7 @@ void KFLogConfig::__addUnitTab()
   m_unitPosition->setEditable(false);
   m_unitPosition->addItem("ddd°mm'ss\"",  WGSPoint::DMS);
   m_unitPosition->addItem("ddd°mm.mmm'",  WGSPoint::DDM);
-  m_unitPosition->addItem(tr("ddd.ddddd°"),   WGSPoint::DDD);
+  m_unitPosition->addItem("ddd.ddddd°",   WGSPoint::DDD);
 
   QFormLayout* unitLayout = new QFormLayout();
   unitLayout->setSpacing( 10 );
@@ -2712,7 +2721,7 @@ bool KFLogConfig::setGuiLanguage( QString newLanguage )
     {
       QCoreApplication::installTranslator( s_guiTranslator );
       qDebug() << "Using GUI translation file"
-	       << langFile
+           << langDir + "/" + langFile
 	       << "for language"
 	       << newLanguage;
 
@@ -2720,7 +2729,7 @@ bool KFLogConfig::setGuiLanguage( QString newLanguage )
     }
   else
     {
-      qWarning() << "couldn't load GUI translation file" << langDir + "/" + langFile;
+      qWarning() << "GUI translation file not found:" << langDir + "/" + langFile;
       ok = false;
     }
 
@@ -2736,8 +2745,8 @@ bool KFLogConfig::setGuiLanguage( QString newLanguage )
   if( s_qtTranslator->load( langFile, langDir ) )
     {
       QCoreApplication::installTranslator( s_qtTranslator );
-      qDebug() << "Using QT-Library translation file"
-	       << langFile
+      qDebug() << "Using Library translation file"
+           << langDir + "/" + langFile
 	       << "for language"
 	       << newLanguage;
 
@@ -2745,7 +2754,7 @@ bool KFLogConfig::setGuiLanguage( QString newLanguage )
     }
   else
     {
-      qWarning() << "could't load QT-Library translation file" << langDir + "/" + langFile;
+      qWarning() << "Library translation file not found:" << langDir + "/" + langFile;
       ok &= false;
     }
 

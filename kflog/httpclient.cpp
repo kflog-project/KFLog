@@ -365,7 +365,7 @@ void HttpClient::slotFinished()
 
   if( reply && tmpFile )
     {
-      qDebug( "Download %s finished with %d", _url.toLatin1().data(), reply->error() );
+      // qDebug( "Download %s finished with %d", _url.toLatin1().data(), reply->error() );
 
       // read reply error status
       enum QNetworkReply::NetworkError error = reply->error();

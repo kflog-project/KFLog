@@ -25,7 +25,7 @@
  *
  * http://qt-project.org/
  *
- * KFLog is built with the release 4.8.x.
+ * KFLog is built with the Qt release 4.8.x and 5.x
  *
  * \date 2001-2014
  *
@@ -120,6 +120,8 @@ int main(int argc, char **argv)
       _mainWindow = new MainWindow;
       _mainWindow->setVisible( true );
     }
+
+  _mainWindow->showWelcome();
 
   QString argument, fileOpenIGC, fileExportPNG, width = "640", height = "480";
   QString waypointsOptionArg;

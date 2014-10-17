@@ -504,9 +504,9 @@ void MapContents::slotReloadAirspaceData()
 
 void MapContents::slotDownloadOpenAipPointFiles( bool askUser )
 {
-  if( askUser == true && __askUserForDownload(tr("openAIP airfield") ) != Automatic )
+  if( askUser == true && __askUserForDownload(tr("openAIP points") ) != Automatic )
     {
-      qDebug() << "openAipPoiFiles: Auto Download Inhibited";
+      qDebug() << "openAipPointFiles: Auto Download Inhibited";
       return;
     }
 
@@ -594,6 +594,97 @@ void MapContents::slotOpenAipPoiNetworkError()
                         msg );
 }
 
+void MapContents::slotGetOpenAipPoints()
+{
+  static bool firstCall = true;
+
+  if( firstCall == false )
+    {
+      // To avoid endless loops, allow only one call of this method.
+      return;
+    }
+
+  firstCall = false;
+
+  // This method checks, if countries are set by the user and tries to download
+  // openAIP point data for the configured countries.
+  //
+  // As first the GUI language is determined.
+  QString guiLang = __getGuiLanguage();
+
+  // Look, if countries for openAIP points are defined.
+  QString pc = _settings.value("/Points/Countries", "").toString();
+
+  if( pc.isEmpty() && guiLang != "??" )
+    {
+      // There are no countries defined for openAIP points. We assume that
+      // is a first call after the installation and try to download the country,
+      // defined by the GUI language.
+      _settings.setValue("/Points/Countries", guiLang );
+      pc = guiLang;
+    }
+
+  if( pc.isEmpty() == false )
+    {
+      slotDownloadOpenAipPointFiles( true );
+    }
+}
+
+void MapContents::slotGetOpenAipAirspaces()
+{
+  static bool firstCall = true;
+
+  if( firstCall == false )
+    {
+      // To avoid endless loops, allow only one call of this method.
+      return;
+    }
+
+  firstCall = false;
+
+  // This method checks, if countries are set by the user and tries to download
+  // openAIP airspace data for the configured countries.
+  //
+  // As first the GUI language is determined.
+  QString guiLang = __getGuiLanguage();
+
+  // Look, if countries for openAIP airspaces are defined.
+  QString ac = _settings.value("/Airspace/Countries", "").toString();
+
+  if( ac.isEmpty() && guiLang != "??" )
+    {
+      // There are no countries defined for openAIP airspaces. We assume that
+      // is a first call after the installation and try to download the country,
+      // defined by the GUI language.
+      _settings.setValue("/Airspace/Countries", guiLang );
+      ac = guiLang;
+    }
+
+  if( ac.isEmpty() == false )
+    {
+      slotDownloadOpenAipAirspaceFiles( true );
+    }
+}
+
+QString MapContents::__getGuiLanguage()
+{
+  // As first the GUI language is determined.
+  QString guiLang = _settings.value( "/PersonalData/Language", "??" ).toString();
+
+  if( guiLang == "??" )
+    {
+      // The GUI language is not configured. Try to get it from the OS
+      QString guiLang = QLocale::system().name();
+
+      if( guiLang.isEmpty() == false && guiLang.size() >= 2 )
+        {
+	  guiLang = guiLang.left(2).toLower();
+        }
+    }
+
+  return guiLang;
+}
+
 bool MapContents::__readTerrainFile( const int fileSecID,
                                      const int fileTypeID )
 {
@@ -619,7 +710,7 @@ bool MapContents::__readTerrainFile( const int fileSecID,
     {
       qWarning() << "KFLog: Can not open Terrain file" << pathName;
 
-      int answer = __askUserForDownload( tr("KFLog map") );
+      int answer = __askUserForDownload( tr("KFLog maps") );
 
       if( answer == Automatic )
         {
@@ -818,7 +909,7 @@ bool MapContents::__readBinaryFile( const int  fileSecID,
     {
       qWarning() << "KFLog: Can not open map file" << pathName;
 
-      int answer = __askUserForDownload( tr("KFLog map") );
+      int answer = __askUserForDownload( tr("KFLog maps") );
 
       if( answer == Automatic )
         {
@@ -1069,7 +1160,6 @@ QList<BaseFlightElement*> *MapContents::getFlightList()
   return &flightList;
 }
 
-
 void MapContents::appendFlight(Flight* flight)
 {
   flightList.append(flight);
@@ -1085,12 +1175,10 @@ int MapContents::__askUserForDownload( QString what )
 {
   extern MainWindow *_mainWindow;
 
-  int result = _settings.value( "/Internet/AutomaticMapDownload", ADT_NotSet ).toInt();;
+  int result = _settings.value( "/Internet/AutomaticMapDownload", ADT_NotSet ).toInt();
 
   if( askUser == true && result == ADT_NotSet )
     {
-      _settings.setValue("/Internet/AutomaticMapDownload", Inhibited);
-
       int ret = QMessageBox::question(_mainWindow,
                 tr("Automatic data download?"),
                 tr("<html>There are <b>%1</b> data missing!"
@@ -1126,7 +1214,6 @@ int MapContents::__askUserForDownload( QString what )
 
   return result;
 }
-
 
 /**
  * Checks the existence of the three required map directories.
@@ -1348,7 +1435,13 @@ void MapContents::proofeSection(bool isPrint)
     {
       loadAirspaces = false;
 
-      AirspaceHelper::loadAirspaces( airspaceList );
+      int res = AirspaceHelper::loadAirspaces( airspaceList );
+
+      if( res == 0 )
+        {
+          // No airspace files found, try to download any.
+          QTimer::singleShot(500, this, SLOT(slotGetOpenAipAirspaces()));
+        }
 
       // finally, sort the airspaces
       airspaceList.sort();
@@ -1360,7 +1453,7 @@ void MapContents::proofeSection(bool isPrint)
 
   qDebug() << "MapContents::proofeSection() loadAirfields=" << loadAirfields;
 
-  // Checking for Airfield, Gliderfield and Outlanding data
+  // Checking for point data
   if( loadAirfields == true )
     {
       loadAirfields = false;
@@ -1368,27 +1461,33 @@ void MapContents::proofeSection(bool isPrint)
       int pointSource = _settings.value( "/Points/Source", 0 ).toInt();
 
       if( pointSource == 0 )
-	{
+        {
           OpenAipPoiLoader poiLoader;
-          poiLoader.load( airfieldList );
-          poiLoader.load( navaidsList );
-	}
+          int res = poiLoader.load( airfieldList );
+          res += poiLoader.load( navaidsList );
+
+          if( res == 0 )
+            {
+              // No openAIP point data loaded, try to download any.
+              QTimer::singleShot(500, this, SLOT(slotGetOpenAipPoints()));
+            }
+        }
       else if( pointSource == 1 )
-	{
-	  // At first try a load of welt2000, that airfield data are available
-	  Welt2000 welt2000;
-	  bool loadOk = welt2000.load( airfieldList, gliderfieldList, outLandingList );
+        {
+          // At first try a load of welt2000, that airfield data are available
+          Welt2000 welt2000;
+          bool loadOk = welt2000.load( airfieldList, gliderfieldList, outLandingList );
 
-	  // As next make the update check
-	  bool check4update = welt2000.check4update();
+          // As next make the update check
+          bool check4update = welt2000.check4update();
 
-	  if( loadOk == false || check4update == true )
-	    {
-	      // Welt2000 update available or load failed, try to download a new
-	      // Welt2000 File from the Internet web page.
-	      slotDownloadWelt2000( true );
-	    }
-	}
+          if( loadOk == false || check4update == true )
+            {
+              // Welt2000 update available or load failed, try to download a new
+              // Welt2000 File from the Internet web page.
+              slotDownloadWelt2000( true );
+            }
+        }
     }
 }
 

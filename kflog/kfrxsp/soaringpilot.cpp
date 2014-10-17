@@ -2,12 +2,12 @@
  **
  **   soaringpilot.cpp
  **
- **   This file is part of KFLog2.
+ **   This file is part of KFLog.
  **
  ************************************************************************
  **
  **   Copyright (c):  2003 by Harald Maier
- **                   2011 by Axel Pauli
+ **                   2011-2014 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -21,11 +21,11 @@
 #include <cstdlib>
 #include <ctype.h>
 #include <fcntl.h>
-#include <signal.h>
+#include <csignal>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <termios.h>
-#include <time.h>
+#include <ctime>
 #include <unistd.h>
 
 #include <QtCore>
@@ -99,7 +99,7 @@ int SoaringPilot::writeFile( QStringList &file )
     {
       QString line = file.at(i) + "\r\n";
 
-      if( write( portID, line.toAscii().data(), line.size() ) != 1 )
+      if( write( portID, line.toLatin1().data(), line.size() ) != 1 )
         {
           return FR_ERROR;
         }
@@ -393,10 +393,10 @@ int SoaringPilot::downloadFlight(int /*flightID*/, int /*secMode*/, const QStrin
           break;
         }
 
-        f.write( A.toAscii().data(), A.length() );
+        f.write( A.toLatin1().data(), A.length() );
       }
       // write data to file
-      f.write(tmp.toAscii().data(), tmp.length() );
+      f.write(tmp.toLatin1().data(), tmp.length() );
     }
   }
   return ret;
@@ -435,7 +435,7 @@ int SoaringPilot::openRecorder(const QString& portName, int baud)
   speed_t speed;
 
   /* eventuell als Mode zusätzlich O_NONBLOCK ??? */
-  portID = open(portName.toAscii().data(), O_RDWR | O_NOCTTY);
+  portID = open(portName.toLatin1().data(), O_RDWR | O_NOCTTY);
 
   if(portID != -1) {
     //

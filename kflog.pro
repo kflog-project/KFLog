@@ -33,9 +33,14 @@ TEMPLATE = subdirs
                 kflog/kfrfla \
                 kflog/kfrgcs \
                 kflog/kfrgmn \
-                kflog/kfrxsp \
-                kflog/opengl_igc
+                kflog/kfrxsp
+                
+# FIXME: Under Qt5 opengl_igc is crashing in virtualbox               
+lessThan(QT_MAJOR_VERSION, 5) {               
+    SUBDIRS += kflog/opengl_igc
+    }
 }
+
 win32 {
     SUBDIRS =   kflog
 }

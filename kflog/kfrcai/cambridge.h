@@ -2,12 +2,12 @@
 **
 **   cambridge.h
 **
-**   This file is part of KFLog2.
+**   This file is part of KFLog.
 **
 ************************************************************************
 **
 **   Copyright (c):  2007 by Hendrik Hoeth
-**                   2011 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -106,8 +106,6 @@ class Cambridge : public FlightRecorderPluginBase
   virtual int writeWaypoints(QList<Waypoint*> *waypoints);
 
 private:
-
-  bool haveDatabase;
 
   /*
    * wait some time in ms
