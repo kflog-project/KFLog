@@ -12,12 +12,11 @@
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
 #include <QtGui>
 
+#include "altitude.h"
 #include "singlepoint.h"
 
 SinglePoint::SinglePoint() :
@@ -144,4 +143,70 @@ bool SinglePoint::drawMapElement(QPainter* targetP)
                        pixmap );
 
   return true;
+}
+
+QString SinglePoint::getInfoString()
+{
+  QString path = glConfig->getIconPath();
+  QString text;
+  QString text1;
+
+  text = QString("<html><center><b>") +
+         "<IMG SRC=" + path + "/" +
+         glConfig->getPixmapName(typeID, false, false) + "> " +
+         name;
+
+  if( !country.isEmpty() )
+    {
+      if( text1.isEmpty() )
+        {
+          text1 = " (";
+        }
+      else
+        {
+          text1 += ", ";
+        }
+
+      text1 += country + ")";
+    }
+  else
+    {
+      text1 += ")";
+    }
+
+  text += text1;
+
+  text += " " + BaseMapElement::item2Text( typeID, QObject::tr("(unknown object)") ) +
+           "</b></center>";
+
+  text += "<table cellpadding=5 width=100%>";
+
+  // get current unit
+  Altitude::altitudeUnit currentUnit = Altitude::getUnit();
+
+  Altitude::setUnit(Altitude::meters);
+  QString meters = Altitude::getText( elevation, true, 0 );
+
+  Altitude::setUnit(Altitude::feet);
+  QString feet = Altitude::getText( elevation, true, 0 );
+
+  // restore save unit
+  Altitude::setUnit(currentUnit);
+
+  if( currentUnit == Altitude::meters )
+   {
+     text += "<tr><td>" + QObject::tr("Elevation:") +
+             "</td><td><b>" + meters + " / " + feet +
+             "</b></td></tr>";
+   }
+  else
+   {
+     text += "<tr><td>" + QObject::tr("Elevation:") +
+             "</td><td><b>" + feet + " / " + meters +
+             "</b></td></tr>";
+   }
+
+  text += "</table></html>";
+
+  return text;
 }

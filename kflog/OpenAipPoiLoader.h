@@ -38,6 +38,7 @@
 
 #include "airfield.h"
 #include "radiopoint.h"
+#include "singlepoint.h"
 
 class OpenAipPoiLoader
 {
@@ -61,17 +62,28 @@ class OpenAipPoiLoader
    * Searches on default places openAIP navAids files and load them. The
    * results are appended to the passed list.
    *
-   * \param navaidsList All read navaids have to be appended to this list.
+   * \param navaidList All read navaids have to be appended to this list.
    *
-   * \return number of loaded navaids files
+   * \return number of loaded navaid files
    */
-  int load( QList<RadioPoint>& navaidsList );
+  int load( QList<RadioPoint>& navaidList );
+
+  /**
+   * Searches on default places openAIP navAids files and load them. The
+   * results are appended to the passed list.
+   *
+   * \param hotspotList All read hotspots have to be appended to this list.
+   *
+   * \return number of loaded hotspot files
+   */
+  int load( QList<SinglePoint>& hotspotList );
 
  private:
 
   /** Mutex to ensure thread safety. */
   static QMutex m_mutexAf;
   static QMutex m_mutexNa;
+  static QMutex m_mutexHs;
 };
 
 #endif /* OpenAip_Poi_Loader_h_ */

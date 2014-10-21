@@ -1021,7 +1021,7 @@ void WaypointTreeView::slotImportWaypointFromMap()
 
       if( currentWaypointCatalog->showAll || currentWaypointCatalog->showNavaids )
         {
-          searchList.append( MapContents::NavaidsList );
+          searchList.append( MapContents::NavaidList );
         }
 
       if( currentWaypointCatalog->showAll || currentWaypointCatalog->showObstacles )
@@ -1039,9 +1039,9 @@ void WaypointTreeView::slotImportWaypointFromMap()
           searchList.append( MapContents::OutLandingList );
         }
 
-      if( currentWaypointCatalog->showAll || currentWaypointCatalog->showStations )
+      if( currentWaypointCatalog->showAll || currentWaypointCatalog->showHotspots )
         {
-          searchList.append( MapContents::StationList );
+          searchList.append( MapContents::HotspotList );
         }
 
       enum WaypointCatalog::FilterType ft = importFilterDlg->getFilter();
@@ -1049,7 +1049,7 @@ void WaypointTreeView::slotImportWaypointFromMap()
       if( ft == WaypointCatalog::Radius )
         {
           filterRadius = ( currentWaypointCatalog->getCenterPoint().lat() != 0  ||
-               currentWaypointCatalog->getCenterPoint().lon() != 0);
+                           currentWaypointCatalog->getCenterPoint().lon() != 0);
         }
       else if( ft == WaypointCatalog::Area )
       	{
@@ -1232,8 +1232,8 @@ void WaypointTreeView::slotSetHome()
       _settings.setValue("/Homesite/Longitude", w->origP.lon());
       _settings.setValue("/Homesite/Country", w->country);
 
-      // update airfield lists from Welt2000 if home site changes:
-      _globalMapContents->slotReloadAirfieldData();
+      // update point lists if home site is changed:
+      _globalMapContents->slotReloadPointData();
       slotFillWaypoints();
   }
 }
@@ -1254,7 +1254,7 @@ void WaypointTreeView::setFilterDataInCatalog( WaypointCatalog* catalog )
   catalog->showObstacles = importFilterDlg->obstacles->isChecked();
   catalog->showLandmarks = importFilterDlg->landmarks->isChecked();
   catalog->showOutlandings = importFilterDlg->outlandings->isChecked();
-  catalog->showStations = importFilterDlg->stations->isChecked();
+  catalog->showHotspots = importFilterDlg->hotspots->isChecked();
 
   catalog->setFilter( importFilterDlg->getFilter() );
   catalog->areaLat1 = importFilterDlg->fromLat->KFLogDegree();
@@ -1324,7 +1324,7 @@ void WaypointTreeView::setFilterDataFromCatalog()
   importFilterDlg->obstacles->setChecked(currentWaypointCatalog->showObstacles);
   importFilterDlg->landmarks->setChecked(currentWaypointCatalog->showLandmarks);
   importFilterDlg->outlandings->setChecked(currentWaypointCatalog->showOutlandings);
-  importFilterDlg->stations->setChecked(currentWaypointCatalog->showStations);
+  importFilterDlg->hotspots->setChecked(currentWaypointCatalog->showHotspots);
 
   importFilterDlg->setFilter( currentWaypointCatalog->getFilter() );
   importFilterDlg->fromLat->setKFLogDegree(currentWaypointCatalog->areaLat1);

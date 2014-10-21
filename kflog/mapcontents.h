@@ -2,7 +2,7 @@
 **
 **   mapcontents.h
 **
-**   This file is part of KFLog4.
+**   This file is part of KFLog.
 **
 ************************************************************************
 **
@@ -80,7 +80,7 @@ class MapContents : public QObject
                            AirfieldList,
                            GliderfieldList,
                            OutLandingList,
-                           NavaidsList,
+                           NavaidList,
                            AirspaceList,
                            ObstacleList,
                            ReportList,
@@ -90,7 +90,7 @@ class MapContents : public QObject
                            HighwayList,
                            RoadList,
                            RailList,
-                           StationList,
+                           HotspotList,
                            HydroList,
                            LakeList,
                            TopoList,
@@ -234,7 +234,15 @@ class MapContents : public QObject
    */
   QList<RadioPoint>& getNavaidList()
   {
-    return navaidsList;
+    return navaidList;
+  };
+
+  /**
+   * @returns the hotspot list.
+   */
+  QList<SinglePoint>& getHotspotList()
+  {
+    return hotspotList;
   };
 
   /**
@@ -356,10 +364,10 @@ class MapContents : public QObject
   void slotDownloadWelt2000(bool askUser);
 
   /**
-   * Reload airfield data. Can be called after a configuration change or
+   * Reload point data. Can be called after a configuration change or
    * after a download update.
    */
-  void slotReloadAirfieldData();
+  void slotReloadPointData();
 
   /*
    * Called, if openAIP airspace files shall be downloaded.
@@ -534,9 +542,14 @@ class MapContents : public QObject
   QList<Airfield> outLandingList;
 
   /**
-   * navaidsList contains all radio navigation facilities.
+   * navaidList contains all radio navigation facilities.
    */
-  QList<RadioPoint> navaidsList;
+  QList<RadioPoint> navaidList;
+
+  /**
+   * hotspotList contains all thermal hotspots.
+   */
+  QList<SinglePoint> hotspotList;
 
   /**
    * airspaceList contains all airspaces. The sort function on this
@@ -658,9 +671,9 @@ class MapContents : public QObject
   bool askUser;
 
   /**
-   * Flag to indicate, if airfield load is needed.
+   * Flag to indicate, if point data load is needed.
    */
-  bool loadAirfields;
+  bool loadPoints;
 
   /**
    * Flag to indicate, if airspace load is needed.

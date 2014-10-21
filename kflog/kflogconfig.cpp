@@ -391,14 +391,14 @@ void KFLogConfig::slotOk()
       __checkAirfieldFileTable() == true ||
       homeLatitudeChanged == true || homeLongitudeChanged == true )
     {
-      emit reloadAirfieldData();
+      emit reloadPointData();
     }
   // Check, if openAIP airfields must be updated
   else if( pointsSourceBox->currentIndex() == 0 &&
       ( m_afOpenAipHomeRadiusValue !=  pointsOpenAipHomeRadius->value() ||
         m_afOpenAipCountryValue != pointsOpenAipCountries->text() ) )
     {
-      emit reloadAirfieldData();
+      emit reloadPointData();
     }
   // Check, if Welt2000 airfields must be updated
   else if( pointsSourceBox->currentIndex() == 1 &&
@@ -406,7 +406,7 @@ void KFLogConfig::slotOk()
             m_welt2000CountryFilterValue != welt2000CountryFilter->text() ||
             m_welt2000ReadOlValue != welt2000ReadOl->isChecked()) )
     {
-      emit reloadAirfieldData();
+      emit reloadPointData();
     }
 
   emit configOk();
@@ -1917,6 +1917,7 @@ void KFLogConfig::__addPointsTab()
   grow++;
 
   QString tip = tr("Uncheck All to enable loading of single files.") + "\n\n" +
+                tr("*_hot.api containing Hotspot points") + "\n\n" +
                 tr("*_nav.api containing Navaid points") + "\n\n" +
                 tr("*_wpt.api containing Airfield points");
 

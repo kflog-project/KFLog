@@ -1796,8 +1796,8 @@ void MainWindow::slotConfigureKFLog()
   connect( confDlg, SIGNAL(downloadWelt2000(bool)),
            _globalMapContents, SLOT(slotDownloadWelt2000(bool)) );
 
-  connect( confDlg, SIGNAL(reloadAirfieldData()),
-           _globalMapContents, SLOT(slotReloadAirfieldData()) );
+  connect( confDlg, SIGNAL(reloadPointData()),
+           _globalMapContents, SLOT(slotReloadPointData()) );
 
   connect( confDlg, SIGNAL(downloadOpenAipAirspaces(bool)),
            _globalMapContents, SLOT(slotDownloadOpenAipAirspaceFiles(bool)) );

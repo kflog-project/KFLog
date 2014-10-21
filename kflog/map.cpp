@@ -651,6 +651,29 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
 	}
     }
 
+  // As next we look for single hotspot objects
+  QList<SinglePoint>& hotList = _globalMapContents->getHotspotList();
+
+  for( int i = 0; i < hotList.size(); i++ )
+    {
+      SinglePoint& hitElement = hotList[i];
+
+      sitePos = hitElement.getMapPosition();
+
+      double dX = abs( sitePos.x() - current.x() );
+      double dY = abs( sitePos.y() - current.y() );
+
+      // Abstand entspricht der Icon-Grösse.
+      if( (dX < delta) && (dY < delta) )
+	{
+	  text += hitElement.getInfoString();
+	  // Text anzeigen
+	  WhatsThat* box = new WhatsThat( this, text, timeout, mapToGlobal( current ) );
+	  box->setVisible( true );
+	  return;
+	}
+    }
+
   BaseFlightElement *baseFlight = _globalMapContents->getFlight();
 
   if(baseFlight && baseFlight->getTypeID() == BaseMapElement::Flight)
@@ -1528,7 +1551,9 @@ void Map::__drawMap()
 
   emit setStatusBarProgress(70);
 
-  _globalMapContents->drawList(&aeroP, MapContents::NavaidsList, drawnElements);
+  _globalMapContents->drawList(&aeroP, MapContents::HotspotList, drawnElements);
+
+  _globalMapContents->drawList(&aeroP, MapContents::NavaidList, drawnElements);
 
   emit setStatusBarProgress(75);
 
@@ -1546,7 +1571,6 @@ void Map::__drawMap()
 
   __drawGrid();
 }
-
 
 void Map::__drawAirspaces()
 {

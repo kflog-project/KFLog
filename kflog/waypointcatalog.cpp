@@ -12,8 +12,6 @@
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
 #define DATA_STREAM QDataStream::Qt_4_7
@@ -161,7 +159,7 @@ WaypointCatalog::WaypointCatalog(const QString& name) :
   showObstacles = false;
   showLandmarks = false;
   showOutlandings = false;
-  showStations = false;
+  showHotspots = false;
 
   areaLat1 = areaLat2 = areaLong1 = areaLong2 = 0;
 

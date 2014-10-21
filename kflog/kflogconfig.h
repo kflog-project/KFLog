@@ -140,9 +140,9 @@ class KFLogConfig : public QDialog
   void downloadWelt2000( bool askUser );
 
   /**
-   * Emitted to request airfield data reload after a configuration change.
+   * Emitted to request point data reload after a configuration change.
    */
-  void reloadAirfieldData();
+  void reloadPointData();
 
   /**
    * Emitted to request a reload of all airspace file.

@@ -24,6 +24,7 @@ extern QSettings _settings;
 // set static member variable
 QMutex OpenAipPoiLoader::m_mutexAf;
 QMutex OpenAipPoiLoader::m_mutexNa;
+QMutex OpenAipPoiLoader::m_mutexHs;
 
 OpenAipPoiLoader::OpenAipPoiLoader()
 {
@@ -126,7 +127,7 @@ int OpenAipPoiLoader::load( QList<RadioPoint>& navaidsList )
 
   if( preselect.count() == 0 )
     {
-      qWarning( "OAIP: No navaids files found in the map directory!" );
+      qWarning( "OAIP: No navaid files found in the map directory!" );
       return loadCounter;
     }
 
@@ -136,7 +137,7 @@ int OpenAipPoiLoader::load( QList<RadioPoint>& navaidsList )
   if( files.isEmpty() )
     {
       // No files shall be loaded
-      qWarning() << "OAIP: No navaids files defined for loading by the user!";
+      qWarning() << "OAIP: No navaid files defined for loading by the user!";
       return loadCounter;
     }
 
@@ -178,6 +179,81 @@ int OpenAipPoiLoader::load( QList<RadioPoint>& navaidsList )
 
   qDebug( "OAIP: %d navaid file(s) with %d items loaded in %dms",
           loadCounter, navaidsList.size(), t.elapsed() );
+
+  return loadCounter;
+}
+
+int OpenAipPoiLoader::load( QList<SinglePoint>& hotspotList )
+{
+  // Set a global lock during execution to avoid calls in parallel.
+  QMutexLocker locker( &m_mutexHs );
+
+  QTime t;
+  t.start();
+  int loadCounter = 0; // number of successfully loaded files
+
+  QString mapDir = MapContents::instance()->getMapRootDirectory() + "/airfields";
+  QStringList preselect;
+
+  // Setup a filter for the desired file extensions.
+  QString filter = "*_hot.aip";
+
+  MapContents::addDir( preselect, mapDir, filter );
+
+  if( preselect.count() == 0 )
+    {
+      qWarning( "OAIP: No hotspot files found in the map directory!" );
+      return loadCounter;
+    }
+
+  // Check, which files shall be loaded.
+  QStringList files = _settings.value( "/Points/FileList", QStringList(QString("All"))).toStringList();
+
+  if( files.isEmpty() )
+    {
+      // No files shall be loaded
+      qWarning() << "OAIP: No hotspot files defined for loading by the user!";
+      return loadCounter;
+    }
+
+  if( files.first() != "All" )
+    {
+      // Tidy up the preselection list, if not all found files shall be loaded.
+      for( int i = preselect.size() - 1; i >= 0; i-- )
+        {
+          QString file = QFileInfo(preselect.at(i)).fileName();
+
+          if( files.contains( file ) == false )
+            {
+              preselect.removeAt(i);
+            }
+        }
+    }
+
+  while( ! preselect.isEmpty() )
+    {
+      QString srcName;
+      OpenAip openAip;
+      QString errorInfo;
+
+      srcName = preselect.first();
+
+      // Remove source file to be read from the list.
+      preselect.removeAt(0);
+
+      bool ok = openAip.readHotspots( srcName,
+                                      hotspotList,
+				      errorInfo,
+				      true );
+
+      if( ok )
+	{
+	  loadCounter++;
+	}
+    }
+
+  qDebug( "OAIP: %d hotspot file(s) with %d items loaded in %dms",
+          loadCounter, hotspotList.size(), t.elapsed() );
 
   return loadCounter;
 }
