@@ -32,6 +32,7 @@ windows_setup/windows_setup.pro
 windows_setup/windows_setup.pro.user
 kflog/object_script.kflog
 kflog.pro.user
+build-kflog-QT*
 
 /Makefile
 /kflog/kfrcai/Makefile
