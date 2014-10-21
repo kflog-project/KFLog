@@ -12,8 +12,6 @@
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
 /**
@@ -154,7 +152,7 @@ public:
   bool showObstacles;
   bool showLandmarks;
   bool showOutlandings;
-  bool showStations;
+  bool showHotspots;
 
   int areaLat1;
   int areaLat2;

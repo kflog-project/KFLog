@@ -12,8 +12,6 @@
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
 #include "mapcontents.h"
@@ -51,7 +49,7 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
   navaids      = new QCheckBox(tr("&Navaids"));
   obstacles    = new QCheckBox(tr("O&bstacles"));
   landmarks    = new QCheckBox(tr("&Landmarks"));
-  stations     = new QCheckBox(tr("&Stations"));
+  hotspots     = new QCheckBox(tr("&Hotspots"));
 
   connect(useAll, SIGNAL(clicked()), this, SLOT(slotChangeUseAll()));
 
@@ -65,7 +63,7 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
   typeLayout->addWidget( navaids );
   typeLayout->addWidget( obstacles );
   typeLayout->addWidget( landmarks );
-  typeLayout->addWidget( stations );
+  typeLayout->addWidget( hotspots );
 
   QGroupBox* typeGroup = new QGroupBox( tr("Type") );
   typeGroup->setLayout( typeLayout );
@@ -308,7 +306,7 @@ void WaypointImpFilterDialog::slotChangeUseAll()
   outlandings->setChecked(show);
   obstacles->setChecked(show);
   landmarks->setChecked(show);
-  stations->setChecked(show);
+  hotspots->setChecked(show);
 }
 
 /** reset all dialog items to default values */
@@ -321,7 +319,7 @@ void WaypointImpFilterDialog::slotClear()
   outlandings->setChecked( false );
   obstacles->setChecked( false );
   landmarks->setChecked( false );
-  stations->setChecked( false );
+  hotspots->setChecked( false );
 
   slotChangeUseAll();
 
@@ -471,7 +469,7 @@ void WaypointImpFilterDialog::saveValues()
   save.outlandings = outlandings->isChecked();
   save.obstacles = obstacles->isChecked();
   save.landmarks = landmarks->isChecked();
-  save.stations = stations->isChecked();
+  save.hotspots = hotspots->isChecked();
 
   save.rb0 = rb0->isChecked();
   save.rb1 = rb1->isChecked();
@@ -597,7 +595,7 @@ void WaypointImpFilterDialog::restoreValues()
   outlandings->setChecked( save.outlandings );
   obstacles->setChecked( save.obstacles );
   landmarks->setChecked( save.landmarks );
-  stations->setChecked( save.stations );
+  hotspots->setChecked( save.hotspots );
 
   fromLat->setKFLogDegree( save.fromLat );
   fromLong->setKFLogDegree( save.fromLong );

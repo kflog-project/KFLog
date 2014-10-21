@@ -70,6 +70,8 @@ class OpenAip
    *
    * \param filename File containing navigation aid definitions
    *
+   * \param navAidList List in which the read items are stored
+   *
    * \param errorInfo Info about read errors
    *
    * \param useFiltering If enabled, filter rules will apply
@@ -86,9 +88,18 @@ class OpenAip
    *
    * \param filename File containing hotspot definitions
    *
+   * \param hotspotList List in which the read items are stored
+   *
+   * \param errorInfo Info about read errors
+   *
+   * \param useFiltering If enabled, filter rules will apply
+   *
    * \return true as success otherwise false
    */
-  bool readHotspots( QString fileName, QList<SinglePoint>& hotspotList, QString& errorInfo );
+  bool readHotspots( QString fileName,
+                     QList<SinglePoint>& hotspotList,
+                     QString& errorInfo,
+                     bool useFiltering=false );
 
   /**
    * Reads in an airfield file provided as open aip xml format.

@@ -594,8 +594,15 @@ bool OpenAip::readParams( QXmlStreamReader& xml, RadioPoint& rp )
 
 bool OpenAip::readHotspots( QString fileName,
                             QList<SinglePoint>& hotspotList,
-                            QString& errorInfo )
+                            QString& errorInfo,
+                            bool useFiltering )
 {
+  if( useFiltering )
+    {
+      // Load the user's defined filter data.
+      loadUserFilterValues();
+    }
+
   QFile file( fileName );
 
   if( ! file.open(QIODevice::ReadOnly | QIODevice::Text) )
@@ -669,6 +676,24 @@ bool OpenAip::readHotspots( QString fileName,
                 {
                   break;
                 }
+
+              if( useFiltering == true )
+                {
+
+                  if( m_filterRadius > 0.0 )
+                    {
+                      double d = dist( &m_homePosition, sp.getWGSPositionPtr() );
+
+                      if( d > m_filterRadius )
+                        {
+                          // The radius filter said no. To far away from home.
+                          continue;
+                        }
+                    }
+                }
+
+              // Short name is only 8 characters long and must be unique
+              sp.setWPName( shortName(sp.getName()) );
 
               hotspotList.append( sp );
             }

@@ -102,7 +102,7 @@ MapContents::MapContents( QObject* object ) :
   QObject(object),
   currentFlight(0),
   askUser(true),
-  loadAirfields(true),
+  loadPoints(true),
   loadAirspaces(true),
   m_downloadManger(0),
   m_downloadMangerW2000(0),
@@ -334,7 +334,7 @@ void MapContents::slotWelt2000DownloadFinished( int requests, int errors )
       // Current file is not available or file sizes are different.
       // Rename new file and initiate a load of it.
       rename( newW2000.toLatin1().data(), curW2000.toLatin1().data() );
-      slotReloadAirfieldData();
+      slotReloadPointData();
       return;
     }
 
@@ -386,21 +386,22 @@ void MapContents::slotWelt2000DownloadFinished( int requests, int errors )
 
   if( differ == true )
     {
-      slotReloadAirfieldData();
+      slotReloadPointData();
     }
 
   qDebug() << "MapContents::slotWelt2000DownloadFinished(): no difference between old and new";
   return;
 }
 
-void MapContents::slotReloadAirfieldData()
+void MapContents::slotReloadPointData()
 {
   airfieldList.clear();
   gliderfieldList.clear();
   outLandingList.clear();
-  navaidsList.clear();
+  navaidList.clear();
+  hotspotList.clear();
 
-  loadAirfields = true;
+  loadPoints = true;
   emit contentsChanged();
 }
 
@@ -539,15 +540,20 @@ void MapContents::slotDownloadOpenAipPointFiles( bool askUser )
 
   for( int i = 0; i < countryList.size(); i++ )
     {
-      // File name format: <country-code>_wpt.aip, example: de_wpt.aip
+      // Airfield file name format: <country-code>_wpt.aip, example: de_wpt.aip
       QString file = countryList.at(i).toLower() + "_wpt.aip";
       QString url  = urlPrefix + file;
       QString dest = destPrefix + file;
-
       m_downloadOpenAipPoiManger->downloadRequest( url, dest );
 
       // Navaids file name format: <country-code>_nav.aip, example: de_nav.aip
       file = countryList.at(i).toLower() + "_nav.aip";
+      url  = urlPrefix + file;
+      dest = destPrefix + file;
+      m_downloadOpenAipPoiManger->downloadRequest( url, dest );
+
+      // Hotspot file name format: <country-code>_hot.aip, example: de_hot.aip
+      file = countryList.at(i).toLower() + "_hot.aip";
       url  = urlPrefix + file;
       dest = destPrefix + file;
       m_downloadOpenAipPoiManger->downloadRequest( url, dest );
@@ -561,7 +567,7 @@ void MapContents::slotOpenAipPoiDownloadsFinished( int requests, int errors )
   m_downloadOpenAipPoiManger = static_cast<DownloadManager *> (0);
 
   // initiate a reload of all airfield data
-  slotReloadAirfieldData();
+  slotReloadPointData();
 
   if( errors )
     {
@@ -1451,12 +1457,12 @@ void MapContents::proofeSection(bool isPrint)
       emit airspacesLoaded();
     }
 
-  qDebug() << "MapContents::proofeSection() loadAirfields=" << loadAirfields;
+  qDebug() << "MapContents::proofeSection() loadPoints=" << loadPoints;
 
   // Checking for point data
-  if( loadAirfields == true )
+  if( loadPoints == true )
     {
-      loadAirfields = false;
+      loadPoints = false;
 
       int pointSource = _settings.value( "/Points/Source", 0 ).toInt();
 
@@ -1464,7 +1470,8 @@ void MapContents::proofeSection(bool isPrint)
         {
           OpenAipPoiLoader poiLoader;
           int res = poiLoader.load( airfieldList );
-          res += poiLoader.load( navaidsList );
+          res += poiLoader.load( navaidList );
+          res += poiLoader.load( hotspotList );
 
           if( res == 0 )
             {
@@ -1501,8 +1508,10 @@ int MapContents::getListLength(int listIndex) const
         return gliderfieldList.count();
       case OutLandingList:
         return outLandingList.count();
-      case NavaidsList:
-        return navaidsList.count();
+      case NavaidList:
+        return navaidList.count();
+      case HotspotList:
+        return hotspotList.count();
       case AirspaceList:
         return airspaceList.count();
       case ObstacleList:
@@ -1565,8 +1574,10 @@ BaseMapElement* MapContents::getElement(int listIndex, uint index)
       return &gliderfieldList[index];
     case OutLandingList:
       return &outLandingList[index];
-    case NavaidsList:
-      return &navaidsList[index];
+    case NavaidList:
+      return &navaidList[index];
+    case HotspotList:
+      return &hotspotList[index];
     case AirspaceList:
       return &airspaceList[index];
     case ObstacleList:
@@ -1609,8 +1620,10 @@ SinglePoint* MapContents::getSinglePoint(int listIndex, uint index)
     return &gliderfieldList[index];
   case OutLandingList:
     return &outLandingList[index];
-  case NavaidsList:
-    return &navaidsList[index];
+  case NavaidList:
+    return &navaidList[index];
+  case HotspotList:
+    return &hotspotList[index];
   case ObstacleList:
     return &obstacleList[index];
   case ReportList:
@@ -1636,7 +1649,8 @@ void MapContents::slotReloadMapData()
   airfieldList.clear();
   gliderfieldList.clear();
   outLandingList.clear();
-  navaidsList.clear();
+  navaidList.clear();
+  hotspotList.clear();
   obstacleList.clear();
   reportList.clear();
   cityList.clear();
@@ -1703,8 +1717,11 @@ void MapContents::printContents(QPainter* targetPainter, bool isText)
   for (int i = 0; i < airspaceList.size(); i++)
     airspaceList[i].printMapElement(targetPainter, isText);
 
-  for (int i = 0; i < navaidsList.size(); i++)
-    navaidsList[i].printMapElement(targetPainter, isText);
+  for (int i = 0; i < navaidList.size(); i++)
+    navaidList[i].printMapElement(targetPainter, isText);
+
+  for (int i = 0; i < hotspotList.size(); i++)
+    hotspotList[i].printMapElement(targetPainter, isText);
 
   for (int i = 0; i < airfieldList.size(); i++)
     airfieldList[i].printMapElement(targetPainter, isText);
@@ -1741,9 +1758,14 @@ void MapContents::drawList( QPainter* targetPainter,
           outLandingList[i].drawMapElement(targetPainter);
         break;
 
-      case NavaidsList:
-        for (int i = 0; i < navaidsList.size(); i++)
-          navaidsList[i].drawMapElement(targetPainter);
+      case NavaidList:
+        for (int i = 0; i < navaidList.size(); i++)
+          navaidList[i].drawMapElement(targetPainter);
+        break;
+
+      case HotspotList:
+        for (int i = 0; i < hotspotList.size(); i++)
+          hotspotList[i].drawMapElement(targetPainter);
         break;
 
       case AirspaceList:

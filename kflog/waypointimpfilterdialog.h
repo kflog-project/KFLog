@@ -103,7 +103,7 @@ public:
   QCheckBox *outlandings;
   QCheckBox *obstacles;
   QCheckBox *landmarks;
-  QCheckBox *stations;
+  QCheckBox *hotspots;
 
   LatEdit *fromLat;
   LongEdit *fromLong;
@@ -205,7 +205,7 @@ private:
       bool outlandings;
       bool obstacles;
       bool landmarks;
-      bool stations;
+      bool hotspots;
 
       enum WaypointCatalog::FilterType usedFilter;
       bool rb0;

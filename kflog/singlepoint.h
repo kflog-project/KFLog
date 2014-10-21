@@ -12,8 +12,6 @@
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
 #ifndef SINGLE_POINT_H
@@ -78,6 +76,7 @@ class SinglePoint : public BaseMapElement
    * Destructor
    */
   virtual ~SinglePoint();
+
   /**
    * Draws the element into the given painter. Reimplemented from
    * BaseMapElement.
@@ -85,6 +84,7 @@ class SinglePoint : public BaseMapElement
    * @param  targetP  The painter to draw the element into.
    */
   virtual bool drawMapElement(QPainter* targetP);
+
   /**
    * Prints the element. Reimplemented from BaseMapElement.
    *
@@ -94,6 +94,14 @@ class SinglePoint : public BaseMapElement
    *                 be printed.
    */
   virtual void printMapElement(QPainter* printP, bool isText);
+
+  /**
+  * Return A short html-info-string about the point, containing the
+  * name, the alias and the elevation.
+  *
+  * @return the info string
+  */
+  virtual QString getInfoString();
 
   /**
    * @return the projected position of the element.
