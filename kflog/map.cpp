@@ -859,6 +859,7 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
 
   if( !found )
     {
+      // TODO We should look in all point lists of the map!!!
       // Try the waypoint catalog to find it.
       found = __getTaskWaypoint( current, &wp, wpList );
     }
@@ -1125,9 +1126,6 @@ void Map::mousePressEvent(QMouseEvent* event)
 
   const QPoint current( event->pos() );
 
-  Airfield *hitElement;
-  QString text;
-
   double dX, dY, delta( 16.0 );
 
   if( _globalMapMatrix->isSwitchScale() )
@@ -1183,43 +1181,66 @@ void Map::mousePressEvent(QMouseEvent* event)
           bool found = false;
 
           // Adds the map item to the Waypoint list, when found.
-          int searchList[] = { MapContents::GliderfieldList,
-                               MapContents::AirfieldList,
-                               MapContents::OutLandingList };
+          QList<int> searchList;
+          searchList << MapContents::GliderfieldList
+                     << MapContents::AirfieldList
+                     << MapContents::OutLandingList
+                     << MapContents::NavaidList
+                     << MapContents::HotspotList;
 
-          for(int l = 0; l < 3; l++)
+          for( int k = 0; k < searchList.size(); k++ )
             {
-             for(int loop = 0; loop < _globalMapContents->getListLength(searchList[l]); loop++)
-               {
-                hitElement = (Airfield *)_globalMapContents->getElement(searchList[l], loop);
-                QPoint sitePos = hitElement->getMapPosition();
+              for( int i = 0; i < _globalMapContents->getListLength(searchList.at(k) ); i++ )
+        	{
+        	  SinglePoint *sp = dynamic_cast<SinglePoint *>(_globalMapContents->getElement(searchList.at(k), i));
 
-                dX = abs(sitePos.x() - current.x());
-                dY = abs(sitePos.y() - current.y());
+                  if( sp == 0 )
+                    {
+                      continue;
+                    }
 
-                // Abstand entspricht der Icon-Grösse.
-                if (dX < delta && dY < delta)
-                  {
-                    // qDebug() << "Found" << hitElement->getName();
-                    Waypoint *w = new Waypoint;
+		  QPoint sitePos = sp->getMapPosition();
 
-                    QString name = hitElement->getName();
-                    w->name = name.left(8).toUpper();
-                    w->description = hitElement->getName();
-                    w->type = hitElement->getTypeID();hitElement->getName();
-                    w->origP = hitElement->getWGSPosition();
-                    w->elevation = hitElement->getElevation();
-                    w->icao = hitElement->getICAO();
-                    w->frequency = hitElement->getFrequency();
-                    w->country = hitElement->getCountry();
-                    w->rwyList = hitElement->getRunwayList();
+		  dX = abs(sitePos.x() - current.x());
+		  dY = abs(sitePos.y() - current.y());
 
-                    // That adds the found item to the current waypoint list.
-                    emit waypointSelected(w);
-                    found = true;
-                    break;
-                  }
-               }
+		  // Abstand entspricht der Icon-Grösse.
+		  if (dX < delta && dY < delta)
+		    {
+		      // qDebug() << "Found" << hitElement->getName();
+		      Waypoint *w = new Waypoint;
+
+		      QString name = sp->getName();
+		      w->name = name.left(8).toUpper();
+		      w->description = sp->getName();
+		      w->country = sp->getCountry();
+		      w->type = sp->getTypeID();
+		      w->origP = sp->getWGSPosition();
+		      w->elevation = sp->getElevation();
+		      w->comment = sp->getComment();
+
+		      Airfield *af   = dynamic_cast<Airfield *>(sp); // try casting to an airfield
+		      RadioPoint *rp = dynamic_cast<RadioPoint *>(sp); // try casting to a navaid
+
+		      if( af )
+			{
+			  w->icao = af->getICAO();
+			  w->frequency = af->getFrequency();
+			  w->rwyList = af->getRunwayList();
+			}
+		      else if( rp )
+			{
+			  w->icao = rp->getICAO();
+			  w->frequency = rp->getFrequency();
+			  w->comment = rp->getAdditionalText();
+			}
+
+		      // That adds the found item to the current waypoint list.
+		      emit waypointSelected(w);
+		      found = true;
+		      break;
+		    }
+		 }
 
              if( found )
                 {
@@ -3028,41 +3049,62 @@ void Map::slotMpNewWaypoint()
 
   const QPoint current( popupPos );
 
-  // select WayPoint
+  // select Waypoint
   QRegExp blank( "[ ]" );
 
   // add WPList !!!
-  int searchList[] = { MapContents::AirfieldList,
-                       MapContents::GliderfieldList,
-                       MapContents::OutLandingList };
+  QList<int> searchList;
+  searchList << MapContents::GliderfieldList
+             << MapContents::AirfieldList
+             << MapContents::OutLandingList
+             << MapContents::NavaidList
+             << MapContents::HotspotList;
 
-  for( int l = 0; l < 3; l++ )
+  for( int k = 0; k < searchList.size(); k++ )
     {
-      for( int loop = 0; loop < _globalMapContents->getListLength( searchList[l] ); loop++ )
-        {
-          Airfield *hitElement =
-              static_cast<Airfield *> ( _globalMapContents->getElement( searchList[l], loop ) );
-          sitePos = hitElement->getMapPosition();
+      for( int i = 0; i < _globalMapContents->getListLength(searchList.at(k) ); i++ )
+	{
+	  SinglePoint *sp = dynamic_cast<SinglePoint *>(_globalMapContents->getElement(searchList.at(k), i));
 
-          dX = abs( sitePos.x() - current.x() );
-          dY = abs( sitePos.y() - current.y() );
+          if( sp == 0 )
+            {
+              continue;
+            }
+
+	  QPoint sitePos = sp->getMapPosition();
+
+	  dX = abs( sitePos.x() - current.x() );
+	  dY = abs( sitePos.y() - current.y() );
 
           // Abstand entspricht der Icon-Größe.
           if( dX < delta && dY < delta )
             {
               Waypoint *w = new Waypoint;
 
-              QString name = hitElement->getName();
+              QString name = sp->getName();
               w->name = name.replace( blank, "" ).left( 8 ).toUpper();
-              w->description = hitElement->getName();
-              w->type = hitElement->getTypeID();
-              w->origP = hitElement->getWGSPosition();
-              w->elevation = hitElement->getElevation();
-              w->icao = hitElement->getICAO();
-              w->frequency = hitElement->getFrequency();
-              w->country = hitElement->getCountry();
-              w->rwyList = hitElement->getRunwayList();
-              w->comment = hitElement->getComment();
+              w->description = sp->getName();
+              w->country = sp->getCountry();
+              w->type = sp->getTypeID();
+              w->origP = sp->getWGSPosition();
+              w->elevation = sp->getElevation();
+              w->comment = sp->getComment();
+
+	      Airfield *af   = dynamic_cast<Airfield *>(sp); // try casting to an airfield
+	      RadioPoint *rp = dynamic_cast<RadioPoint *>(sp); // try casting to a navaid
+
+	      if( af )
+		{
+		  w->icao = af->getICAO();
+		  w->frequency = af->getFrequency();
+		  w->rwyList = af->getRunwayList();
+		}
+	      else if( rp )
+		{
+		  w->icao = rp->getICAO();
+		  w->frequency = rp->getFrequency();
+		  w->comment = rp->getAdditionalText();
+		}
 
               emit waypointSelected( w );
               return;
