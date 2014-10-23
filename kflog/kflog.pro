@@ -33,6 +33,7 @@ QT += network \
 
 !win32 {
   QMAKE_LFLAGS += -rdynamic
+  QMAKE_CXXFLAGS += -Wall -Wextra
   
   CONFIG += qt \
       warn_on \
