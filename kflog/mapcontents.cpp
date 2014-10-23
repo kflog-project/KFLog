@@ -300,7 +300,7 @@ void MapContents::slotDownloadWelt2000(bool askUser)
   _settings.setValue( "/Welt2000/Link", welt2000Link );
 
   QString url  = welt2000Link + "/" + welt2000FileName;
-  QString dest = getMapRootDirectory() + "/airfields/WELT2000.TXT.new";
+  QString dest = getMapRootDirectory() + "/points/WELT2000.TXT.new";
 
   m_downloadMangerW2000->downloadRequest( url, dest );
 }
@@ -317,8 +317,8 @@ void MapContents::slotWelt2000DownloadFinished( int requests, int errors )
   m_downloadMangerW2000 = static_cast<DownloadManager *> (0);
 
   // Check, if the file content of the new Welt2000 file has been changed.
-  QString curW2000 = getMapRootDirectory() + "/airfields/WELT2000.TXT";
-  QString newW2000 = getMapRootDirectory() + "/airfields/WELT2000.TXT.new";
+  QString curW2000 = getMapRootDirectory() + "/points/WELT2000.TXT";
+  QString newW2000 = getMapRootDirectory() + "/points/WELT2000.TXT.new";
 
   QFileInfo curFi(curW2000);
   QFileInfo newFi(newW2000);
@@ -536,7 +536,7 @@ void MapContents::slotDownloadOpenAipPointFiles( bool askUser )
   QStringList countryList = countries.split(QRegExp("[ ,;]"));
 
   const QString urlPrefix = KFLogConfig::rot47(_settings.value("/OpenAip/Link", "").toByteArray()) + "/";
-  const QString destPrefix = getMapRootDirectory() + "/airfields/";
+  const QString destPrefix = getMapRootDirectory() + "/points/";
 
   for( int i = 0; i < countryList.size(); i++ )
     {
@@ -1232,7 +1232,7 @@ bool MapContents::checkMapDirectories()
 
   QStringList list;
 
-  list << "airspaces" << "airfields" << "landscape";
+  list << "airspaces" << "points" << "landscape";
 
   for( int i = 0; i < list.size(); i++ )
     {
@@ -1267,7 +1267,7 @@ bool MapContents::createMapDirectories()
 
   QStringList list;
 
-  list << "airspaces" << "airfields" << "landscape";
+  list << "airspaces" << "points" << "landscape";
 
   for( int i = 0; i < list.size(); i++ )
     {

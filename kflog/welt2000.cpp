@@ -87,7 +87,7 @@ bool Welt2000::check4update()
   hasCalled = true;
 
   QString wu = "WELT2000.TXT";
-  QString sd = "/airfields/";
+  QString sd = "/points/";
   QString mapDir = _globalMapContents->getMapRootDirectory();
 
   // Search for the Welt2000 source file.
@@ -124,7 +124,7 @@ bool Welt2000::load( QList<Airfield>& airfieldList,
   qDebug() << "Welt2000::load";
 
   QString wu = "WELT2000.TXT";
-  QString sd = "/airfields/";
+  QString sd = "/points/";
   QString mapDir = _globalMapContents->getMapRootDirectory();
 
   QString path2File = mapDir + sd + wu;
@@ -133,7 +133,7 @@ bool Welt2000::load( QList<Airfield>& airfieldList,
 
   if( ! test.exists() )
     {
-      qWarning( "W2000: No Welt2000 file found in the map airfields directory" );
+      qWarning( "W2000: No Welt2000 file found in the map points directory" );
       return false;
     }
 

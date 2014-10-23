@@ -43,7 +43,7 @@ int OpenAipPoiLoader::load( QList<Airfield>& airfieldList )
   t.start();
   int loadCounter = 0; // number of successfully loaded files
 
-  QString mapDir = MapContents::instance()->getMapRootDirectory() + "/airfields";
+  QString mapDir = MapContents::instance()->getMapRootDirectory() + "/points";
   QStringList preselect;
 
   // Setup a filter for the desired file extensions.
@@ -117,7 +117,7 @@ int OpenAipPoiLoader::load( QList<RadioPoint>& navaidsList )
   t.start();
   int loadCounter = 0; // number of successfully loaded files
 
-  QString mapDir = MapContents::instance()->getMapRootDirectory() + "/airfields";
+  QString mapDir = MapContents::instance()->getMapRootDirectory() + "/points";
   QStringList preselect;
 
   // Setup a filter for the desired file extensions.
@@ -192,7 +192,7 @@ int OpenAipPoiLoader::load( QList<SinglePoint>& hotspotList )
   t.start();
   int loadCounter = 0; // number of successfully loaded files
 
-  QString mapDir = MapContents::instance()->getMapRootDirectory() + "/airfields";
+  QString mapDir = MapContents::instance()->getMapRootDirectory() + "/points";
   QStringList preselect;
 
   // Setup a filter for the desired file extensions.
