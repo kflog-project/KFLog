@@ -1498,7 +1498,7 @@
     <message>
         <location filename="mainwindow.cpp" line="397"/>
         <source>Map Control</source>
-        <translation>Karten Kontrolle</translation>
+        <translation>Versarten Kontrolle</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="405"/>
@@ -1549,38 +1549,38 @@
     <message>
         <location filename="mainwindow.cpp" line="601"/>
         <source>Move map NW</source>
-        <translation>Schiebe Karte NM</translation>
+        <translation>Verschiebe Karte NW</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="608"/>
         <source>Move map N</source>
-        <translation>Schiebe Karte N</translation>
+        <translation>Verschiebe Karte N</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="615"/>
         <source>Move map NE</source>
-        <translation>Schiebe Karte NE</translation>
+        <translation>Verschiebe Karte NE</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="622"/>
         <location filename="mainwindow.cpp" line="629"/>
         <source>Move map W</source>
-        <translation>Schiebe Karte W</translation>
+        <translation>Verschiebe Karte W</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="636"/>
         <source>Move map SW</source>
-        <translation>Schiebe Karte SW</translation>
+        <translation>Verschiebe Karte SW</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="643"/>
         <source>Move map S</source>
-        <translation>Schiebe Karte S</translation>
+        <translation>Verschiebe Karte S</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="650"/>
         <source>Move map SO</source>
-        <translation>Schiebe Karte SO</translation>
+        <translation>Verschiebe Karte SO</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="656"/>
@@ -1590,7 +1590,7 @@
     <message>
         <location filename="mainwindow.cpp" line="684"/>
         <source>Move map</source>
-        <translation>Schiebe Karte</translation>
+        <translation>Verschiebe Karte</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="698"/>
@@ -1783,7 +1783,7 @@
     <message>
         <location filename="mainwindow.cpp" line="589"/>
         <source>&amp;Zoom into mouse rectangle</source>
-        <translation>Vergrößere Mausausschschnitt</translation>
+        <translation type="unfinished">Vergrößere Mausausschnitt</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="595"/>
@@ -1863,7 +1863,7 @@
     <message>
         <location filename="mainwindow.cpp" line="844"/>
         <source>Show Flight Data</source>
-        <translation>Zeige Flug Daten</translation>
+        <translation>Zeige Flugdaten</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="869"/>
@@ -1873,32 +1873,32 @@
     <message>
         <location filename="mainwindow.cpp" line="882"/>
         <source>Show Flight &amp;Data</source>
-        <translation>Zeige Flug &amp;Daten</translation>
+        <translation>Zeige Flug&amp;daten</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="891"/>
         <source>Show Help Window</source>
-        <translation>Zeige Hilfe Fenster</translation>
+        <translation type="unfinished">Zeige Hilfefenster</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="900"/>
         <source>Show KFLog &amp;Browser</source>
-        <translation>Zeige KFLog &amp;Browser</translation>
+        <translation>Zeige KFLog-&amp;Browser</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="909"/>
         <source>Show Terrain Profile</source>
-        <translation>Zeige Gelände Profil</translation>
+        <translation>Zeige Geländeprofil</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="919"/>
         <source>Show &amp;Map</source>
-        <translation>Zeige Karte</translation>
+        <translation>Zeige &amp;Karte</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="925"/>
         <source>Show Map&amp; Control</source>
-        <translation>Zeige Karten Kontrolle</translation>
+        <translation>Zeige Karten&amp;kontrolle</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="931"/>
@@ -3488,22 +3488,22 @@ Alle Downloads verworfen!</translation>
     <message>
         <location filename="flighttask.cpp" line="320"/>
         <source>not set</source>
-        <translation type="unfinished"></translation>
+        <translation>nicht definiert</translation>
     </message>
     <message>
         <location filename="flighttask.cpp" line="321"/>
         <source>Free Distance</source>
-        <translation type="unfinished"></translation>
+        <translation>Freie Strecke</translation>
     </message>
     <message>
         <location filename="flighttask.cpp" line="322"/>
         <source>Free Out and Return Distance</source>
-        <translation type="unfinished"></translation>
+        <translation>Freie Strecke Ziel- Rückkehr </translation>
     </message>
     <message>
         <location filename="flighttask.cpp" line="323"/>
         <source>FAI Triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>FAI Dreieck</translation>
     </message>
     <message>
         <location filename="flighttask.cpp" line="324"/>
@@ -3513,7 +3513,7 @@ Alle Downloads verworfen!</translation>
     <message>
         <location filename="flighttask.cpp" line="325"/>
         <source>FAI Triangle Start on leg</source>
-        <translation type="unfinished"></translation>
+        <translation>FAI Dreieck - Start auf dem Schenkel</translation>
     </message>
     <message>
         <location filename="flighttask.cpp" line="326"/>
@@ -3523,24 +3523,24 @@ Alle Downloads verworfen!</translation>
     <message>
         <location filename="flighttask.cpp" line="327"/>
         <source>OLC optimized (2003 rules)</source>
-        <translation type="unfinished"></translation>
+        <translation>OLC optimiert (2003er Regeln)</translation>
     </message>
     <message>
         <location filename="flighttask.cpp" line="328"/>
         <source>???</source>
-        <translation type="unfinished"></translation>
+        <translation>???</translation>
     </message>
     <message>
         <location filename="flighttask.cpp" line="331"/>
         <location filename="runway.cpp" line="81"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannt</translation>
     </message>
     <message>
         <location filename="flighttask.cpp" line="886"/>
         <location filename="flighttask.cpp" line="908"/>
         <source>Not reached first waypoint</source>
-        <translation type="unfinished"></translation>
+        <translation>Den ersten Wegpunkt nicht erreicht</translation>
     </message>
     <message>
         <location filename="flighttask.cpp" line="887"/>
@@ -3551,7 +3551,7 @@ Alle Downloads verworfen!</translation>
     <message>
         <location filename="flighttask.cpp" line="927"/>
         <source>Not reached last waypoint</source>
-        <translation type="unfinished"></translation>
+        <translation>Den letzten Wegpunkt nicht erreicht</translation>
     </message>
     <message>
         <location filename="flighttask.cpp" line="928"/>
@@ -3561,7 +3561,7 @@ Alle Downloads verworfen!</translation>
     <message>
         <location filename="flighttask.cpp" line="1007"/>
         <source>Incorrect time interval</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehlerhaftes Zeitinterval</translation>
     </message>
     <message>
         <location filename="flighttask.cpp" line="1008"/>
@@ -3576,37 +3576,37 @@ Alle Downloads verworfen!</translation>
     <message>
         <location filename="flighttask.cpp" line="1638"/>
         <source>FAI Area</source>
-        <translation type="unfinished"></translation>
+        <translation>FAI Area</translation>
     </message>
     <message>
         <location filename="httpclient.cpp" line="246"/>
         <source>HTTP-%1</source>
-        <translation type="unfinished"></translation>
+        <translation>HTTP-%1</translation>
     </message>
     <message>
         <location filename="httpclient.cpp" line="247"/>
         <source>Download failed with: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Herunterladen fehlgeschlagen mit: %1</translation>
     </message>
     <message>
         <location filename="httpclient.cpp" line="291"/>
         <source>%1 at %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 bei %2</translation>
     </message>
     <message>
         <location filename="httpclient.cpp" line="321"/>
         <source>HTTP SSL Error</source>
-        <translation type="unfinished"></translation>
+        <translation>HTTP SSL-Fehler</translation>
     </message>
     <message>
         <location filename="httpclient.cpp" line="322"/>
         <source>One or more SSL errors has occurred: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ein oder mehrere SSL Fehler aufgetreten: %1</translation>
     </message>
     <message>
         <location filename="igc3dview.cpp" line="32"/>
         <source>Help for IGC 3D view</source>
-        <translation type="unfinished"></translation>
+        <translation>Hilfe für IGC 3D-Ansicht</translation>
     </message>
     <message>
         <location filename="igc3dview.cpp" line="35"/>
@@ -3619,12 +3619,19 @@ S:          toggle shadow
 B:          toggle back
 F:          toggle front
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Grundfunktionen:
+Links/Rechst:  drehen
+Hoch/Runter:  kippen
++/-:                 zoomen
+S:                    schattieren
+B:...............hintergrund
+F:...............Vordergrund
+</translation>
     </message>
     <message>
         <location filename="map.cpp" line="535"/>
         <source>Waypoint:</source>
-        <translation type="unfinished"></translation>
+        <translation>Wegpunkt:</translation>
     </message>
     <message>
         <location filename="map.cpp" line="705"/>
@@ -3639,12 +3646,12 @@ F:          toggle front
     <message>
         <location filename="map.cpp" line="716"/>
         <source>FAI-Sector</source>
-        <translation type="unfinished"></translation>
+        <translation>FAI-Sektor</translation>
     </message>
     <message>
         <location filename="map.cpp" line="720"/>
         <source>not reached</source>
-        <translation type="unfinished"></translation>
+        <translation>nicht erreicht</translation>
     </message>
     <message>
         <location filename="map.cpp" line="726"/>
@@ -3654,7 +3661,7 @@ F:          toggle front
     <message>
         <location filename="map.cpp" line="732"/>
         <source>End of task</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgaben Ende</translation>
     </message>
     <message>
         <location filename="map.cpp" line="871"/>
@@ -3664,7 +3671,7 @@ F:          toggle front
     <message>
         <location filename="map.cpp" line="2949"/>
         <source>Map Menu</source>
-        <translation type="unfinished">Karten Menü</translation>
+        <translation>Karten Menü</translation>
     </message>
     <message>
         <location filename="map.cpp" line="2957"/>
@@ -3679,42 +3686,42 @@ F:          toggle front
     <message>
         <location filename="map.cpp" line="2968"/>
         <source>&amp;New waypoint</source>
-        <translation type="unfinished"></translation>
+        <translation>Neuer &amp;Wegpunkt</translation>
     </message>
     <message>
         <location filename="map.cpp" line="2973"/>
         <source>&amp;Edit waypoint</source>
-        <translation type="unfinished"></translation>
+        <translation>Wegpunkt &amp;bearbeiten</translation>
     </message>
     <message>
         <location filename="map.cpp" line="2978"/>
         <source>&amp;Delete waypoint</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Lösche Wegpunkt</translation>
     </message>
     <message>
         <location filename="map.cpp" line="2984"/>
         <source>&amp;Center map</source>
-        <translation type="unfinished"></translation>
+        <translation>Karte &amp;zentrieren</translation>
     </message>
     <message>
         <location filename="map.cpp" line="2989"/>
         <source>Zoom &amp;In</source>
-        <translation type="unfinished">Vergrößern</translation>
+        <translation>Ver&amp;größern</translation>
     </message>
     <message>
         <location filename="map.cpp" line="2994"/>
         <source>Zoom &amp;Out</source>
-        <translation type="unfinished">Verkleinern</translation>
+        <translation>Ver&amp;kleinern</translation>
     </message>
     <message>
         <location filename="radiopoint.cpp" line="109"/>
         <source>Channel:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal:</translation>
     </message>
     <message>
         <location filename="radiopoint.cpp" line="120"/>
         <source>Declination:</source>
-        <translation type="unfinished"></translation>
+        <translation>Deklination:</translation>
     </message>
     <message>
         <location filename="radiopoint.cpp" line="134"/>
@@ -3724,12 +3731,12 @@ F:          toggle front
     <message>
         <location filename="radiopoint.cpp" line="138"/>
         <source>Yes</source>
-        <translation type="unfinished">Ja</translation>
+        <translation>Ja</translation>
     </message>
     <message>
         <location filename="radiopoint.cpp" line="142"/>
         <source>No</source>
-        <translation type="unfinished"></translation>
+        <translation>Nein</translation>
     </message>
     <message>
         <location filename="radiopoint.cpp" line="145"/>
@@ -3739,7 +3746,7 @@ F:          toggle front
     <message>
         <location filename="radiopoint.cpp" line="192"/>
         <source>Channel </source>
-        <translation type="unfinished"></translation>
+        <translation>Kanal</translation>
     </message>
     <message>
         <location filename="radiopoint.cpp" line="202"/>
@@ -3749,12 +3756,12 @@ F:          toggle front
     <message>
         <location filename="radiopoint.cpp" line="212"/>
         <source>Declination %1%2</source>
-        <translation type="unfinished"></translation>
+        <translation>Deklination %1%2</translation>
     </message>
     <message>
         <location filename="radiopoint.cpp" line="224"/>
         <source>Not </source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht</translation>
     </message>
     <message>
         <location filename="radiopoint.cpp" line="227"/>
@@ -3764,17 +3771,17 @@ F:          toggle front
     <message>
         <location filename="runway.cpp" line="82"/>
         <source>Grass</source>
-        <translation type="unfinished"></translation>
+        <translation>Gras</translation>
     </message>
     <message>
         <location filename="runway.cpp" line="83"/>
         <source>Asphalt</source>
-        <translation type="unfinished"></translation>
+        <translation>Asphalt</translation>
     </message>
     <message>
         <location filename="runway.cpp" line="84"/>
         <source>Concrete</source>
-        <translation type="unfinished"></translation>
+        <translation>Beton</translation>
     </message>
     <message>
         <location filename="runway.cpp" line="85"/>
@@ -3789,7 +3796,7 @@ F:          toggle front
     <message>
         <location filename="taskdataprint.cpp" line="75"/>
         <source>Flight planning</source>
-        <translation type="unfinished"></translation>
+        <translation>Flugplanung</translation>
     </message>
     <message>
         <location filename="taskdataprint.cpp" line="80"/>
@@ -3799,27 +3806,27 @@ F:          toggle front
     <message>
         <location filename="tasklistviewitem.cpp" line="76"/>
         <source>Distance</source>
-        <translation type="unfinished"></translation>
+        <translation>Distanz</translation>
     </message>
     <message>
         <location filename="tasklistviewitem.cpp" line="91"/>
         <source>Waypoints</source>
-        <translation type="unfinished">Wegpunkte</translation>
+        <translation>Wegpunkte</translation>
     </message>
     <message>
         <location filename="tasklistviewitem.cpp" line="92"/>
         <source>%1 waypoints in task</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Wegpunkte in der Aufgabe</translation>
     </message>
     <message>
         <location filename="tasklistviewitem.cpp" line="112"/>
         <source>Finish</source>
-        <translation type="unfinished"></translation>
+        <translation>Ende</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="115"/>
         <source>unnamed</source>
-        <translation type="unfinished"></translation>
+        <translation>unbenannt</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="209"/>
@@ -3843,12 +3850,12 @@ F:          toggle front
         <location filename="waypointcatalog.cpp" line="2723"/>
         <location filename="waypointcatalog.cpp" line="2852"/>
         <source>Error occurred!</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler aufgetreten!</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="211"/>
         <source>not found!</source>
-        <translation type="unfinished"></translation>
+        <translation>nicht gefunden!</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="222"/>
@@ -3857,17 +3864,17 @@ F:          toggle front
         <location filename="waypointcatalog.cpp" line="2725"/>
         <location filename="waypointcatalog.cpp" line="2854"/>
         <source>permission denied!</source>
-        <translation type="unfinished"></translation>
+        <translation>Zugriff verweigert!</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="247"/>
         <source>Error in %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler in %1</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="314"/>
         <source>wrong doctype </source>
-        <translation type="unfinished"></translation>
+        <translation>falscher Dokumententyp</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="533"/>
@@ -3877,37 +3884,37 @@ F:          toggle front
     <message>
         <location filename="waypointcatalog.cpp" line="541"/>
         <source>No permission</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Berechtigung</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="551"/>
         <source>Import file ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei importieren ...</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="675"/>
         <source>KFLog</source>
-        <translation type="unfinished"></translation>
+        <translation>KFLog</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="676"/>
         <source>Cumulus</source>
-        <translation type="unfinished"></translation>
+        <translation>Cumulus</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="677"/>
         <source>Cambrigde</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambridge</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="678"/>
         <source>Filser txt</source>
-        <translation type="unfinished"></translation>
+        <translation>Filser txt</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="679"/>
         <source>Filser da4</source>
-        <translation type="unfinished"></translation>
+        <translation>Filser da4</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="680"/>
@@ -3917,7 +3924,7 @@ F:          toggle front
     <message>
         <location filename="waypointcatalog.cpp" line="681"/>
         <source>Any file</source>
-        <translation type="unfinished"></translation>
+        <translation>Irgend eine Datei</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="684"/>
@@ -3927,7 +3934,7 @@ F:          toggle front
     <message>
         <location filename="waypointcatalog.cpp" line="816"/>
         <source>Imported from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Importiert von %1</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="964"/>
@@ -3937,27 +3944,27 @@ F:          toggle front
     <message>
         <location filename="waypointcatalog.cpp" line="965"/>
         <source>A DA4 waypoint file can only contain up to 600 waypoints. </source>
-        <translation type="unfinished"></translation>
+        <translation>eine DA4 Wegpunktdatei kann maximal 600 Wegpunkte beinhalten.</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="966"/>
         <source>Your file contains %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ihre Datei beinhaltet %1.</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="1061"/>
         <source>&lt;html&gt;&lt;B&gt;Catalog %1&lt;/B&gt;&lt;BR&gt;not found!&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;B&gt;Katalog %1&lt;/B&gt;&lt;BR&gt;nicht gefunden!&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="1681"/>
         <source>Country filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Länderfilter</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="1682"/>
         <source>2 letter country codes to be read:</source>
-        <translation type="unfinished"></translation>
+        <translation>zu lesender 2 Zeichen Ländercode:</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="1713"/>
@@ -3968,17 +3975,17 @@ F:          toggle front
         <location filename="waypointcatalog.cpp" line="1820"/>
         <location filename="welt2000.cpp" line="364"/>
         <source>Emergency Field No: </source>
-        <translation type="unfinished"></translation>
+        <translation>Notfeld No: </translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="2228"/>
         <source>Waypoint exists</source>
-        <translation type="unfinished"></translation>
+        <translation>Wegpunkt exisitert</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="2229"/>
         <source>A waypoint with the name&lt;BR&gt;&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;&lt;BR&gt;is already in current catalog.&lt;BR&gt;&lt;BR&gt;Do you want to replace the existing waypoint?</source>
-        <translation type="unfinished"></translation>
+        <translation>Ein Wegpunkt mit dem Namen&lt;BR&gt;&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;&lt;BR&gt;existiert bereits im aktuellen Katalog.&lt;BR&gt;&lt;BR&gt;Willst Du den existierenden Wegpunkt ersetzen?</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="2400"/>
@@ -3988,17 +3995,17 @@ F:          toggle front
     <message>
         <location filename="waypointimpfilterdialog.cpp" line="259"/>
         <source>Latitude error</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler Breitengrad</translation>
     </message>
     <message>
         <location filename="waypointimpfilterdialog.cpp" line="260"/>
         <source>Please enter a valid latitude for the Radius Position Filter!</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitte gültigen Breitengrad für den Radius-Positions-Filter eingeben!</translation>
     </message>
     <message>
         <location filename="waypointimpfilterdialog.cpp" line="278"/>
         <source>Error in coordinates</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler in Koordinaten</translation>
     </message>
     <message>
         <location filename="waypointimpfilterdialog.cpp" line="279"/>
@@ -4008,22 +4015,22 @@ F:          toggle front
     <message>
         <location filename="waypointimpfilterdialog.cpp" line="281"/>
         <source>Latitudes maybe not zero and from-to coordinates should be different.</source>
-        <translation type="unfinished"></translation>
+        <translation>Breitengrad darf nicht null sein und von-nach Koordination müssen unterschliechlich sein.</translation>
     </message>
     <message>
         <location filename="waypointtreeview.cpp" line="186"/>
         <source>&amp;New catalog</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Neuer Katalog</translation>
     </message>
     <message>
         <location filename="waypointtreeview.cpp" line="192"/>
         <source>&amp;Open default catalog</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Öffne Standard-Katalog</translation>
     </message>
     <message>
         <location filename="waypointtreeview.cpp" line="197"/>
         <source>&amp;Open catalog</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Öffne Katalog</translation>
     </message>
 </context>
 <context>
