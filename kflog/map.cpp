@@ -583,12 +583,8 @@ Waypoint* Map::findWaypoint (const QPoint& current)
 
 void Map::__displayMapInfo(const QPoint& current, bool automatic)
 {
-  /*
-   * Glider airfields first, if there exist any
-   */
-  QPoint sitePos;
   // Radius for Mouse Snapping
-  double delta(16.0);
+  int delta(16.0);
 
   int timeout = 60000;
 
@@ -599,78 +595,54 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
 
   QString text;
 
-  int searchList[] = { MapContents::AirfieldList,
-                       MapContents::GliderfieldList,
-                       MapContents::OutLandingList };
+  // compose search list
+  QList<int> searchList;
+  searchList << MapContents::GliderfieldList
+	     << MapContents::AirfieldList
+	     << MapContents::OutLandingList
+	     << MapContents::NavaidList
+	     << MapContents::HotspotList;
 
-  // At first we look for single airfields, ... objects
-  for( int l = 0; l < 3; l++ )
+  for( int k = 0; k < searchList.size(); k++ )
     {
-     for( int loop = 0; loop < _globalMapContents->getListLength( searchList[l] ); loop++ )
-       {
-          Airfield *hitElement =
-              static_cast<Airfield *> ( _globalMapContents->getElement( searchList[l], loop ) );
+      for( int i = 0; i < _globalMapContents->getListLength(searchList.at(k) ); i++ )
+	{
+	  SinglePoint *sp = dynamic_cast<SinglePoint *>(_globalMapContents->getElement(searchList.at(k), i));
 
-          sitePos = hitElement->getMapPosition();
+	    if( sp == 0 )
+	      {
+		continue;
+	      }
 
-          double dX = abs( sitePos.x() - current.x() );
-          double dY = abs( sitePos.y() - current.y() );
+	  QPoint sitePos = sp->getMapPosition();
 
-          // Abstand entspricht der Icon-Grösse.
-          if( (dX < delta) && (dY < delta) )
-            {
-              text += hitElement->getInfoString();
+	  int dX = abs( sitePos.x() - current.x() );
+	  int dY = abs( sitePos.y() - current.y() );
+
+	  // Abstand entspricht der Icon-Größe.
+	  if( dX < delta && dY < delta )
+	    {
+	      Airfield *af   = dynamic_cast<Airfield *>(sp); // try casting to an airfield
+	      RadioPoint *rp = dynamic_cast<RadioPoint *>(sp); // try casting to a navaid
+
+	      if( af )
+		{
+		  text += af->getInfoString();
+		}
+	      else if( rp )
+		{
+		  text += rp->getInfoString();
+		}
+	      else
+		{
+		  text += sp->getInfoString();
+		}
+
               // Text anzeigen
               WhatsThat* box = new WhatsThat( this, text, timeout, mapToGlobal( current ) );
               box->setVisible( true );
               return;
-            }
-        }
-    }
-
-  // As next we look for single navaids objects
-  QList<RadioPoint>& navList = _globalMapContents->getNavaidList();
-
-  for( int i = 0; i < navList.size(); i++ )
-    {
-      RadioPoint& hitElement = navList[i];
-
-      sitePos = hitElement.getMapPosition();
-
-      double dX = abs( sitePos.x() - current.x() );
-      double dY = abs( sitePos.y() - current.y() );
-
-      // Abstand entspricht der Icon-Grösse.
-      if( (dX < delta) && (dY < delta) )
-	{
-	  text += hitElement.getInfoString();
-	  // Text anzeigen
-	  WhatsThat* box = new WhatsThat( this, text, timeout, mapToGlobal( current ) );
-	  box->setVisible( true );
-	  return;
-	}
-    }
-
-  // As next we look for single hotspot objects
-  QList<SinglePoint>& hotList = _globalMapContents->getHotspotList();
-
-  for( int i = 0; i < hotList.size(); i++ )
-    {
-      SinglePoint& hitElement = hotList[i];
-
-      sitePos = hitElement.getMapPosition();
-
-      double dX = abs( sitePos.x() - current.x() );
-      double dY = abs( sitePos.y() - current.y() );
-
-      // Abstand entspricht der Icon-Grösse.
-      if( (dX < delta) && (dY < delta) )
-	{
-	  text += hitElement.getInfoString();
-	  // Text anzeigen
-	  WhatsThat* box = new WhatsThat( this, text, timeout, mapToGlobal( current ) );
-	  box->setVisible( true );
-	  return;
+	    }
 	}
     }
 
@@ -687,10 +659,10 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
 
       for(int loop = 0; loop < wpList.count(); loop++)
         {
-          sitePos = _globalMapMatrix->map(wpList.at(loop)->projP);
+          QPoint sitePos = _globalMapMatrix->map(wpList.at(loop)->projP);
 
-          double dX = abs (sitePos.x() - current.x());
-          double dY = abs (sitePos.y() - current.y());
+          int dX = abs (sitePos.x() - current.x());
+          int dY = abs (sitePos.y() - current.y());
 
           // We do not search for the sector ...
           if ( ( dX < delta ) && ( dY < delta ) )
@@ -859,6 +831,7 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
 
   if( !found )
     {
+      // TODO We should look in all point lists of the map!!!
       // Try the waypoint catalog to find it.
       found = __getTaskWaypoint( current, &wp, wpList );
     }
@@ -1125,14 +1098,11 @@ void Map::mousePressEvent(QMouseEvent* event)
 
   const QPoint current( event->pos() );
 
-  Airfield *hitElement;
-  QString text;
-
-  double dX, dY, delta( 16.0 );
+  int delta = 16;
 
   if( _globalMapMatrix->isSwitchScale() )
     {
-      delta = 8.0;
+      delta = 8;
     }
 
   if( event->button() == Qt::MidButton )
@@ -1180,62 +1150,24 @@ void Map::mousePressEvent(QMouseEvent* event)
 
       if( event->modifiers() == Qt::ShiftModifier )
         {
-          bool found = false;
+          Waypoint *w = new Waypoint;
 
-          // Adds the map item to the Waypoint list, when found.
-          int searchList[] = { MapContents::GliderfieldList,
-                               MapContents::AirfieldList,
-                               MapContents::OutLandingList };
-
-          for(int l = 0; l < 3; l++)
+          if( findMapPoint( delta, current, w ) == true )
             {
-             for(int loop = 0; loop < _globalMapContents->getListLength(searchList[l]); loop++)
-               {
-                hitElement = (Airfield *)_globalMapContents->getElement(searchList[l], loop);
-                QPoint sitePos = hitElement->getMapPosition();
+	      // That adds the found item to the current waypoint list.
+	      emit waypointSelected(w);
+            }
+          else
+            {
+              delete w;
 
-                dX = abs(sitePos.x() - current.x());
-                dY = abs(sitePos.y() - current.y());
-
-                // Abstand entspricht der Icon-Grösse.
-                if (dX < delta && dY < delta)
-                  {
-                    // qDebug() << "Found" << hitElement->getName();
-                    Waypoint *w = new Waypoint;
-
-                    QString name = hitElement->getName();
-                    w->name = name.left(8).toUpper();
-                    w->description = hitElement->getName();
-                    w->type = hitElement->getTypeID();hitElement->getName();
-                    w->origP = hitElement->getWGSPosition();
-                    w->elevation = hitElement->getElevation();
-                    w->icao = hitElement->getICAO();
-                    w->frequency = hitElement->getFrequency();
-                    w->country = hitElement->getCountry();
-                    w->rwyList = hitElement->getRunwayList();
-
-                    // That adds the found item to the current waypoint list.
-                    emit waypointSelected(w);
-                    found = true;
-                    break;
-                  }
-               }
-
-             if( found )
-                {
-                  break;
-                }
-          }
-
-          if( !found )
-              {
-                // No map item found, we open the waypoint editor, that the user
-                // can create a new waypoint at the current position.
-                WaypointDialog* waypointDlg = __openWaypointDialog( current );
-                waypointDlg->exec();
-                delete waypointDlg;
-              }
-          }
+              // No map item found, we open the waypoint editor, that the user
+              // can create a new waypoint at the current position.
+              WaypointDialog* waypointDlg = __openWaypointDialog( current );
+              waypointDlg->exec();
+              delete waypointDlg;
+            }
+        }
     }
   else if( event->button() == Qt::RightButton )
     {
@@ -2577,22 +2509,22 @@ void Map::slotAppendWaypoint2Task( Waypoint *p )
 /** search for a waypoint
 First look in task itself
 Second look in map contents */
-bool Map::__getTaskWaypoint(const QPoint& current, Waypoint *wp, QList<Waypoint*> &taskPointList)
+bool Map::__getTaskWaypoint( const QPoint& current,
+                             Waypoint *wp,
+                             QList<Waypoint*> &taskPointList )
 {
   Waypoint *tmpPoint;
-  QPoint sitePos;
-  double dX, dY;
+
   // Radius for Mouse Snapping
-  double delta(16.0);
+  int delta(16);
   bool found = false;
-  Airfield *hitElement;
 
   for(int i = 0; i < taskPointList.count(); i++)
     {
       tmpPoint = taskPointList.at(i);
-      sitePos = _globalMapMatrix->map(_globalMapMatrix->wgsToMap(tmpPoint->origP));
-      dX = abs(sitePos.x() - current.x());
-      dY = abs(sitePos.y() - current.y());
+      QPoint sitePos = _globalMapMatrix->map(_globalMapMatrix->wgsToMap(tmpPoint->origP));
+      int dX = abs(sitePos.x() - current.x());
+      int dY = abs(sitePos.y() - current.y());
 
       // Abstand entspricht der Icon-Größe.
       if (dX < delta && dY < delta)
@@ -2603,46 +2535,9 @@ bool Map::__getTaskWaypoint(const QPoint& current, Waypoint *wp, QList<Waypoint*
         }
     }
 
-  if(!found)
+  if( ! found )
     {
-      /*
-       *  Muss für alle Punktdaten durchgeführt werden
-       */
-      QVector<int> contentArray(3);
-      contentArray[0] = MapContents::GliderfieldList;
-      contentArray[1] = MapContents::AirfieldList;
-      contentArray[2] = MapContents::OutLandingList;
-
-
-      for(int n = 0; n < contentArray.count(); n++)
-        {
-          for(int loop = 0; loop < _globalMapContents->getListLength(contentArray.at(n)); loop++)
-            {
-              hitElement = (Airfield *)_globalMapContents->getElement(contentArray.at(n), loop);
-              sitePos = hitElement->getMapPosition();
-              dX = abs(sitePos.x() - current.x());
-              dY = abs(sitePos.y() - current.y());
-
-              if (dX < delta && dY < delta)
-                {
-                  wp->name = hitElement->getWPName();
-                  wp->origP = hitElement->getWGSPosition();
-                  wp->elevation = hitElement->getElevation();
-                  wp->projP = hitElement->getPosition();
-                  wp->description = hitElement->getName();
-                  wp->type = hitElement->getTypeID();
-                  wp->elevation = hitElement->getElevation();
-                  wp->icao = hitElement->getICAO();
-                  wp->frequency = hitElement->getFrequency();
-                  wp->country = hitElement->getCountry();
-                  wp->rwyList = hitElement->getRunwayList();
-                  wp->comment = hitElement->getComment();
-
-                  found = true;
-                  break;
-                }
-            }
-        }
+      found = findMapPoint( delta, current, wp );
     }
 
   return found;
@@ -3021,57 +2916,19 @@ void Map::__showPopupMenu(QMouseEvent* event)
 /** called from the Map popup menu to add a new waypoint. */
 void Map::slotMpNewWaypoint()
 {
-  QString text;
+  Waypoint *w = new Waypoint;
 
-  QPoint sitePos;
-  double dX, dY, delta( 16.0 );
-
-  const QPoint current( popupPos );
-
-  // select WayPoint
-  QRegExp blank( "[ ]" );
-
-  // add WPList !!!
-  int searchList[] = { MapContents::AirfieldList,
-                       MapContents::GliderfieldList,
-                       MapContents::OutLandingList };
-
-  for( int l = 0; l < 3; l++ )
+  if( findMapPoint( 16, popupPos, w ) == true )
     {
-      for( int loop = 0; loop < _globalMapContents->getListLength( searchList[l] ); loop++ )
-        {
-          Airfield *hitElement =
-              static_cast<Airfield *> ( _globalMapContents->getElement( searchList[l], loop ) );
-          sitePos = hitElement->getMapPosition();
-
-          dX = abs( sitePos.x() - current.x() );
-          dY = abs( sitePos.y() - current.y() );
-
-          // Abstand entspricht der Icon-Größe.
-          if( dX < delta && dY < delta )
-            {
-              Waypoint *w = new Waypoint;
-
-              QString name = hitElement->getName();
-              w->name = name.replace( blank, "" ).left( 8 ).toUpper();
-              w->description = hitElement->getName();
-              w->type = hitElement->getTypeID();
-              w->origP = hitElement->getWGSPosition();
-              w->elevation = hitElement->getElevation();
-              w->icao = hitElement->getICAO();
-              w->frequency = hitElement->getFrequency();
-              w->country = hitElement->getCountry();
-              w->rwyList = hitElement->getRunwayList();
-              w->comment = hitElement->getComment();
-
-              emit waypointSelected( w );
-              return;
-            }
-        }
+      emit waypointSelected( w );
+    }
+  else
+    {
+      delete w;
     }
 
   // create a new waypoint
-  WaypointDialog* waypointDlg = __openWaypointDialog( current );
+  WaypointDialog* waypointDlg = __openWaypointDialog( popupPos );
   waypointDlg->exec();
   delete waypointDlg;
 }
@@ -3339,4 +3196,80 @@ QString Map::calculateRealMapScale( const int metersPerPixel )
   double crms = metersPerPixel * 1000 / spxSizeMM;
 
   return QString("1:%1").arg(crms, 0, 'f', 0);
+}
+
+bool Map::findMapPoint( int delta, const QPoint& mapPosition, Waypoint *w )
+{
+  // compose search list
+  QList<int> searchList;
+  searchList << MapContents::GliderfieldList
+	     << MapContents::AirfieldList
+	     << MapContents::OutLandingList
+	     << MapContents::NavaidList
+	     << MapContents::HotspotList;
+
+  int dX, dY;
+
+  // select Waypoint
+  QRegExp blank( "[ ]" );
+
+  for( int k = 0; k < searchList.size(); k++ )
+    {
+      for( int i = 0; i < _globalMapContents->getListLength(searchList.at(k) ); i++ )
+	{
+	  SinglePoint *sp = dynamic_cast<SinglePoint *>(_globalMapContents->getElement(searchList.at(k), i));
+
+	    if( sp == 0 )
+	      {
+		continue;
+	      }
+
+	  QPoint sitePos = sp->getMapPosition();
+
+	  dX = abs( sitePos.x() - mapPosition.x() );
+	  dY = abs( sitePos.y() - mapPosition.y() );
+
+	  // Abstand entspricht der Icon-Größe.
+	  if( dX < delta && dY < delta )
+	    {
+	      QString name = sp->getName();
+	      w->name = name.replace( blank, "" ).left( 8 ).toUpper();
+	      w->description = sp->getName();
+	      w->country = sp->getCountry();
+	      w->type = sp->getTypeID();
+	      w->origP = sp->getWGSPosition();
+	      w->elevation = sp->getElevation();
+	      w->comment = sp->getComment();
+	      w->icao = "";
+	      w->frequency = 0.0;
+	      w->rwyList.clear();
+
+	      Airfield *af   = dynamic_cast<Airfield *>(sp); // try casting to an airfield
+	      RadioPoint *rp = dynamic_cast<RadioPoint *>(sp); // try casting to a navaid
+
+	      if( af )
+		{
+		  w->icao = af->getICAO();
+		  w->frequency = af->getFrequency();
+		  w->rwyList = af->getRunwayList();
+		}
+	      else if( rp )
+		{
+		  w->icao = rp->getICAO();
+		  w->frequency = rp->getFrequency();
+		  w->comment = rp->getAdditionalText();
+		}
+	      else
+		{
+		  w->icao = "";
+		  w->frequency = 0.0;
+		  w->rwyList.clear();
+		}
+
+	      return true;
+	    }
+	}
+    }
+
+  return false;
 }

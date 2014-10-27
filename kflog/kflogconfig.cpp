@@ -393,7 +393,7 @@ void KFLogConfig::slotOk()
     {
       emit reloadPointData();
     }
-  // Check, if openAIP airfields must be updated
+  // Check, if openAIP point data must be updated
   else if( pointsSourceBox->currentIndex() == 0 &&
       ( m_afOpenAipHomeRadiusValue !=  pointsOpenAipHomeRadius->value() ||
         m_afOpenAipCountryValue != pointsOpenAipCountries->text() ) )
@@ -2452,7 +2452,7 @@ void KFLogConfig::slotLoadOpenAipPointFilesIntoTable()
 {
   m_pointFileTable->clear();
 
-  QString mapDir = _globalMapContents->getMapRootDirectory() + "/airfields";
+  QString mapDir = _globalMapContents->getMapRootDirectory() + "/points";
 
   QTableWidgetItem *hrItem = new QTableWidgetItem( tr("Point Files in ") + mapDir );
   m_pointFileTable->setHorizontalHeaderItem( 0, hrItem );

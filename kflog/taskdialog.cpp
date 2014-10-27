@@ -2,17 +2,15 @@
  **
  **   taskdialog.cpp
  **
- **   This file is part of KFLog4.
+ **   This file is part of KFLog.
  **
  ************************************************************************
  **
  **   Copyright (c):  2002 by Harald Maier
- **                   2011 by Axel Pauli
+ **                   2011-2014 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
- **
- **   $Id$
  **
  ***********************************************************************/
 
@@ -728,7 +726,7 @@ void TaskDialog::slotAccept()
     {
       QMessageBox::warning( this,
                              tr("Task is incomplete"),
-                             tr("<htlm>A task consist of at least four waypoints!<br><br>"
+                             tr("<html>A task consist of at least four waypoints!<br><br>"
                                 "Please add the missing points.</html>"),
                              QMessageBox::Ok );
       return;
@@ -738,7 +736,7 @@ void TaskDialog::slotAccept()
     {
       QMessageBox::warning( this,
                              tr("FAI area task violation"),
-                             tr("<htlm>A FAI area task can have one additional "
+                             tr("<html>A FAI area task can have one additional "
                                  "route point only!<br><br>"
                                  "Please remove all not needed other points.</html>"),
                              QMessageBox::Ok );

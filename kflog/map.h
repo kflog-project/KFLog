@@ -90,6 +90,18 @@ private:
      */
     QString calculateRealMapScale( const int metersPerPixel );
 
+    /**
+     * Find a map point at a certain position.
+     *
+     * \param delta Maximum distance to site position
+     *
+     * \param mapPosition Position at the drawn map
+     *
+     * \param w Pointer to an existing Waypoint class object. The found data
+     *          are copied into that class.
+     */
+    bool findMapPoint( int delta, const QPoint& mapPosition, Waypoint *w );
+
   public slots:
 
     /**  */

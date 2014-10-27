@@ -12,8 +12,6 @@
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
 #ifdef QT_5
@@ -665,14 +663,17 @@ void EvaluationView::__draw()
   unsigned int gn_va = smoothness_va * 2 + 1;
   unsigned int gn_h  = smoothness_h * 2 + 1;
 
-  int    baro_d[gn_h];
-  int    baro_d_last[gn_h];
-  int    elev_d[gn_h];
-  int    elev_d_last[gn_h];
-  float speed_d[gn_v];
-  float speed_d_last[gn_v];
-  float vario_d[gn_va];
-  float vario_d_last[gn_va];
+  int *baro_d      = new int[gn_h];
+  int *baro_d_last = new int[gn_h];
+
+  int *elev_d      = new int[gn_h];
+  int *elev_d_last = new int[gn_h];
+
+  float *speed_d      = new float[gn_v];
+  float *speed_d_last = new float[gn_v];
+
+  float *vario_d      = new float[gn_va];
+  float *vario_d_last = new float[gn_va];
 
   for(unsigned int loop = 0; baro && loop < gn_h; loop++)
     {
@@ -941,6 +942,16 @@ void EvaluationView::__draw()
 
   __drawCursor(( cursor1 - startTime ) / secWidth + X_DISTANCE, false, 1);
   __drawCursor(( cursor2 - startTime ) / secWidth + X_DISTANCE, false, 2);
+
+  delete [] baro_d;
+  delete [] baro_d_last;
+  delete [] elev_d;
+  delete [] elev_d_last;
+
+  delete [] speed_d;
+  delete [] speed_d_last;
+  delete [] vario_d;
+  delete [] vario_d_last;
 }
 
 void EvaluationView::__drawCursor( const int xpos,
