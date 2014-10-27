@@ -1708,7 +1708,7 @@
     <message>
         <location filename="mainwindow.cpp" line="1950"/>
         <source>&lt;html&gt;&lt;b&gt;Temporarily Maintainer&lt;/b&gt;&lt;blockquote&gt;Axel Pauli &amp;lt;&lt;a href=&quot;mailto:kflog.cumulus&amp;#64;gmail.com&quot;&gt;kflog.cumulus&amp;#64;gmail.com&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;&lt;b&gt;Developers, Maintainers&lt;/b&gt;&lt;blockquote&gt;Axel Pauli (Developer, Portage to Qt4)&lt;br&gt;Constantijn Neeteson (Maintenance, Core-developer)&lt;br&gt;Florian Ehinger (Maintenance, Core-developer, Mapdata)&lt;br&gt;Heiner Lamprecht (Maintenance, Core-developer)&lt;br&gt;Andr&amp;eacute; Somers (Developer, Waypoint-handling, Plugin architecture, ...)&lt;br&gt;Christof Bodner (Developer, OLC Optimization)&lt;br&gt;Eggert Ehmke (Developer)&lt;br&gt;Harald Maier (Developer, Waypoint-Dialog, Task-handling)&lt;br&gt;Thomas Nielsen (Developer, 3D-Dialog)&lt;br&gt;Jan Kr&amp;uuml;ger (Developer, 3D-Dialog)&lt;br&gt;Matthias Degenkolb (Developer, MS-Windows portage)&lt;br&gt;Peter Simon (Developer, MS-Windows portage)&lt;/blockquote&gt;&lt;b&gt;Server Sponsor&lt;/b&gt;&lt;blockquote&gt;Heiner Lamprecht &amp;lt;&lt;a href=&quot;mailto:heiner&amp;#64;kflog.org&quot;&gt;heiner&amp;#64;kflog.org&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;Thanks to all, who have made available this software!&lt;br&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;b&gt;Augenblickliche Wartung durch&lt;/b&gt;&lt;blockquote&gt;Axel Pauli &amp;lt;&lt;a href=&quot;mailto:kflog.cumulus&amp;#64;gmail.com&quot;&gt;kflog.cumulus&amp;#64;gmail.com&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;&lt;b&gt;Entwickler und Instandhalter&lt;/b&gt;&lt;blockquote&gt;Axel Pauli (Entwickler, Portierung zu Qt4)&lt;br&gt;Constantijn Neeteson (Instandhalter, Kernentwickler)&lt;br&gt;Florian Ehinger (Instandhalter, Kernentwickler, Kartendaten)&lt;br&gt;Heiner Lamprecht (Instandhalter, Kernentwickler)&lt;br&gt;Andr&amp;eacute; Somers (Entwickler, Wegpunkte, Plugin Architektur, ...)&lt;br&gt;Christof Bodner (Entwickler, OLC Optimierung)&lt;br&gt;Eggert Ehmke (Entwickler)&lt;br&gt;Harald Maier (Entwickler, Wegpunkt-Dialog, Aufgaben)&lt;br&gt;Thomas Nielsen (Entwickler, 3D-Dialog)&lt;br&gt;Jan Kr&amp;uuml;ger (Entwickler, 3D-Dialog)&lt;br&gt;Matthias Degenkolb (Entwickler, MS-Windows Portierung)&lt;br&gt;Peter Simon (Entwickler, MS-Windows Portierung)&lt;/blockquote&gt;&lt;b&gt;Server Sponsor&lt;/b&gt;&lt;blockquote&gt;Heiner Lamprecht &amp;lt;&lt;a href=&quot;mailto:heiner&amp;#64;kflog.org&quot;&gt;heiner&amp;#64;kflog.org&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;Danke an alle, die diese Software entstehen lassen haben und am Leben erhalten!&lt;br&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished">&lt;html&gt;&lt;b&gt;Augenblickliche Wartung durch&lt;/b&gt;&lt;blockquote&gt;Axel Pauli &amp;lt;&lt;a href=&quot;mailto:kflog.cumulus&amp;#64;gmail.com&quot;&gt;kflog.cumulus&amp;#64;gmail.com&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;&lt;b&gt;Entwickler und Instandhalter&lt;/b&gt;&lt;blockquote&gt;Axel Pauli (Entwickler, Portierung zu Qt4)&lt;br&gt;Constantijn Neeteson (Instandhalter, Kernentwickler)&lt;br&gt;Florian Ehinger (Instandhalter, Kernentwickler, Kartendaten)&lt;br&gt;Heiner Lamprecht (Instandhalter, Kernentwickler)&lt;br&gt;Andr&amp;eacute; Somers (Entwickler, Wegpunkte, Plugin Architektur, ...)&lt;br&gt;Christof Bodner (Entwickler, OLC Optimierung)&lt;br&gt;Eggert Ehmke (Entwickler)&lt;br&gt;Harald Maier (Entwickler, Wegpunkt-Dialog, Aufgaben)&lt;br&gt;Thomas Nielsen (Entwickler, 3D-Dialog)&lt;br&gt;Jan Kr&amp;uuml;ger (Entwickler, 3D-Dialog)&lt;br&gt;Matthias Degenkolb (Entwickler, MS-Windows Portierung)&lt;br&gt;Peter Simon (Entwickler, MS-Windows Portierung)&lt;/blockquote&gt;&lt;b&gt;Server Sponsor&lt;/b&gt;&lt;blockquote&gt;Heiner Lamprecht &amp;lt;&lt;a href=&quot;mailto:heiner&amp;#64;kflog.org&quot;&gt;heiner&amp;#64;kflog.org&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;Danke an alle, die beim Erstellen dieser Software mitgewirkt haben und sie weiter pflegen!&lt;br&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="435"/>
@@ -2060,7 +2060,8 @@
     <message>
         <location filename="map.cpp" line="107"/>
         <source>&lt;html&gt;&lt;B&gt;The map&lt;/B&gt;&lt;P&gt;To move or scale the map, you can use the buttons in the &lt;B&gt;Map control area&lt;/B&gt;.&lt;/P&gt;&lt;P&gt;To zoom in or out, use the slider or the two buttons on the toolbar. You can also zoom with &quot;&amp;lt;Ctrl&amp;gt;&amp;lt;+&amp;gt;&quot; or &quot;+&quot; (zoom in) and &quot;&amp;lt;Ctrl&amp;gt;&amp;lt;-&amp;gt;&quot; or &quot;-&quot;(zoom out).&lt;/P&gt;&lt;P&gt;The cursor keys and the keys on the NumPad can also pan the map, if NumLock is switched on.&lt;/P&gt;&lt;P&gt;With the menu item &lt;b&gt;Settings-&amp;gt;KFLog Setup-&amp;gt;Map Elements&lt;/b&gt; you can configure, which map elements should be displayed at which scale.&lt;/P&gt;&lt;b&gt;Supported mouse actions at the map:&lt;/b&gt;&lt;ul&gt;&lt;li&gt;Moving the mouse pointer at a map item will display the item data after a short delay, if the &lt;i&gt;Show map data touched by Mouse&lt;/i&gt; option is enabled.&lt;li&gt;Pressing the right mouse button opens the map menu with different possible actions.&lt;li&gt;Pressing the middle mouse button centers the map to the mouse point.&lt;li&gt;Pressing the left mouse button opens the task menu, if graphical task planning is activated. Otherwise you can move the map so long the left mouse button is pressed during move.&lt;li&gt;Pressing the shift key and the left mouse button over a map item creates a new waypoint by using the item data. If no item is touched by the mouse the waypoint dialog is opened and the user can enter the waypoint data.&lt;li&gt;Pressing the control key and the left mouse button and hold both down during drag will draw a frame at the map. Release the mouse button to zoom the map into the frame.&lt;li&gt;Turning the mouse wheel will zoom into or out the map.&lt;/ul&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>&lt;html&gt;&lt;B&gt;Die Karte&lt;/B&gt;&lt;P&gt;Verwende die Buttons im &lt;B&gt;Karten-Kontrollbereich&lt;/B&gt; um die Karte zu verschieben oder zu skalieren.&lt;/P&gt;&lt;P&gt;Zum Zoomen verwende den Slider oder die zwei Buttons in der Toolbar. Du kannst auch mit der Tastenkombination &quot;&amp;lt;STRG&amp;gt;&amp;lt;+&amp;gt;&quot; oder &quot;+&quot; (vergrößern) und &quot;&amp;lt;STRGl&amp;gt;&amp;lt;-&amp;gt;&quot; oder &quot;-&quot;(verkleinern).&lt;/P&gt;&lt;P&gt;Die Pfeiltasten und die Tasten auf dem Nummernblock können auch zum Verschieben der Karte verwendet werden, falls NumLock  aktiviert wurde.&lt;/P&gt;&lt;P&gt;Unter dem Menueintrag&lt;b&gt;Einstellungen-&amp;gt;KFLog Einstellungen...&amp;gt;Kartenelemente&lt;/b&gt; kann eingestellt werden, welche Kartenelemente bei welchem Maßstab angezeigt werden sollen.&lt;/P&gt;&lt;b&gt;Unterstützte Mausbedienung in der Karte:&lt;/b&gt;&lt;ul&gt;&lt;li&gt;Bewegen des Mauszeiger über ein Kartenelement: die Details für das Element werden nach kurzer Zeit eingeblendet, falls die Option &lt;i&gt;Zeige Details bei Mausberührung&lt;/i&gt; aktiviert wurde.&lt;li&gt;Das Drücken der rechten Maustaste auf der Karte öffnet ein Menu mit unterschiedlichen Aktionen.&lt;li&gt;Das Drücken der mittleren Maustaste zentriert die Karte auf die Position des Mauszeigers.&lt;li&gt;Das Drücken der linken Maustaste öffnet das Aufgaben-Menu falls die &lt;i&gt;Grafische Aufgabenplanung&lt;/i&gt; gewählt wurde. Falls diese Option nicht aktiv ist, kann die Karte mit gedrücktem linken Mausbutton verschoben werden. &lt;li&gt;Umschalten-Linke-Maustaste über einem Kartenelement erzeugt einen neuen Wegpunkt unter Verwendung der Elementdaten. Falls kein Element von der Maus dabei berührt wurde, wird der Wegpunkt Dialog zum Definieren eines neuen Wegpunkts an der Mausposition geöffnet.&lt;li&gt;STRG-Linke-Maustaste während des Bewegens der Maus über die Karte erzeugt einen Rahmen, in den beim Loslassen der Maustaste hineingezoomt wird. &lt;li&gt;Drehen des Mausrades vergrößert/verkleinert den Kartenausschnitt.&lt;/ul&gt;&lt;/html&gt;</translatorcomment>
+        <translation></translation>
     </message>
     <message>
         <location filename="map.cpp" line="845"/>
@@ -2183,7 +2184,7 @@ Alle Downloads verworfen!</translation>
     <message>
         <location filename="mapcontents.cpp" line="2010"/>
         <source>&lt;html&gt;&lt;b&gt;Graphical Task Planning&lt;/b&gt;&lt;br&gt;&lt;br&gt;If a new task is created the graphical task planning is activated automatically. Press the left mouse button on a point at the map and you will get displayed a popup menu with the possible actions. Position the mouse pointer at an existing waypoint to add or delete it from the task. Position the mouse pointer at a free point at the map to create a new waypoint. The new created waypoint will be added to the task. Waypoints are always appended at the end of the task. If you need more flexibility, you should open the task in the task editor. With the editor you have more possibilities to modify the task.&lt;br&gt;&lt;br&gt;To finish the graphical task planning use the menu point &lt;b&gt;&lt;i&gt;End task planning&lt;/i&gt;&lt;/b&gt;. It is important to do that otherwise the task is not closed.&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;b&gt;Grafische Aufgabenplanung&lt;/b&gt;&lt;br&gt;&lt;br&gt;Beim Erstellen einer neuen Aufgabe wird der grafische Aufgabenplaner automatisch gestartet. Beim Drücken der linken Maustaste über einem Punkt auf der karte wird ein Popup Menu mit den verfügbaren Aktionen angezeigt. Positioniere die Maus über einen existierenden Wegpunkt um diesen zur Aufgabe hinzuzufügen oder aus der Aufgabe zu löschen. Positioniere die Maus über einer freien Fläche auf der Karte um einen neuen Wegpunkt an der Mausposition zu definieren. Der neue Wegpunkt wird automatsich zur Aufgabe hinzugefügt. Wegpunkte werden immer an eine Aufgabe angefügt. Falls sie mehr flexibilität in der Aufgabenbearbeitung benötigen, öffnen sie bitte den Aufgabeneditor.&lt;br&gt;&lt;br&gt;Um den graphischen Aufgabenplaner zu beenden wählen sie den Menupunkt&lt;b&gt;&lt;i&gt;Aufgabenplaner beenden&lt;/i&gt;&lt;/b&gt;. Falls sie das nicht tun, wird die Definition der Aufgabe nicht abgeschlossen!&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="mapcontents.cpp" line="2067"/>
@@ -2356,7 +2357,7 @@ Alle Downloads verworfen!</translation>
     <message>
         <location filename="objecttree.cpp" line="510"/>
         <source>Open &amp;task</source>
-        <translation type="unfinished">&amp;Öffne Aufgabe</translation>
+        <translation>&amp;Aufgabe öffnen</translation>
     </message>
     <message>
         <location filename="objecttree.cpp" line="515"/>
@@ -3111,68 +3112,68 @@ Alle Downloads verworfen!</translation>
     <message>
         <location filename="da4record.cpp" line="232"/>
         <source>Imported from Filser</source>
-        <translation type="unfinished"></translation>
+        <translation>Importiert von Filser</translation>
     </message>
     <message>
         <location filename="flight.cpp" line="96"/>
         <source>Original task</source>
-        <translation type="unfinished"></translation>
+        <translation>Ursprüngliche Aufgabe</translation>
     </message>
     <message>
         <location filename="flight.cpp" line="97"/>
         <source>Optimized task</source>
-        <translation type="unfinished"></translation>
+        <translation>Optimierte Aufgabe</translation>
     </message>
     <message>
         <location filename="flight.cpp" line="1008"/>
         <location filename="flight.cpp" line="1189"/>
         <source>Take-Off</source>
-        <translation type="unfinished"></translation>
+        <translation>Start</translation>
     </message>
     <message>
         <location filename="flight.cpp" line="1010"/>
         <source>Soaring Begin</source>
-        <translation type="unfinished"></translation>
+        <translation>Beginn des Segelfluges</translation>
     </message>
     <message>
         <location filename="flight.cpp" line="1012"/>
         <source>Task Begin</source>
-        <translation type="unfinished"></translation>
+        <translation>Beginn der Aufgabe</translation>
     </message>
     <message>
         <location filename="flight.cpp" line="1014"/>
         <source>OLC 1</source>
-        <translation type="unfinished"></translation>
+        <translation>OLC 1</translation>
     </message>
     <message>
         <location filename="flight.cpp" line="1016"/>
         <source>OLC 2</source>
-        <translation type="unfinished"></translation>
+        <translation>OLC 2</translation>
     </message>
     <message>
         <location filename="flight.cpp" line="1018"/>
         <source>OLC 3</source>
-        <translation type="unfinished"></translation>
+        <translation>OLC 3</translation>
     </message>
     <message>
         <location filename="flight.cpp" line="1020"/>
         <source>OLC 4</source>
-        <translation type="unfinished"></translation>
+        <translation>OLC 4</translation>
     </message>
     <message>
         <location filename="flight.cpp" line="1022"/>
         <source>OLC 5</source>
-        <translation type="unfinished"></translation>
+        <translation>OLC 5</translation>
     </message>
     <message>
         <location filename="flight.cpp" line="1024"/>
         <source>Task End</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgaben Ende</translation>
     </message>
     <message>
         <location filename="flight.cpp" line="1026"/>
         <source>Soaring End</source>
-        <translation type="unfinished"></translation>
+        <translation>Beginn des Segelfluges</translation>
     </message>
     <message>
         <location filename="flight.cpp" line="1028"/>
@@ -3188,7 +3189,7 @@ Alle Downloads verworfen!</translation>
         <source>The task has been optimized. The best task found is:
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Die Aufgabe wurde optimiert. Die beste gefundene Aufgabe ist:</translation>
     </message>
     <message>
         <location filename="flight.cpp" line="1181"/>
@@ -3198,179 +3199,179 @@ Alle Downloads verworfen!</translation>
     <message>
         <location filename="flight.cpp" line="1181"/>
         <source>Points:</source>
-        <translation type="unfinished"></translation>
+        <translation>Punkte:</translation>
     </message>
     <message>
         <location filename="flight.cpp" line="1182"/>
         <source>Do You want to use this task and replace the old?</source>
-        <translation type="unfinished"></translation>
+        <translation>Willst Du mit dieser Aufgabe die alte überschreiben?</translation>
     </message>
     <message>
         <location filename="flight.cpp" line="1184"/>
         <source>Optimizing</source>
-        <translation type="unfinished"></translation>
+        <translation>Optimiere</translation>
     </message>
     <message>
         <location filename="flight.cpp" line="1190"/>
         <source>Begin of Task</source>
-        <translation type="unfinished">Aufgaben Beginn</translation>
+        <translation>Aufgaben Beginn</translation>
     </message>
     <message>
         <location filename="flight.cpp" line="1192"/>
         <source>Optimize 1</source>
-        <translation type="unfinished"></translation>
+        <translation>Optimiere 1</translation>
     </message>
     <message>
         <location filename="flight.cpp" line="1194"/>
         <source>Optimize 2</source>
-        <translation type="unfinished"></translation>
+        <translation>Optimiere 2</translation>
     </message>
     <message>
         <location filename="flight.cpp" line="1196"/>
         <source>Optimize 3</source>
-        <translation type="unfinished"></translation>
+        <translation>Optimiere 3</translation>
     </message>
     <message>
         <location filename="flight.cpp" line="1198"/>
         <source>End of Task</source>
-        <translation type="unfinished">Aufgaben Ende</translation>
+        <translation>Aufgaben Ende</translation>
     </message>
     <message>
         <location filename="flightdataprint.cpp" line="45"/>
         <source>Print Flight</source>
-        <translation type="unfinished"></translation>
+        <translation>Flug Drucken</translation>
     </message>
     <message>
         <location filename="flightdataprint.cpp" line="83"/>
         <source>Flight Analysis</source>
-        <translation type="unfinished"></translation>
+        <translation>Flug Analyse</translation>
     </message>
     <message>
         <location filename="flightdataprint.cpp" line="109"/>
         <source>Flight track</source>
-        <translation type="unfinished"></translation>
+        <translation>Flugspur</translation>
     </message>
     <message>
         <location filename="flightdataprint.cpp" line="114"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Dauer</translation>
     </message>
     <message>
         <location filename="flightdataprint.cpp" line="120"/>
         <location filename="tasklistviewitem.cpp" line="102"/>
         <source>Takeoff</source>
-        <translation type="unfinished"></translation>
+        <translation>Start</translation>
     </message>
     <message>
         <location filename="flightdataprint.cpp" line="128"/>
         <source>max. Altitude</source>
-        <translation type="unfinished"></translation>
+        <translation>max. Höhe</translation>
     </message>
     <message>
         <location filename="flightdataprint.cpp" line="133"/>
         <source>max. Vario</source>
-        <translation type="unfinished"></translation>
+        <translation>max. Steigen</translation>
     </message>
     <message>
         <location filename="flightdataprint.cpp" line="138"/>
         <source>min. Vario</source>
-        <translation type="unfinished"></translation>
+        <translation>min. Steigen</translation>
     </message>
     <message>
         <location filename="flightdataprint.cpp" line="143"/>
         <source>max. Speed</source>
-        <translation type="unfinished"></translation>
+        <translation>max. Geschwindigkeit</translation>
     </message>
     <message>
         <location filename="flightdataprint.cpp" line="160"/>
         <location filename="flightdataprint.cpp" line="197"/>
         <source>%1  Track: %2  Points: %3</source>
-        <translation type="unfinished"></translation>
+        <translation>%1  Spur: %2 Punkte: %3</translation>
     </message>
     <message>
         <location filename="flightdataprint.cpp" line="184"/>
         <source>Optimized Task</source>
-        <translation type="unfinished"></translation>
+        <translation>Optimierte Aufgabe</translation>
     </message>
     <message>
         <location filename="flightlistviewitem.cpp" line="76"/>
         <source>Copilot</source>
-        <translation type="unfinished"></translation>
+        <translation>Begleiter</translation>
     </message>
     <message>
         <location filename="flightlistviewitem.cpp" line="97"/>
         <source>Competition Id</source>
-        <translation type="unfinished"></translation>
+        <translation>Wettbewerbskennzeichen</translation>
     </message>
     <message>
         <location filename="flightlistviewitem.cpp" line="106"/>
         <source>Competition class</source>
-        <translation type="unfinished"></translation>
+        <translation>Wettbewerbsklasse</translation>
     </message>
     <message>
         <location filename="flightlistviewitem.cpp" line="121"/>
         <source>Points (optimized)</source>
-        <translation type="unfinished"></translation>
+        <translation>Punkte (optimiert)</translation>
     </message>
     <message>
         <location filename="flightlistviewitem.cpp" line="129"/>
         <source>Total distance</source>
-        <translation type="unfinished"></translation>
+        <translation>Distanz (total)</translation>
     </message>
     <message>
         <location filename="flightlistviewitem.cpp" line="137"/>
         <source>FR-Device</source>
-        <translation type="unfinished"></translation>
+        <translation>Logger</translation>
     </message>
     <message>
         <location filename="flightlistviewitem.cpp" line="138"/>
         <source>Data</source>
-        <translation type="unfinished"></translation>
+        <translation>Daten</translation>
     </message>
     <message>
         <location filename="flightlistviewitem.cpp" line="145"/>
         <source>Manufacturer</source>
-        <translation type="unfinished"></translation>
+        <translation>Hersteller</translation>
     </message>
     <message>
         <location filename="flightlistviewitem.cpp" line="152"/>
         <source>FR-Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Logger-Typ</translation>
     </message>
     <message>
         <location filename="flightlistviewitem.cpp" line="159"/>
         <source>Firmware version</source>
-        <translation type="unfinished"></translation>
+        <translation>Firmwareversion</translation>
     </message>
     <message>
         <location filename="flightlistviewitem.cpp" line="166"/>
         <source>Hardware version</source>
-        <translation type="unfinished"></translation>
+        <translation>Hardwareversion</translation>
     </message>
     <message>
         <location filename="flightlistviewitem.cpp" line="173"/>
         <source>Pressure altitude sensor</source>
-        <translation type="unfinished"></translation>
+        <translation>Druckhöhensensor</translation>
     </message>
     <message>
         <location filename="flightlistviewitem.cpp" line="180"/>
         <source>GPS manufacturer</source>
-        <translation type="unfinished"></translation>
+        <translation>GPS Hersteller</translation>
     </message>
     <message>
         <location filename="flightlistviewitem.cpp" line="187"/>
         <source>GPS Datum</source>
-        <translation type="unfinished"></translation>
+        <translation>GPS Datum</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="61"/>
         <source>unknow manufacture</source>
-        <translation type="unfinished"></translation>
+        <translation>unbekannter Hersteller</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="75"/>
         <source>File does not exist</source>
-        <translation type="unfinished">Datei existiert nicht</translation>
+        <translation>Datei existiert nicht</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="76"/>
@@ -3379,18 +3380,18 @@ Alle Downloads verworfen!</translation>
         <location filename="waypointcatalog.cpp" line="1657"/>
         <location filename="waypointcatalog.cpp" line="2382"/>
         <source>The selected file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;does not exist!</source>
-        <translation type="unfinished">Die ausgewählte Datei&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;existiert nicht!</translation>
+        <translation>Die ausgewählte Datei&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;existiert nicht!</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="82"/>
         <location filename="flightloader.cpp" line="89"/>
         <source>File is empty</source>
-        <translation type="unfinished">Datei ist leer</translation>
+        <translation>Datei ist leer</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="83"/>
         <source>Cannot open the selected file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;directly. Please open the flight file instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann ausgewählte Datei nicht direkt öffnen&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;. Bitte statt dessen die Flugdatei öffnen.</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="90"/>
@@ -3399,56 +3400,56 @@ Alle Downloads verworfen!</translation>
         <location filename="waypointcatalog.cpp" line="1666"/>
         <location filename="waypointcatalog.cpp" line="2391"/>
         <source>The selected file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;is empty!</source>
-        <translation type="unfinished">Die ausgewählte Datei&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;ist leer!</translation>
+        <translation>Die ausgewählte Datei&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;ist leer!</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="96"/>
         <source>No permission to file</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Berechtigung</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="97"/>
         <location filename="waypointcatalog.cpp" line="543"/>
         <source>You don&apos;t have permission to access file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;</source>
-        <translation type="unfinished">Du hast keine Zugriffsrechte auf die Datei&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;</translation>
+        <translation>Du hast keine Zugriffsrechte auf die Datei&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="114"/>
         <source>Unknown file extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannt Dateiendung</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="115"/>
         <source>Couldn&apos;t open the file, because it has an unknown file extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Datei nicht öffnen weil sie eine unbekannte Dateiendung besitzt</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="127"/>
         <location filename="flightloader.cpp" line="574"/>
         <source>Loading flight...</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Flug...</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="129"/>
         <location filename="flightloader.cpp" line="576"/>
         <location filename="waypointcatalog.cpp" line="553"/>
         <source>Please wait while loading file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitte warten solange ich den Flug &lt;BR&gt;&lt;B&gt;%1&lt;/B&gt; lade</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="285"/>
         <source>Syntax-error in IGC-file</source>
-        <translation type="unfinished"></translation>
+        <translation>Syntax-fehler in der IGC-Datei</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="286"/>
         <source>Syntax-error while loading igc-file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;Aborting!</source>
-        <translation type="unfinished"></translation>
+        <translation>Syntax-Fehler während des Ladens der IGC-Datei &lt;BR&gt;&lt;B&gt;%1&lt;/B&gt; Abbruch!</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="379"/>
         <source>unknown manufacturer</source>
-        <translation type="unfinished"></translation>
+        <translation>unbekannter Hersteller</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="541"/>
@@ -3456,12 +3457,12 @@ Alle Downloads verworfen!</translation>
         <location filename="flightloader.cpp" line="784"/>
         <location filename="flightloader.cpp" line="821"/>
         <source>File contains no flight</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei beinhaltet keine Flugdaten</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="543"/>
         <source>The selected file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;contains no flight!</source>
-        <translation type="unfinished"></translation>
+        <translation>Die gewählte Datei &lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;beinhaltet keine Flugdaten!</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="551"/>
