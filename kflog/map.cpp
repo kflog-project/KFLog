@@ -606,44 +606,44 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
   for( int k = 0; k < searchList.size(); k++ )
     {
       for( int i = 0; i < _globalMapContents->getListLength(searchList.at(k) ); i++ )
-	{
-	  SinglePoint *sp = dynamic_cast<SinglePoint *>(_globalMapContents->getElement(searchList.at(k), i));
+      {
+        SinglePoint *sp = dynamic_cast<SinglePoint *>(_globalMapContents->getElement(searchList.at(k), i));
 
-	    if( sp == 0 )
-	      {
-		continue;
-	      }
+        if( sp == 0 )
+          {
+            continue;
+          }
 
-	  QPoint sitePos = sp->getMapPosition();
+        QPoint sitePos = sp->getMapPosition();
 
-	  int dX = abs( sitePos.x() - current.x() );
-	  int dY = abs( sitePos.y() - current.y() );
+        int dX = abs( sitePos.x() - current.x() );
+        int dY = abs( sitePos.y() - current.y() );
 
-	  // Abstand entspricht der Icon-Größe.
-	  if( dX < delta && dY < delta )
-	    {
-	      Airfield *af   = dynamic_cast<Airfield *>(sp); // try casting to an airfield
-	      RadioPoint *rp = dynamic_cast<RadioPoint *>(sp); // try casting to a navaid
+        // Abstand entspricht der Icon-Größe.
+        if( dX < delta && dY < delta )
+          {
+            Airfield *af   = dynamic_cast<Airfield *>(sp); // try casting to an airfield
+            RadioPoint *rp = dynamic_cast<RadioPoint *>(sp); // try casting to a navaid
 
-	      if( af )
-		{
-		  text += af->getInfoString();
-		}
-	      else if( rp )
-		{
-		  text += rp->getInfoString();
-		}
-	      else
-		{
-		  text += sp->getInfoString();
-		}
+            if( af )
+              {
+                text += af->getInfoString();
+              }
+            else if( rp )
+              {
+                text += rp->getInfoString();
+              }
+            else
+              {
+                text += sp->getInfoString();
+              }
 
-              // Text anzeigen
-              WhatsThat* box = new WhatsThat( this, text, timeout, mapToGlobal( current ) );
-              box->setVisible( true );
-              return;
-	    }
-	}
+            // Text anzeigen
+            WhatsThat* box = new WhatsThat( this, text, timeout, mapToGlobal( current ) );
+            box->setVisible( true );
+            return;
+          }
+       }
     }
 
   BaseFlightElement *baseFlight = _globalMapContents->getFlight();
@@ -805,8 +805,7 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
 {
   BaseFlightElement *bfe = _globalMapContents->getFlight();
 
-  // bfe can contain different classes. We take only into account a
-  // flight task.
+  // bfe can contain different classes. We take only into account a flight task.
   FlightTask* ft = dynamic_cast<FlightTask*>(bfe);
 
   if( ! ft )
@@ -829,11 +828,22 @@ void Map::__graphicalPlanning(const QPoint& current, QMouseEvent* event)
   // Is the point already in the flight task?
   bool found = __getTaskWaypoint(current, &wp, taskPointList);
 
-  if( !found )
+  if( ! found )
     {
-      // TODO We should look in all point lists of the map!!!
       // Try the waypoint catalog to find it.
       found = __getTaskWaypoint( current, &wp, wpList );
+    }
+
+  if( ! found )
+    {
+      int delta = 16;
+
+      if( _globalMapMatrix->isSwitchScale() )
+        {
+          delta = 8;
+        }
+
+      found = findMapPoint( delta, current, &wp );
     }
 
   // Open task action menu for further processing. That seems for me the best
@@ -1154,8 +1164,8 @@ void Map::mousePressEvent(QMouseEvent* event)
 
           if( findMapPoint( delta, current, w ) == true )
             {
-	      // That adds the found item to the current waypoint list.
-	      emit waypointSelected(w);
+              // That adds the found item to the current waypoint list.
+              emit waypointSelected(w);
             }
           else
             {
@@ -1268,6 +1278,7 @@ void Map::__drawGrid()
       break;
     default:
       gridStep = 4;
+      break;
     }
 
   // First the latitudes:
@@ -3216,59 +3227,59 @@ bool Map::findMapPoint( int delta, const QPoint& mapPosition, Waypoint *w )
   for( int k = 0; k < searchList.size(); k++ )
     {
       for( int i = 0; i < _globalMapContents->getListLength(searchList.at(k) ); i++ )
-	{
-	  SinglePoint *sp = dynamic_cast<SinglePoint *>(_globalMapContents->getElement(searchList.at(k), i));
+      {
+        SinglePoint *sp = dynamic_cast<SinglePoint *>(_globalMapContents->getElement(searchList.at(k), i));
 
-	    if( sp == 0 )
-	      {
-		continue;
-	      }
+          if( sp == 0 )
+            {
+              continue;
+            }
 
-	  QPoint sitePos = sp->getMapPosition();
+        QPoint sitePos = sp->getMapPosition();
 
-	  dX = abs( sitePos.x() - mapPosition.x() );
-	  dY = abs( sitePos.y() - mapPosition.y() );
+        dX = abs( sitePos.x() - mapPosition.x() );
+        dY = abs( sitePos.y() - mapPosition.y() );
 
-	  // Abstand entspricht der Icon-Größe.
-	  if( dX < delta && dY < delta )
-	    {
-	      QString name = sp->getName();
-	      w->name = name.replace( blank, "" ).left( 8 ).toUpper();
-	      w->description = sp->getName();
-	      w->country = sp->getCountry();
-	      w->type = sp->getTypeID();
-	      w->origP = sp->getWGSPosition();
-	      w->elevation = sp->getElevation();
-	      w->comment = sp->getComment();
-	      w->icao = "";
-	      w->frequency = 0.0;
-	      w->rwyList.clear();
+        // Abstand entspricht der Icon-Größe.
+        if( dX < delta && dY < delta )
+          {
+            QString name = sp->getName();
+            w->name = name.replace( blank, "" ).left( 8 ).toUpper();
+            w->description = sp->getName();
+            w->country = sp->getCountry();
+            w->type = sp->getTypeID();
+            w->origP = sp->getWGSPosition();
+            w->elevation = sp->getElevation();
+            w->comment = sp->getComment();
+            w->icao = "";
+            w->frequency = 0.0;
+            w->rwyList.clear();
 
-	      Airfield *af   = dynamic_cast<Airfield *>(sp); // try casting to an airfield
-	      RadioPoint *rp = dynamic_cast<RadioPoint *>(sp); // try casting to a navaid
+            Airfield *af   = dynamic_cast<Airfield *>(sp); // try casting to an airfield
+            RadioPoint *rp = dynamic_cast<RadioPoint *>(sp); // try casting to a navaid
 
-	      if( af )
-		{
-		  w->icao = af->getICAO();
-		  w->frequency = af->getFrequency();
-		  w->rwyList = af->getRunwayList();
-		}
-	      else if( rp )
-		{
-		  w->icao = rp->getICAO();
-		  w->frequency = rp->getFrequency();
-		  w->comment = rp->getAdditionalText();
-		}
-	      else
-		{
-		  w->icao = "";
-		  w->frequency = 0.0;
-		  w->rwyList.clear();
-		}
+            if( af )
+              {
+                w->icao = af->getICAO();
+                w->frequency = af->getFrequency();
+                w->rwyList = af->getRunwayList();
+              }
+            else if( rp )
+              {
+                w->icao = rp->getICAO();
+                w->frequency = rp->getFrequency();
+                w->comment = rp->getAdditionalText();
+              }
+            else
+              {
+                w->icao = "";
+                w->frequency = 0.0;
+                w->rwyList.clear();
+              }
 
-	      return true;
-	    }
-	}
+          return true;
+        }
+      }
     }
 
   return false;
