@@ -2,7 +2,7 @@
 **
 **   projectionlambert.h
 **
-**   This file is part of KFLog4.
+**   This file is part of KFLog.
 **
 ************************************************************************
 **
@@ -106,7 +106,7 @@ public:
 
   /**
    * Sets the two standard parallels. If one of the parallels is
-   * too large, the default values (54°N and 50°N) are used for both
+   * too large, the default values (54ï¿½N and 50ï¿½N) are used for both
    * of them.
    */
   bool initProjection(int  v1, int v2, int origin);

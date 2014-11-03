@@ -2,7 +2,7 @@
 **
 **   flightloader.cpp
 **
-**   This file is part of KFLog4.
+**   This file is part of KFLog.
 **
 **   This class reads a flight file into the memory.
 **

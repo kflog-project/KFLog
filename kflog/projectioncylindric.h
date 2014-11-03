@@ -2,7 +2,7 @@
 **
 **   projectioncylindric.h
 **
-**   This file is part of KFLog4.
+**   This file is part of KFLog.
 **
 ************************************************************************
 **
@@ -101,7 +101,7 @@ class ProjectionCylindric : public ProjectionBase
 
   /**
    * Sets the standard parallel. If it is too large,
-   * the default value (45°N) is used.
+   * the default value (45ï¿½N) is used.
    */
   bool initProjection(int v1);
 

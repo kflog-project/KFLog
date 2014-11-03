@@ -2,7 +2,7 @@
 **
 **   igc3dpolyhedron.cpp
 **
-**   This file is part of KFLog4.
+**   This file is part of KFLog.
 **
 ************************************************************************
 **
