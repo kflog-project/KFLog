@@ -12,8 +12,6 @@
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
  **
- **   $Id$
- **
  ***********************************************************************/
 
 #include "soaringpilot.h"
@@ -366,6 +364,7 @@ int SoaringPilot::downloadFlight(int /*flightID*/, int /*secMode*/, const QStrin
             flightCount.insert( key, fc );
           }
           else {
+            fc = 1;
             flightCount.insert( key, 1 );
           }
 

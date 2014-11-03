@@ -14,9 +14,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/file.h>
-#include <stdio.h>
+#include <cstdio>
 #include <cstdlib>
-#include <string.h>
+#include <cstring>
 #include <strings.h>
 #include <fcntl.h>
 #include <unistd.h>

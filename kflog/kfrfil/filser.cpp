@@ -2,17 +2,15 @@
 **
 **   filser.cpp
 **
-**   This file is part of KFLog4.
+**   This file is part of KFLog.
 **
 ************************************************************************
 **
 **   Copyright (c):  2003 by Christian Fughe, Harald Maier, Eggert Ehmke
-**                   2011-2013 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -22,7 +20,7 @@
 
 #include <fcntl.h>
 #include <sys/ioctl.h>
-#include <signal.h>
+#include <csignal>
 #include <unistd.h>
 #include <cstdio>
 #include <cstdlib>
@@ -858,9 +856,9 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
   int i, j, l, ftab[16], etab[16], time = 0, time_orig = 0, fix_lat, fix_lat_orig = 0, fix_lon, fix_lon_orig = 0, tp;
   unsigned char flight_no = 0, *fil_p_ev = 0;
 
-  unsigned int ext_dat;
+  unsigned int ext_dat = 0;
   char HFDTE[256], fix_ext_num = 0, ext_num = 0, ev = 0, fix_stat;
-  unsigned int flt_id;
+  unsigned int flt_id = 0;
   char *flt_pilot = 0, *flt_glider = 0, *flt_reg = 0, *flt_comp = 0, *flt_observer = 0, *flt_gps = 0;
   unsigned char flt_class_id = 0, flt_gps_datum = 0, flt_fix_accuracy = 0;
 

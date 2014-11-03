@@ -7,12 +7,10 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by Harald Maier
-**                   2011-2013 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -24,8 +22,8 @@
 
 #include <fcntl.h>
 #include <termios.h>
-#include <time.h>
-#include <signal.h>
+#include <ctime>
+#include <csignal>
 
 #include <ctype.h>
 

@@ -7,16 +7,14 @@
 ************************************************************************
 **
 **   Copyright (c): 2004 by André Somers <andre@kflog.org>
-**                  2011 by Axel Pauli
+**                  2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
-#include <QtGui>
+#include <QtCore>
 
 #include "elevationfinder.h"
 #include "mapcontents.h"
@@ -121,8 +119,6 @@ int ElevationFinder::findDEMelevation(const QPoint& coordinates)
     }
 
   return h;
-
-  timer->start( 10000 );
 }
 
 void ElevationFinder::timeout()

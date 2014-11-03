@@ -7,17 +7,16 @@
  ************************************************************************
  **
  **   Copyright (c):  2002 by Heiner Lamprecht
+ **                   2014 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   Licence. See the file COPYING for more information.
- **
- **   $Id$
  **
  ***********************************************************************/
 
 #include "vla_support.h"
 
-#include <stdio.h>
+#include <cstdio>
 #include <cstdlib>
 #include <iostream>
 
@@ -26,9 +25,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#include <signal.h>
+#include <csignal>
 #include <termios.h>
-#include <time.h>
+#include <ctime>
 #include <unistd.h>
 
 using namespace std; 
@@ -73,7 +72,7 @@ VLA_ERROR VLA_SYS::serial_open_port()
   extern struct termios newTermEnv;
   extern struct termios oldTermEnv;
 
-  /* eventuell als Mode zusätzlich O_NONBLOCK ??? */
+  /* eventuell als Mode zusaetzlich O_NONBLOCK ??? */
   portID = open(portName, O_RDWR | O_NOCTTY);
 
   if(portID == -1) {
@@ -187,12 +186,22 @@ VLA_ERROR VLA_SYS::serial_close_port()
 VLA_ERROR VLA_SYS::serial_out(const byte outbyte)
 {
   extern int portID;
-  if (portID == -1) {
-    return VLA_ERR_COMM;
-  }
 
-  write(portID, &outbyte, sizeof(outbyte));
-  return VLA_ERR_NOERR;
+  if (portID == -1)
+    {
+      return VLA_ERR_COMM;
+    }
+
+  int res = write(portID, &outbyte, sizeof(outbyte));
+
+  if( res < -1 )
+    {
+      return VLA_ERR_NOERR;
+    }
+  else
+    {
+      return VLA_ERR_COMM;
+    }
 }
 
 /**
@@ -214,8 +223,8 @@ VLA_ERROR VLA_SYS::serial_in(byte *inbyte)
     // Kein Zeichen empfangen!!!
     //		  cerr << "\n Nichts gelesen !!!\n\n";
     //      cerr << "Fehlercode: " << VLA_ERR_NOCHAR << " (sonst: " << VLA_ERR_NOERR << ")\n";
-    // Trotz dieses Rückgabe-Codes bricht die aufrufende Funktion nicht ab!
-    // Eine "-1" kann die Funktion nicht zurückliefern, da dies kein
+    // Trotz dieses Rueckgabe-Codes bricht die aufrufende Funktion nicht ab!
+    // Eine "-1" kann die Funktion nicht zurueckliefern, da dies kein
     // Element von VLA_ERROR ist :-(
     return VLA_ERR_NOCHAR;		
   }
