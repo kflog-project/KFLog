@@ -84,24 +84,23 @@ int main(int argc, char **argv)
   QTextCodec::setCodecForTr( QTextCodec::codecForName ("UTF-8") );
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 #endif
-  // Make install root of KFLog available for other modules via
-  // QSettings. The assumption is that KFLog is installed at
-  // <root>/bin/kflog. The <root> path will be passed to QSettings.
-  char *callPath = dirname(argv[0]);
-  char *startDir = getcwd(0,0);
-  chdir( callPath );
-  char *callDir = getcwd(0,0);
-  QString root = QString(dirname(callDir));
-  _settings.setValue( "/Path/InstallRoot", root );
+  // Make install root of KFLog available for other modules via QSettings.
+  // The assumption is, that KFLog is installed at <root>/bin/kflog.
+  // The <root> path will be stored in QSettings.
+  QDir rootDir( QFileInfo(argv[0]).canonicalPath() );
 
-  // change back to start directory
-  chdir( startDir );
-  free( callDir );
-  free( startDir );
+  if( rootDir.cdUp() == false )
+    {
+      qWarning() << "main: KFlog App has no parent directory! InstallDir is" << rootDir;
+    }
+
+  QString rootPath = rootDir.canonicalPath();
+
+ _settings.setValue( "/Path/InstallRoot", rootPath );
 
   qDebug() << "KFLog Version:" << KFLOG_VERSION;
   qDebug() << "KFLog Built Date:" << __DATE__;
-  qDebug() << "KFLog Install Root:" << root;
+  qDebug() << "KFLog Install Root:" << rootPath;
 
   if( _settings.value( "/GeneralOptions/Logo", true ).toBool() )
     {
@@ -112,7 +111,6 @@ int main(int argc, char **argv)
 
       _mainWindow = new MainWindow;
       _mainWindow->setVisible( true );
-
       splash.finish( _mainWindow );
     }
   else
