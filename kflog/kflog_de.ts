@@ -1471,532 +1471,532 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="mainwindow.cpp" line="147"/>
+        <location filename="mainwindow.cpp" line="168"/>
         <source>Toolbar</source>
         <translation>Werkzeugleiste</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="365"/>
+        <location filename="mainwindow.cpp" line="386"/>
         <source>Flight Data</source>
         <translation>Flugdaten</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="373"/>
+        <location filename="mainwindow.cpp" line="394"/>
         <source>Flight Evaluation</source>
         <translation>Flugauswertung</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="381"/>
+        <location filename="mainwindow.cpp" line="402"/>
         <source>Help</source>
         <translation>Hilfe</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="389"/>
+        <location filename="mainwindow.cpp" line="410"/>
         <source>Terrain Profile</source>
         <translation>Gelände Profil</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="397"/>
+        <location filename="mainwindow.cpp" line="418"/>
         <source>Map Control</source>
         <translation>Versarten Kontrolle</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="405"/>
+        <location filename="mainwindow.cpp" line="426"/>
         <source>Loaded Objects</source>
         <translation>Geladene Objekte</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="413"/>
+        <location filename="mainwindow.cpp" line="434"/>
         <source>Waypoints</source>
         <translation>Wegpunkte</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="430"/>
+        <location filename="mainwindow.cpp" line="451"/>
         <source>New &amp;Waypoint</source>
         <translation>Neuer &amp;Wegpunkt</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="471"/>
-        <location filename="mainwindow.cpp" line="1832"/>
+        <location filename="mainwindow.cpp" line="492"/>
+        <location filename="mainwindow.cpp" line="1853"/>
         <source>Print Map</source>
         <translation>Drucke Karte</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="477"/>
+        <location filename="mainwindow.cpp" line="498"/>
         <source>Print Flight Data</source>
         <translation>Drucke Flugdaten</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="482"/>
+        <location filename="mainwindow.cpp" line="503"/>
         <source>Print Task Data</source>
         <translation>Drucke Aufgabendaten</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="487"/>
+        <location filename="mainwindow.cpp" line="508"/>
         <source>Open Recorder</source>
         <translation>Öffne Rekorder</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="502"/>
+        <location filename="mainwindow.cpp" line="523"/>
         <source>&amp;File</source>
         <translation>&amp;Datei</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="503"/>
+        <location filename="mainwindow.cpp" line="524"/>
         <source>&amp;New</source>
         <translation>&amp;Neu</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="601"/>
+        <location filename="mainwindow.cpp" line="622"/>
         <source>Move map NW</source>
         <translation>Verschiebe Karte NW</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="608"/>
+        <location filename="mainwindow.cpp" line="629"/>
         <source>Move map N</source>
         <translation>Verschiebe Karte N</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="615"/>
+        <location filename="mainwindow.cpp" line="636"/>
         <source>Move map NE</source>
         <translation>Verschiebe Karte NE</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="622"/>
-        <location filename="mainwindow.cpp" line="629"/>
+        <location filename="mainwindow.cpp" line="643"/>
+        <location filename="mainwindow.cpp" line="650"/>
         <source>Move map W</source>
         <translation>Verschiebe Karte W</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="636"/>
+        <location filename="mainwindow.cpp" line="657"/>
         <source>Move map SW</source>
         <translation>Verschiebe Karte SW</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="643"/>
+        <location filename="mainwindow.cpp" line="664"/>
         <source>Move map S</source>
         <translation>Verschiebe Karte S</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="650"/>
+        <location filename="mainwindow.cpp" line="671"/>
         <source>Move map SO</source>
         <translation>Verschiebe Karte SO</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="656"/>
+        <location filename="mainwindow.cpp" line="677"/>
         <source>Show map data touched by Mouse</source>
         <translation>Zeige Kartendaten unter Mauszeiger</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="684"/>
+        <location filename="mainwindow.cpp" line="705"/>
         <source>Move map</source>
         <translation>Verschiebe Karte</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="698"/>
+        <location filename="mainwindow.cpp" line="719"/>
         <source>Show &amp;Evaluation Window</source>
         <translation>Zeige B&amp;ewertungsfenster</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="715"/>
+        <location filename="mainwindow.cpp" line="736"/>
         <source>Optimize</source>
         <translation>Optimiere</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="721"/>
+        <location filename="mainwindow.cpp" line="742"/>
         <source>Optimize for OLC</source>
         <translation>Optimiere für OLC</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="727"/>
+        <location filename="mainwindow.cpp" line="748"/>
         <source>Altitude</source>
         <translation>Höhe</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="731"/>
+        <location filename="mainwindow.cpp" line="752"/>
         <source>Cycling</source>
         <translation>Kreisflug</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="735"/>
+        <location filename="mainwindow.cpp" line="756"/>
         <source>Speed</source>
         <translation>Geschwindigkeit</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="739"/>
+        <location filename="mainwindow.cpp" line="760"/>
         <source>Vario</source>
         <translation>Vario</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="743"/>
+        <location filename="mainwindow.cpp" line="764"/>
         <source>Airspace Violations</source>
         <translation>Luftraumverletzungen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="747"/>
+        <location filename="mainwindow.cpp" line="768"/>
         <source>Solid</source>
         <translation>Durchgezogen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="986"/>
+        <location filename="mainwindow.cpp" line="1007"/>
         <source>About &amp;Qt</source>
         <translation>Über &amp;Qt</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="989"/>
-        <location filename="mainwindow.cpp" line="1929"/>
+        <location filename="mainwindow.cpp" line="1010"/>
+        <location filename="mainwindow.cpp" line="1950"/>
         <source>About KFLog</source>
         <translation>Über KFLog</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1204"/>
+        <location filename="mainwindow.cpp" line="1225"/>
         <source>Plugin is missing!</source>
         <translation>Plugin nicht gefunden!</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1363"/>
-        <location filename="mainwindow.cpp" line="1414"/>
-        <location filename="mainwindow.cpp" line="1461"/>
+        <location filename="mainwindow.cpp" line="1384"/>
+        <location filename="mainwindow.cpp" line="1435"/>
+        <location filename="mainwindow.cpp" line="1482"/>
         <source>Opening file...</source>
         <translation>Öffne Datei...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1366"/>
+        <location filename="mainwindow.cpp" line="1387"/>
         <source>Open Flight</source>
         <translation>Öffne Flug</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1371"/>
+        <location filename="mainwindow.cpp" line="1392"/>
         <source>All types</source>
         <translation>Alle Typen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1372"/>
+        <location filename="mainwindow.cpp" line="1393"/>
         <source>IGC</source>
         <translation>IGC</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1373"/>
+        <location filename="mainwindow.cpp" line="1394"/>
         <source>Garmin</source>
         <translation>Garmin</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1409"/>
-        <location filename="mainwindow.cpp" line="1453"/>
-        <location filename="mainwindow.cpp" line="1501"/>
-        <location filename="mainwindow.cpp" line="1536"/>
-        <location filename="mainwindow.cpp" line="1863"/>
-        <location filename="mainwindow.cpp" line="1888"/>
+        <location filename="mainwindow.cpp" line="1430"/>
+        <location filename="mainwindow.cpp" line="1474"/>
+        <location filename="mainwindow.cpp" line="1522"/>
+        <location filename="mainwindow.cpp" line="1557"/>
+        <location filename="mainwindow.cpp" line="1884"/>
+        <location filename="mainwindow.cpp" line="1909"/>
         <source>Ready.</source>
         <translation>Fertig.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1464"/>
+        <location filename="mainwindow.cpp" line="1485"/>
         <source>Open Task</source>
         <translation>Öffne Aufgabe</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1932"/>
+        <location filename="mainwindow.cpp" line="1953"/>
         <source>&lt;html&gt;KFLog %1, &amp;copy; 2000-2014, The KFLog-Team&lt;/html&gt;</source>
         <translation>&lt;html&gt;KFLog %1, &amp;copy; 2000-2014, Das KFLog-Team&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1936"/>
+        <location filename="mainwindow.cpp" line="1957"/>
         <source>&lt;html&gt;KFLog %1, compiled at %2 with QT %3&lt;br&gt;&lt;br&gt;Homepage: &lt;a href=&quot;http://www.kflog.org/kflog/&quot;&gt;www.kflog.org/kflog/&lt;/a&gt;&lt;br&gt;&lt;br&gt;GitHub Software Repository: &lt;a href=&quot;https://github.com/kflog-project/KFLog&quot;&gt;https://github.com/kflog-project/KFLog&lt;/a&gt;&lt;br&gt;&lt;br&gt;ChangeLog &lt;a href=&quot;https://github.com/kflog-project/KFLog/blob/%1/ChangeLog&quot;&gt;%1&lt;/a&gt;&lt;br&gt;&lt;br&gt;Report bugs to: &lt;a href=&quot;https://github.com/kflog-project/KFLog/issues&quot;&gt;kflog-project/KFLog/issues&lt;/a&gt;&lt;br&gt;&lt;br&gt;Published under the &lt;a href=&quot;http://www.gnu.org/licenses/licenses.html#GPL&quot;&gt;GPL&lt;/a&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;KFLog %1, gebaut am %2 mit QT %3&lt;br&gt;&lt;br&gt;Internet Adresse: &lt;a href=&quot;http://www.kflog.org/kflog/&quot;&gt;www.kflog.org/kflog/&lt;/a&gt;&lt;br&gt;&lt;br&gt;GitHub Software Archiv: &lt;a href=&quot;https://github.com/kflog-project/KFLog&quot;&gt;https://github.com/kflog-project/KFLog&lt;/a&gt;&lt;br&gt;&lt;br&gt;ChangeLog &lt;a href=&quot;https://github.com/kflog-project/KFLog/blob/%1/ChangeLog&quot;&gt;%1&lt;/a&gt;&lt;br&gt;&lt;br&gt;Melde Fehler an: &lt;a href=&quot;https://github.com/kflog-project/KFLog/issues&quot;&gt;kflog-project/KFLog/issues&lt;/a&gt;&lt;br&gt;&lt;br&gt;Veröffentlicht unter der &lt;a href=&quot;http://www.gnu.org/licenses/licenses.html#GPL&quot;&gt;GPL&lt;/a&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1950"/>
+        <location filename="mainwindow.cpp" line="1971"/>
         <source>&lt;html&gt;&lt;b&gt;Temporarily Maintainer&lt;/b&gt;&lt;blockquote&gt;Axel Pauli &amp;lt;&lt;a href=&quot;mailto:kflog.cumulus&amp;#64;gmail.com&quot;&gt;kflog.cumulus&amp;#64;gmail.com&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;&lt;b&gt;Developers, Maintainers&lt;/b&gt;&lt;blockquote&gt;Axel Pauli (Developer, Portage to Qt4)&lt;br&gt;Constantijn Neeteson (Maintenance, Core-developer)&lt;br&gt;Florian Ehinger (Maintenance, Core-developer, Mapdata)&lt;br&gt;Heiner Lamprecht (Maintenance, Core-developer)&lt;br&gt;Andr&amp;eacute; Somers (Developer, Waypoint-handling, Plugin architecture, ...)&lt;br&gt;Christof Bodner (Developer, OLC Optimization)&lt;br&gt;Eggert Ehmke (Developer)&lt;br&gt;Harald Maier (Developer, Waypoint-Dialog, Task-handling)&lt;br&gt;Thomas Nielsen (Developer, 3D-Dialog)&lt;br&gt;Jan Kr&amp;uuml;ger (Developer, 3D-Dialog)&lt;br&gt;Matthias Degenkolb (Developer, MS-Windows portage)&lt;br&gt;Peter Simon (Developer, MS-Windows portage)&lt;/blockquote&gt;&lt;b&gt;Server Sponsor&lt;/b&gt;&lt;blockquote&gt;Heiner Lamprecht &amp;lt;&lt;a href=&quot;mailto:heiner&amp;#64;kflog.org&quot;&gt;heiner&amp;#64;kflog.org&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;Thanks to all, who have made available this software!&lt;br&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;b&gt;Augenblickliche Wartung durch&lt;/b&gt;&lt;blockquote&gt;Axel Pauli &amp;lt;&lt;a href=&quot;mailto:kflog.cumulus&amp;#64;gmail.com&quot;&gt;kflog.cumulus&amp;#64;gmail.com&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;&lt;b&gt;Entwickler und Instandhalter&lt;/b&gt;&lt;blockquote&gt;Axel Pauli (Entwickler, Portierung zu Qt4)&lt;br&gt;Constantijn Neeteson (Instandhalter, Kernentwickler)&lt;br&gt;Florian Ehinger (Instandhalter, Kernentwickler, Kartendaten)&lt;br&gt;Heiner Lamprecht (Instandhalter, Kernentwickler)&lt;br&gt;Andr&amp;eacute; Somers (Entwickler, Wegpunkte, Plugin Architektur, ...)&lt;br&gt;Christof Bodner (Entwickler, OLC Optimierung)&lt;br&gt;Eggert Ehmke (Entwickler)&lt;br&gt;Harald Maier (Entwickler, Wegpunkt-Dialog, Aufgaben)&lt;br&gt;Thomas Nielsen (Entwickler, 3D-Dialog)&lt;br&gt;Jan Kr&amp;uuml;ger (Entwickler, 3D-Dialog)&lt;br&gt;Matthias Degenkolb (Entwickler, MS-Windows Portierung)&lt;br&gt;Peter Simon (Entwickler, MS-Windows Portierung)&lt;/blockquote&gt;&lt;b&gt;Server Sponsor&lt;/b&gt;&lt;blockquote&gt;Heiner Lamprecht &amp;lt;&lt;a href=&quot;mailto:heiner&amp;#64;kflog.org&quot;&gt;heiner&amp;#64;kflog.org&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;Danke an alle, die beim Erstellen dieser Software mitgewirkt haben und sie weiter pflegen!&lt;br&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="435"/>
+        <location filename="mainwindow.cpp" line="456"/>
         <source>New &amp;Task</source>
         <translation>Neue &amp;Aufgabe</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="441"/>
+        <location filename="mainwindow.cpp" line="462"/>
         <source>New &amp;Flight Group</source>
         <translation>Neue &amp;Gruppe von Flügen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="447"/>
+        <location filename="mainwindow.cpp" line="468"/>
         <source>&amp;Open Flight</source>
         <translation>Flug &amp;Öffnen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="453"/>
+        <location filename="mainwindow.cpp" line="474"/>
         <source>Open &amp;Task</source>
         <translation>&amp;Aufgabe öffnen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="459"/>
+        <location filename="mainwindow.cpp" line="480"/>
         <source>&amp;Close Flight/Task</source>
         <translation>&amp;Schließen Flug/Aufgabe</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="466"/>
+        <location filename="mainwindow.cpp" line="487"/>
         <source>Save map to PNG...</source>
         <translation>Sichere Karte in PNG...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="493"/>
+        <location filename="mainwindow.cpp" line="514"/>
         <source>&amp;Quit</source>
         <translation>&amp;Beenden</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="513"/>
+        <location filename="mainwindow.cpp" line="534"/>
         <source>&amp;Open recent files</source>
         <translation>Öffne &amp;kürzlich verwendete Dateien</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="547"/>
+        <location filename="mainwindow.cpp" line="568"/>
         <source>Center to &amp;Task</source>
         <translation>Zentriere in &amp;Aufgabe</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="554"/>
+        <location filename="mainwindow.cpp" line="575"/>
         <source>Center to &amp;Flight</source>
         <translation>Zentriere Im &amp;Flug</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="561"/>
+        <location filename="mainwindow.cpp" line="582"/>
         <source>Center to &amp;Homesite</source>
         <translation>Zentriere auf &amp;Heimatflugplatz</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="568"/>
+        <location filename="mainwindow.cpp" line="589"/>
         <source>&amp;Center to...</source>
         <translation>&amp;Zentriere auf...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="575"/>
+        <location filename="mainwindow.cpp" line="596"/>
         <source>Zoom &amp;In</source>
         <translation>Vergrößern</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="582"/>
+        <location filename="mainwindow.cpp" line="603"/>
         <source>Zoom &amp;Out</source>
         <translation>Verkleinern</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="589"/>
+        <location filename="mainwindow.cpp" line="610"/>
         <source>&amp;Zoom into mouse rectangle</source>
         <translation>&amp;Vergrößere in Mausausschnitt</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="595"/>
+        <location filename="mainwindow.cpp" line="616"/>
         <source>&amp;Redraw</source>
         <translation>Neu Zeichnen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="669"/>
+        <location filename="mainwindow.cpp" line="690"/>
         <source>&amp;View</source>
         <translation>Ansicht</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="708"/>
+        <location filename="mainwindow.cpp" line="729"/>
         <source>Set QNH</source>
         <translation>Setze QNH</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="766"/>
+        <location filename="mainwindow.cpp" line="787"/>
         <source>View flight in 3D</source>
         <translation>Zeige Flug in 3D</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="773"/>
+        <location filename="mainwindow.cpp" line="794"/>
         <source>View flight in 3D (OpenGL)</source>
         <translation>Zeige Flug in 3D (OpenGL)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="779"/>
+        <location filename="mainwindow.cpp" line="800"/>
         <source>&amp;Start Flight Animation</source>
         <translation>&amp;Starten Flug Animation</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="786"/>
+        <location filename="mainwindow.cpp" line="807"/>
         <source>&amp;Pause Flight Animation</source>
         <translation>&amp;Pausieren Flug Animation</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="793"/>
+        <location filename="mainwindow.cpp" line="814"/>
         <source>Stop Flight &amp;Animation</source>
         <translation>Stoppen Flug &amp;Animation</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="800"/>
+        <location filename="mainwindow.cpp" line="821"/>
         <source>Next Flight Point</source>
         <translation>Nächster Flugpunkt</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="806"/>
+        <location filename="mainwindow.cpp" line="827"/>
         <source>Prev Flight Point</source>
         <translation>Vorheriger Flugpunkt</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="812"/>
+        <location filename="mainwindow.cpp" line="833"/>
         <source>Step +10 Flight Points</source>
         <translation>Spinge +10 Flugpunkte</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="818"/>
+        <location filename="mainwindow.cpp" line="839"/>
         <source>Step -10 Flight Points</source>
         <translation>Spinge -10 Flugpunkte</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="824"/>
+        <location filename="mainwindow.cpp" line="845"/>
         <source>First Flight Point</source>
         <translation>Erster Flugpunkt</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="830"/>
+        <location filename="mainwindow.cpp" line="851"/>
         <source>Last Flight Point</source>
         <translation>Letzter Flugpunkt</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="838"/>
+        <location filename="mainwindow.cpp" line="859"/>
         <source>F&amp;light</source>
         <translation>F&amp;lug</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="844"/>
+        <location filename="mainwindow.cpp" line="865"/>
         <source>Show Flight Data</source>
         <translation>Zeige Flugdaten</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="869"/>
+        <location filename="mainwindow.cpp" line="890"/>
         <source>&amp;Flights</source>
         <translation>&amp;Flüge</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="882"/>
+        <location filename="mainwindow.cpp" line="903"/>
         <source>Show Flight &amp;Data</source>
         <translation>Zeige Flug&amp;daten</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="891"/>
+        <location filename="mainwindow.cpp" line="912"/>
         <source>Show Help Window</source>
         <translation>Zeige Hilfefenster</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="900"/>
+        <location filename="mainwindow.cpp" line="921"/>
         <source>Show KFLog &amp;Browser</source>
         <translation>Zeige KFLog-&amp;Browser</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="909"/>
+        <location filename="mainwindow.cpp" line="930"/>
         <source>Show Terrain Profile</source>
         <translation>Zeige Geländeprofil</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="919"/>
+        <location filename="mainwindow.cpp" line="940"/>
         <source>Show &amp;Map</source>
         <translation>Zeige &amp;Karte</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="925"/>
+        <location filename="mainwindow.cpp" line="946"/>
         <source>Show Map&amp; Control</source>
         <translation>Zeige Karten&amp;kontrolle</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="931"/>
+        <location filename="mainwindow.cpp" line="952"/>
         <source>Show Toolbar</source>
         <translation>Zeige Werkzeugleiste</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="939"/>
+        <location filename="mainwindow.cpp" line="960"/>
         <source>Show Statusbar</source>
         <translation>Zeige Statusleiste</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="946"/>
+        <location filename="mainwindow.cpp" line="967"/>
         <source>Show &amp;Waypoints</source>
         <translation>Zeige &amp;Wegpunkte</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="955"/>
+        <location filename="mainwindow.cpp" line="976"/>
         <source>&amp;Windows</source>
         <translation>&amp;Fenster</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="967"/>
+        <location filename="mainwindow.cpp" line="988"/>
         <source>&amp;Settings</source>
         <translation>&amp;Einstellungen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="969"/>
+        <location filename="mainwindow.cpp" line="990"/>
         <source>KFLog &amp;Setup...</source>
         <translation>KFLog Ein&amp;stellungen...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="979"/>
+        <location filename="mainwindow.cpp" line="1000"/>
         <source>&amp;Help</source>
         <translation>&amp;Hilfe</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="982"/>
+        <location filename="mainwindow.cpp" line="1003"/>
         <source>What&apos;s This?</source>
         <translation>Direkthilfe</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1205"/>
+        <location filename="mainwindow.cpp" line="1226"/>
         <source>Cannot open plugin library:</source>
         <translation>Kann Plugin nicht öffnen:</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1469"/>
+        <location filename="mainwindow.cpp" line="1490"/>
         <source>KFLog tasks</source>
         <translation>KFLog Aufgaben</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1511"/>
+        <location filename="mainwindow.cpp" line="1532"/>
         <source>Opening File...</source>
         <translation>Öffne Datei...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1605"/>
+        <location filename="mainwindow.cpp" line="1626"/>
         <source>Save map as image</source>
         <translation>Speichere Karte als Bild</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1607"/>
+        <location filename="mainwindow.cpp" line="1628"/>
         <source>Image (*.png)</source>
         <translation>Bild (*.png)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1822"/>
+        <location filename="mainwindow.cpp" line="1843"/>
         <source>Printing map ...</source>
         <translation>Drucke Karte ...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1875"/>
+        <location filename="mainwindow.cpp" line="1896"/>
         <source>Printing flight ...</source>
         <translation>Drucke Flug ...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1879"/>
+        <location filename="mainwindow.cpp" line="1900"/>
         <source>Printing task ...</source>
         <translation>Drucke Aufgabe ...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1883"/>
+        <location filename="mainwindow.cpp" line="1904"/>
         <source>Not yet available for type: %1</source>
         <translation>Nicht verfügbar für Typ: %1</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1884"/>
+        <location filename="mainwindow.cpp" line="1905"/>
         <source>Type not available</source>
         <translation>Typ nicht verfügbar</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="259"/>
+        <location filename="mainwindow.cpp" line="280"/>
         <source>Welcome to KFLog</source>
         <translation>Willkommen bei KFLog</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="238"/>
+        <location filename="mainwindow.cpp" line="259"/>
         <source>Welcome to KFLog, the Linux flight analyser.&lt;br&gt;&lt;br&gt;After a first installation you should open the setup menu and configure the following things:&lt;p&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Airspaces:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Define the countries to be downloaded and used.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Points:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Define the point source and the countries to be downloaded and used.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Identity:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Define your personal data and your home airfield.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/p&gt;&lt;br&gt;Have fun with KFLog ;-)&lt;br&gt;&lt;br&gt;Show this message again?</source>
         <translation>&lt;p align=&quot;center&quot;&gt;&lt;big&gt;&lt;br&gt;&lt;b&gt;Willkommen bei KFLog&lt;/b&gt;&lt;/big&gt;&lt;br&gt;&lt;br&gt; dem freien Flug Analysewerkzeug!&lt;/p&gt;&lt;br&gt;Drei kleine Konfigurationsschritte trennen Dich noch von der vollständigen Konfiguration von KFLog:&lt;p&gt;&lt;table style=&quot;spacing:10px&quot;&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Lufträume:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Auswahl der herunterzuladenen und anzuzeigenden Luftraumdaten.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Orte:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Auswahl der Datenquelle und Länder der anzuzeigenden Flugplätze, Thermikquellen und Radio-Navigationspunkt.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Identität:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Angaben zu Deiner Person für die Definition von Flug-Aufgaben, Dein Heimatflugplatz sowie die Sprache der Benutzeroberfläche.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/p&gt;&lt;br&gt;Zur Konfiguration wähle jetzt Einstellungen - KFLog Einstellungen...&lt;br&gt;&lt;br&gt;Viel Spaß mit KFLog ;-)&lt;br&gt;&lt;br&gt;Diese Meldung wieder zeigen?</translation>
     </message>
@@ -2004,56 +2004,56 @@
 <context>
     <name>Map</name>
     <message>
-        <location filename="map.cpp" line="804"/>
+        <location filename="map.cpp" line="776"/>
         <source>Airspace&amp;nbsp;Structure</source>
         <translation>Luftraum&amp;nbsp;Struktur</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="875"/>
-        <location filename="map.cpp" line="891"/>
+        <location filename="map.cpp" line="858"/>
+        <location filename="map.cpp" line="874"/>
         <source>Task Menu</source>
         <translation>Aufgaben Menü</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="881"/>
+        <location filename="map.cpp" line="864"/>
         <source>Create waypoint here</source>
         <translation>Erzeuge Wegpunkt hier</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="886"/>
-        <location filename="map.cpp" line="920"/>
+        <location filename="map.cpp" line="869"/>
+        <location filename="map.cpp" line="903"/>
         <source>End task planning</source>
         <translation>Aufgabenplanungsende</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="902"/>
+        <location filename="map.cpp" line="885"/>
         <source>Add waypoint 1x</source>
         <translation>Wegpunkt 1x hinzufügen</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="906"/>
+        <location filename="map.cpp" line="889"/>
         <source>Add waypoint 2x</source>
         <translation>Wegpunkt 2x hinzufügen</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="915"/>
+        <location filename="map.cpp" line="898"/>
         <source>Delete all waypoints</source>
         <translation>Alle Wegpunkte löschen</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="994"/>
-        <location filename="map.cpp" line="1032"/>
-        <location filename="map.cpp" line="1089"/>
+        <location filename="map.cpp" line="977"/>
+        <location filename="map.cpp" line="1015"/>
+        <location filename="map.cpp" line="1072"/>
         <source>Ready.</source>
         <translation>Fertig.</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="2951"/>
+        <location filename="map.cpp" line="2857"/>
         <source>Map Menu</source>
         <translation>Karten Menü</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="3171"/>
+        <location filename="map.cpp" line="3039"/>
         <source>Create a new Waypoint</source>
         <translation>Erzeuge neuen Wegpunkt</translation>
     </message>
@@ -2064,34 +2064,34 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="map.cpp" line="845"/>
-        <location filename="map.cpp" line="1849"/>
+        <location filename="map.cpp" line="816"/>
+        <location filename="map.cpp" line="1792"/>
         <source>Task planning on</source>
         <translation>Aufgabenplanung ein</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="910"/>
+        <location filename="map.cpp" line="893"/>
         <source>Delete waypoint 1x</source>
         <translation>Lösche Wegpunkt 1x</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="1118"/>
-        <location filename="map.cpp" line="1160"/>
+        <location filename="map.cpp" line="1101"/>
+        <location filename="map.cpp" line="1140"/>
         <source>Drag zooming on</source>
         <translation>Ausschnitt vergrößern ein</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="1173"/>
+        <location filename="map.cpp" line="1153"/>
         <source>Map move on</source>
         <translation>Karte verschieben ein</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="1804"/>
+        <location filename="map.cpp" line="1747"/>
         <source>%1 with %2 (%3) on %4</source>
         <translation>%1 mit %2 (%3) am %4</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="1970"/>
+        <location filename="map.cpp" line="1913"/>
         <source>Drag zooming activated</source>
         <translation>Ausschnittvergrößung ist aktiviert</translation>
     </message>
@@ -2099,146 +2099,146 @@
 <context>
     <name>MapContents</name>
     <message>
-        <location filename="mapcontents.cpp" line="248"/>
-        <location filename="mapcontents.cpp" line="466"/>
-        <location filename="mapcontents.cpp" line="575"/>
+        <location filename="mapcontents.cpp" line="249"/>
+        <location filename="mapcontents.cpp" line="467"/>
+        <location filename="mapcontents.cpp" line="576"/>
         <source>%1 download(s) with %2 error(s) done.</source>
         <translation>%1 Download(s) mit %2 Fehler(n) beendet.</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="251"/>
+        <location filename="mapcontents.cpp" line="252"/>
         <source>Downloads finished</source>
         <translation>Herunterladen beendet</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="264"/>
-        <location filename="mapcontents.cpp" line="487"/>
-        <location filename="mapcontents.cpp" line="596"/>
+        <location filename="mapcontents.cpp" line="265"/>
+        <location filename="mapcontents.cpp" line="488"/>
+        <location filename="mapcontents.cpp" line="597"/>
         <source>Network error occurred.
 All downloads are canceled!</source>
         <translation>Netwerk Fehler aufgetreten.
 Alle Downloads verworfen!</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="267"/>
-        <location filename="mapcontents.cpp" line="490"/>
-        <location filename="mapcontents.cpp" line="599"/>
+        <location filename="mapcontents.cpp" line="268"/>
+        <location filename="mapcontents.cpp" line="491"/>
+        <location filename="mapcontents.cpp" line="600"/>
         <source>Network Error</source>
         <translation>Netzwerk Fehler</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="276"/>
+        <location filename="mapcontents.cpp" line="277"/>
         <source>Welt2000 airfield</source>
         <translation>Welt2000 Flugplatz</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="410"/>
+        <location filename="mapcontents.cpp" line="411"/>
         <source>openAIP airspace</source>
         <translation>openAIP Luftraum</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="469"/>
+        <location filename="mapcontents.cpp" line="470"/>
         <source>openAIP Airspace Downloads finished</source>
         <translation>openAIP Luftraum Downloads beendet</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="578"/>
+        <location filename="mapcontents.cpp" line="579"/>
         <source>openAIP Point Data Downloads finished</source>
         <translation>openAIP Punkt Daten Downloads beendet</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="1189"/>
+        <location filename="mapcontents.cpp" line="1190"/>
         <source>Automatic data download?</source>
         <translation>Automatischer Daten Download?</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="1190"/>
+        <location filename="mapcontents.cpp" line="1191"/>
         <source>&lt;html&gt;There are &lt;b&gt;%1&lt;/b&gt; data missing!&lt;br&gt;&lt;br&gt;Do you want to download these data from the Internet?&lt;/html&gt;</source>
         <translation>&lt;html&gt;Es werden &lt;b&gt;%1&lt;/b&gt; Daten vermisst!&lt;br&gt;&lt;br&gt;Möchtest du diese Daten aus dem Internet holen?&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="1345"/>
+        <location filename="mapcontents.cpp" line="1346"/>
         <source>Map directories not found</source>
         <translation>Karten Verzeichnisse nicht gefunden</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="1347"/>
+        <location filename="mapcontents.cpp" line="1348"/>
         <source>The directories for the map files do not exist.</source>
         <translation>Die Verzeichnisse für die Karten Dateien gibt es nicht.</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="1348"/>
+        <location filename="mapcontents.cpp" line="1349"/>
         <source>Please select the map root directory.</source>
         <translation>Bitte wähle ein Karten Wurzelverzeichnis aus.</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="1352"/>
+        <location filename="mapcontents.cpp" line="1353"/>
         <source>Select a map root directory!</source>
         <translation>Wähle ein Karten Wurzelverzeichnis aus!</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="1365"/>
+        <location filename="mapcontents.cpp" line="1366"/>
         <source>Loading map data ...</source>
         <translation>Lade Karten Dateien ...</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="2010"/>
+        <location filename="mapcontents.cpp" line="2011"/>
         <source>&lt;html&gt;&lt;b&gt;Graphical Task Planning&lt;/b&gt;&lt;br&gt;&lt;br&gt;If a new task is created the graphical task planning is activated automatically. Press the left mouse button on a point at the map and you will get displayed a popup menu with the possible actions. Position the mouse pointer at an existing waypoint to add or delete it from the task. Position the mouse pointer at a free point at the map to create a new waypoint. The new created waypoint will be added to the task. Waypoints are always appended at the end of the task. If you need more flexibility, you should open the task in the task editor. With the editor you have more possibilities to modify the task.&lt;br&gt;&lt;br&gt;To finish the graphical task planning use the menu point &lt;b&gt;&lt;i&gt;End task planning&lt;/i&gt;&lt;/b&gt;. It is important to do that otherwise the task is not closed.&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;b&gt;Grafische Aufgabenplanung&lt;/b&gt;&lt;br&gt;&lt;br&gt;Beim Erstellen einer neuen Aufgabe wird der grafische Aufgabenplaner automatisch gestartet. Beim Drücken der linken Maustaste über einem Punkt auf der karte wird ein Popup Menu mit den verfügbaren Aktionen angezeigt. Positioniere die Maus über einen existierenden Wegpunkt um diesen zur Aufgabe hinzuzufügen oder aus der Aufgabe zu löschen. Positioniere die Maus über einer freien Fläche auf der Karte um einen neuen Wegpunkt an der Mausposition zu definieren. Der neue Wegpunkt wird automatsich zur Aufgabe hinzugefügt. Wegpunkte werden immer an eine Aufgabe angefügt. Falls sie mehr flexibilität in der Aufgabenbearbeitung benötigen, öffnen sie bitte den Aufgabeneditor.&lt;br&gt;&lt;br&gt;Um den graphischen Aufgabenplaner zu beenden wählen sie den Menupunkt&lt;b&gt;&lt;i&gt;Aufgabenplaner beenden&lt;/i&gt;&lt;/b&gt;. Falls sie das nicht tun, wird die Definition der Aufgabe nicht abgeschlossen!&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="2067"/>
+        <location filename="mapcontents.cpp" line="2068"/>
         <source>Group-%1</source>
         <translation>Gruppe-%1</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="2165"/>
+        <location filename="mapcontents.cpp" line="2166"/>
         <source>File does not exist</source>
         <translation>Datei existiert nicht</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="2165"/>
+        <location filename="mapcontents.cpp" line="2166"/>
         <source>The selected file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;does not exist!</source>
         <translation>Die ausgewählte Datei&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;existiert nicht!</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="2171"/>
+        <location filename="mapcontents.cpp" line="2172"/>
         <source>File is empty</source>
         <translation>Datei ist leer</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="2171"/>
+        <location filename="mapcontents.cpp" line="2172"/>
         <source>The selected file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;is empty!</source>
         <translation>Die ausgewählte Datei&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;ist leer!</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="2177"/>
+        <location filename="mapcontents.cpp" line="2178"/>
         <source>No permission</source>
         <translation>Keine Rechte</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="2177"/>
+        <location filename="mapcontents.cpp" line="2178"/>
         <source>You don&apos;t have permission to access file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;</source>
         <translation>Du hast keine Zugriffsrechte auf die Datei&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="2261"/>
+        <location filename="mapcontents.cpp" line="2262"/>
         <source>Load task failed!</source>
         <translation>Aufgabe laden fehlgeschlagen!</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="2262"/>
+        <location filename="mapcontents.cpp" line="2263"/>
         <source>Wrong XML task document type </source>
         <translation>Falscher XML Aufgaben Dokumenten Typ </translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="508"/>
+        <location filename="mapcontents.cpp" line="509"/>
         <source>openAIP points</source>
         <translation>openAIP Punkte</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="719"/>
-        <location filename="mapcontents.cpp" line="918"/>
+        <location filename="mapcontents.cpp" line="720"/>
+        <location filename="mapcontents.cpp" line="919"/>
         <source>KFLog maps</source>
         <translation>KFLog Karten</translation>
     </message>
@@ -2690,7 +2690,7 @@ Alle Downloads verworfen!</translation>
         <translation>Punkte</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="729"/>
+        <location filename="map.cpp" line="701"/>
         <source>Begin of task</source>
         <translation>Beginn der Aufgabe</translation>
     </message>
@@ -2710,7 +2710,7 @@ Alle Downloads verworfen!</translation>
         <translation>Start</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="674"/>
+        <location filename="waypointcatalog.cpp" line="679"/>
         <source>All formats</source>
         <translation>Alle Formate</translation>
     </message>
@@ -3179,7 +3179,7 @@ Alle Downloads verworfen!</translation>
         <location filename="flight.cpp" line="1028"/>
         <location filename="flight.cpp" line="1199"/>
         <location filename="flightdataprint.cpp" line="124"/>
-        <location filename="map.cpp" line="735"/>
+        <location filename="map.cpp" line="707"/>
         <location filename="tasklistviewitem.cpp" line="117"/>
         <source>Landing</source>
         <translation>Landung</translation>
@@ -3375,10 +3375,10 @@ Alle Downloads verworfen!</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="76"/>
-        <location filename="waypointcatalog.cpp" line="517"/>
-        <location filename="waypointcatalog.cpp" line="1291"/>
-        <location filename="waypointcatalog.cpp" line="1657"/>
-        <location filename="waypointcatalog.cpp" line="2382"/>
+        <location filename="waypointcatalog.cpp" line="522"/>
+        <location filename="waypointcatalog.cpp" line="1296"/>
+        <location filename="waypointcatalog.cpp" line="1662"/>
+        <location filename="waypointcatalog.cpp" line="2387"/>
         <source>The selected file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;does not exist!</source>
         <translation>Die ausgewählte Datei&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;existiert nicht!</translation>
     </message>
@@ -3395,10 +3395,10 @@ Alle Downloads verworfen!</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="90"/>
-        <location filename="waypointcatalog.cpp" line="524"/>
-        <location filename="waypointcatalog.cpp" line="1300"/>
-        <location filename="waypointcatalog.cpp" line="1666"/>
-        <location filename="waypointcatalog.cpp" line="2391"/>
+        <location filename="waypointcatalog.cpp" line="529"/>
+        <location filename="waypointcatalog.cpp" line="1305"/>
+        <location filename="waypointcatalog.cpp" line="1671"/>
+        <location filename="waypointcatalog.cpp" line="2396"/>
         <source>The selected file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;is empty!</source>
         <translation>Die ausgewählte Datei&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;ist leer!</translation>
     </message>
@@ -3409,7 +3409,7 @@ Alle Downloads verworfen!</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="97"/>
-        <location filename="waypointcatalog.cpp" line="543"/>
+        <location filename="waypointcatalog.cpp" line="548"/>
         <source>You don&apos;t have permission to access file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;</source>
         <translation>Du hast keine Zugriffsrechte auf die Datei&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;</translation>
     </message>
@@ -3425,14 +3425,14 @@ Alle Downloads verworfen!</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="127"/>
-        <location filename="flightloader.cpp" line="574"/>
+        <location filename="flightloader.cpp" line="577"/>
         <source>Loading flight...</source>
         <translation>Lade Flug...</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="129"/>
-        <location filename="flightloader.cpp" line="576"/>
-        <location filename="waypointcatalog.cpp" line="553"/>
+        <location filename="flightloader.cpp" line="579"/>
+        <location filename="waypointcatalog.cpp" line="558"/>
         <source>Please wait while loading file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;</source>
         <translation>Bitte warten solange ich den Flug &lt;BR&gt;&lt;B&gt;%1&lt;/B&gt; lade</translation>
     </message>
@@ -3447,41 +3447,41 @@ Alle Downloads verworfen!</translation>
         <translation>Syntax-Fehler während des Ladens der IGC-Datei &lt;BR&gt;&lt;B&gt;%1&lt;/B&gt; Abbruch!</translation>
     </message>
     <message>
-        <location filename="flightloader.cpp" line="379"/>
+        <location filename="flightloader.cpp" line="382"/>
         <source>unknown manufacturer</source>
         <translation>unbekannter Hersteller</translation>
     </message>
     <message>
-        <location filename="flightloader.cpp" line="541"/>
-        <location filename="flightloader.cpp" line="726"/>
-        <location filename="flightloader.cpp" line="784"/>
-        <location filename="flightloader.cpp" line="821"/>
+        <location filename="flightloader.cpp" line="544"/>
+        <location filename="flightloader.cpp" line="729"/>
+        <location filename="flightloader.cpp" line="787"/>
+        <location filename="flightloader.cpp" line="824"/>
         <source>File contains no flight</source>
         <translation>Datei beinhaltet keine Flugdaten</translation>
     </message>
     <message>
-        <location filename="flightloader.cpp" line="543"/>
+        <location filename="flightloader.cpp" line="546"/>
         <source>The selected file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;contains no flight!</source>
         <translation>Die gewählte Datei &lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;beinhaltet keine Flugdaten!</translation>
     </message>
     <message>
-        <location filename="flightloader.cpp" line="551"/>
+        <location filename="flightloader.cpp" line="554"/>
         <source>Please wait while checking airspaces</source>
         <translation>Bitte warten - überprüfe Lufträume</translation>
     </message>
     <message>
-        <location filename="flightloader.cpp" line="728"/>
-        <location filename="flightloader.cpp" line="786"/>
+        <location filename="flightloader.cpp" line="731"/>
+        <location filename="flightloader.cpp" line="789"/>
         <source>The selected file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;exists but contains no QNH value</source>
         <translation>Die gewählte Datei %1 existiert, beinhaltet aber kein QNH</translation>
     </message>
     <message>
-        <location filename="flightloader.cpp" line="823"/>
+        <location filename="flightloader.cpp" line="826"/>
         <source>The selected file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;is empty or unsupported</source>
         <translation>Die gewählte Datei &lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt; ist  leer oder das Format ist nicht unterstützt</translation>
     </message>
     <message>
-        <location filename="flightloader.cpp" line="849"/>
+        <location filename="flightloader.cpp" line="852"/>
         <source>Please enter the QNH of the flight (900-1100 hPa). &lt;br&gt;If you cancel 1013 hPa will be used.</source>
         <translation>Bitte das QNH (900-1100 hPA) für den Flug angeben. &lt;br&gt;Bei Abbruch werden 1013 hPa benutzt.</translation>
     </message>
@@ -3634,82 +3634,82 @@ F:...............Vordergrund
         <translation>Wegpunkt:</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="705"/>
+        <location filename="map.cpp" line="677"/>
         <source>Sector 1</source>
         <translation>Sektor 1</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="710"/>
+        <location filename="map.cpp" line="682"/>
         <source>Sector 2</source>
         <translation>Sektor 2</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="716"/>
+        <location filename="map.cpp" line="688"/>
         <source>FAI-Sector</source>
         <translation>FAI-Sektor</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="720"/>
+        <location filename="map.cpp" line="692"/>
         <source>not reached</source>
         <translation>nicht erreicht</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="726"/>
+        <location filename="map.cpp" line="698"/>
         <source>Take Off</source>
         <translation>Start</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="732"/>
+        <location filename="map.cpp" line="704"/>
         <source>End of task</source>
         <translation>Aufgaben Ende</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="871"/>
+        <location filename="map.cpp" line="854"/>
         <source>Task Menu</source>
         <translation>Aufgaben Menü</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="2949"/>
+        <location filename="map.cpp" line="2855"/>
         <source>Map Menu</source>
         <translation>Karten Menü</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="2957"/>
+        <location filename="map.cpp" line="2863"/>
         <source>&amp;Show item info</source>
         <translation>&amp;Zeige Elementinformation</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="2962"/>
+        <location filename="map.cpp" line="2868"/>
         <source>&amp;Show airspace info</source>
         <translation>&amp;Zeige Luftrauminformation</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="2968"/>
+        <location filename="map.cpp" line="2874"/>
         <source>&amp;New waypoint</source>
         <translation>Neuer &amp;Wegpunkt</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="2973"/>
+        <location filename="map.cpp" line="2879"/>
         <source>&amp;Edit waypoint</source>
         <translation>Wegpunkt &amp;bearbeiten</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="2978"/>
+        <location filename="map.cpp" line="2884"/>
         <source>&amp;Delete waypoint</source>
         <translation>&amp;Lösche Wegpunkt</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="2984"/>
+        <location filename="map.cpp" line="2890"/>
         <source>&amp;Center map</source>
         <translation>Karte &amp;zentrieren</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="2989"/>
+        <location filename="map.cpp" line="2895"/>
         <source>Zoom &amp;In</source>
         <translation>Ver&amp;größern</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="2994"/>
+        <location filename="map.cpp" line="2900"/>
         <source>Zoom &amp;Out</source>
         <translation>Ver&amp;kleinern</translation>
     </message>
@@ -3726,7 +3726,7 @@ F:...............Vordergrund
     <message>
         <location filename="radiopoint.cpp" line="134"/>
         <source>True N aligned:</source>
-        <translation type="unfinished">Missweisend Nord:</translation>
+        <translation>Rechtweisend Nord:</translation>
     </message>
     <message>
         <location filename="radiopoint.cpp" line="138"/>
@@ -3766,7 +3766,7 @@ F:...............Vordergrund
     <message>
         <location filename="radiopoint.cpp" line="227"/>
         <source>True N aligned</source>
-        <translation type="unfinished">Missweisend Nord</translation>
+        <translation>rechtweisend Nord korrigiert</translation>
     </message>
     <message>
         <location filename="runway.cpp" line="82"/>
@@ -3824,171 +3824,171 @@ F:...............Vordergrund
         <translation>Ende</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="115"/>
+        <location filename="waypointcatalog.cpp" line="120"/>
         <source>unnamed</source>
         <translation>unbenannt</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="209"/>
-        <location filename="waypointcatalog.cpp" line="220"/>
-        <location filename="waypointcatalog.cpp" line="313"/>
-        <location filename="waypointcatalog.cpp" line="401"/>
-        <location filename="waypointcatalog.cpp" line="498"/>
-        <location filename="waypointcatalog.cpp" line="516"/>
-        <location filename="waypointcatalog.cpp" line="523"/>
-        <location filename="waypointcatalog.cpp" line="532"/>
-        <location filename="waypointcatalog.cpp" line="1060"/>
-        <location filename="waypointcatalog.cpp" line="1269"/>
-        <location filename="waypointcatalog.cpp" line="1290"/>
-        <location filename="waypointcatalog.cpp" line="1299"/>
-        <location filename="waypointcatalog.cpp" line="1656"/>
-        <location filename="waypointcatalog.cpp" line="1665"/>
-        <location filename="waypointcatalog.cpp" line="1712"/>
-        <location filename="waypointcatalog.cpp" line="2381"/>
-        <location filename="waypointcatalog.cpp" line="2390"/>
-        <location filename="waypointcatalog.cpp" line="2399"/>
-        <location filename="waypointcatalog.cpp" line="2723"/>
-        <location filename="waypointcatalog.cpp" line="2852"/>
+        <location filename="waypointcatalog.cpp" line="214"/>
+        <location filename="waypointcatalog.cpp" line="225"/>
+        <location filename="waypointcatalog.cpp" line="318"/>
+        <location filename="waypointcatalog.cpp" line="406"/>
+        <location filename="waypointcatalog.cpp" line="503"/>
+        <location filename="waypointcatalog.cpp" line="521"/>
+        <location filename="waypointcatalog.cpp" line="528"/>
+        <location filename="waypointcatalog.cpp" line="537"/>
+        <location filename="waypointcatalog.cpp" line="1065"/>
+        <location filename="waypointcatalog.cpp" line="1274"/>
+        <location filename="waypointcatalog.cpp" line="1295"/>
+        <location filename="waypointcatalog.cpp" line="1304"/>
+        <location filename="waypointcatalog.cpp" line="1661"/>
+        <location filename="waypointcatalog.cpp" line="1670"/>
+        <location filename="waypointcatalog.cpp" line="1717"/>
+        <location filename="waypointcatalog.cpp" line="2386"/>
+        <location filename="waypointcatalog.cpp" line="2395"/>
+        <location filename="waypointcatalog.cpp" line="2404"/>
+        <location filename="waypointcatalog.cpp" line="2728"/>
+        <location filename="waypointcatalog.cpp" line="2857"/>
         <source>Error occurred!</source>
         <translation>Fehler aufgetreten!</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="211"/>
+        <location filename="waypointcatalog.cpp" line="216"/>
         <source>not found!</source>
         <translation>nicht gefunden!</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="222"/>
-        <location filename="waypointcatalog.cpp" line="403"/>
-        <location filename="waypointcatalog.cpp" line="500"/>
-        <location filename="waypointcatalog.cpp" line="2725"/>
-        <location filename="waypointcatalog.cpp" line="2854"/>
+        <location filename="waypointcatalog.cpp" line="227"/>
+        <location filename="waypointcatalog.cpp" line="408"/>
+        <location filename="waypointcatalog.cpp" line="505"/>
+        <location filename="waypointcatalog.cpp" line="2730"/>
+        <location filename="waypointcatalog.cpp" line="2859"/>
         <source>permission denied!</source>
         <translation>Zugriff verweigert!</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="247"/>
+        <location filename="waypointcatalog.cpp" line="252"/>
         <source>Error in %1</source>
         <translation>Fehler in %1</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="314"/>
+        <location filename="waypointcatalog.cpp" line="319"/>
         <source>wrong doctype </source>
         <translation>falscher Dokumententyp</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="533"/>
+        <location filename="waypointcatalog.cpp" line="538"/>
         <source>The selected file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;is not a Volkslogger-file!</source>
         <translation>Die selektierte Datei &lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;ist nicht im Volkslogger Format! </translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="541"/>
+        <location filename="waypointcatalog.cpp" line="546"/>
         <source>No permission</source>
         <translation>Keine Berechtigung</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="551"/>
+        <location filename="waypointcatalog.cpp" line="556"/>
         <source>Import file ...</source>
         <translation>Datei importieren ...</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="675"/>
+        <location filename="waypointcatalog.cpp" line="680"/>
         <source>KFLog</source>
         <translation>KFLog</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="676"/>
+        <location filename="waypointcatalog.cpp" line="681"/>
         <source>Cumulus</source>
         <translation>Cumulus</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="677"/>
+        <location filename="waypointcatalog.cpp" line="682"/>
         <source>Cambrigde</source>
         <translation>Cambridge</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="678"/>
+        <location filename="waypointcatalog.cpp" line="683"/>
         <source>Filser txt</source>
         <translation>Filser txt</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="679"/>
+        <location filename="waypointcatalog.cpp" line="684"/>
         <source>Filser da4</source>
         <translation>Filser da4</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="680"/>
+        <location filename="waypointcatalog.cpp" line="685"/>
         <source>SeeYou</source>
         <translation>SeeYou</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="681"/>
+        <location filename="waypointcatalog.cpp" line="686"/>
         <source>Any file</source>
         <translation>Irgend eine Datei</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="684"/>
+        <location filename="waypointcatalog.cpp" line="689"/>
         <source>Save waypoint catalog</source>
         <translation>Sichere Wegpunkkatalog</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="816"/>
+        <location filename="waypointcatalog.cpp" line="821"/>
         <source>Imported from %1</source>
         <translation>Importiert von %1</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="964"/>
+        <location filename="waypointcatalog.cpp" line="969"/>
         <source>To much waypoints!</source>
         <translation>Zu viele Wegpunkte!</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="965"/>
+        <location filename="waypointcatalog.cpp" line="970"/>
         <source>A DA4 waypoint file can only contain up to 600 waypoints. </source>
         <translation>eine DA4 Wegpunktdatei kann maximal 600 Wegpunkte beinhalten.</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="966"/>
+        <location filename="waypointcatalog.cpp" line="971"/>
         <source>Your file contains %1.</source>
-        <translation type="unfinished">Ihre Datei beinhaltet %1.</translation>
+        <translation>Ihre Datei beinhaltet %1 Wegpunkte.</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="1061"/>
+        <location filename="waypointcatalog.cpp" line="1066"/>
         <source>&lt;html&gt;&lt;B&gt;Catalog %1&lt;/B&gt;&lt;BR&gt;not found!&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;B&gt;Katalog %1&lt;/B&gt;&lt;BR&gt;nicht gefunden!&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="1681"/>
+        <location filename="waypointcatalog.cpp" line="1686"/>
         <source>Country filter</source>
         <translation>Länderfilter</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="1682"/>
+        <location filename="waypointcatalog.cpp" line="1687"/>
         <source>2 letter country codes to be read:</source>
         <translation>zu lesender 2 Zeichen Ländercode:</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="1713"/>
+        <location filename="waypointcatalog.cpp" line="1718"/>
         <source>Your country entries were wrong! Two letter codes are only allowed. Use spaces to separate them from each other.</source>
         <translation>Der angegebene Ländercode ist ungültig! </translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="1820"/>
-        <location filename="welt2000.cpp" line="364"/>
+        <location filename="waypointcatalog.cpp" line="1825"/>
+        <location filename="welt2000.cpp" line="369"/>
         <source>Emergency Field No: </source>
         <translation>Notfeld No: </translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="2228"/>
+        <location filename="waypointcatalog.cpp" line="2233"/>
         <source>Waypoint exists</source>
         <translation>Wegpunkt exisitert</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="2229"/>
+        <location filename="waypointcatalog.cpp" line="2234"/>
         <source>A waypoint with the name&lt;BR&gt;&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;&lt;BR&gt;is already in current catalog.&lt;BR&gt;&lt;BR&gt;Do you want to replace the existing waypoint?</source>
         <translation>Ein Wegpunkt mit dem Namen&lt;BR&gt;&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;&lt;BR&gt;existiert bereits im aktuellen Katalog.&lt;BR&gt;&lt;BR&gt;Willst Du den existierenden Wegpunkt ersetzen?</translation>
     </message>
     <message>
-        <location filename="waypointcatalog.cpp" line="2400"/>
+        <location filename="waypointcatalog.cpp" line="2405"/>
         <source>The selected file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;is not readable!</source>
         <translation>Die gewählte Datei &lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;ist nicht lesbar!</translation>
     </message>
@@ -4036,1062 +4036,1072 @@ F:...............Vordergrund
 <context>
     <name>RecorderDialog</name>
     <message>
-        <location filename="recorderdialog.cpp" line="79"/>
+        <location filename="recorderdialog.cpp" line="81"/>
         <source>Menu</source>
-        <translation type="unfinished">Menü</translation>
+        <translation>Menü</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="506"/>
+        <location filename="recorderdialog.cpp" line="508"/>
         <source>Auto</source>
-        <translation type="unfinished">Automatisch</translation>
+        <translation>Automatisch</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="526"/>
+        <location filename="recorderdialog.cpp" line="528"/>
         <source>Flights</source>
-        <translation type="unfinished">Flüge</translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="554"/>
-        <source>Date</source>
-        <translation type="unfinished">Datum</translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="555"/>
-        <source>Pilot</source>
-        <translation type="unfinished">Pilot</translation>
+        <translation>Flüge</translation>
     </message>
     <message>
         <location filename="recorderdialog.cpp" line="556"/>
-        <source>Glider</source>
-        <translation type="unfinished">Segelflugzeug</translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="656"/>
-        <location filename="recorderdialog.cpp" line="899"/>
-        <source>Latitude</source>
-        <translation type="unfinished">Breitengrad</translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="657"/>
-        <location filename="recorderdialog.cpp" line="900"/>
-        <source>Longitude</source>
-        <translation type="unfinished">Längengrad</translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="2691"/>
-        <source>Speed</source>
-        <translation type="unfinished">Geschwindigkeit</translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="2711"/>
-        <source>Altitude</source>
-        <translation type="unfinished">Höhe</translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="2751"/>
-        <source>Vario</source>
-        <translation type="unfinished">Vario</translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="48"/>
-        <source>KFLog Flight Recorder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="93"/>
-        <source>&amp;Close</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="173"/>
-        <source>Recorder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="187"/>
-        <source>Settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="194"/>
-        <source>Port:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="210"/>
-        <source>Transfer speed:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="213"/>
-        <source>URL:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="216"/>
-        <source>Connect to recorder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="224"/>
-        <source>Type:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="238"/>
-        <source>Info</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="240"/>
-        <source>API-Version:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="247"/>
-        <source>Device ID:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="254"/>
-        <source>Software Version:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="261"/>
-        <source>Serial-No.:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="262"/>
-        <source>No recorder connected</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="268"/>
-        <source>Recorder Type:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="275"/>
-        <source>Pilot Name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="279"/>
-        <source>Copilot Name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="283"/>
-        <location filename="recorderdialog.cpp" line="698"/>
-        <source>Glider Type:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="287"/>
-        <location filename="recorderdialog.cpp" line="691"/>
-        <source>Glider Id:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="291"/>
-        <location filename="recorderdialog.cpp" line="692"/>
-        <source>Competition Id:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="295"/>
-        <source>Write data to recorder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="354"/>
-        <source>No recorders installed!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="355"/>
-        <source>There are no recorder-libraries installed.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="553"/>
-        <location filename="recorderdialog.cpp" line="654"/>
-        <location filename="recorderdialog.cpp" line="786"/>
-        <location filename="recorderdialog.cpp" line="897"/>
-        <source>No.</source>
-        <translation type="unfinished"></translation>
+        <source>Date</source>
+        <translation>Datum</translation>
     </message>
     <message>
         <location filename="recorderdialog.cpp" line="557"/>
-        <source>First Point</source>
-        <translation type="unfinished"></translation>
+        <source>Pilot</source>
+        <translation>Pilot</translation>
     </message>
     <message>
         <location filename="recorderdialog.cpp" line="558"/>
-        <source>Last Point</source>
-        <translation type="unfinished"></translation>
+        <source>Glider</source>
+        <translation>Segelflugzeug</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="658"/>
+        <location filename="recorderdialog.cpp" line="901"/>
+        <source>Latitude</source>
+        <translation>Breite</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="659"/>
+        <location filename="recorderdialog.cpp" line="902"/>
+        <source>Longitude</source>
+        <translation>Länge</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="2693"/>
+        <source>Speed</source>
+        <translation>Geschwindigkeit</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="2713"/>
+        <source>Altitude</source>
+        <translation>Höhe</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="2753"/>
+        <source>Vario</source>
+        <translation>Vario</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="50"/>
+        <source>KFLog Flight Recorder</source>
+        <translation>KFLog Flugrecorder</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="95"/>
+        <source>&amp;Close</source>
+        <translation>&amp;Schließen</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="175"/>
+        <source>Recorder</source>
+        <translation>Rekorder</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="189"/>
+        <source>Settings</source>
+        <translation>Einstellungen</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="196"/>
+        <source>Port:</source>
+        <translation>Port:</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="212"/>
+        <source>Transfer speed:</source>
+        <translation>Übertragungsgeschwindigkeit:</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="215"/>
+        <source>URL:</source>
+        <translation>URL:</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="218"/>
+        <source>Connect to recorder</source>
+        <translation>Mit dem Rekorder verbinden</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="226"/>
+        <source>Type:</source>
+        <translation>Typ:</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="240"/>
+        <source>Info</source>
+        <translation>Info</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="242"/>
+        <source>API-Version:</source>
+        <translation>API-Version:</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="249"/>
+        <source>Device ID:</source>
+        <translation>Geräte-Id:</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="256"/>
+        <source>Software Version:</source>
+        <translation>Softwareversion:</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="263"/>
+        <source>Serial-No.:</source>
+        <translation>Seriennummer:</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="264"/>
+        <source>No recorder connected</source>
+        <translation>Kein Rekorder verbunden</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="270"/>
+        <source>Recorder Type:</source>
+        <translation>Rekorder Typ:</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="277"/>
+        <source>Pilot Name:</source>
+        <translation>Pilotenname:</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="281"/>
+        <source>Copilot Name:</source>
+        <translation>Copilotenname:</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="285"/>
+        <location filename="recorderdialog.cpp" line="700"/>
+        <source>Glider Type:</source>
+        <translation>Flugzeugtyp:</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="289"/>
+        <location filename="recorderdialog.cpp" line="693"/>
+        <source>Glider Id:</source>
+        <translation>Flugzeugkennzeichen:</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="293"/>
+        <location filename="recorderdialog.cpp" line="694"/>
+        <source>Competition Id:</source>
+        <translation>Wettbewerbskennzeichen:</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="297"/>
+        <source>Write data to recorder</source>
+        <translation>Schreibe Daten auf Rekorder</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="356"/>
+        <source>No recorders installed!</source>
+        <translation>Keine Rekorder installiert!</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="357"/>
+        <source>There are no recorder-libraries installed.</source>
+        <translation>Es sind kein Rekorderschnittstellen installiert.</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="555"/>
+        <location filename="recorderdialog.cpp" line="656"/>
+        <location filename="recorderdialog.cpp" line="788"/>
+        <location filename="recorderdialog.cpp" line="899"/>
+        <source>No.</source>
+        <translation>Nr.</translation>
     </message>
     <message>
         <location filename="recorderdialog.cpp" line="559"/>
+        <source>First Point</source>
+        <translation>Erster Punkt</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="560"/>
+        <source>Last Point</source>
+        <translation>Letzter Punkt</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="561"/>
         <source>Duration</source>
-        <translation type="unfinished"></translation>
+        <translation>Dauer</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="584"/>
+        <location filename="recorderdialog.cpp" line="586"/>
         <source>Load list</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Liste</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="587"/>
+        <location filename="recorderdialog.cpp" line="589"/>
         <source>Save flight</source>
-        <translation type="unfinished"></translation>
+        <translation>Flug speichern</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="590"/>
+        <location filename="recorderdialog.cpp" line="592"/>
         <source>Long filenames</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="594"/>
-        <source>If checked, long filenames are used.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lange Dateinamen</translation>
     </message>
     <message>
         <location filename="recorderdialog.cpp" line="596"/>
+        <source>If checked, long filenames are used.</source>
+        <translation>Falls gesetzt werden lange Dateinamen verwendet.</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="598"/>
         <source>Fast download</source>
-        <translation type="unfinished"></translation>
+        <translation>Schnelles Laden</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="600"/>
+        <location filename="recorderdialog.cpp" line="602"/>
         <source>&lt;html&gt;If checked, the IGC-file will not be signed.&lt;BR&gt;&lt;b&gt;Note!&lt;/b&gt; Do not use fast download&lt;BR&gt; when using the file for competitions.&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;Falls gesetzt wird die IGC-Datei nicht signiert. &lt;BR&gt;&lt;b&gt;Hinweis!&lt;/b&gt;Bitte schnelles Laden nicht nutzen&lt;BR&gt;wenn die Datei für einem Wettbewerb genutzt werden soll.&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="627"/>
+        <location filename="recorderdialog.cpp" line="629"/>
         <source>Declaration</source>
-        <translation type="unfinished"></translation>
+        <translation>Deklaration</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="655"/>
-        <location filename="recorderdialog.cpp" line="787"/>
-        <location filename="recorderdialog.cpp" line="898"/>
+        <location filename="recorderdialog.cpp" line="657"/>
+        <location filename="recorderdialog.cpp" line="789"/>
+        <location filename="recorderdialog.cpp" line="900"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="674"/>
+        <location filename="recorderdialog.cpp" line="676"/>
         <source>Task:</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgabe:</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="690"/>
+        <location filename="recorderdialog.cpp" line="692"/>
         <source>Pilot:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="697"/>
-        <source>Copilot:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pilot:</translation>
     </message>
     <message>
         <location filename="recorderdialog.cpp" line="699"/>
+        <source>Copilot:</source>
+        <translation>Copilot:</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="701"/>
         <source>Competition Class:</source>
-        <translation type="unfinished"></translation>
+        <translation>Wettbewerbsklasse:</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="702"/>
+        <location filename="recorderdialog.cpp" line="704"/>
         <source>Write declaration to recorder</source>
-        <translation type="unfinished"></translation>
+        <translation>Übertrage Aufgabe an Rekorder</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="705"/>
+        <location filename="recorderdialog.cpp" line="707"/>
         <source>Export declaration to file</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportiere Deklaration in Datei</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="759"/>
+        <location filename="recorderdialog.cpp" line="761"/>
         <source>Tasks</source>
-        <translation type="unfinished">Aufgaben</translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="788"/>
-        <source>Description</source>
-        <translation type="unfinished">Deschreibung</translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="789"/>
-        <location filename="recorderdialog.cpp" line="2667"/>
-        <source>Distance</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgaben</translation>
     </message>
     <message>
         <location filename="recorderdialog.cpp" line="790"/>
+        <source>Description</source>
+        <translation>Beschreibung</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="791"/>
+        <location filename="recorderdialog.cpp" line="2669"/>
+        <source>Distance</source>
+        <translation>Entfernung</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="792"/>
         <source>Total distance</source>
-        <translation type="unfinished"></translation>
+        <translation>Distanz (total)</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="811"/>
+        <location filename="recorderdialog.cpp" line="813"/>
         <source>Write tasks to recorder</source>
-        <translation type="unfinished"></translation>
+        <translation>Übertrage Aufgaben an Rekorder</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="814"/>
+        <location filename="recorderdialog.cpp" line="816"/>
         <source>Read tasks from recorder</source>
-        <translation type="unfinished"></translation>
+        <translation>Lese Aufgaben vom Rekorder</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="870"/>
+        <location filename="recorderdialog.cpp" line="872"/>
         <source>Waypoints</source>
-        <translation type="unfinished">Wegpunkte</translation>
+        <translation>Wegpunkte</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="913"/>
+        <location filename="recorderdialog.cpp" line="915"/>
         <source>Write waypoints to recorder</source>
-        <translation type="unfinished"></translation>
+        <translation>Übertrage Wegpunkte zum Rekorder</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="916"/>
+        <location filename="recorderdialog.cpp" line="918"/>
         <source>Read waypoints from recorder</source>
-        <translation type="unfinished"></translation>
+        <translation>Lese Wegpunkte vom Rekorder</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="992"/>
+        <location filename="recorderdialog.cpp" line="994"/>
         <source>Connecting to recorder</source>
-        <translation type="unfinished"></translation>
+        <translation>Verbinde mit Rekorder</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1047"/>
+        <location filename="recorderdialog.cpp" line="1049"/>
         <source>Sorry, could not connect to recorder.
 Please check connections and settings.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Sorry, kann nicht mit dem Rekorder verbinden.
+Bitte Verbindungseinstellungen und Kabel überprüfen.
+</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1056"/>
-        <location filename="recorderdialog.cpp" line="2147"/>
-        <location filename="recorderdialog.cpp" line="2360"/>
+        <location filename="recorderdialog.cpp" line="1058"/>
+        <location filename="recorderdialog.cpp" line="2149"/>
+        <location filename="recorderdialog.cpp" line="2362"/>
         <source>Recorder Connection</source>
-        <translation type="unfinished"></translation>
+        <translation>Verbindung zum Rekorder</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1070"/>
+        <location filename="recorderdialog.cpp" line="1072"/>
         <source>Closing connection to recorder</source>
-        <translation type="unfinished"></translation>
+        <translation>Schließe Verbindung zum Rekorder</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1153"/>
+        <location filename="recorderdialog.cpp" line="1155"/>
         <source>Flight download</source>
-        <translation type="unfinished"></translation>
+        <translation>Flug herunterladen</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1154"/>
-        <location filename="recorderdialog.cpp" line="1353"/>
-        <location filename="recorderdialog.cpp" line="1384"/>
-        <location filename="recorderdialog.cpp" line="1435"/>
-        <location filename="recorderdialog.cpp" line="1507"/>
-        <location filename="recorderdialog.cpp" line="1692"/>
-        <location filename="recorderdialog.cpp" line="1773"/>
-        <location filename="recorderdialog.cpp" line="1928"/>
-        <location filename="recorderdialog.cpp" line="2009"/>
+        <location filename="recorderdialog.cpp" line="1156"/>
+        <location filename="recorderdialog.cpp" line="1355"/>
+        <location filename="recorderdialog.cpp" line="1386"/>
+        <location filename="recorderdialog.cpp" line="1437"/>
+        <location filename="recorderdialog.cpp" line="1509"/>
+        <location filename="recorderdialog.cpp" line="1694"/>
+        <location filename="recorderdialog.cpp" line="1775"/>
+        <location filename="recorderdialog.cpp" line="1930"/>
+        <location filename="recorderdialog.cpp" line="2011"/>
         <source>Function not implemented</source>
-        <translation type="unfinished"></translation>
+        <translation>Funktion nicht verfügbar</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1161"/>
+        <location filename="recorderdialog.cpp" line="1163"/>
         <source>Reading flights from recorder</source>
-        <translation type="unfinished"></translation>
+        <translation>Übertrage Flüge vom Rekorder</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1177"/>
+        <location filename="recorderdialog.cpp" line="1179"/>
         <source>Cannot read flights from recorder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Flüge nicht vom Rekorder übertragen.</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1185"/>
-        <location filename="recorderdialog.cpp" line="1326"/>
-        <location filename="recorderdialog.cpp" line="1403"/>
-        <location filename="recorderdialog.cpp" line="1526"/>
-        <location filename="recorderdialog.cpp" line="1719"/>
-        <location filename="recorderdialog.cpp" line="1790"/>
-        <location filename="recorderdialog.cpp" line="1804"/>
-        <location filename="recorderdialog.cpp" line="1898"/>
-        <location filename="recorderdialog.cpp" line="1955"/>
-        <location filename="recorderdialog.cpp" line="2023"/>
-        <location filename="recorderdialog.cpp" line="2080"/>
+        <location filename="recorderdialog.cpp" line="1187"/>
+        <location filename="recorderdialog.cpp" line="1328"/>
+        <location filename="recorderdialog.cpp" line="1405"/>
+        <location filename="recorderdialog.cpp" line="1528"/>
+        <location filename="recorderdialog.cpp" line="1721"/>
+        <location filename="recorderdialog.cpp" line="1792"/>
+        <location filename="recorderdialog.cpp" line="1806"/>
+        <location filename="recorderdialog.cpp" line="1900"/>
+        <location filename="recorderdialog.cpp" line="1957"/>
+        <location filename="recorderdialog.cpp" line="2025"/>
+        <location filename="recorderdialog.cpp" line="2082"/>
         <source>Library Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Programmfehler</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1196"/>
+        <location filename="recorderdialog.cpp" line="1198"/>
         <source>Download result</source>
-        <translation type="unfinished"></translation>
+        <translation>Übertragungsergebnis</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1197"/>
+        <location filename="recorderdialog.cpp" line="1199"/>
         <source>No flights are stored in the recorder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Flüge im Rekorder gefunden.</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1290"/>
+        <location filename="recorderdialog.cpp" line="1292"/>
         <source>IGC</source>
-        <translation type="unfinished">IGC</translation>
+        <translation>IGC</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1293"/>
+        <location filename="recorderdialog.cpp" line="1295"/>
         <source>Select IGC file to save to</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle den Namen der zu speichernden IGC-Datei</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1304"/>
+        <location filename="recorderdialog.cpp" line="1306"/>
         <source>Downloading flight from recorder</source>
-        <translation type="unfinished"></translation>
+        <translation>Übertrage Flüge vom Rekorder</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1318"/>
+        <location filename="recorderdialog.cpp" line="1320"/>
         <source>Cannot download flight from recorder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Flug nicht vom Rekorder übertragen.</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1333"/>
+        <location filename="recorderdialog.cpp" line="1335"/>
         <source>Flight download finished</source>
-        <translation type="unfinished"></translation>
+        <translation>Flugübertragung beendet</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1334"/>
+        <location filename="recorderdialog.cpp" line="1336"/>
         <source>Flight successfully downloaded from the recorder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Flug erfolgreich vom Rekorder übertragen.</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1352"/>
-        <location filename="recorderdialog.cpp" line="1383"/>
-        <location filename="recorderdialog.cpp" line="1410"/>
-        <location filename="recorderdialog.cpp" line="1506"/>
+        <location filename="recorderdialog.cpp" line="1354"/>
+        <location filename="recorderdialog.cpp" line="1385"/>
+        <location filename="recorderdialog.cpp" line="1412"/>
+        <location filename="recorderdialog.cpp" line="1508"/>
         <source>Declaration upload</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgabenübertragung</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1359"/>
+        <location filename="recorderdialog.cpp" line="1361"/>
         <source>Sending flight declaration to the recorder</source>
-        <translation type="unfinished"></translation>
+        <translation>Übertrage Flugaufgabe zum Rekorder</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1395"/>
-        <location filename="recorderdialog.cpp" line="1518"/>
+        <location filename="recorderdialog.cpp" line="1397"/>
+        <location filename="recorderdialog.cpp" line="1520"/>
         <source>Cannot write declaration to recorder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Aufgabe nicht an Rekorder übertragen.</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1411"/>
+        <location filename="recorderdialog.cpp" line="1413"/>
         <source>The declaration was uploaded to the recorder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Aufgabe wurde an den Rekorder übertragen.</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1426"/>
-        <location filename="recorderdialog.cpp" line="1434"/>
-        <location filename="recorderdialog.cpp" line="1533"/>
+        <location filename="recorderdialog.cpp" line="1428"/>
+        <location filename="recorderdialog.cpp" line="1436"/>
+        <location filename="recorderdialog.cpp" line="1535"/>
         <source>Declaration export</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgabenexport</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1427"/>
+        <location filename="recorderdialog.cpp" line="1429"/>
         <source>No Task selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Aufgabe ausgewählt</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1442"/>
-        <location filename="recorderdialog.cpp" line="1450"/>
-        <location filename="recorderdialog.cpp" line="1458"/>
-        <location filename="recorderdialog.cpp" line="1466"/>
-        <location filename="recorderdialog.cpp" line="1474"/>
+        <location filename="recorderdialog.cpp" line="1444"/>
+        <location filename="recorderdialog.cpp" line="1452"/>
+        <location filename="recorderdialog.cpp" line="1460"/>
+        <location filename="recorderdialog.cpp" line="1468"/>
+        <location filename="recorderdialog.cpp" line="1476"/>
         <source>Required</source>
-        <translation type="unfinished"></translation>
+        <translation>Erforderlich</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1443"/>
+        <location filename="recorderdialog.cpp" line="1445"/>
         <source>Pilot name</source>
-        <translation type="unfinished"></translation>
+        <translation>Pilotenname</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1451"/>
+        <location filename="recorderdialog.cpp" line="1453"/>
         <source>Glider Id</source>
-        <translation type="unfinished"></translation>
+        <translation>Flugzeugkennzeichen</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1459"/>
+        <location filename="recorderdialog.cpp" line="1461"/>
         <source>Glider Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Flugzeugtyp</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1467"/>
+        <location filename="recorderdialog.cpp" line="1469"/>
         <source>Competition ID</source>
-        <translation type="unfinished"></translation>
+        <translation>Wettbewerbskennzeichen</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1475"/>
+        <location filename="recorderdialog.cpp" line="1477"/>
         <source>Competition Class</source>
-        <translation type="unfinished"></translation>
+        <translation>Wettbewerbsklasse</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1481"/>
+        <location filename="recorderdialog.cpp" line="1483"/>
         <source>Exporting flight declaration to file</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportiere Flugaufgabe in Datei</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1534"/>
+        <location filename="recorderdialog.cpp" line="1536"/>
         <source>The declaration was exported to file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Aufgabe wurde in Datei exportiert.</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1604"/>
+        <location filename="recorderdialog.cpp" line="1606"/>
         <source>Plugin is missing!</source>
-        <translation type="unfinished">Plugin nicht gefunden!</translation>
+        <translation>Plugin nicht gefunden!</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1605"/>
+        <location filename="recorderdialog.cpp" line="1607"/>
         <source>Cannot open plugin library:</source>
-        <translation type="unfinished">Kann Plugin nicht öffnen:</translation>
+        <translation>Kann Plugin nicht öffnen:</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1691"/>
+        <location filename="recorderdialog.cpp" line="1693"/>
         <source>Download task</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgabe herunterladen</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1699"/>
+        <location filename="recorderdialog.cpp" line="1701"/>
         <source>Reading Tasks from recorder</source>
-        <translation type="unfinished"></translation>
+        <translation>Übertrage Aufgaben vom Rekorder</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1711"/>
+        <location filename="recorderdialog.cpp" line="1713"/>
         <source>Cannot read tasks from recorder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Aufgaben nicht vom Rekorder übertragen.</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1748"/>
+        <location filename="recorderdialog.cpp" line="1750"/>
         <source>Recorder Tasks</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgaben im Rekorder</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1753"/>
+        <location filename="recorderdialog.cpp" line="1755"/>
         <source>Task download</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgabe übertragen</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1754"/>
+        <location filename="recorderdialog.cpp" line="1756"/>
         <source>%1 task(s) are downloaded from the recorder.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Aufgabe(n) wurde vom Rekorder übertragen.</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1772"/>
-        <location filename="recorderdialog.cpp" line="1905"/>
+        <location filename="recorderdialog.cpp" line="1774"/>
+        <location filename="recorderdialog.cpp" line="1907"/>
         <source>Task upload</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgaben übertragen</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1780"/>
+        <location filename="recorderdialog.cpp" line="1782"/>
         <source>Writing Tasks to recorder</source>
-        <translation type="unfinished"></translation>
+        <translation>Übertrage Aufgaben zum Rekorder</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1791"/>
+        <location filename="recorderdialog.cpp" line="1793"/>
         <source>Cannot obtain maximum number of tasks!</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann die maximale Aufgabenzahl nicht ermitteln.</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1805"/>
+        <location filename="recorderdialog.cpp" line="1807"/>
         <source>Cannot obtain maximum number of waypoints per task!</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann maximale Wegpunktzahl pro Aufgaben nicht ermitteln!</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1822"/>
+        <location filename="recorderdialog.cpp" line="1824"/>
         <source>Maximum number of %1 tasks reached!
 Further tasks will be ignored.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die maximale Zahl von %1 Aufgaben erreicht!
+Weitere Aufgaben werden ignoriert.</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1826"/>
-        <location filename="recorderdialog.cpp" line="1860"/>
-        <location filename="recorderdialog.cpp" line="2043"/>
+        <location filename="recorderdialog.cpp" line="1828"/>
+        <location filename="recorderdialog.cpp" line="1862"/>
+        <location filename="recorderdialog.cpp" line="2045"/>
         <source>Recorder Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Rekorder Warnung:</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1854"/>
+        <location filename="recorderdialog.cpp" line="1856"/>
         <source>Maximum number of turnpoints/task %1 in %2 reached!
 Further turnpoints will be ignored.</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale Zahl der Wendepunkte pro Aufgabe %1 in %2 erreicht!
+Weitere Wendepunkte werden ignoriert.</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1890"/>
+        <location filename="recorderdialog.cpp" line="1892"/>
         <source>Cannot write tasks to recorder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Aufgabe nicht zum Rekorder übertragen.</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1906"/>
+        <location filename="recorderdialog.cpp" line="1908"/>
         <source>%1 tasks were uploaded to the recorder.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Aufgaben wurden an Rekorder übertragen.</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1927"/>
+        <location filename="recorderdialog.cpp" line="1929"/>
         <source>Waypoints download</source>
-        <translation type="unfinished"></translation>
+        <translation>Wegpunktübertragung</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1935"/>
+        <location filename="recorderdialog.cpp" line="1937"/>
         <source>Reading Waypoints from recorder</source>
-        <translation type="unfinished"></translation>
+        <translation>Übertrage Wegpunkte vom Rekorder</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1947"/>
+        <location filename="recorderdialog.cpp" line="1949"/>
         <source>Cannot read waypoints from recorder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Wegpunkte nicht vom Rekorder übertragen.</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1975"/>
+        <location filename="recorderdialog.cpp" line="1977"/>
         <source>Recorder Waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>Rekorder Wegpunkte</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1980"/>
+        <location filename="recorderdialog.cpp" line="1982"/>
         <source>Waypoints reading finished</source>
-        <translation type="unfinished"></translation>
+        <translation>Wegpunktübertragung vom Rekorder beendet</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1981"/>
+        <location filename="recorderdialog.cpp" line="1983"/>
         <source>%1 waypoints have been read from the recorder.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Wegpunkte wurden vom Rekorder übertragen.</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1995"/>
-        <location filename="recorderdialog.cpp" line="2008"/>
-        <location filename="recorderdialog.cpp" line="2087"/>
+        <location filename="recorderdialog.cpp" line="1997"/>
+        <location filename="recorderdialog.cpp" line="2010"/>
+        <location filename="recorderdialog.cpp" line="2089"/>
         <source>Waypoints upload</source>
-        <translation type="unfinished"></translation>
+        <translation>Wegpunktübertragung</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="1996"/>
+        <location filename="recorderdialog.cpp" line="1998"/>
         <source>Uploading waypoints to the recorder will overwrite existing waypoints on the recorder. Do want to continue uploading?</source>
-        <translation type="unfinished"></translation>
+        <translation>Wegpunktübertragung zum Recorder werden aktuelle Wegpunkte auf dem Rekorder überschreiben. Willst Du wirklich übertragen?</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2014"/>
+        <location filename="recorderdialog.cpp" line="2016"/>
         <source>Writing Waypoints to recorder</source>
-        <translation type="unfinished"></translation>
+        <translation>Übertrage Wegpunkte zum Rekorder</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2024"/>
+        <location filename="recorderdialog.cpp" line="2026"/>
         <source>Cannot obtain maximum number of waypoints from library</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann maximale Wegpunktzahl der Bibliothek nicht ermitteln</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2039"/>
+        <location filename="recorderdialog.cpp" line="2041"/>
         <source>Maximum number of %1 waypoints reached!
 Further waypoints will be ignored.</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale Anzahl von %1 Wegpunkten erreicht!
+Weitere Wegpunkte werden ignoriert.</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2072"/>
+        <location filename="recorderdialog.cpp" line="2074"/>
         <source>Cannot write waypoints to recorder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Wegpunkte nicht zum Rekorder übertragen.</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2088"/>
+        <location filename="recorderdialog.cpp" line="2090"/>
         <source>%1 waypoints have been uploaded to the recorder.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Wegpunkte wurden zum Rekorder übertragen.</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2105"/>
+        <location filename="recorderdialog.cpp" line="2107"/>
         <source>Reading recorder data</source>
-        <translation type="unfinished"></translation>
+        <translation>Übertrage Daten vom Rekorder</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2138"/>
+        <location filename="recorderdialog.cpp" line="2140"/>
         <source>Sorry, could not connect to recorder.
 Please check connections and settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann keine Verbindung zum Rekorder aufbauen.</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2341"/>
+        <location filename="recorderdialog.cpp" line="2343"/>
         <source>Writing recorder data</source>
-        <translation type="unfinished"></translation>
+        <translation>Übertrage Daten zum Rekorder</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2351"/>
+        <location filename="recorderdialog.cpp" line="2353"/>
         <source>Sorry, could not write configuration to recorder.
 Please check connections and settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Konfigruation nicht an Rekorder übertragen.
+Bitte Kabel und Verbindungseinstellungen überprüfen.</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2498"/>
+        <location filename="recorderdialog.cpp" line="2500"/>
         <source>Configuration</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="2549"/>
-        <source>Best L/D:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="2550"/>
-        <source>Best L/D speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>Konfiguration</translation>
     </message>
     <message>
         <location filename="recorderdialog.cpp" line="2551"/>
+        <source>Best L/D:</source>
+        <translation>Emax:</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="2552"/>
+        <source>Best L/D speed:</source>
+        <translation>Geschwindigkeit Emax: </translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="2553"/>
         <source>2 m/s sink speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>Geschwindigkeit bei 2 m/s:</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2554"/>
+        <location filename="recorderdialog.cpp" line="2556"/>
         <source>Dry weight:</source>
-        <translation type="unfinished"></translation>
+        <translation>Fluggewicht:</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2555"/>
+        <location filename="recorderdialog.cpp" line="2557"/>
         <source>Max. water ballast:</source>
-        <translation type="unfinished"></translation>
+        <translation>Max. Wasserballast:</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2559"/>
+        <location filename="recorderdialog.cpp" line="2561"/>
         <source>Glider Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Flugzeugkonfiguration</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2619"/>
+        <location filename="recorderdialog.cpp" line="2621"/>
         <source>Sink tone</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="2625"/>
-        <source>Approach radius:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="2626"/>
-        <source>Arrival radius:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ton bei Fallen</translation>
     </message>
     <message>
         <location filename="recorderdialog.cpp" line="2627"/>
-        <source>Goal altitude:</source>
-        <translation type="unfinished"></translation>
+        <source>Approach radius:</source>
+        <translation>Abflugradius:</translation>
     </message>
     <message>
         <location filename="recorderdialog.cpp" line="2628"/>
+        <source>Arrival radius:</source>
+        <translation>Ankunftsradius:</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="2629"/>
+        <source>Goal altitude:</source>
+        <translation>Zielradius:</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="2630"/>
         <source>Min. flight time:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="2634"/>
-        <source>Slow log interval:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="recorderdialog.cpp" line="2635"/>
-        <source>Fast log interval:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mindestflugzeit:</translation>
     </message>
     <message>
         <location filename="recorderdialog.cpp" line="2636"/>
-        <source>Min. logging speed:</source>
-        <translation type="unfinished"></translation>
+        <source>Slow log interval:</source>
+        <translation>Langsames Aufzeichnugsintervall:</translation>
     </message>
     <message>
         <location filename="recorderdialog.cpp" line="2637"/>
+        <source>Fast log interval:</source>
+        <translation>Schnelles Aufzeichungsintervall:</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="2638"/>
+        <source>Min. logging speed:</source>
+        <translation>Mindestaufzeichnungs-Geschwindigkeit:</translation>
+    </message>
+    <message>
+        <location filename="recorderdialog.cpp" line="2639"/>
         <source>Audio dead-band:</source>
-        <translation type="unfinished"></translation>
+        <translation>Bandbreite stumm:</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2655"/>
+        <location filename="recorderdialog.cpp" line="2657"/>
         <source>km</source>
-        <translation type="unfinished"></translation>
+        <translation>km</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2659"/>
+        <location filename="recorderdialog.cpp" line="2661"/>
         <source>nm</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2663"/>
+        <location filename="recorderdialog.cpp" line="2665"/>
         <source>sm</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2679"/>
+        <location filename="recorderdialog.cpp" line="2681"/>
         <source>km/h</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2683"/>
-        <location filename="recorderdialog.cpp" line="2747"/>
+        <location filename="recorderdialog.cpp" line="2685"/>
+        <location filename="recorderdialog.cpp" line="2749"/>
         <source>kts</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2687"/>
+        <location filename="recorderdialog.cpp" line="2689"/>
         <source>mph</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2703"/>
+        <location filename="recorderdialog.cpp" line="2705"/>
         <source>m</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2707"/>
+        <location filename="recorderdialog.cpp" line="2709"/>
         <source>ft</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2723"/>
+        <location filename="recorderdialog.cpp" line="2725"/>
         <source>mbar</source>
-        <translation type="unfinished"></translation>
+        <translation>hPa</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2727"/>
+        <location filename="recorderdialog.cpp" line="2729"/>
         <source>inHg</source>
-        <translation type="unfinished"></translation>
+        <translation>inHg</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2731"/>
+        <location filename="recorderdialog.cpp" line="2733"/>
         <source>QNH</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2743"/>
+        <location filename="recorderdialog.cpp" line="2745"/>
         <source>m/s</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2763"/>
+        <location filename="recorderdialog.cpp" line="2765"/>
         <source>C</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2767"/>
+        <location filename="recorderdialog.cpp" line="2769"/>
         <source>F</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2771"/>
+        <location filename="recorderdialog.cpp" line="2773"/>
         <source>Temp.</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2785"/>
+        <location filename="recorderdialog.cpp" line="2787"/>
         <source>Variometer Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Vario Einstellungen</translation>
     </message>
     <message>
-        <location filename="recorderdialog.cpp" line="2789"/>
+        <location filename="recorderdialog.cpp" line="2791"/>
         <source>Write configuration to recorder</source>
-        <translation type="unfinished"></translation>
+        <translation>Übertrage Konfiguration zum Rekorder</translation>
     </message>
 </context>
 <context>
     <name>TaskDialog</name>
     <message>
-        <location filename="taskdialog.cpp" line="83"/>
+        <location filename="taskdialog.cpp" line="81"/>
         <source>&amp;Ok</source>
         <translation>&amp;OK</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="87"/>
+        <location filename="taskdialog.cpp" line="85"/>
         <source>&amp;Cancel</source>
         <translation>&amp;Abbrechen</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="164"/>
+        <location filename="taskdialog.cpp" line="162"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="251"/>
+        <location filename="taskdialog.cpp" line="249"/>
         <source>Country</source>
         <translation>Land</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="42"/>
+        <location filename="taskdialog.cpp" line="40"/>
         <source>Task Editor</source>
         <translation>Aufgaben Editor</translation>
     </message>
     <message>
+        <location filename="taskdialog.cpp" line="63"/>
         <location filename="taskdialog.cpp" line="65"/>
-        <location filename="taskdialog.cpp" line="67"/>
         <source>Task selection</source>
         <translation>Aufgaben Auswahl</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="95"/>
+        <location filename="taskdialog.cpp" line="93"/>
         <source>&amp;Name</source>
         <translation>&amp;Name</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="106"/>
+        <location filename="taskdialog.cpp" line="104"/>
         <source>Task T&amp;ype</source>
         <translation>Aufgaben T&amp;yp</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="118"/>
+        <location filename="taskdialog.cpp" line="116"/>
         <source>&amp;left</source>
         <translation>&amp;links</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="121"/>
+        <location filename="taskdialog.cpp" line="119"/>
         <source>ri&amp;ght</source>
         <translation>rechts</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="126"/>
+        <location filename="taskdialog.cpp" line="124"/>
         <source>Side of FAI area</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="165"/>
+        <location filename="taskdialog.cpp" line="163"/>
         <source>Taskpoint</source>
         <translation>Aufgaben Punkt</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="166"/>
+        <location filename="taskdialog.cpp" line="164"/>
         <source>Length</source>
         <translation>Länge</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="167"/>
+        <location filename="taskdialog.cpp" line="165"/>
         <source>Course</source>
         <translation>Kurs</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="189"/>
+        <location filename="taskdialog.cpp" line="187"/>
         <source>&amp;Task</source>
         <translation>&amp;Aufgabe</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="196"/>
+        <location filename="taskdialog.cpp" line="194"/>
         <source>Moves selected task point up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="203"/>
+        <location filename="taskdialog.cpp" line="201"/>
         <source>Moves selected task point down</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="216"/>
+        <location filename="taskdialog.cpp" line="214"/>
         <source>Adds the selected waypoint to the task list</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="223"/>
+        <location filename="taskdialog.cpp" line="221"/>
         <source>Inverts the task. Last point becomes the first point, A.s.o.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="230"/>
+        <location filename="taskdialog.cpp" line="228"/>
         <source>Removes the selected task point from the task list</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="249"/>
+        <location filename="taskdialog.cpp" line="247"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="250"/>
+        <location filename="taskdialog.cpp" line="248"/>
         <source>Description</source>
         <translation>Deschreibung</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="252"/>
+        <location filename="taskdialog.cpp" line="250"/>
         <source>ICAO</source>
         <translation>ICAO</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="271"/>
+        <location filename="taskdialog.cpp" line="269"/>
         <source>&amp;Waypoint&apos;s</source>
         <translation>&amp;Wegpunkte</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="333"/>
+        <location filename="taskdialog.cpp" line="331"/>
         <source>&lt;b&gt;Task Type FAI Area:&lt;/b&gt;&lt;br&gt;&lt;br&gt;You can define a FAI task with either Takeoff, Start, End and Landing or Takeoff, Start, End, Landing and &lt;b&gt;one&lt;/b&gt; additional Route point.&lt;br&gt;The points &lt;i&gt;Takeoff&lt;/i&gt;, &lt;i&gt;Start&lt;/i&gt;, &lt;i&gt;End&lt;/i&gt; and &lt;i&gt;Landing&lt;/i&gt;are &lt;b&gt;mandatory!&lt;/b&gt;&lt;br&gt;&lt;br&gt;The FAI area calculation will be made with Start and End point or Start and Route point, depending weather the Route point is defined or not.&lt;br&gt;&lt;br&gt;New waypoints are inserted after the selected one.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="344"/>
+        <location filename="taskdialog.cpp" line="342"/>
         <source>&lt;br&gt;&lt;br&gt;&lt;b&gt;Your FAI task contains too much route points!&lt;br&gt;Please remove all not necessary route points.&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="360"/>
+        <location filename="taskdialog.cpp" line="358"/>
         <source>&lt;html&gt;&lt;b&gt;Task Type Traditional Route:&lt;/b&gt;&lt;br&gt;&lt;br&gt;You can define a task with Takeoff, Start, End, Landing and Route points. The points &lt;i&gt;Takeoff&lt;/i&gt;, &lt;i&gt;Start&lt;/i&gt;, &lt;i&gt;End&lt;/i&gt; and &lt;i&gt;Landing&lt;/i&gt;are &lt;b&gt;mandatory!&lt;/b&gt; Additional route points can be added.&lt;br&gt;&lt;br&gt;New waypoints are inserted after the selected one.&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="412"/>
+        <location filename="taskdialog.cpp" line="410"/>
         <source>Take Off</source>
         <translation>Start</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="415"/>
+        <location filename="taskdialog.cpp" line="413"/>
         <source>Begin of Task</source>
         <translation>Aufgaben Beginn</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="418"/>
+        <location filename="taskdialog.cpp" line="416"/>
         <source>Route Point</source>
         <translation>Route Punkt</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="421"/>
+        <location filename="taskdialog.cpp" line="419"/>
         <source>End of Task</source>
         <translation>Aufgaben Ende</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="424"/>
+        <location filename="taskdialog.cpp" line="422"/>
         <source>Free Point</source>
         <translation>Freier Punkt</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="427"/>
+        <location filename="taskdialog.cpp" line="425"/>
         <source>Landing</source>
         <translation>Landung</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="430"/>
+        <location filename="taskdialog.cpp" line="428"/>
         <source>Unkown</source>
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="717"/>
+        <location filename="taskdialog.cpp" line="715"/>
         <source>Task name in use</source>
         <translation>Aufgabenname in Benutzung</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="718"/>
+        <location filename="taskdialog.cpp" line="716"/>
         <source>&lt;html&gt;The chosen task name is already in use!&lt;br&gt;&lt;br&gt;Please enter another one.&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="730"/>
+        <location filename="taskdialog.cpp" line="728"/>
         <source>Task is incomplete</source>
         <translation>Aufgabe unvollkommen</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="731"/>
-        <source>&lt;htlm&gt;A task consist of at least four waypoints!&lt;br&gt;&lt;br&gt;Please add the missing points.&lt;/html&gt;</source>
-        <translation>&lt;htlm&gt;Eine Aufgabe besteht aus mind. 4 Wegpunkten!&lt;br&gt;&lt;br&gt;Bitte fehlende Punkte hinzufügen.&lt;/html&gt;</translation>
+        <location filename="taskdialog.cpp" line="729"/>
+        <source>&lt;html&gt;A task consist of at least four waypoints!&lt;br&gt;&lt;br&gt;Please add the missing points.&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="740"/>
+        <location filename="taskdialog.cpp" line="739"/>
+        <source>&lt;html&gt;A FAI area task can have one additional route point only!&lt;br&gt;&lt;br&gt;Please remove all not needed other points.&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;htlm&gt;A task consist of at least four waypoints!&lt;br&gt;&lt;br&gt;Please add the missing points.&lt;/html&gt;</source>
+        <translation type="vanished">&lt;htlm&gt;Eine Aufgabe besteht aus mind. 4 Wegpunkten!&lt;br&gt;&lt;br&gt;Bitte fehlende Punkte hinzufügen.&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="taskdialog.cpp" line="738"/>
         <source>FAI area task violation</source>
         <translation>FAI Flächen Aufgaben Verletzung</translation>
-    </message>
-    <message>
-        <location filename="taskdialog.cpp" line="741"/>
-        <source>&lt;htlm&gt;A FAI area task can have one additional route point only!&lt;br&gt;&lt;br&gt;Please remove all not needed other points.&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5546,7 +5556,7 @@ Please check connections and settings.</source>
     <message>
         <location filename="waypointtreeview.cpp" line="232"/>
         <source>&amp;Edit waypoint</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Wegpunkt &amp;bearbeiten</translation>
     </message>
     <message>
         <location filename="waypointtreeview.cpp" line="237"/>
@@ -5586,13 +5596,13 @@ Please check connections and settings.</source>
         <location filename="waypointtreeview.cpp" line="349"/>
         <location filename="waypointtreeview.cpp" line="917"/>
         <source>KFLog</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">KFLog</translation>
     </message>
     <message>
         <location filename="waypointtreeview.cpp" line="350"/>
         <location filename="waypointtreeview.cpp" line="918"/>
         <source>Cumulus</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cumulus</translation>
     </message>
     <message>
         <location filename="waypointtreeview.cpp" line="351"/>
@@ -5604,19 +5614,19 @@ Please check connections and settings.</source>
         <location filename="waypointtreeview.cpp" line="352"/>
         <location filename="waypointtreeview.cpp" line="920"/>
         <source>Filser txt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Filser txt</translation>
     </message>
     <message>
         <location filename="waypointtreeview.cpp" line="353"/>
         <location filename="waypointtreeview.cpp" line="921"/>
         <source>Filser da4</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Filser da4</translation>
     </message>
     <message>
         <location filename="waypointtreeview.cpp" line="354"/>
         <location filename="waypointtreeview.cpp" line="922"/>
         <source>SeeYou</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">SeeYou</translation>
     </message>
     <message>
         <location filename="waypointtreeview.cpp" line="355"/>
