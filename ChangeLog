@@ -11,6 +11,12 @@
 #
 ################################################################################
 
+2014-11-04 Peter Simon <psimon.kflog@gmail.com>
+
+  * Changes to build KFLog in Microsoft Visual Studio 2012.
+
+2014-10-14 Axel Pauli <kflog.cumulus@gmail.com>
+
   * Issue #17 Provide GUI surface translations for other languages has been
     realised in the code. KFLog can load such translation data files now, if
     they are provided.
