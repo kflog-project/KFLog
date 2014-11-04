@@ -856,7 +856,11 @@ void EvaluationView::__draw()
 
   QString timeText;
 
-#warning "Drawing of turnpoints needs some tweaking!"
+#ifdef _MSC_VER
+ #pragma message ("warning: Drawing of turnpoints needs some tweaking!")
+#else
+ #warning "Drawing of turnpoints needs some tweaking!"
+#endif
 
   /* It should be checked the distance to the previous drawing point to avoid
    * an overwriting of text and time labels if they lay to near.

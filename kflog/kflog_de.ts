@@ -1708,7 +1708,7 @@
     <message>
         <location filename="mainwindow.cpp" line="1950"/>
         <source>&lt;html&gt;&lt;b&gt;Temporarily Maintainer&lt;/b&gt;&lt;blockquote&gt;Axel Pauli &amp;lt;&lt;a href=&quot;mailto:kflog.cumulus&amp;#64;gmail.com&quot;&gt;kflog.cumulus&amp;#64;gmail.com&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;&lt;b&gt;Developers, Maintainers&lt;/b&gt;&lt;blockquote&gt;Axel Pauli (Developer, Portage to Qt4)&lt;br&gt;Constantijn Neeteson (Maintenance, Core-developer)&lt;br&gt;Florian Ehinger (Maintenance, Core-developer, Mapdata)&lt;br&gt;Heiner Lamprecht (Maintenance, Core-developer)&lt;br&gt;Andr&amp;eacute; Somers (Developer, Waypoint-handling, Plugin architecture, ...)&lt;br&gt;Christof Bodner (Developer, OLC Optimization)&lt;br&gt;Eggert Ehmke (Developer)&lt;br&gt;Harald Maier (Developer, Waypoint-Dialog, Task-handling)&lt;br&gt;Thomas Nielsen (Developer, 3D-Dialog)&lt;br&gt;Jan Kr&amp;uuml;ger (Developer, 3D-Dialog)&lt;br&gt;Matthias Degenkolb (Developer, MS-Windows portage)&lt;br&gt;Peter Simon (Developer, MS-Windows portage)&lt;/blockquote&gt;&lt;b&gt;Server Sponsor&lt;/b&gt;&lt;blockquote&gt;Heiner Lamprecht &amp;lt;&lt;a href=&quot;mailto:heiner&amp;#64;kflog.org&quot;&gt;heiner&amp;#64;kflog.org&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;Thanks to all, who have made available this software!&lt;br&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;b&gt;Augenblickliche Wartung durch&lt;/b&gt;&lt;blockquote&gt;Axel Pauli &amp;lt;&lt;a href=&quot;mailto:kflog.cumulus&amp;#64;gmail.com&quot;&gt;kflog.cumulus&amp;#64;gmail.com&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;&lt;b&gt;Entwickler und Instandhalter&lt;/b&gt;&lt;blockquote&gt;Axel Pauli (Entwickler, Portierung zu Qt4)&lt;br&gt;Constantijn Neeteson (Instandhalter, Kernentwickler)&lt;br&gt;Florian Ehinger (Instandhalter, Kernentwickler, Kartendaten)&lt;br&gt;Heiner Lamprecht (Instandhalter, Kernentwickler)&lt;br&gt;Andr&amp;eacute; Somers (Entwickler, Wegpunkte, Plugin Architektur, ...)&lt;br&gt;Christof Bodner (Entwickler, OLC Optimierung)&lt;br&gt;Eggert Ehmke (Entwickler)&lt;br&gt;Harald Maier (Entwickler, Wegpunkt-Dialog, Aufgaben)&lt;br&gt;Thomas Nielsen (Entwickler, 3D-Dialog)&lt;br&gt;Jan Kr&amp;uuml;ger (Entwickler, 3D-Dialog)&lt;br&gt;Matthias Degenkolb (Entwickler, MS-Windows Portierung)&lt;br&gt;Peter Simon (Entwickler, MS-Windows Portierung)&lt;/blockquote&gt;&lt;b&gt;Server Sponsor&lt;/b&gt;&lt;blockquote&gt;Heiner Lamprecht &amp;lt;&lt;a href=&quot;mailto:heiner&amp;#64;kflog.org&quot;&gt;heiner&amp;#64;kflog.org&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;Danke an alle, die beim Erstellen dieser Software mitgewirkt haben und sie weiter pflegen!&lt;br&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;b&gt;Augenblickliche Wartung durch&lt;/b&gt;&lt;blockquote&gt;Axel Pauli &amp;lt;&lt;a href=&quot;mailto:kflog.cumulus&amp;#64;gmail.com&quot;&gt;kflog.cumulus&amp;#64;gmail.com&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;&lt;b&gt;Entwickler und Instandhalter&lt;/b&gt;&lt;blockquote&gt;Axel Pauli (Entwickler, Portierung zu Qt4)&lt;br&gt;Constantijn Neeteson (Instandhalter, Kernentwickler)&lt;br&gt;Florian Ehinger (Instandhalter, Kernentwickler, Kartendaten)&lt;br&gt;Heiner Lamprecht (Instandhalter, Kernentwickler)&lt;br&gt;Andr&amp;eacute; Somers (Entwickler, Wegpunkte, Plugin Architektur, ...)&lt;br&gt;Christof Bodner (Entwickler, OLC Optimierung)&lt;br&gt;Eggert Ehmke (Entwickler)&lt;br&gt;Harald Maier (Entwickler, Wegpunkt-Dialog, Aufgaben)&lt;br&gt;Thomas Nielsen (Entwickler, 3D-Dialog)&lt;br&gt;Jan Kr&amp;uuml;ger (Entwickler, 3D-Dialog)&lt;br&gt;Matthias Degenkolb (Entwickler, MS-Windows Portierung)&lt;br&gt;Peter Simon (Entwickler, MS-Windows Portierung)&lt;/blockquote&gt;&lt;b&gt;Server Sponsor&lt;/b&gt;&lt;blockquote&gt;Heiner Lamprecht &amp;lt;&lt;a href=&quot;mailto:heiner&amp;#64;kflog.org&quot;&gt;heiner&amp;#64;kflog.org&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;Danke an alle, die beim Erstellen dieser Software mitgewirkt haben und sie weiter pflegen!&lt;br&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="435"/>
@@ -1783,7 +1783,7 @@
     <message>
         <location filename="mainwindow.cpp" line="589"/>
         <source>&amp;Zoom into mouse rectangle</source>
-        <translation type="unfinished">Vergrößere Mausausschnitt</translation>
+        <translation>&amp;Vergrößere in Mausausschnitt</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="595"/>
@@ -1878,7 +1878,7 @@
     <message>
         <location filename="mainwindow.cpp" line="891"/>
         <source>Show Help Window</source>
-        <translation type="unfinished">Zeige Hilfefenster</translation>
+        <translation>Zeige Hilfefenster</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="900"/>
@@ -3467,23 +3467,23 @@ Alle Downloads verworfen!</translation>
     <message>
         <location filename="flightloader.cpp" line="551"/>
         <source>Please wait while checking airspaces</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitte warten - überprüfe Lufträume</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="728"/>
         <location filename="flightloader.cpp" line="786"/>
         <source>The selected file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;exists but contains no QNH value</source>
-        <translation type="unfinished"></translation>
+        <translation>Die gewählte Datei %1 existiert, beinhaltet aber kein QNH</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="823"/>
         <source>The selected file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;is empty or unsupported</source>
-        <translation type="unfinished"></translation>
+        <translation>Die gewählte Datei &lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt; ist  leer oder das Format ist nicht unterstützt</translation>
     </message>
     <message>
         <location filename="flightloader.cpp" line="849"/>
         <source>Please enter the QNH of the flight (900-1100 hPa). &lt;br&gt;If you cancel 1013 hPa will be used.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitte das QNH (900-1100 hPA) für den Flug angeben. &lt;br&gt;Bei Abbruch werden 1013 hPa benutzt.</translation>
     </message>
     <message>
         <location filename="flighttask.cpp" line="320"/>
@@ -3508,7 +3508,7 @@ Alle Downloads verworfen!</translation>
     <message>
         <location filename="flighttask.cpp" line="324"/>
         <source>Triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Dreieck</translation>
     </message>
     <message>
         <location filename="flighttask.cpp" line="325"/>
@@ -3518,7 +3518,7 @@ Alle Downloads verworfen!</translation>
     <message>
         <location filename="flighttask.cpp" line="326"/>
         <source>Triangle Start on leg</source>
-        <translation type="unfinished"></translation>
+        <translation>Dreick mit Start auf dem Schenkel</translation>
     </message>
     <message>
         <location filename="flighttask.cpp" line="327"/>
@@ -3546,7 +3546,7 @@ Alle Downloads verworfen!</translation>
         <location filename="flighttask.cpp" line="887"/>
         <location filename="flighttask.cpp" line="909"/>
         <source>You have not reached the first waypoint of your task.</source>
-        <translation type="unfinished"></translation>
+        <translation>Du hast  nicht den ersten Wendepunkt deiner Aufgabe erreicht.</translation>
     </message>
     <message>
         <location filename="flighttask.cpp" line="927"/>
@@ -3556,7 +3556,7 @@ Alle Downloads verworfen!</translation>
     <message>
         <location filename="flighttask.cpp" line="928"/>
         <source>You have not reached the last point of your task.</source>
-        <translation type="unfinished"></translation>
+        <translation>Du hast nicht den letzten Wendepunkt der Aufgabe erreicht.</translation>
     </message>
     <message>
         <location filename="flighttask.cpp" line="1007"/>
@@ -3566,12 +3566,12 @@ Alle Downloads verworfen!</translation>
     <message>
         <location filename="flighttask.cpp" line="1008"/>
         <source>The time interval between two points of the flight is more than 70 sec.!&lt;BR&gt;Due to Code Sportif 3, Nr. 1.9.2.1, the flight can not be valued!</source>
-        <translation type="unfinished"></translation>
+        <translation>Der Zeitunterschied zwischen zwei GPS-Punkten des Fluges ist größer als 70 Sekunden!&lt;BR&gt;Nach Code Sportif 3, Nr. 1.9.2.1 ist der Flug ungültig!</translation>
     </message>
     <message>
         <location filename="flighttask.cpp" line="1637"/>
         <source>Traditional Route</source>
-        <translation type="unfinished"></translation>
+        <translation>Traditionelle Strecke</translation>
     </message>
     <message>
         <location filename="flighttask.cpp" line="1638"/>
@@ -3636,12 +3636,12 @@ F:...............Vordergrund
     <message>
         <location filename="map.cpp" line="705"/>
         <source>Sector 1</source>
-        <translation type="unfinished"></translation>
+        <translation>Sektor 1</translation>
     </message>
     <message>
         <location filename="map.cpp" line="710"/>
         <source>Sector 2</source>
-        <translation type="unfinished"></translation>
+        <translation>Sektor 2</translation>
     </message>
     <message>
         <location filename="map.cpp" line="716"/>
@@ -3656,7 +3656,7 @@ F:...............Vordergrund
     <message>
         <location filename="map.cpp" line="726"/>
         <source>Take Off</source>
-        <translation type="unfinished">Start</translation>
+        <translation>Start</translation>
     </message>
     <message>
         <location filename="map.cpp" line="732"/>
@@ -3666,7 +3666,7 @@ F:...............Vordergrund
     <message>
         <location filename="map.cpp" line="871"/>
         <source>Task Menu</source>
-        <translation type="unfinished">Aufgaben Menü</translation>
+        <translation>Aufgaben Menü</translation>
     </message>
     <message>
         <location filename="map.cpp" line="2949"/>
@@ -3676,12 +3676,12 @@ F:...............Vordergrund
     <message>
         <location filename="map.cpp" line="2957"/>
         <source>&amp;Show item info</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Zeige Elementinformation</translation>
     </message>
     <message>
         <location filename="map.cpp" line="2962"/>
         <source>&amp;Show airspace info</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Zeige Luftrauminformation</translation>
     </message>
     <message>
         <location filename="map.cpp" line="2968"/>
@@ -3726,7 +3726,7 @@ F:...............Vordergrund
     <message>
         <location filename="radiopoint.cpp" line="134"/>
         <source>True N aligned:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Missweisend Nord:</translation>
     </message>
     <message>
         <location filename="radiopoint.cpp" line="138"/>
@@ -3741,7 +3741,7 @@ F:...............Vordergrund
     <message>
         <location filename="radiopoint.cpp" line="145"/>
         <source>Range:</source>
-        <translation type="unfinished"></translation>
+        <translation>Entfernung:</translation>
     </message>
     <message>
         <location filename="radiopoint.cpp" line="192"/>
@@ -3751,7 +3751,7 @@ F:...............Vordergrund
     <message>
         <location filename="radiopoint.cpp" line="202"/>
         <source>Range </source>
-        <translation type="unfinished"></translation>
+        <translation>Entfernung</translation>
     </message>
     <message>
         <location filename="radiopoint.cpp" line="212"/>
@@ -3766,7 +3766,7 @@ F:...............Vordergrund
     <message>
         <location filename="radiopoint.cpp" line="227"/>
         <source>True N aligned</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Missweisend Nord</translation>
     </message>
     <message>
         <location filename="runway.cpp" line="82"/>
@@ -3786,12 +3786,12 @@ F:...............Vordergrund
     <message>
         <location filename="runway.cpp" line="85"/>
         <source>Sand</source>
-        <translation type="unfinished"></translation>
+        <translation>Sand</translation>
     </message>
     <message>
         <location filename="taskdataprint.cpp" line="46"/>
         <source>Print Task</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgabe drucken</translation>
     </message>
     <message>
         <location filename="taskdataprint.cpp" line="75"/>
@@ -3801,7 +3801,7 @@ F:...............Vordergrund
     <message>
         <location filename="taskdataprint.cpp" line="80"/>
         <source>Task Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufgabetyp</translation>
     </message>
     <message>
         <location filename="tasklistviewitem.cpp" line="76"/>
@@ -3879,7 +3879,7 @@ F:...............Vordergrund
     <message>
         <location filename="waypointcatalog.cpp" line="533"/>
         <source>The selected file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;is not a Volkslogger-file!</source>
-        <translation type="unfinished"></translation>
+        <translation>Die selektierte Datei &lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;ist nicht im Volkslogger Format! </translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="541"/>
@@ -3919,7 +3919,7 @@ F:...............Vordergrund
     <message>
         <location filename="waypointcatalog.cpp" line="680"/>
         <source>SeeYou</source>
-        <translation type="unfinished"></translation>
+        <translation>SeeYou</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="681"/>
@@ -3929,7 +3929,7 @@ F:...............Vordergrund
     <message>
         <location filename="waypointcatalog.cpp" line="684"/>
         <source>Save waypoint catalog</source>
-        <translation type="unfinished"></translation>
+        <translation>Sichere Wegpunkkatalog</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="816"/>
@@ -3939,7 +3939,7 @@ F:...............Vordergrund
     <message>
         <location filename="waypointcatalog.cpp" line="964"/>
         <source>To much waypoints!</source>
-        <translation type="unfinished"></translation>
+        <translation>Zu viele Wegpunkte!</translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="965"/>
@@ -3969,7 +3969,7 @@ F:...............Vordergrund
     <message>
         <location filename="waypointcatalog.cpp" line="1713"/>
         <source>Your country entries were wrong! Two letter codes are only allowed. Use spaces to separate them from each other.</source>
-        <translation type="unfinished"></translation>
+        <translation>Der angegebene Ländercode ist ungültig! </translation>
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="1820"/>
@@ -3990,7 +3990,7 @@ F:...............Vordergrund
     <message>
         <location filename="waypointcatalog.cpp" line="2400"/>
         <source>The selected file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;is not readable!</source>
-        <translation type="unfinished"></translation>
+        <translation>Die gewählte Datei &lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;ist nicht lesbar!</translation>
     </message>
     <message>
         <location filename="waypointimpfilterdialog.cpp" line="259"/>
@@ -4010,7 +4010,7 @@ F:...............Vordergrund
     <message>
         <location filename="waypointimpfilterdialog.cpp" line="279"/>
         <source>Please enter valid coordinates for the Area filter!</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitte gültige Koordination für den Bereichsfilter angeben!</translation>
     </message>
     <message>
         <location filename="waypointimpfilterdialog.cpp" line="281"/>

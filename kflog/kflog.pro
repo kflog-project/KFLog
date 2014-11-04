@@ -43,7 +43,7 @@ QT += network \
   OBJECTS_DIR = .obj
   MOC_DIR     = .obj
   
-  LIBS += -ldl    
+  LIBS += -ldl
 }
 
 win32 {

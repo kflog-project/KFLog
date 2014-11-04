@@ -40,6 +40,9 @@
 #define MAXTSKNAME     37
 
 // need to be packed to ensure size 31
+#if defined WIN32 && defined _MSC_VER
+#pragma pack(push, 1)
+#endif
 struct DA4WPStruct
 {
   char prg;
@@ -53,22 +56,46 @@ struct DA4WPStruct
   unsigned char rwtype;
   unsigned char tcdir;
   short tc;
-} __attribute__ ((packed));
-  
+}
+#if defined WIN32 && defined _MSC_VER
+;
+#pragma pack(pop)
+#else
+__attribute__ ((packed));
+#endif
+
 // need to be packed to ensure size 32
+#if defined WIN32 && defined _MSC_VER
+#pragma pack(push, 1)
+#endif
 struct DA4TaskStruct
 {
   char prg;
   char ctrlpnt;
   char pnttype[MAXTSKPNT];
   unsigned short pntind[MAXTSKPNT];
-} __attribute__ ((packed));
+}
+#if defined WIN32 && defined _MSC_VER
+;
+#pragma pack(pop)
+#else
+__attribute__ ((packed));
+#endif
 
+#if defined WIN32 && defined _MSC_VER
+#pragma pack(push, 1)
+#endif
 struct DA4Buffer
 {
   DA4WPStruct waypoints [WAYPOINT_MAX];
   DA4TaskStruct tasks [TASK_MAX];
-} __attribute__ ((packed));
+}
+#if defined WIN32 && defined _MSC_VER
+;
+#pragma pack(pop)
+#else
+__attribute__ ((packed));
+#endif
 
 class DA4WPRecord
 {

@@ -14,6 +14,9 @@
 **   $Id$
 **
 ***********************************************************************/
+#ifdef _MSC_VER
+#define _USE_MATH_DEFINES
+#endif
 
 #include "igc3dpolyhedron.h"
 #include "igc3dviewstate.h"

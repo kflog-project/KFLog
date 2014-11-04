@@ -183,7 +183,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
   //
   QRegExp bRecord("^B[0-2][0-9][0-6][0-9][0-6][0-9][0-9][0-9][0-6][0-9][0-9][0-9][0-9][NS][0-1][0-9][0-9][0-6][0-9][0-9][0-9][0-9][EW][AV][0-9,-][0-9][0-9][0-9][0-9][0-9,-][0-9][0-9][0-9][0-9]");
 
-  extern const MapMatrix *_globalMapMatrix;
+  extern MapMatrix *_globalMapMatrix;
   extern MapContents *_globalMapContents;
   ElevationFinder * ef=ElevationFinder::instance();
 
@@ -316,11 +316,14 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
 
           // Scan the optional parts of the B record
           newPoint.engineNoise = -1;
+#ifdef _MSC_VER
+#define strcasecmp stricmp
+#define strncasecmp strnicmp
+#endif
 
           for ( int i = 0; i < options.size(); i++ )
             {
               // Parse only known options
-              if( strncasecmp((options.at(i)).mnemonic, "ENL", 3) == 0 )
               if( strncasecmp((options.at(i)).mnemonic, "ENL", 3) == 0 )
 
               {
@@ -610,7 +613,7 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo)
   //
   QRegExp bRecord("^[$]GPRMC,[0-9][0-9][0-9][0-9][0-9][0-9],[AV],[0-9][0-9][0-9][0-9]\\.[0-9][0-9][0-9],[NS],[0-9][0-9][0-9][0-9][0-9]\\.[0-9][0-9][0-9],[EW],[0-9][0-9][0-9]\\.[0-9],[0-9][0-9][0-9]\\.[0-9],[0-9][0-9][0-9][0-9][0-9][0-9][0-9],[0-9][0-9][0-9]\\.[0-9],[EW],[*][0-9][0-9]$");
 
-  extern const MapMatrix *_globalMapMatrix;
+  extern MapMatrix *_globalMapMatrix;
   extern MapContents *_globalMapContents;
   ElevationFinder * ef=ElevationFinder::instance();
 

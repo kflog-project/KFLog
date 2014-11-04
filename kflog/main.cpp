@@ -32,8 +32,12 @@
  * \version $Id$
  */
 
+#ifndef _MSC_VER
 #include <unistd.h>
 #include <libgen.h>
+#endif
+
+
 
 #ifdef QT_5
     #include <QtWidgets>

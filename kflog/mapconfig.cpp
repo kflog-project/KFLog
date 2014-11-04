@@ -1122,8 +1122,8 @@ QString MapConfig::getPixmapName( unsigned int typeID,
 
   switch(typeID)
     {
-      case BaseMapElement::BaseMapElement::Airport:
-      case BaseMapElement::BaseMapElement::IntAirport:
+      case BaseMapElement::Airport:
+      case BaseMapElement::IntAirport:
         iconName = "airport";
         break;
       case BaseMapElement::MilAirport:

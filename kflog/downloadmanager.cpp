@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <sys/vfs.h>
 #else
-#include <windows.h>
+#include <qt_windows.h>
 #endif
 
 #include <QtCore>

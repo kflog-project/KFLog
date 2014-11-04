@@ -37,6 +37,8 @@ FlightRecorderPluginBase::transferStruct FlightRecorderPluginBase::transferData 
     {bps38400,  38400,  B38400},
     {bps57600,  57600,  B57600},
     {bps115200,115200, B115200}
+#else
+    {bps00000, NULL, NULL }
 #endif
 };
 

@@ -220,7 +220,12 @@ bool Airfield::drawMapElement( QPainter* targetP )
   return true;
 }
 
-#warning "Airport::printMapElement not yet ready to use!"
+#define MSG "Airport::printMapElement not yet ready to use!"
+#ifdef _MSC_VER
+#pragma message ("warning: "MSG)
+#else
+#warning MSG
+#endif
 
 void Airfield::printMapElement(QPainter* printPainter, bool isText)
 {

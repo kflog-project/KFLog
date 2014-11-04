@@ -18,7 +18,9 @@
 
 #include <cmath>
 #include <cstdlib>
+#ifndef _MSC_VER
 #include <unistd.h>
+#endif
 
 #include <QtCore>
 

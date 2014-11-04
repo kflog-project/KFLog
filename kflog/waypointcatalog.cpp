@@ -16,14 +16,19 @@
 
 #define DATA_STREAM QDataStream::Qt_4_7
 
+#ifdef _MSC_VER
+    #pragma comment (lib, "advapi32.lib")
+#endif
+
 #ifdef _WIN32
-#include <windows.h>
+#include <qt_windows.h>
 #include <Lmcons.h>
 #endif
 
 #include <cmath>
+#ifndef _WIN32
 #include <unistd.h>
-
+#endif
 #ifdef QT_5
     #include <QtWidgets>
 #else

@@ -14,7 +14,7 @@
 **
 ***********************************************************************/
 #ifdef _WIN32
-#include <windows.h>
+#include <qt_windows.h>
 #else
 #include <dlfcn.h>
 #endif
@@ -74,7 +74,8 @@ MapContents *_globalMapContents = static_cast<MapContents *> (0);
 /**
  * Used for transforming the map items.
  */
-MapMatrix *_globalMapMatrix =  static_cast<MapMatrix *> (0);
+//MapMatrix *_globalMapMatrix =  static_cast<MapMatrix *> (0);
+MapMatrix *_globalMapMatrix;
 
 /**
  * Contains all configuration-info for drawing and printing the elements.

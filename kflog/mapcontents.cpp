@@ -16,8 +16,9 @@
  **
  **
  ***********************************************************************/
-
+#ifndef _MSC_VER
 #include <unistd.h>
+#endif
 #include <cmath>
 
 #ifdef QT_5
@@ -694,7 +695,7 @@ QString MapContents::__getGuiLanguage()
 bool MapContents::__readTerrainFile( const int fileSecID,
                                      const int fileTypeID )
 {
-  extern const MapMatrix *_globalMapMatrix;
+  extern MapMatrix *_globalMapMatrix;
 
   if ( fileTypeID != FILE_TYPE_TERRAIN && fileTypeID != FILE_TYPE_GROUND )
     {
@@ -899,7 +900,7 @@ bool MapContents::__readTerrainFile( const int fileSecID,
 bool MapContents::__readBinaryFile( const int  fileSecID,
                                     const char fileTypeID )
 {
-  extern const MapMatrix *_globalMapMatrix;
+  extern MapMatrix *_globalMapMatrix;
 
   QString path, file;
 
@@ -2158,7 +2159,7 @@ bool MapContents::loadTask(QFile& path)
 
   QFileInfo fInfo(path);
 
-  extern const MapMatrix *_globalMapMatrix;
+  extern MapMatrix *_globalMapMatrix;
 
   if(!fInfo.exists())
     {

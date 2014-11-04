@@ -14,7 +14,9 @@
 **   $Id$
 **
 ***********************************************************************/
-
+#ifdef _MSC_VER
+#define _USE_MATH_DEFINES
+#endif
 #include <cmath>
 #include <cstdlib>
 
@@ -180,6 +182,9 @@ QString printTime(time_t time, bool isZero, bool isSecond)
 #ifndef _WIN32
   gmtime_r (&time, &lt);
 #else
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
     struct tm * blubb = gmtime (&time);
     memcpy(&lt,blubb,sizeof(struct tm));
 #endif
@@ -215,7 +220,11 @@ time_t timeToDay(const int year, const int month, const int day, const char *mon
   {
     mymonth = 1; // default to Jan
     for ( int i = 0; i < 12; i++ )
-      if ( strcasecmp(monthAbb[i], monabb) == 0 ) {
+#ifdef _MSC_VER
+#define strcasecmp stricmp
+#define strncasecmp strnicmp
+#endif
+    if ( strcasecmp(monthAbb[i], monabb) == 0 ) {
         mymonth = i + 1;
         break;
       }

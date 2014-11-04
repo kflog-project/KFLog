@@ -25,6 +25,9 @@
  * and "lon". Furthermore it controls the unit to be used for position
  * representation.
  */
+#ifdef _MSC_VER
+#define _USE_MATH_DEFINES
+#endif
 
 #include <cstdlib>
 #include <cmath>
