@@ -4947,12 +4947,12 @@ Bitte Kabel und Verbindungseinstellungen überprüfen.</translation>
     <message>
         <location filename="taskdialog.cpp" line="119"/>
         <source>ri&amp;ght</source>
-        <translation>rechts</translation>
+        <translation>&amp;rechts</translation>
     </message>
     <message>
         <location filename="taskdialog.cpp" line="124"/>
         <source>Side of FAI area</source>
-        <translation type="unfinished"></translation>
+        <translation>Schenkel der FAI Fläche</translation>
     </message>
     <message>
         <location filename="taskdialog.cpp" line="163"/>
@@ -4977,27 +4977,27 @@ Bitte Kabel und Verbindungseinstellungen überprüfen.</translation>
     <message>
         <location filename="taskdialog.cpp" line="194"/>
         <source>Moves selected task point up</source>
-        <translation type="unfinished"></translation>
+        <translation>Verschiebt ausgwählten Wendepunkt nach oben</translation>
     </message>
     <message>
         <location filename="taskdialog.cpp" line="201"/>
         <source>Moves selected task point down</source>
-        <translation type="unfinished"></translation>
+        <translation>Verschiebt ausgewählten Wendepunkt nach unten</translation>
     </message>
     <message>
         <location filename="taskdialog.cpp" line="214"/>
         <source>Adds the selected waypoint to the task list</source>
-        <translation type="unfinished"></translation>
+        <translation>Fügt ausgewählten Wendepunkt zur Aufgabenliste</translation>
     </message>
     <message>
         <location filename="taskdialog.cpp" line="221"/>
         <source>Inverts the task. Last point becomes the first point, A.s.o.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kehrt Reihenfolge der Wendepunkte um.</translation>
     </message>
     <message>
         <location filename="taskdialog.cpp" line="228"/>
         <source>Removes the selected task point from the task list</source>
-        <translation type="unfinished"></translation>
+        <translation>Löscht ausgewählten Wendepunkt aus Aufgabe</translation>
     </message>
     <message>
         <location filename="taskdialog.cpp" line="247"/>
@@ -5022,17 +5022,17 @@ Bitte Kabel und Verbindungseinstellungen überprüfen.</translation>
     <message>
         <location filename="taskdialog.cpp" line="331"/>
         <source>&lt;b&gt;Task Type FAI Area:&lt;/b&gt;&lt;br&gt;&lt;br&gt;You can define a FAI task with either Takeoff, Start, End and Landing or Takeoff, Start, End, Landing and &lt;b&gt;one&lt;/b&gt; additional Route point.&lt;br&gt;The points &lt;i&gt;Takeoff&lt;/i&gt;, &lt;i&gt;Start&lt;/i&gt;, &lt;i&gt;End&lt;/i&gt; and &lt;i&gt;Landing&lt;/i&gt;are &lt;b&gt;mandatory!&lt;/b&gt;&lt;br&gt;&lt;br&gt;The FAI area calculation will be made with Start and End point or Start and Route point, depending weather the Route point is defined or not.&lt;br&gt;&lt;br&gt;New waypoints are inserted after the selected one.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Aufgabentyp FAI Gebiet&lt;/b&gt;&lt;br&gt;&lt;br&gt;Du kannst einen FAI Aufgabe definieren mit &lt;i&gt;Startort&lt;/i&gt;, &lt;i&gt;Abflugpunkt&lt;/i&gt;, &lt;i&gt;Endpunkt&lt;/i&gt; und &lt;i&gt;Landeor&lt;/i&gt;t oder Startort, Abflugpunkt und &lt;b&gt;einem&lt;/b&gt; zusätzlichen Wendepunkt. &lt;br&gt;Die Punke &lt;i&gt;Startort&lt;/i&gt;, &lt;i&gt;Abflugpunkt&lt;/i&gt;, &lt;i&gt;Endpunkt&lt;/i&gt; und &lt;i&gt;Landeort&lt;/i&gt; sind &lt;b&gt;Pflichtangaben&lt;/b&gt;&lt;br&gt;&lt;br&gt;die FAI Region Berechnung kann mit Startort, Abflugpunkt, Endpunkt und Landeort auch ohne zusätzlichen Wendepunkt durchgeführt werden.&lt;br&gt;&lt;br&gt;Neue Wendepunkte werden hinter dem ausgewählten Punkt eingefügt.</translation>
     </message>
     <message>
         <location filename="taskdialog.cpp" line="342"/>
         <source>&lt;br&gt;&lt;br&gt;&lt;b&gt;Your FAI task contains too much route points!&lt;br&gt;Please remove all not necessary route points.&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;br&gt;&lt;br&gt;&lt;b&gt;Deine FAI Aufgabe beinhaltet zu viele Wendepunkte &lt;br&gt; Bitte alle nicht notwendigen Punkte entfernen.&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="taskdialog.cpp" line="358"/>
         <source>&lt;html&gt;&lt;b&gt;Task Type Traditional Route:&lt;/b&gt;&lt;br&gt;&lt;br&gt;You can define a task with Takeoff, Start, End, Landing and Route points. The points &lt;i&gt;Takeoff&lt;/i&gt;, &lt;i&gt;Start&lt;/i&gt;, &lt;i&gt;End&lt;/i&gt; and &lt;i&gt;Landing&lt;/i&gt;are &lt;b&gt;mandatory!&lt;/b&gt; Additional route points can be added.&lt;br&gt;&lt;br&gt;New waypoints are inserted after the selected one.&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;b&gt;Aufgabentype Traditionelle Strecke:&lt;/b&gt;&lt;br&gt;&lt;br&gt;Du kannst eine Aufgabe mit Startort, Abflugpunkt, Endpunkt, Landeort und Wegpunkten definieren. Die Punkte &lt;i&gt;Startort&lt;/i&gt;, &lt;i&gt;Abflugpunkt&lt;/i&gt;, &lt;i&gt;Endpunkt&lt;/i&gt; sind &lt;b&gt;Pflichtangaben&lt;/b&gt;. Zusätzliche Wendepunkte können hinzugefügt werden.&lt;br&gt;&lt;br&gt;Neue Wegpunkte werden hinter dem ausgewählten Punkt eingefügt.&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="taskdialog.cpp" line="410"/>
@@ -5077,7 +5077,7 @@ Bitte Kabel und Verbindungseinstellungen überprüfen.</translation>
     <message>
         <location filename="taskdialog.cpp" line="716"/>
         <source>&lt;html&gt;The chosen task name is already in use!&lt;br&gt;&lt;br&gt;Please enter another one.&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;Der gewählte Aufgabename ist bereits in Verwendung!&lt;br&gt;&lt;br&gt;Bitte einen anderen wählen.&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="taskdialog.cpp" line="728"/>
@@ -5087,12 +5087,12 @@ Bitte Kabel und Verbindungseinstellungen überprüfen.</translation>
     <message>
         <location filename="taskdialog.cpp" line="729"/>
         <source>&lt;html&gt;A task consist of at least four waypoints!&lt;br&gt;&lt;br&gt;Please add the missing points.&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;Eine Aufgabe besteht aus mindestens 4 Wegpunkten!&lt;br&gt;&lt;br&gt;. Bitte füge die fehlenden Punkte hinzu.&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="taskdialog.cpp" line="739"/>
         <source>&lt;html&gt;A FAI area task can have one additional route point only!&lt;br&gt;&lt;br&gt;Please remove all not needed other points.&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;Eine FAI Gebiets Aufgabe kann nur einen weiteren Wendepunkt haben.&lt;br&gt;&lt;br&gt;Bitte alle nicht benötigten Punkte entfernen.&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;htlm&gt;A task consist of at least four waypoints!&lt;br&gt;&lt;br&gt;Please add the missing points.&lt;/html&gt;</source>
@@ -5109,7 +5109,7 @@ Bitte Kabel und Verbindungseinstellungen überprüfen.</translation>
     <message>
         <location filename="topolegend.cpp" line="89"/>
         <source>&lt; 0 m (water)</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt; 0 m (Wasser)</translation>
     </message>
 </context>
 <context>
@@ -5117,77 +5117,77 @@ Bitte Kabel und Verbindungseinstellungen überprüfen.</translation>
     <message>
         <location filename="waypointdialog.cpp" line="87"/>
         <source>Add country as two letter code according to ISO 3166-1-alpha-2</source>
-        <translation type="unfinished">Zwei-Buchstabe Länderkennzeichen nach ISO 3166-1-alpha-2 angeben</translation>
+        <translation>Zwei-Buchstabe Länderkennzeichen nach ISO 3166-1-alpha-2 angeben</translation>
     </message>
     <message>
         <location filename="waypointdialog.cpp" line="239"/>
         <source>&amp;Ok</source>
-        <translation type="unfinished">&amp;OK</translation>
+        <translation>&amp;OK</translation>
     </message>
     <message>
         <location filename="waypointdialog.cpp" line="244"/>
         <source>&amp;Cancel</source>
-        <translation type="unfinished">&amp;Abbrechen</translation>
+        <translation>&amp;Abbrechen</translation>
     </message>
     <message>
         <location filename="waypointdialog.cpp" line="67"/>
         <source>&amp;Name</source>
-        <translation type="unfinished">&amp;Name</translation>
+        <translation>&amp;Name</translation>
     </message>
     <message>
         <location filename="waypointdialog.cpp" line="70"/>
         <source>&amp;Country</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Land</translation>
     </message>
     <message>
         <location filename="waypointdialog.cpp" line="73"/>
         <source>&amp;Description</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Beschreibung</translation>
     </message>
     <message>
         <location filename="waypointdialog.cpp" line="108"/>
         <source>&amp;Latitude</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Breite</translation>
     </message>
     <message>
         <location filename="waypointdialog.cpp" line="111"/>
         <source>L&amp;ongitude</source>
-        <translation type="unfinished"></translation>
+        <translation>L&amp;änge</translation>
     </message>
     <message>
         <location filename="waypointdialog.cpp" line="126"/>
         <source>&amp;Type</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Typ</translation>
     </message>
     <message>
         <location filename="waypointdialog.cpp" line="152"/>
         <source>&amp;ICAO:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;ICAO:</translation>
     </message>
     <message>
         <location filename="waypointdialog.cpp" line="155"/>
         <source>&amp;Frequency</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Frequenz</translation>
     </message>
     <message>
         <location filename="waypointdialog.cpp" line="177"/>
         <source>&amp;Runway</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Startbahn</translation>
     </message>
     <message>
         <location filename="waypointdialog.cpp" line="180"/>
         <source>&amp;Surface</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Oberfläche</translation>
     </message>
     <message>
         <location filename="waypointdialog.cpp" line="183"/>
         <source>%1 (m):</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (m):</translation>
     </message>
     <message>
         <location filename="waypointdialog.cpp" line="183"/>
         <source>Len&amp;gth</source>
-        <translation type="unfinished"></translation>
+        <translation>Lä&amp;nge</translation>
     </message>
     <message>
         <location filename="waypointdialog.cpp" line="215"/>
