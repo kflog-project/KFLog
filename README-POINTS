@@ -1,4 +1,5 @@
-This directory is used for the point data, such as airfields, navaids, ...
+This directory is used for the point data, such as airfields, navaids,
+hotspots, ...
 
 KFLog supports two different point data sources:
 
@@ -13,7 +14,7 @@ KFLog supports two different point data sources:
  2. openAIP point data from http://www.openaip.net/. See there
     for more information.
 
-KFLog downloads point data files automatically for you in the settings
-airfields page. Please define on that page, which point data source
+KFLog downloads point data files automatically for you in the KFLOg Setup
+Points page. Please define on that page, which point data source
 (Welt2000 or openAIP) do you want to use and for which countries point
 data should be loaded.

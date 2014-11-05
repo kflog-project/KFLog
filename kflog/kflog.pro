@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# KFLog qmake project file for Qt4.x
+# KFLog qmake project file for Qt4 and Qt5
 #
 ###############################################################################
 
@@ -227,8 +227,8 @@ HEADERS = \
 landscape.path  = /mapdata/landscape
 landscape.files = ../README-LANDSCAPE
 
-airfields.path  = /mapdata/airfields
-airfields.files = ../README-AIRFIELDS
+points.path  = /mapdata/points
+points.files = ../README-POINTS
 
 airspaces.path  = /mapdata/airspaces
 airspaces.files = ../README-AIRSPACES
@@ -236,7 +236,7 @@ airspaces.files = ../README-AIRSPACES
 translations.path  = /mapdata/translations
 translations.files = ../README-TRANSLATIONS
 
-INSTALLS += landscape airfields airspaces translations
+INSTALLS += landscape points airspaces translations
 
 !win32 {
 DESTDIR = ../release/bin
