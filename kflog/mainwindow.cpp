@@ -28,6 +28,7 @@
 #else
     #include <QtGui>
 #endif
+
 #include <QSortFilterProxyModel>
 
 #include "aboutwidget.h"
@@ -684,6 +685,15 @@ void MainWindow::createMenuBar()
   connect( viewMapDataUnderMouseCursor, SIGNAL(triggered(bool)),
            this, SLOT(slotViewMapDataUnderMouseCursor(bool)) );
 
+  viewWaypointLabels = new QAction( tr("Show waypoint labels"), this );
+  viewWaypointLabels->setEnabled( true );
+  viewWaypointLabels->setCheckable( true );
+  viewWaypointLabels->setShortcut( Qt::Key_F4 );
+
+  viewWaypointLabels->setChecked( _settings.value( "/MapData/ViewWaypointLabels", true ).toBool() );
+  connect( viewWaypointLabels, SIGNAL(triggered(bool)),
+           this, SLOT(slotViewWaypointLabels(bool)) );
+
   //----------------------------------------------------------------------------
   // View menu creation
   //----------------------------------------------------------------------------
@@ -698,6 +708,7 @@ void MainWindow::createMenuBar()
   vm->addAction( viewZoomAction );
   vm->addAction( viewRedrawAction );
   vm->addSeparator();
+  vm->addAction( viewWaypointLabels );
   vm->addAction( viewMapDataUnderMouseCursor );
   vm->addSeparator();
 
@@ -952,6 +963,7 @@ void MainWindow::createMenuBar()
   settingsToolBarAction = new QAction( tr("Show Toolbar"), this );
   settingsToolBarAction->setCheckable( true );
   settingsToolBarAction->setChecked( true );
+  settingsToolBarAction->setShortcut( Qt::CTRL + Qt::Key_X );
   connect( settingsToolBarAction, SIGNAL(triggered(bool)),
            toolBar, SLOT(setVisible(bool)) );
   connect( toolBar, SIGNAL(visibilityChanged(bool)),
@@ -960,6 +972,7 @@ void MainWindow::createMenuBar()
   settingsStatusBarAction = new QAction( tr("Show Statusbar"), this );
   settingsStatusBarAction->setCheckable( true );
   settingsStatusBarAction->setChecked( true );
+  settingsStatusBarAction->setShortcut( Qt::CTRL + Qt::Key_Y );
   connect( settingsStatusBarAction, SIGNAL(triggered(bool)),
            statusBar(), SLOT(setVisible(bool)) );
 
@@ -1012,7 +1025,6 @@ void MainWindow::createMenuBar()
 
 
   //FIXME: link to manual must be added
-  //FIXME: dialog to switch application language must be added
   //help->insertItem(getPixmap("kde_idea_16.png"), tr("Tip of the day") );//, this, SLOT(slotTipOfDay()));
 }
 
@@ -1933,13 +1945,22 @@ void MainWindow::slotFlightsMenuAboutToShow()
     }
 }
 
-/**
- * Toggles the view map data action on/off.
- */
 void MainWindow::slotViewMapDataUnderMouseCursor( bool checked )
 {
   viewMapDataUnderMouseCursor->setChecked( checked );
   _settings.setValue( "/MapData/ViewDataUnderMouseCursor", checked );
+}
+
+void MainWindow::slotViewWaypointLabels( bool checked )
+{
+  viewWaypointLabels->setChecked( checked );
+  _settings.setValue( "/MapData/ViewWaypointLabels", checked );
+
+  if( map != 0 )
+    {
+      // Initiate a map redrawing.
+      map->slotRedrawMap();
+    }
 }
 
 void MainWindow::slotShowAbout()

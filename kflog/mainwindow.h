@@ -219,6 +219,11 @@ public slots:
    */
   void slotViewMapDataUnderMouseCursor( bool checked );
 
+  /**
+   * Toggles the view waypoint labels action on/off.
+   */
+  void slotViewWaypointLabels( bool checked );
+
   /** Called to save the map into an image file. */
   void slotSaveMap2Image();
 
@@ -365,6 +370,7 @@ private:
   QAction* viewMoveSAction;
   QAction* viewMoveSEAction;
   QAction* viewMapDataUnderMouseCursor;
+  QAction* viewWaypointLabels;
   /**
    * Actions for the menu Flight
    */

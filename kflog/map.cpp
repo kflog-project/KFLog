@@ -2594,8 +2594,10 @@ void Map::__drawWaypoints()
     // draw marker
     painter.drawRect( mp.x() - 4, mp.y() - 4, 8, 8 );
 
-    // draw name of wp
-    if( _globalMapConfig->drawWpLabels() )
+    // Draw the name of the waypoint in dependency of scale and user configuration.
+    bool drawLabels = _settings.value( "/MapData/ViewWaypointLabels", true ).toBool();
+
+    if( _globalMapConfig->drawWpLabels() && drawLabels )
       {
         // save the current painter, must be restored at the end!!!
         painter.save();

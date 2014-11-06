@@ -11,6 +11,11 @@
 #
 ################################################################################
 
+2014-11-06 Axel Pauli <kflog.cumulus@gmail.com>
+
+  * Issue #33 Make waypoint label drawing configurable. Added a new menu entry
+    under the View menu to realize that.
+
 2014-11-04 Peter Simon <psimon.kflog@gmail.com>
 
   * Changes to build KFLog in Microsoft Visual Studio 2012.
