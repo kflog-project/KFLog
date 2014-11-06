@@ -1,5 +1,6 @@
 This directory is used for the GUI labels and text translations. Per country
 two files have to be installed here.
 
-1. KFLog GUI text translations
-2. QT text translations
+1. KFLog GUI text translations e.g. kflog_<country-code>.qm
+2. QT text translations e.g. qt_<country-code>.qm. In Qt5 some more files are
+   necessary to install here.
