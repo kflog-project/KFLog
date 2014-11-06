@@ -233,7 +233,7 @@ points.files = ../README-POINTS
 airspaces.path  = /mapdata/airspaces
 airspaces.files = ../README-AIRSPACES
 
-translations.path  = /mapdata/translations
+translations.path  = /translations
 translations.files = ../README-TRANSLATIONS
 
 INSTALLS += landscape points airspaces translations
