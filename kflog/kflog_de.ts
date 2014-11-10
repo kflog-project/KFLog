@@ -3581,7 +3581,7 @@ Alle Downloads verworfen!</translation>
     <message>
         <location filename="flighttask.cpp" line="1638"/>
         <source>FAI Area</source>
-        <translation>FAI Area</translation>
+        <translation>FAI Region</translation>
     </message>
     <message>
         <location filename="httpclient.cpp" line="246"/>
@@ -4904,209 +4904,271 @@ Bitte Kabel und Verbindungseinstellungen überprüfen.</translation>
 <context>
     <name>TaskDialog</name>
     <message>
-        <location filename="taskdialog.cpp" line="81"/>
+        <location filename="taskdialog.cpp" line="80"/>
         <source>&amp;Ok</source>
         <translation>&amp;OK</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="85"/>
+        <location filename="taskdialog.cpp" line="84"/>
         <source>&amp;Cancel</source>
         <translation>&amp;Abbrechen</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="162"/>
+        <location filename="taskdialog.cpp" line="103"/>
+        <source>Task Type</source>
+        <translation>Aufgabetyp</translation>
+    </message>
+    <message>
+        <location filename="taskdialog.cpp" line="115"/>
+        <source>left</source>
+        <translation>links</translation>
+    </message>
+    <message>
+        <location filename="taskdialog.cpp" line="118"/>
+        <source>right</source>
+        <translation>rechts</translation>
+    </message>
+    <message>
+        <location filename="taskdialog.cpp" line="161"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="249"/>
+        <location filename="taskdialog.cpp" line="186"/>
+        <source>Task</source>
+        <translation>Aufgabe</translation>
+    </message>
+    <message>
+        <location filename="taskdialog.cpp" line="220"/>
+        <source>Inverts the task. Last point becomes the first point, a.s.o.</source>
+        <translation>Aufgabe umkehren (letzter Punkt wird der erste u.s.w.)</translation>
+    </message>
+    <message>
+        <location filename="taskdialog.cpp" line="248"/>
         <source>Country</source>
         <translation>Land</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="40"/>
+        <location filename="taskdialog.cpp" line="39"/>
         <source>Task Editor</source>
         <translation>Aufgaben Editor</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="63"/>
-        <location filename="taskdialog.cpp" line="65"/>
+        <location filename="taskdialog.cpp" line="62"/>
+        <location filename="taskdialog.cpp" line="64"/>
         <source>Task selection</source>
         <translation>Aufgaben Auswahl</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="93"/>
         <source>&amp;Name</source>
-        <translation>&amp;Name</translation>
+        <translation type="vanished">&amp;Name</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="104"/>
         <source>Task T&amp;ype</source>
-        <translation>Aufgaben T&amp;yp</translation>
+        <translation type="vanished">Aufgaben T&amp;yp</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="116"/>
         <source>&amp;left</source>
-        <translation>&amp;links</translation>
+        <translation type="vanished">&amp;links</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="119"/>
         <source>ri&amp;ght</source>
-        <translation>&amp;rechts</translation>
+        <translation type="vanished">&amp;rechts</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="124"/>
+        <location filename="taskdialog.cpp" line="123"/>
         <source>Side of FAI area</source>
         <translation>Schenkel der FAI Fläche</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="163"/>
+        <location filename="taskdialog.cpp" line="162"/>
         <source>Taskpoint</source>
         <translation>Aufgaben Punkt</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="164"/>
+        <location filename="taskdialog.cpp" line="163"/>
         <source>Length</source>
         <translation>Länge</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="165"/>
+        <location filename="taskdialog.cpp" line="164"/>
         <source>Course</source>
         <translation>Kurs</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="187"/>
         <source>&amp;Task</source>
-        <translation>&amp;Aufgabe</translation>
+        <translation type="vanished">&amp;Aufgabe</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="194"/>
+        <location filename="taskdialog.cpp" line="193"/>
         <source>Moves selected task point up</source>
         <translation>Verschiebt ausgwählten Wendepunkt nach oben</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="201"/>
+        <location filename="taskdialog.cpp" line="200"/>
         <source>Moves selected task point down</source>
         <translation>Verschiebt ausgewählten Wendepunkt nach unten</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="214"/>
+        <location filename="taskdialog.cpp" line="213"/>
         <source>Adds the selected waypoint to the task list</source>
         <translation>Fügt ausgewählten Wendepunkt zur Aufgabenliste</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="221"/>
         <source>Inverts the task. Last point becomes the first point, A.s.o.</source>
-        <translation>Kehrt Reihenfolge der Wendepunkte um.</translation>
+        <translation type="vanished">Kehrt Reihenfolge der Wendepunkte um.</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="228"/>
+        <location filename="taskdialog.cpp" line="227"/>
         <source>Removes the selected task point from the task list</source>
         <translation>Löscht ausgewählten Wendepunkt aus Aufgabe</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="247"/>
+        <location filename="taskdialog.cpp" line="92"/>
+        <location filename="taskdialog.cpp" line="246"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="248"/>
+        <location filename="taskdialog.cpp" line="247"/>
         <source>Description</source>
         <translation>Deschreibung</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="250"/>
+        <location filename="taskdialog.cpp" line="249"/>
         <source>ICAO</source>
         <translation>ICAO</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="269"/>
         <source>&amp;Waypoint&apos;s</source>
-        <translation>&amp;Wegpunkte</translation>
+        <translation type="vanished">&amp;Wegpunkte</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="331"/>
         <source>&lt;b&gt;Task Type FAI Area:&lt;/b&gt;&lt;br&gt;&lt;br&gt;You can define a FAI task with either Takeoff, Start, End and Landing or Takeoff, Start, End, Landing and &lt;b&gt;one&lt;/b&gt; additional Route point.&lt;br&gt;The points &lt;i&gt;Takeoff&lt;/i&gt;, &lt;i&gt;Start&lt;/i&gt;, &lt;i&gt;End&lt;/i&gt; and &lt;i&gt;Landing&lt;/i&gt;are &lt;b&gt;mandatory!&lt;/b&gt;&lt;br&gt;&lt;br&gt;The FAI area calculation will be made with Start and End point or Start and Route point, depending weather the Route point is defined or not.&lt;br&gt;&lt;br&gt;New waypoints are inserted after the selected one.</source>
-        <translation>&lt;b&gt;Aufgabentyp FAI Gebiet&lt;/b&gt;&lt;br&gt;&lt;br&gt;Du kannst einen FAI Aufgabe definieren mit &lt;i&gt;Startort&lt;/i&gt;, &lt;i&gt;Abflugpunkt&lt;/i&gt;, &lt;i&gt;Endpunkt&lt;/i&gt; und &lt;i&gt;Landeor&lt;/i&gt;t oder Startort, Abflugpunkt und &lt;b&gt;einem&lt;/b&gt; zusätzlichen Wendepunkt. &lt;br&gt;Die Punke &lt;i&gt;Startort&lt;/i&gt;, &lt;i&gt;Abflugpunkt&lt;/i&gt;, &lt;i&gt;Endpunkt&lt;/i&gt; und &lt;i&gt;Landeort&lt;/i&gt; sind &lt;b&gt;Pflichtangaben&lt;/b&gt;&lt;br&gt;&lt;br&gt;die FAI Region Berechnung kann mit Startort, Abflugpunkt, Endpunkt und Landeort auch ohne zusätzlichen Wendepunkt durchgeführt werden.&lt;br&gt;&lt;br&gt;Neue Wendepunkte werden hinter dem ausgewählten Punkt eingefügt.</translation>
+        <translation type="vanished">&lt;b&gt;Aufgabentyp FAI Gebiet&lt;/b&gt;&lt;br&gt;&lt;br&gt;Du kannst einen FAI Aufgabe definieren mit &lt;i&gt;Startort&lt;/i&gt;, &lt;i&gt;Abflugpunkt&lt;/i&gt;, &lt;i&gt;Endpunkt&lt;/i&gt; und &lt;i&gt;Landeor&lt;/i&gt;t oder Startort, Abflugpunkt und &lt;b&gt;einem&lt;/b&gt; zusätzlichen Wendepunkt. &lt;br&gt;Die Punke &lt;i&gt;Startort&lt;/i&gt;, &lt;i&gt;Abflugpunkt&lt;/i&gt;, &lt;i&gt;Endpunkt&lt;/i&gt; und &lt;i&gt;Landeort&lt;/i&gt; sind &lt;b&gt;Pflichtangaben&lt;/b&gt;&lt;br&gt;&lt;br&gt;die FAI Region Berechnung kann mit Startort, Abflugpunkt, Endpunkt und Landeort auch ohne zusätzlichen Wendepunkt durchgeführt werden.&lt;br&gt;&lt;br&gt;Neue Wendepunkte werden hinter dem ausgewählten Punkt eingefügt.</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="342"/>
+        <location filename="taskdialog.cpp" line="400"/>
         <source>&lt;br&gt;&lt;br&gt;&lt;b&gt;Your FAI task contains too much route points!&lt;br&gt;Please remove all not necessary route points.&lt;/b&gt;</source>
         <translation>&lt;br&gt;&lt;br&gt;&lt;b&gt;Deine FAI Aufgabe beinhaltet zu viele Wendepunkte &lt;br&gt; Bitte alle nicht notwendigen Punkte entfernen.&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="358"/>
         <source>&lt;html&gt;&lt;b&gt;Task Type Traditional Route:&lt;/b&gt;&lt;br&gt;&lt;br&gt;You can define a task with Takeoff, Start, End, Landing and Route points. The points &lt;i&gt;Takeoff&lt;/i&gt;, &lt;i&gt;Start&lt;/i&gt;, &lt;i&gt;End&lt;/i&gt; and &lt;i&gt;Landing&lt;/i&gt;are &lt;b&gt;mandatory!&lt;/b&gt; Additional route points can be added.&lt;br&gt;&lt;br&gt;New waypoints are inserted after the selected one.&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;b&gt;Aufgabentype Traditionelle Strecke:&lt;/b&gt;&lt;br&gt;&lt;br&gt;Du kannst eine Aufgabe mit Startort, Abflugpunkt, Endpunkt, Landeort und Wegpunkten definieren. Die Punkte &lt;i&gt;Startort&lt;/i&gt;, &lt;i&gt;Abflugpunkt&lt;/i&gt;, &lt;i&gt;Endpunkt&lt;/i&gt; sind &lt;b&gt;Pflichtangaben&lt;/b&gt;. Zusätzliche Wendepunkte können hinzugefügt werden.&lt;br&gt;&lt;br&gt;Neue Wegpunkte werden hinter dem ausgewählten Punkt eingefügt.&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;b&gt;Aufgabentype Traditionelle Strecke:&lt;/b&gt;&lt;br&gt;&lt;br&gt;Du kannst eine Aufgabe mit Startort, Abflugpunkt, Endpunkt, Landeort und Wegpunkten definieren. Die Punkte &lt;i&gt;Startort&lt;/i&gt;, &lt;i&gt;Abflugpunkt&lt;/i&gt;, &lt;i&gt;Endpunkt&lt;/i&gt; sind &lt;b&gt;Pflichtangaben&lt;/b&gt;. Zusätzliche Wendepunkte können hinzugefügt werden.&lt;br&gt;&lt;br&gt;Neue Wegpunkte werden hinter dem ausgewählten Punkt eingefügt.&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="410"/>
+        <location filename="taskdialog.cpp" line="270"/>
+        <source>Point Source:</source>
+        <translation>Wegpunktquelle:</translation>
+    </message>
+    <message>
+        <location filename="taskdialog.cpp" line="317"/>
+        <source>Waypoints</source>
+        <translation>Wegpunkte</translation>
+    </message>
+    <message>
+        <location filename="taskdialog.cpp" line="322"/>
+        <source>Airfields</source>
+        <translation>Flugplätze</translation>
+    </message>
+    <message>
+        <location filename="taskdialog.cpp" line="327"/>
+        <source>Outlandings</source>
+        <translation>Außenlandefelder</translation>
+    </message>
+    <message>
+        <location filename="taskdialog.cpp" line="332"/>
+        <source>Hotspots</source>
+        <translation>Thermikquellen</translation>
+    </message>
+    <message>
+        <location filename="taskdialog.cpp" line="337"/>
+        <source>Navaids</source>
+        <translation>Radionavigationspunkte</translation>
+    </message>
+    <message>
+        <location filename="taskdialog.cpp" line="342"/>
+        <source>No point data found</source>
+        <translation>Keine Punkte gefunden</translation>
+    </message>
+    <message>
+        <location filename="taskdialog.cpp" line="389"/>
+        <source>&lt;b&gt;Task Type FAI Area:&lt;/b&gt;&lt;br&gt;&lt;br&gt;You can define a FAI task with either Takeoff, Start, End and Landing or Takeoff, Start, End, Landing and &lt;b&gt;one&lt;/b&gt; additional Route point.&lt;br&gt;The points &lt;i&gt;Takeoff&lt;/i&gt;, &lt;i&gt;Start&lt;/i&gt;, &lt;i&gt;End&lt;/i&gt; and &lt;i&gt;Landing&lt;/i&gt; are &lt;b&gt;mandatory!&lt;/b&gt;&lt;br&gt;&lt;br&gt;The FAI area calculation will be made with Start and End point or Start and Route point, depending weather the route point is defined or not.&lt;br&gt;&lt;br&gt;New points are inserted always after the selected one.</source>
+        <translation>&lt;b&gt;Aufgabentyp FAI Region:&lt;/b&gt;&lt;br&gt;&lt;br&gt;Du kannst eine FAI Aufgabe mit entweder Startort, Abflugpunkt, Zielpunkt und Landeort oder Startort,Abflugpunkt, Zielpunkt, Landeort und &lt;b&gt;einem&lt;/b&gt; weiteren Wegpunkt definieren.&gt;br&gt;Die Punkte &lt;i&gt;Startort&lt;/i&gt;, &lt;i&gt;Startpunkt&lt;/i&gt;, &lt;i&gt;Zielpunkt&lt;/i&gt; und &lt;i&gt;Landeort&lt;/i&gt; sind &lt;b&gt;Pflichtangaben!&lt;/b&gt;&lt;br&gt;&lt;br&gt;Die FAI Regionsberechnung wird mit Abflugpunkt und Zielpunkt oder mit Abflugpunkt und Wegpunkt durchgeführt unabhängig davon ob Wegpunkte definiert wurden oder nicht.&lt;br&gt;&lt;br&gt;Neue Punkte werden hinter dem ausgewählten Punkt eingefügt.</translation>
+    </message>
+    <message>
+        <location filename="taskdialog.cpp" line="416"/>
+        <source>&lt;html&gt;&lt;b&gt;Task Type Traditional Route:&lt;/b&gt;&lt;br&gt;&lt;br&gt;You can define a task with Takeoff, Start, End, Landing and Route points. The points &lt;i&gt;Takeoff&lt;/i&gt;, &lt;i&gt;Start&lt;/i&gt;, &lt;i&gt;End&lt;/i&gt; and &lt;i&gt;Landing&lt;/i&gt; are &lt;b&gt;mandatory!&lt;/b&gt; Additional route points can be added.&lt;br&gt;&lt;br&gt;New points are inserted always after the selected one.&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;b&gt;Aufgabentyp traditionelle Strecke:&lt;/b&gt;&lt;br&gt;&lt;br&gt;Du kannst eine Aufgabe mit Startpunkt, Abflugpunkt, Zielpunkt, Landeort und Wendepunkten definieren. Die Punkte &lt;i&gt;Startort&lt;/i&gt;, &lt;i&gt;Abflugpunkt&lt;/i&gt;,&lt;i&gt;Zielpunkt&lt;/i&gt; und &lt;i&gt;Landeort&lt;/i&gt; sind &lt;b&gt;Pflichtangaben&lt;/b&gt;. Weitere Wendepunkte können hinzugefügt werden.&lt;br&gt;&lt;br&gt;Neue Punkte werden hinter dem gewählten Punkt eingefügt.&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="taskdialog.cpp" line="468"/>
         <source>Take Off</source>
         <translation>Start</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="413"/>
+        <location filename="taskdialog.cpp" line="471"/>
         <source>Begin of Task</source>
         <translation>Aufgaben Beginn</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="416"/>
+        <location filename="taskdialog.cpp" line="474"/>
         <source>Route Point</source>
         <translation>Route Punkt</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="419"/>
+        <location filename="taskdialog.cpp" line="477"/>
         <source>End of Task</source>
         <translation>Aufgaben Ende</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="422"/>
+        <location filename="taskdialog.cpp" line="480"/>
         <source>Free Point</source>
         <translation>Freier Punkt</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="425"/>
+        <location filename="taskdialog.cpp" line="483"/>
         <source>Landing</source>
         <translation>Landung</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="428"/>
+        <location filename="taskdialog.cpp" line="486"/>
         <source>Unkown</source>
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="715"/>
+        <location filename="taskdialog.cpp" line="773"/>
         <source>Task name in use</source>
         <translation>Aufgabenname in Benutzung</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="716"/>
+        <location filename="taskdialog.cpp" line="774"/>
         <source>&lt;html&gt;The chosen task name is already in use!&lt;br&gt;&lt;br&gt;Please enter another one.&lt;/html&gt;</source>
         <translation>&lt;html&gt;Der gewählte Aufgabename ist bereits in Verwendung!&lt;br&gt;&lt;br&gt;Bitte einen anderen wählen.&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="728"/>
+        <location filename="taskdialog.cpp" line="786"/>
         <source>Task is incomplete</source>
         <translation>Aufgabe unvollkommen</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="729"/>
+        <location filename="taskdialog.cpp" line="787"/>
         <source>&lt;html&gt;A task consist of at least four waypoints!&lt;br&gt;&lt;br&gt;Please add the missing points.&lt;/html&gt;</source>
         <translation>&lt;html&gt;Eine Aufgabe besteht aus mindestens 4 Wegpunkten!&lt;br&gt;&lt;br&gt;. Bitte füge die fehlenden Punkte hinzu.&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="739"/>
+        <location filename="taskdialog.cpp" line="797"/>
         <source>&lt;html&gt;A FAI area task can have one additional route point only!&lt;br&gt;&lt;br&gt;Please remove all not needed other points.&lt;/html&gt;</source>
-        <translation>&lt;html&gt;Eine FAI Gebiets Aufgabe kann nur einen weiteren Wendepunkt haben.&lt;br&gt;&lt;br&gt;Bitte alle nicht benötigten Punkte entfernen.&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;Eine FAI-Region-Aufgabe kann nur einen weiteren Wendepunkt haben.&lt;br&gt;&lt;br&gt;Bitte alle nicht benötigten Punkte entfernen.&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;htlm&gt;A task consist of at least four waypoints!&lt;br&gt;&lt;br&gt;Please add the missing points.&lt;/html&gt;</source>
         <translation type="vanished">&lt;htlm&gt;Eine Aufgabe besteht aus mind. 4 Wegpunkten!&lt;br&gt;&lt;br&gt;Bitte fehlende Punkte hinzufügen.&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="taskdialog.cpp" line="738"/>
+        <location filename="taskdialog.cpp" line="796"/>
         <source>FAI area task violation</source>
-        <translation>FAI Flächen Aufgaben Verletzung</translation>
+        <translation>FAI-Region-Aufgaben Verletzung</translation>
     </message>
 </context>
 <context>
