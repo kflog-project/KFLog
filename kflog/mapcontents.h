@@ -45,20 +45,19 @@
 #include <QRect>
 #include <QSet>
 
+#include "airfield.h"
 #include "airspace.h"
 #include "downloadmanager.h"
 #include "flighttask.h"
 #include "isolist.h"
+#include "radiopoint.h"
+#include "singlepoint.h"
 
-class Airfield;
 class Distance;
 class Flight;
 class FlightGroup;
-class GliderSite;
 class Isohypse;
 class LineElement;
-class RadioPoint;
-class SinglePoint;
 
 // number of isoline levels
 #define ISO_LINE_LEVELS 51
@@ -230,7 +229,31 @@ class MapContents : public QObject
   };
 
   /**
-   * @returns the navaid list.
+   * @returns The airfield list.
+   */
+  QList<Airfield>& getAirfieldList()
+  {
+    return airfieldList;
+  }
+
+  /**
+   * @returns The gliderfield list.
+   */
+  QList<Airfield>& getGliderfieldList()
+  {
+    return gliderfieldList;
+  }
+
+  /**
+   * @returns The outlanding list.
+   */
+  QList<Airfield>& getOutLandingList()
+    {
+      return outLandingList;
+    }
+
+  /**
+   * @returns The navaid list.
    */
   QList<RadioPoint>& getNavaidList()
   {
@@ -238,7 +261,7 @@ class MapContents : public QObject
   };
 
   /**
-   * @returns the hotspot list.
+   * @returns The hotspot list.
    */
   QList<SinglePoint>& getHotspotList()
   {

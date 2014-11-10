@@ -7,12 +7,10 @@
 ************************************************************************
 **
 **   Copyright (c):  2002 by Harald Maier
-**                   2011 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -42,7 +40,7 @@
  *
  * \author Harald Maier, Axel Pauli
  *
- * \date 2002-2011
+ * \date 2002-2014
  *
  * \version $Id$
  */
@@ -94,6 +92,12 @@ private slots:
 
 private:
 
+  /**
+   * Sets the selection entries in m_pointSourceBox according to the
+   * available data.
+   */
+  void setEntriesInPointSourceBox();
+
   int getCurrentPosition();
 
   void setSelected( int position );
@@ -101,6 +105,17 @@ private:
   void enableCommandButtons();
 
 private:
+
+  /** Enumeration types for point source selection. */
+  enum PointSource
+    {
+      None,
+      Waypoints,
+      Airfields,
+      Outlandings,
+      Navaids,
+      Hotspots
+    };
 
   /** Waypoint list of task. */
   QList<Waypoint*> wpList;
@@ -131,6 +146,9 @@ private:
 
   /** Waypoint list view. */
   KFLogTreeWidget *waypoints;
+
+  /** Combo box for point source selection. */
+  QComboBox *m_pointSourceBox;
 
   int colWpName;
   int colWpDescription;

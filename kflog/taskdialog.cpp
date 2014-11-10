@@ -30,7 +30,6 @@ extern MapConfig*     _globalMapConfig;
 extern MapContents*   _globalMapContents;
 extern MapMatrix*     _globalMapMatrix;
 extern QSettings       _settings;
-extern TranslationList taskTypes;
 
 TaskDialog::TaskDialog( QWidget *parent ) :
   QDialog(parent),
@@ -90,7 +89,7 @@ void TaskDialog::createDialog()
   // Row 1
   name = new QLineEdit;
   name->setReadOnly(false);
-  l = new QLabel(tr("&Name") + ":");
+  l = new QLabel(tr("Name") + ":");
   header->addWidget(l);
   header->addWidget(name);
 
@@ -101,7 +100,7 @@ void TaskDialog::createDialog()
   connect( planningTypes, SIGNAL(activated(const QString&)),
            SLOT(slotSetPlanningType(const QString&)) );
 
-  l = new QLabel( tr( "Task T&ype" ) + ":" );
+  l = new QLabel( tr( "Task Type" ) + ":" );
   l->setBuddy( planningTypes );
 
   // Load task types into combo box
@@ -113,10 +112,10 @@ void TaskDialog::createDialog()
   bgrp2->setExclusive(false);
 
   // insert 2 check buttons
-  left = new QCheckBox(tr("&left"));
+  left = new QCheckBox(tr("left"));
   left->setChecked(true);
   bgrp2->addButton( left, 0 );
-  right = new QCheckBox(tr("ri&ght"));
+  right = new QCheckBox(tr("right"));
   left->setChecked(false);
   bgrp2->addButton( right, 1 );
 
@@ -184,7 +183,7 @@ void TaskDialog::createDialog()
 
   route->loadConfig();
 
-  l = new QLabel(tr("&Task"));
+  l = new QLabel(tr("Task"));
   l->setBuddy( route );
 
   smallButtons->addStretch(1);
@@ -218,7 +217,7 @@ void TaskDialog::createDialog()
   invertCmd = new QPushButton(this);
   invertCmd->setIcon(_mainWindow->getPixmap("kde_reload_16.png"));
   invertCmd->setIconSize(QSize(16, 16));
-  invertCmd->setToolTip( tr("Inverts the task. Last point becomes the first point, A.s.o."));
+  invertCmd->setToolTip( tr("Inverts the task. Last point becomes the first point, a.s.o."));
   connect(invertCmd, SIGNAL(clicked()), SLOT(slotInvertWaypoints()));
   middleLayout->addWidget(invertCmd);
 
@@ -266,10 +265,15 @@ void TaskDialog::createDialog()
 
   waypoints->loadConfig();
 
-  l = new QLabel(tr("&Waypoint's"));
-  l->setBuddy( waypoints );
+  QHBoxLayout* hbox = new QHBoxLayout;
+  hbox->setMargin(0);
+  hbox->addWidget(new QLabel(tr("Point Source:")));
 
-  rightLayout->addWidget(l);
+  m_pointSourceBox = new QComboBox;
+  hbox->addWidget( m_pointSourceBox );
+  hbox->addStretch( 10 );
+
+  rightLayout->addLayout( hbox );
   rightLayout->addWidget(waypoints);
 
   topGroup->addLayout(leftLayout);
@@ -281,8 +285,62 @@ void TaskDialog::createDialog()
   topLayout->addLayout(topGroup);
   topLayout->addLayout(buttons);
 
+  setEntriesInPointSourceBox();
   loadListWaypoints();
   enableCommandButtons();
+}
+
+void TaskDialog::setEntriesInPointSourceBox()
+{
+  if( m_pointSourceBox == 0 )
+    {
+      return;
+    }
+
+  // Gets all available lists from MapContents
+  QList<Waypoint*> &wpList = _globalMapContents->getWaypointList();
+
+  QList<Airfield> &airfieldList = _globalMapContents->getAirfieldList();
+
+  QList<Airfield> &gliderfieldList = _globalMapContents->getGliderfieldList();
+
+  QList<Airfield> &outLandingList = _globalMapContents->getOutLandingList();
+
+  QList<RadioPoint> &navaidList = _globalMapContents->getNavaidList();
+
+  QList<SinglePoint> &hotspotList = _globalMapContents->getHotspotList();
+
+  m_pointSourceBox->clear();
+
+  if( wpList.size() > 0 )
+    {
+      m_pointSourceBox->addItem( tr("Waypoints"), Waypoints );
+    }
+
+  if( airfieldList.size() > 0 || gliderfieldList.size() > 0 )
+    {
+      m_pointSourceBox->addItem( tr("Airfields"), Airfields );
+    }
+
+  if( outLandingList.size() > 0 )
+    {
+      m_pointSourceBox->addItem( tr("Outlandings"), Outlandings );
+    }
+
+  if( hotspotList.size() > 0 )
+    {
+      m_pointSourceBox->addItem( tr("Hotspots"), Hotspots );
+    }
+
+  if( navaidList.size() > 0 )
+    {
+      m_pointSourceBox->addItem( tr("Navaids"), Navaids );
+    }
+
+  if( m_pointSourceBox->count() == 0 )
+    {
+      m_pointSourceBox->addItem( tr("No point data found"), None );
+    }
 }
 
 void TaskDialog::loadListWaypoints()
@@ -331,16 +389,16 @@ void TaskDialog::slotSetPlanningType( const QString& text )
       QString msg = tr("<b>Task Type FAI Area:</b><br><br>"
           "You can define a FAI task with either Takeoff, Start, End and Landing or "
           "Takeoff, Start, End, Landing and <b>one</b> additional Route point.<br>"
-          "The points <i>Takeoff</i>, <i>Start</i>, <i>End</i> and <i>Landing</i>"
+          "The points <i>Takeoff</i>, <i>Start</i>, <i>End</i> and <i>Landing</i> "
           "are <b>mandatory!</b><br><br>"
           "The FAI area calculation will be made with Start and End point or Start "
-          "and Route point, depending weather the Route point is defined or not.<br><br>"
-          "New waypoints are inserted after the selected one." );
+          "and Route point, depending weather the route point is defined or not.<br><br>"
+          "New points are inserted always after the selected one." );
 
       if( wpList.size() > 5 )
         {
           msg += tr( "<br><br><b>Your FAI task contains too much route points!"
-                      "<br>Please remove all not necessary route points.</b>" );
+                     "<br>Please remove all not necessary route points.</b>" );
         }
 
       errorFai->showMessage( "<html>" + msg + "</html>" );
@@ -357,10 +415,10 @@ void TaskDialog::slotSetPlanningType( const QString& text )
 
     errorRoute->showMessage(  tr("<html><b>Task Type Traditional Route:</b><br><br>"
       "You can define a task with Takeoff, Start, End, Landing and Route points. "
-      "The points <i>Takeoff</i>, <i>Start</i>, <i>End</i> and <i>Landing</i>"
+      "The points <i>Takeoff</i>, <i>Start</i>, <i>End</i> and <i>Landing</i> "
       "are <b>mandatory!</b> "
       "Additional route points can be added.<br><br>"
-      "New waypoints are inserted after the selected one.</html>") );
+      "New points are inserted always after the selected one.</html>") );
 
     left->setEnabled(false);
     right->setEnabled(false);
