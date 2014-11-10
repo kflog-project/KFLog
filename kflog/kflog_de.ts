@@ -1161,7 +1161,7 @@
     <message>
         <location filename="kflogconfig.cpp" line="1920"/>
         <source>*_hot.api containing Hotspot points</source>
-        <translation type="unfinished">*_hot.api beinhaltet Thermikquellen&lt;br&gt;&lt;br&gt;</translation>
+        <translation>*_hot.api beinhaltet Thermikquellen&lt;br&gt;</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1999"/>
@@ -1346,12 +1346,12 @@
         <location filename="kflogconfig.cpp" line="1919"/>
         <location filename="kflogconfig.cpp" line="2039"/>
         <source>Uncheck All to enable loading of single files.</source>
-        <translation type="unfinished">Entferne Markierung vor &lt;b&gt;Alle&lt;/b&gt;, um einzelne Dateien laden zu können&lt;br&gt;&lt;br&gt;.</translation>
+        <translation>Entferne Markierung vor &lt;b&gt;Alle&lt;/b&gt;, um einzelne Dateien laden zu können&lt;br&gt;&lt;br&gt;</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1922"/>
         <source>*_wpt.api containing Airfield points</source>
-        <translation type="unfinished">*_wpt_api beinhaltet Flugplatzkoordinaten</translation>
+        <translation>*_wpt_api beinhaltet Flugplatzkoordinaten</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1944"/>
@@ -1421,7 +1421,7 @@
     <message>
         <location filename="kflogconfig.cpp" line="1921"/>
         <source>*_nav.api containing Navaid points</source>
-        <translation type="unfinished">*_nav.api beinhaltet Funknavigationssender&lt;br&gt;</translation>
+        <translation>*_nav.api beinhaltet Funknavigationssender&lt;br&gt;</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1179"/>
@@ -1738,7 +1738,7 @@
     <message>
         <location filename="mainwindow.cpp" line="488"/>
         <source>Save map to PNG...</source>
-        <translation type="unfinished">Speichere Karte als PNG...</translation>
+        <translation>Speichere Karte als PNG...</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="515"/>
@@ -2065,7 +2065,7 @@
     <message>
         <location filename="map.cpp" line="107"/>
         <source>&lt;html&gt;&lt;B&gt;The map&lt;/B&gt;&lt;P&gt;To move or scale the map, you can use the buttons in the &lt;B&gt;Map control area&lt;/B&gt;.&lt;/P&gt;&lt;P&gt;To zoom in or out, use the slider or the two buttons on the toolbar. You can also zoom with &quot;&amp;lt;Ctrl&amp;gt;&amp;lt;+&amp;gt;&quot; or &quot;+&quot; (zoom in) and &quot;&amp;lt;Ctrl&amp;gt;&amp;lt;-&amp;gt;&quot; or &quot;-&quot;(zoom out).&lt;/P&gt;&lt;P&gt;The cursor keys and the keys on the NumPad can also pan the map, if NumLock is switched on.&lt;/P&gt;&lt;P&gt;With the menu item &lt;b&gt;Settings-&amp;gt;KFLog Setup-&amp;gt;Map Elements&lt;/b&gt; you can configure, which map elements should be displayed at which scale.&lt;/P&gt;&lt;b&gt;Supported mouse actions at the map:&lt;/b&gt;&lt;ul&gt;&lt;li&gt;Moving the mouse pointer at a map item will display the item data after a short delay, if the &lt;i&gt;Show map data touched by Mouse&lt;/i&gt; option is enabled.&lt;li&gt;Pressing the right mouse button opens the map menu with different possible actions.&lt;li&gt;Pressing the middle mouse button centers the map to the mouse point.&lt;li&gt;Pressing the left mouse button opens the task menu, if graphical task planning is activated. Otherwise you can move the map so long the left mouse button is pressed during move.&lt;li&gt;Pressing the shift key and the left mouse button over a map item creates a new waypoint by using the item data. If no item is touched by the mouse the waypoint dialog is opened and the user can enter the waypoint data.&lt;li&gt;Pressing the control key and the left mouse button and hold both down during drag will draw a frame at the map. Release the mouse button to zoom the map into the frame.&lt;li&gt;Turning the mouse wheel will zoom into or out the map.&lt;/ul&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;B&gt;Die Karte&lt;/B&gt;&lt;P&gt;Verwende die Buttons im &lt;B&gt;Karten-Kontrollbereich&lt;/B&gt; um die Karte zu verschieben oder zu skalieren.&lt;/P&gt;&lt;P&gt;Zum Zoomen verwende den Schieber oder die zwei Buttons in der Toolbar. Du kannst auch mit der Tastenkombination &quot;&amp;lt;STRG&amp;gt;&amp;lt;+&amp;gt;&quot; oder &quot;+&quot; (vergrößern) und &quot;&amp;lt;STRG&amp;gt;&amp;lt;-&amp;gt;&quot; oder &quot;-&quot;(verkleinern).&lt;/P&gt;&lt;P&gt;Die Pfeiltasten und,falls NumLock  aktiviert wurde, die Tasten auf dem Nummernblock können zum Verschieben der Karte verwendet werden.&lt;/P&gt;&lt;P&gt;Unter dem Menueintrag&lt;b&gt; Einstellungen -&amp;gt; KFLog Einstellungen... -&amp;gt; Kartenelemente&lt;/b&gt; kann eingestellt werden, welche Kartenelemente bei welchem Maßstab angezeigt werden sollen.&lt;/P&gt;&lt;b&gt;Unterstützte Mausbedienung in der Karte:&lt;/b&gt;&lt;ul&gt;&lt;li&gt;Bewegen des Mauszeiger über ein Kartenelement: die Details für das Element werden nach kurzer Zeit eingeblendet, falls die Option &lt;i&gt;Zeige Details bei Mausberührung&lt;/i&gt; aktiviert wurde.&lt;li&gt;Das Drücken der rechten Maustaste auf der Karte öffnet ein Menu mit verschiedenen Aktionen.&lt;li&gt;Das Drücken der mittleren Maustaste zentriert die Karte auf die Position des Mauszeigers.&lt;li&gt;Das Drücken der linken Maustaste öffnet das Aufgaben-Menu falls die &lt;i&gt;Grafische Aufgabenplanung&lt;/i&gt; gewählt wurde. Falls diese Option nicht aktiv ist, kann die Karte mit gedrücktem linken Mausbutton verschoben werden. &lt;li&gt;Umschalten-Linke-Maustaste über einem Kartenelement erzeugt einen neuen Wegpunkt unter Verwendung der Elementdaten. Falls kein Element von der Maus dabei berührt wurde, wird der Wegpunkt Dialog zum Definieren eines neuen Wegpunkts an der Mausposition geöffnet.&lt;li&gt;STRG-Linke-Maustaste während des Bewegens der Maus über die Karte erzeugt einen Rahmen, in den beim Loslassen der Maustaste hineingezoomt wird. &lt;li&gt;Drehen des Mausrades vergrößert/verkleinert den Kartenausschnitt.&lt;/ul&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;B&gt;Die Karte&lt;/B&gt;&lt;P&gt;Verwende die Buttons im &lt;B&gt;Karten-Kontrollbereich&lt;/B&gt; um die Karte zu verschieben oder zu skalieren.&lt;/P&gt;&lt;P&gt;Zum Zoomen verwende den Schieber oder die zwei Buttons in der Toolbar. Du kannst auch mit der Tastenkombination &quot;&amp;lt;STRG&amp;gt;&amp;lt;+&amp;gt;&quot; oder &quot;+&quot; (vergrößern) und &quot;&amp;lt;STRG&amp;gt;&amp;lt;-&amp;gt;&quot; oder &quot;-&quot;(verkleinern).&lt;/P&gt;&lt;P&gt;Die Pfeiltasten und,falls NumLock  aktiviert wurde, die Tasten auf dem Nummernblock können zum Verschieben der Karte verwendet werden.&lt;/P&gt;&lt;P&gt;Unter dem Menueintrag&lt;b&gt; Einstellungen -&amp;gt; KFLog Einstellungen... -&amp;gt; Kartenelemente&lt;/b&gt; kann eingestellt werden, welche Kartenelemente bei welchem Maßstab angezeigt werden sollen.&lt;/P&gt;&lt;b&gt;Unterstützte Mausbedienung in der Karte:&lt;/b&gt;&lt;ul&gt;&lt;li&gt;Bewegen des Mauszeiger über ein Kartenelement: die Details für das Element werden nach kurzer Zeit eingeblendet, falls die Option &lt;i&gt;Zeige Details bei Mausberührung&lt;/i&gt; aktiviert wurde.&lt;li&gt;Das Drücken der rechten Maustaste auf der Karte öffnet ein Menu mit verschiedenen Aktionen.&lt;li&gt;Das Drücken der mittleren Maustaste zentriert die Karte auf die Position des Mauszeigers.&lt;li&gt;Das Drücken der linken Maustaste öffnet das Aufgaben-Menu falls die &lt;i&gt;Grafische Aufgabenplanung&lt;/i&gt; gewählt wurde. Falls diese Option nicht aktiv ist, kann die Karte mit gedrücktem linken Mausbutton verschoben werden. &lt;li&gt;Umschalten-Linke-Maustaste über einem Kartenelement erzeugt einen neuen Wegpunkt unter Verwendung der Elementdaten. Falls kein Element von der Maus dabei berührt wurde, wird der Wegpunkt Dialog zum Definieren eines neuen Wegpunkts an der Mausposition geöffnet.&lt;li&gt;STRG-Linke-Maustaste während des Bewegens der Maus über die Karte erzeugt einen Rahmen, in den beim Loslassen der Maustaste hineingezoomt wird. &lt;li&gt;Drehen des Mausrades vergrößert/verkleinert den Kartenausschnitt.&lt;/ul&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="map.cpp" line="816"/>
@@ -2244,7 +2244,7 @@ Alle Downloads verworfen!</translation>
         <location filename="mapcontents.cpp" line="720"/>
         <location filename="mapcontents.cpp" line="919"/>
         <source>KFLog maps</source>
-        <translation>KFLog Karten</translation>
+        <translation type="unfinished">KFLog-Karten</translation>
     </message>
 </context>
 <context>
