@@ -70,7 +70,7 @@
     <message>
         <location filename="centertodialog.cpp" line="30"/>
         <source>Center to ...</source>
-        <translation>Zentrieren auf ...</translation>
+        <translation>Zentriere auf Position</translation>
     </message>
     <message>
         <location filename="centertodialog.cpp" line="36"/>
@@ -668,12 +668,12 @@
     <message>
         <location filename="kflogconfig.cpp" line="326"/>
         <source>You have changed the GUI language.</source>
-        <translation>Die GUI Sprache wurde geändert.</translation>
+        <translation>Die Sprache der KFLog Benutzeroberfläche wurde geändert.</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="328"/>
         <source>Please restart KFLog to make the new language available.</source>
-        <translation>Bitte KFLog restarten, um die neue Sprache zu laden.</translation>
+        <translation>Bitte KFLog neu starten, um die gewählte Sprache vollständig zu laden.</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="552"/>
@@ -985,27 +985,27 @@
     <message>
         <location filename="kflogconfig.cpp" line="1264"/>
         <source>Lower limit</source>
-        <translation>untere Grenze</translation>
+        <translation>Untere Grenze</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1287"/>
         <source>Upper limit</source>
-        <translation>obere Grenze</translation>
+        <translation>Obere Grenze</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1325"/>
         <source>Scale Thresholds (Meters per Pixel)</source>
-        <translation>Skala Schwellen (Meter pro Pixel)</translation>
+        <translation>Skalaschwellen (Meter pro Pixel)</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1327"/>
         <source>Use small icons</source>
-        <translation>kleine Symbole</translation>
+        <translation>Kleine Symbole</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1347"/>
         <source>Draw waypoint labels</source>
-        <translation>Zeichne Wegpunkt-Beschriftung</translation>
+        <translation>Zeichne Wegpunktbeschriftung</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1369"/>
@@ -1161,12 +1161,12 @@
     <message>
         <location filename="kflogconfig.cpp" line="1920"/>
         <source>*_hot.api containing Hotspot points</source>
-        <translation>*_hot.api beinhaltet Thermikquellen</translation>
+        <translation type="unfinished">*_hot.api beinhaltet Thermikquellen&lt;br&gt;&lt;br&gt;</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1999"/>
         <source>openAIP Airspaces: www.openaip.net</source>
-        <translation>openAIP Lufträume: www.openaip.net</translation>
+        <translation>Luftraumquelle: www.openaip.net</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="2009"/>
@@ -1262,7 +1262,7 @@
     <message>
         <location filename="kflogconfig.cpp" line="2380"/>
         <source>Airspace Files in </source>
-        <translation>Luftraum Dateien in </translation>
+        <translation>Luftraumdateien in </translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="2394"/>
@@ -1346,17 +1346,17 @@
         <location filename="kflogconfig.cpp" line="1919"/>
         <location filename="kflogconfig.cpp" line="2039"/>
         <source>Uncheck All to enable loading of single files.</source>
-        <translation>Demakiere Alle, um einzelne Dateien laden zu können.</translation>
+        <translation type="unfinished">Entferne Markierung vor &lt;b&gt;Alle&lt;/b&gt;, um einzelne Dateien laden zu können&lt;br&gt;&lt;br&gt;.</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1922"/>
         <source>*_wpt.api containing Airfield points</source>
-        <translation>*_wpt_api beinhaltet Flugplatz Geodaten</translation>
+        <translation type="unfinished">*_wpt_api beinhaltet Flugplatzkoordinaten</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1944"/>
         <source>Point data source:</source>
-        <translation>Orte Datenquelle:</translation>
+        <translation>Datenquelle Orte:</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="2040"/>
@@ -1421,7 +1421,7 @@
     <message>
         <location filename="kflogconfig.cpp" line="1921"/>
         <source>*_nav.api containing Navaid points</source>
-        <translation>*_nav.api mit Nav Hilfe Geodaten</translation>
+        <translation type="unfinished">*_nav.api beinhaltet Funknavigationssender&lt;br&gt;</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1179"/>
@@ -1723,7 +1723,7 @@
     <message>
         <location filename="mainwindow.cpp" line="469"/>
         <source>&amp;Open Flight</source>
-        <translation>Flug &amp;Öffnen</translation>
+        <translation>Flug &amp;öffnen</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="475"/>
@@ -1733,12 +1733,12 @@
     <message>
         <location filename="mainwindow.cpp" line="481"/>
         <source>&amp;Close Flight/Task</source>
-        <translation>&amp;Schließen Flug/Aufgabe</translation>
+        <translation>&amp;Schließe Flug/Aufgabe</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="488"/>
         <source>Save map to PNG...</source>
-        <translation>Sichere Karte in PNG...</translation>
+        <translation type="unfinished">Speichere Karte als PNG...</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="515"/>
@@ -1758,7 +1758,7 @@
     <message>
         <location filename="mainwindow.cpp" line="576"/>
         <source>Center to &amp;Flight</source>
-        <translation>Zentriere Im &amp;Flug</translation>
+        <translation>Zentriere in &amp;Flug</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="583"/>
@@ -1768,7 +1768,7 @@
     <message>
         <location filename="mainwindow.cpp" line="590"/>
         <source>&amp;Center to...</source>
-        <translation>&amp;Zentriere auf...</translation>
+        <translation>&amp;Zentriere auf Position</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="597"/>
@@ -2149,7 +2149,7 @@ Alle Downloads verworfen!</translation>
     <message>
         <location filename="mapcontents.cpp" line="579"/>
         <source>openAIP Point Data Downloads finished</source>
-        <translation>openAIP Punkt Daten Downloads beendet</translation>
+        <translation>openAIP Punkt-Daten Download beendet</translation>
     </message>
     <message>
         <location filename="mapcontents.cpp" line="1190"/>
@@ -2159,7 +2159,7 @@ Alle Downloads verworfen!</translation>
     <message>
         <location filename="mapcontents.cpp" line="1191"/>
         <source>&lt;html&gt;There are &lt;b&gt;%1&lt;/b&gt; data missing!&lt;br&gt;&lt;br&gt;Do you want to download these data from the Internet?&lt;/html&gt;</source>
-        <translation>&lt;html&gt;Es werden &lt;b&gt;%1&lt;/b&gt; Daten vermisst!&lt;br&gt;&lt;br&gt;Möchtest du diese Daten aus dem Internet holen?&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;Es fehlen &lt;b&gt;%1&lt;/b&gt;-Daten!&lt;br&gt;&lt;br&gt;Möchtest du diese Daten aus dem Internet laden?&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="mapcontents.cpp" line="1346"/>
@@ -2239,7 +2239,7 @@ Alle Downloads verworfen!</translation>
     <message>
         <location filename="mapcontents.cpp" line="509"/>
         <source>openAIP points</source>
-        <translation>openAIP Punkte</translation>
+        <translation>openAIP-Punkte</translation>
     </message>
     <message>
         <location filename="mapcontents.cpp" line="720"/>
@@ -5084,7 +5084,7 @@ Bitte Kabel und Verbindungseinstellungen überprüfen.</translation>
     <message>
         <location filename="taskdialog.cpp" line="337"/>
         <source>Navaids</source>
-        <translation>Radionavigationspunkte</translation>
+        <translation>Funknavigationspunkte</translation>
     </message>
     <message>
         <location filename="taskdialog.cpp" line="342"/>
@@ -5377,7 +5377,7 @@ Bitte Kabel und Verbindungseinstellungen überprüfen.</translation>
     <message>
         <location filename="waypointimpfilterdialog.cpp" line="49"/>
         <source>&amp;Navaids</source>
-        <translation>&amp;Radionavigation</translation>
+        <translation>&amp;Funknavigation</translation>
     </message>
     <message>
         <location filename="waypointimpfilterdialog.cpp" line="50"/>
