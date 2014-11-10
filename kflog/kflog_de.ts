@@ -2153,7 +2153,7 @@ Alle Downloads verworfen!</translation>
     <message>
         <location filename="mapcontents.cpp" line="1190"/>
         <source>Automatic data download?</source>
-        <translation>Automatischer Daten Download?</translation>
+        <translation>Automatischer Daten Download</translation>
     </message>
     <message>
         <location filename="mapcontents.cpp" line="1191"/>
@@ -2244,7 +2244,7 @@ Alle Downloads verworfen!</translation>
         <location filename="mapcontents.cpp" line="720"/>
         <location filename="mapcontents.cpp" line="919"/>
         <source>KFLog maps</source>
-        <translation type="unfinished">KFLog-Karten</translation>
+        <translation>KFLog-Karten</translation>
     </message>
 </context>
 <context>
