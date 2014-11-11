@@ -191,6 +191,7 @@ HEADERS = \
     mapcontrolview.h \
     mapdefaults.h \
     mapmatrix.h \
+    MetaTypes.h \
     objecttree.h \
     OpenAip.h \
     OpenAipPoiLoader.h \

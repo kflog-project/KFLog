@@ -70,14 +70,17 @@ private:
 
   void loadRouteWaypoints();
 
-  void loadListWaypoints();
-
 private slots:
+
+  /** Called, if the point source selection is changed. */
+  void slotLoadSelectableWaypoints( int index );
 
   /** Called if an item is clicked in the route tree view. */
   void slotItemClicked( QTreeWidgetItem * item, int column );
+
   /** No descriptions */
   void slotSetPlanningType( const QString & text );
+
   /** No descriptions */
   void slotSetPlanningDirection(int);
 
@@ -164,38 +167,6 @@ private:
 
   QErrorMessage* errorFai;
   QErrorMessage* errorRoute;
-};
-
-/**
- * This template is used to store a pointer by using the class QVariant.
- *
- * I found it here:
- *
- * http://blog.bigpixel.ro/2010/04/23/storing-pointer-in-qvariant/
- *
- * So how do you use this? Assuming you have a class MyClass, and you want
- * to store a pointer to this class as a property of a QWidget, or any
- * QObject, or you want to convert it to QVariant, you can do the following:
- *
- * MyClass *p;
- * QVariant v = VPtr<MyClass>::asQVariant(p);
- *
- * MyClass *p1 = VPtr<MyClass>::asPtr(v);
- *
- */
-template <class T> class VPtr
-{
-  public:
-
-    static T* asPtr(QVariant v)
-      {
-        return  (T *) v.value<void *>();
-      };
-
-    static QVariant asQVariant(T* ptr)
-      {
-        return qVariantFromValue((void *) ptr);
-      };
 };
 
 #endif

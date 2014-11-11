@@ -22,8 +22,9 @@
 
 #include "mapcalc.h"
 #include "mapcontents.h"
-#include "taskdialog.h"
 #include "mainwindow.h"
+#include "MetaTypes.h"
+#include "taskdialog.h"
 
 extern MainWindow*    _mainWindow;
 extern MapConfig*     _globalMapConfig;
@@ -286,7 +287,6 @@ void TaskDialog::createDialog()
   topLayout->addLayout(buttons);
 
   setEntriesInPointSourceBox();
-  loadListWaypoints();
   enableCommandButtons();
 }
 
@@ -341,37 +341,195 @@ void TaskDialog::setEntriesInPointSourceBox()
     {
       m_pointSourceBox->addItem( tr("No point data found"), None );
     }
+  else
+    {
+      // Activate point list loading, if combo box index is changed.
+      connect( m_pointSourceBox, SIGNAL(currentIndexChanged(int)),
+	       SLOT(slotLoadSelectableWaypoints(int)) );
+
+      if( m_pointSourceBox->currentIndex() != 0 )
+	{
+	  m_pointSourceBox->setCurrentIndex( 0 );
+	}
+      else
+	{
+	  slotLoadSelectableWaypoints( 0 );
+	}
+    }
 }
 
-void TaskDialog::loadListWaypoints()
+void TaskDialog::slotLoadSelectableWaypoints( int index )
 {
-  // gets current waypoint list from MapContents
-  QList<Waypoint*> &wpList = _globalMapContents->getWaypointList();
+  if( m_pointSourceBox == 0 || m_pointSourceBox->count() == 0 )
+    {
+      return;
+    }
 
+  int selectedItem = m_pointSourceBox->itemData(index).toInt();
+
+  // Check, which point source is selected.
+  if( selectedItem == None )
+    {
+      return;
+    }
+
+  // Clear the current content in the list.
   waypoints->clear();
 
-  QString label;
-
-  for( int i = 0; i < wpList.size(); i++ )
+  if( selectedItem == Waypoints )
     {
-      Waypoint* wp = wpList.at(i);
+      // Gets current waypoint list from MapContents
+      QList<Waypoint*> &wpList = _globalMapContents->getWaypointList();
 
-      QTreeWidgetItem *item = new QTreeWidgetItem;
+      for( int i = 0; i < wpList.size(); i++ )
+	{
+	  Waypoint* wp = wpList.at(i);
 
-      item->setText(colWpName, wp->name);
-      item->setIcon(colWpName, _globalMapConfig->getPixmap(wp->type, false, true));
-      item->setText(colWpDescription, wp->description);
-      item->setText(colWpCountry, wp->country);
-      item->setText(colWpIcao, wp->icao);
+	  QTreeWidgetItem *item = new QTreeWidgetItem;
 
-      item->setTextAlignment( colWpName, Qt::AlignLeft|Qt::AlignVCenter );
-      item->setTextAlignment( colWpDescription, Qt::AlignLeft|Qt::AlignVCenter );
-      item->setTextAlignment( colWpCountry, Qt::AlignCenter );
-      item->setTextAlignment( colWpIcao, Qt::AlignCenter );
+	  item->setText(colWpName, wp->name);
+	  item->setIcon(colWpName, _globalMapConfig->getPixmap(wp->type, false, true));
+	  item->setText(colWpDescription, wp->description);
+	  item->setText(colWpCountry, wp->country);
+	  item->setText(colWpIcao, wp->icao);
 
-      item->setData( 0, Qt::UserRole, VPtr<Waypoint>::asQVariant(wp) );
+	  item->setTextAlignment( colWpName, Qt::AlignLeft|Qt::AlignVCenter );
+	  item->setTextAlignment( colWpDescription, Qt::AlignLeft|Qt::AlignVCenter );
+	  item->setTextAlignment( colWpCountry, Qt::AlignCenter );
+	  item->setTextAlignment( colWpIcao, Qt::AlignCenter );
 
-      waypoints->insertTopLevelItem( i, item );
+	  QVariant v;
+	  v.setValue(wp);
+	  item->setData( 0, Qt::UserRole, v );
+	  waypoints->insertTopLevelItem( i, item );
+	}
+    }
+  else if( selectedItem == Airfields )
+    {
+      QList<Airfield>* lists[2];
+
+      // Gets current airfield list from MapContents
+      lists[0] = &_globalMapContents->getAirfieldList();
+
+      // Gets current gliderfield list from MapContents
+      lists[1] = &_globalMapContents->getGliderfieldList();
+
+      for( int i = 0; i < 2; i++ )
+	{
+	  for( int k = 0; k < lists[i]->size(); k++ )
+	    {
+	      Airfield& af = const_cast<Airfield &>(lists[i]->at(k));
+
+	      QTreeWidgetItem *item = new QTreeWidgetItem;
+
+	      item->setText(colWpName, af.getShortName() );
+	      item->setIcon(colWpName, _globalMapConfig->getPixmap(af.getTypeID(), false, true) );
+	      item->setText(colWpDescription, af.getName() );
+	      item->setText(colWpCountry, af.getCountry() );
+	      item->setText(colWpIcao, af.getICAO() );
+
+	      item->setTextAlignment( colWpName, Qt::AlignLeft|Qt::AlignVCenter );
+	      item->setTextAlignment( colWpDescription, Qt::AlignLeft|Qt::AlignVCenter );
+	      item->setTextAlignment( colWpCountry, Qt::AlignCenter );
+	      item->setTextAlignment( colWpIcao, Qt::AlignCenter );
+
+	      QVariant v;
+	      v.setValue(&af);
+	      item->setData( 0, Qt::UserRole, v );
+	      waypoints->insertTopLevelItem( i, item );
+	    }
+	}
+    }
+  else if( selectedItem == Outlandings )
+    {
+      // Gets current outlanding list from MapContents
+      QList<Airfield>& list = _globalMapContents->getOutLandingList();
+
+      for( int i = 0; i < list.size(); i++ )
+	{
+	  Airfield &af = list[i];
+
+	  QTreeWidgetItem *item = new QTreeWidgetItem;
+
+	  item->setText(colWpName, af.getShortName() );
+	  item->setIcon(colWpName, _globalMapConfig->getPixmap(af.getTypeID(), false, true) );
+	  item->setText(colWpDescription, af.getName() );
+	  item->setText(colWpCountry, af.getCountry() );
+	  item->setText(colWpIcao, af.getICAO() );
+
+	  item->setTextAlignment( colWpName, Qt::AlignLeft|Qt::AlignVCenter );
+	  item->setTextAlignment( colWpDescription, Qt::AlignLeft|Qt::AlignVCenter );
+	  item->setTextAlignment( colWpCountry, Qt::AlignCenter );
+	  item->setTextAlignment( colWpIcao, Qt::AlignCenter );
+
+	  QVariant v;
+	  v.setValue(&af);
+	  item->setData( 0, Qt::UserRole, v );
+	  waypoints->insertTopLevelItem( i, item );
+	}
+    }
+  else if( selectedItem == Hotspots )
+    {
+      // Gets current hotspot list from MapContents
+      QList<SinglePoint> &list = _globalMapContents->getHotspotList();
+
+      for( int i = 0; i < list.size(); i++ )
+	{
+	  SinglePoint& sp = list[i];
+
+	  QTreeWidgetItem *item = new QTreeWidgetItem;
+
+	  item->setText(colWpName, sp.getShortName() );
+	  item->setIcon(colWpName, _globalMapConfig->getPixmap(sp.getTypeID(), false, true) );
+	  item->setText(colWpDescription, sp.getName() );
+	  item->setText(colWpCountry, sp.getCountry() );
+	  item->setText(colWpIcao, "" );
+
+	  item->setTextAlignment( colWpName, Qt::AlignLeft|Qt::AlignVCenter );
+	  item->setTextAlignment( colWpDescription, Qt::AlignLeft|Qt::AlignVCenter );
+	  item->setTextAlignment( colWpCountry, Qt::AlignCenter );
+	  item->setTextAlignment( colWpIcao, Qt::AlignCenter );
+
+	  QVariant v;
+	  v.setValue(&sp);
+	  item->setData( 0, Qt::UserRole, v );
+	  waypoints->insertTopLevelItem( i, item );
+	}
+    }
+  else if( selectedItem == Navaids )
+    {
+      // Gets current navaid list from MapContents
+      QList<RadioPoint> &list = _globalMapContents->getNavaidList();
+
+      for( int i = 0; i < list.size(); i++ )
+	{
+	  RadioPoint& rp = list[i];
+
+	  QTreeWidgetItem *item = new QTreeWidgetItem;
+
+	  item->setText(colWpName, rp.getShortName() );
+	  item->setIcon(colWpName, _globalMapConfig->getPixmap(rp.getTypeID(), false, true) );
+	  item->setText(colWpDescription, rp.getName() );
+	  item->setText(colWpCountry, rp.getCountry() );
+	  item->setText(colWpIcao, rp.getICAO() );
+
+	  item->setTextAlignment( colWpName, Qt::AlignLeft|Qt::AlignVCenter );
+	  item->setTextAlignment( colWpDescription, Qt::AlignLeft|Qt::AlignVCenter );
+	  item->setTextAlignment( colWpCountry, Qt::AlignCenter );
+	  item->setTextAlignment( colWpIcao, Qt::AlignCenter );
+
+	  QVariant v;
+	  v.setValue(&rp);
+	  item->setData( 0, Qt::UserRole, v );
+	  waypoints->insertTopLevelItem( i, item );
+	}
+    }
+  else
+    {
+      // Unknown category
+      qWarning() << "TaskDialog::slotLoadSelectableWaypoints(): Unknown list item"
+	         << selectedItem;
+      return;
     }
 
   waypoints->sortItems(0, Qt::AscendingOrder);
@@ -620,14 +778,74 @@ void TaskDialog::slotAddWaypoint()
       return;
     }
 
-  // Retrieve waypoint data from current item.
-  Waypoint *wp = VPtr<Waypoint>::asPtr(item->data(0, Qt::UserRole));
+  Waypoint *newWp = 0;
+  Waypoint *wp = 0;
+  Airfield *af = 0;
+  RadioPoint *rp = 0;
+  SinglePoint *sp = 0;
+
+  // Retrieve the point data from the selected  item. At first we have to find
+  // the item type.
+  if( item->data(0, Qt::UserRole).canConvert<WaypointPtr>() )
+    {
+      wp = item->data(0, Qt::UserRole).value<WaypointPtr>();
+
+      // Make a deep copy of waypoint data.
+      newWp = new Waypoint( wp );
+    }
+  else if( item->data(0, Qt::UserRole).canConvert<AirfieldPtr>() )
+    {
+      af = item->data(0, Qt::UserRole).value<AirfieldPtr>();
+
+      qDebug() << "AF=" << af << af->getName();
+
+      newWp = new Waypoint;
+      newWp->icao = af->getICAO();
+      newWp->frequency = af->getFrequency();
+      newWp->rwyList = af->getRunwayList();
+      sp = af;
+    }
+  else if( item->data(0, Qt::UserRole).canConvert<RadioPointPtr>() )
+    {
+      rp = item->data(0, Qt::UserRole).value<RadioPointPtr>();
+      newWp = new Waypoint;
+      newWp->icao = rp->getICAO();
+      newWp->frequency = rp->getFrequency();
+      newWp->comment = rp->getAdditionalText();
+      sp = rp;
+    }
+  else if( item->data(0, Qt::UserRole).canConvert<SinglePointPtr>() )
+    {
+      sp = item->data(0, Qt::UserRole).value<SinglePointPtr>();
+      newWp = new Waypoint;
+    }
+  else
+    {
+      qWarning() << "TaskDialog::slotAddWaypoint(): Item data not handled!";
+      return;
+    }
+
+  if( sp != 0 && newWp != 0 )
+    {
+      newWp->name = sp->getShortName();
+      newWp->description = sp->getName();
+      newWp->country = sp->getCountry();
+      newWp->type = sp->getTypeID();
+      newWp->origP = sp->getWGSPosition();
+      newWp->elevation = sp->getElevation();
+
+      if( newWp->comment.isEmpty() )
+	{
+	  newWp->comment = sp->getComment();
+	}
+      else
+	{
+	  newWp->comment += "\n\n" + sp->getComment();
+	}
+    }
 
   // Set projected coordinates
-  wp->projP = _globalMapMatrix->wgsToMap(wp->origP);
-
-  // Make a deep copy of waypoint data.
-  Waypoint *newWp = new Waypoint( wp );
+  newWp->projP = _globalMapMatrix->wgsToMap(newWp->origP);
 
   if( pos >= wpList.size() || pos < 0 )
     {

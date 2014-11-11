@@ -22,11 +22,11 @@
 /**
  * \class SinglePoint
  *
- * \brief Map element used for small objects.
+ * \brief Map element used for a point object definition.
  *
- * Map element used for small objects. The object can be one of:
+ * Map element used for point objects. The object can be one of:
  * UltraLight, HangGlider, Parachute, Balloon, Village
- * or Landmark. Consists only of a name and a position.
+ * or Landmark.
  *
  * \see BaseMapElement#objectType
  * \see Airfield
@@ -36,7 +36,7 @@
  *
  * \date 2000-2014
  *
- * \version $Id$
+ * \version 11.11.2014
  */
 
 class SinglePoint : public BaseMapElement
@@ -154,7 +154,7 @@ class SinglePoint : public BaseMapElement
   /**
    * @return the  short name of the element.
    */
-  virtual QString getWPName() const
+  virtual QString getShortName() const
     {
       return shortName;
     };
@@ -162,7 +162,7 @@ class SinglePoint : public BaseMapElement
   /**
    * @param newName The new short name of the element.
    */
-  virtual void setWPName( const QString& newName )
+  virtual void setShortName( const QString& newName )
     {
       shortName = newName;
     };

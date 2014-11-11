@@ -261,7 +261,7 @@ bool OpenAip::readNavAids( QString fileName,
                 }
 
               // Short name is only 8 characters long and must be unique
-              rp.setWPName( shortName(rp.getName()) );
+              rp.setShortName( shortName(rp.getName()) );
 
               navAidList.append( rp );
             }
@@ -363,7 +363,7 @@ bool OpenAip::readNavAidRecord( QXmlStreamReader& xml, RadioPoint& rp )
             {
               QString id = xml.readElementText();
               rp.setICAO( id );
-              rp.setWPName( id.left(8) );
+              rp.setShortName( id.left(8) );
             }
           else if ( elementName == "GEOLOCATION" )
             {
@@ -693,7 +693,7 @@ bool OpenAip::readHotspots( QString fileName,
                 }
 
               // Short name is only 8 characters long and must be unique
-              sp.setWPName( shortName(sp.getName()) );
+              sp.setShortName( shortName(sp.getName()) );
 
               hotspotList.append( sp );
             }
@@ -759,7 +759,7 @@ bool OpenAip::readHotspotRecord( QXmlStreamReader& xml, SinglePoint& sp )
               sp.setName( name );
 
               // Short name only 8 characters long
-              sp.setWPName( name.left(8) );
+              sp.setShortName( name.left(8) );
             }
           else if ( elementName == "COMMENT" )
             {
@@ -923,7 +923,7 @@ bool OpenAip::readAirfields( QString fileName,
                 }
 
               // Short name is only 8 characters long and must be unique
-              af.setWPName( shortName(af.getName()) );
+              af.setShortName( shortName(af.getName()) );
 
               airfieldList.append( af );
             }
@@ -1064,7 +1064,7 @@ bool OpenAip::readAirfieldRecord( QXmlStreamReader& xml, Airfield& af )
               af.setName( name );
 
               // Short name is only 8 characters long
-              af.setWPName( name.left(8) );
+              af.setShortName( name.left(8) );
             }
           else if ( elementName == "ICAO" )
             {

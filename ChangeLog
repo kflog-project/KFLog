@@ -13,12 +13,22 @@
 
 2014-11-06 Axel Pauli <kflog.cumulus@gmail.com>
 
+  * Task editor enhanced, that beside the waypoint list also other point data
+    lists are available for the turnpoint selection. These other lists can be
+    airfields, gliderfields, outlandings, navaids and hotspots.
+
+2014-11-06 Axel Pauli <kflog.cumulus@gmail.com>
+
   * Issue #33 Make waypoint label drawing configurable. Added a new menu entry
     under the View menu to realize that.
 
 2014-11-04 Peter Simon <psimon.kflog@gmail.com>
 
   * Changes to build KFLog in Microsoft Visual Studio 2012.
+
+2014-10-17 Axel Pauli <kflog.cumulus@gmail.com>
+
+  * Issue #32 fixed. KFLog crashes, if the main window is resized.
 
 2014-10-14 Axel Pauli <kflog.cumulus@gmail.com>
 
