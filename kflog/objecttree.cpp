@@ -30,7 +30,7 @@
 #include "flightselectiondialog.h"
 #include "mapcontents.h"
 #include "objecttree.h"
-#include "taskdialog.h"
+#include "TaskEditor.h"
 #include "tasklistviewitem.h"
 #include "mainwindow.h"
 
@@ -541,16 +541,16 @@ void ObjectTree::slotEditTask()
         {
           FlightTask *ft = dynamic_cast<FlightTask *> (currentFlightElement);
 
-          TaskDialog* td = new TaskDialog( this );
+          TaskEditor* te = new TaskEditor( this );
 
-          td->setTask( ft );
+          te->setTask( ft );
 
-          if( td->exec() == QDialog::Accepted )
+          if( te->exec() == QDialog::Accepted )
             {
               emit newFlightSelected( ft );
             }
 
-          delete td;
+          delete te;
         }
     }
 }

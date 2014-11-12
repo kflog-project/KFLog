@@ -1,6 +1,6 @@
 /***********************************************************************
  **
- **   taskdialog.cpp
+ **   TaskEditor.cpp
  **
  **   This file is part of KFLog.
  **
@@ -24,7 +24,7 @@
 #include "mapcontents.h"
 #include "mainwindow.h"
 #include "MetaTypes.h"
-#include "taskdialog.h"
+#include "TaskEditor.h"
 
 extern MainWindow*    _mainWindow;
 extern MapConfig*     _globalMapConfig;
@@ -32,7 +32,7 @@ extern MapContents*   _globalMapContents;
 extern MapMatrix*     _globalMapMatrix;
 extern QSettings       _settings;
 
-TaskDialog::TaskDialog( QWidget *parent ) :
+TaskEditor::TaskEditor( QWidget *parent ) :
   QDialog(parent),
   pTask(0),
   _task(QString("task"))
@@ -42,17 +42,17 @@ TaskDialog::TaskDialog( QWidget *parent ) :
   createDialog();
   setMinimumWidth(500);
   setMinimumHeight(300);
-  restoreGeometry( _settings.value("/TaskDialog/Geometry").toByteArray() );
+  restoreGeometry( _settings.value("/TaskEditor/Geometry").toByteArray() );
   show();
 }
 
-TaskDialog::~TaskDialog()
+TaskEditor::~TaskEditor()
 {
-  _settings.setValue( "/TaskDialog/Geometry", saveGeometry() );
+  _settings.setValue( "/TaskEditor/Geometry", saveGeometry() );
 }
 
 /** No descriptions */
-void TaskDialog::createDialog()
+void TaskEditor::createDialog()
 {
   QLabel *l;
   QPushButton *b;
@@ -139,7 +139,7 @@ void TaskDialog::createDialog()
 
   //----------------------------------------------------------------------------
   // Row 3
-  route =  new KFLogTreeWidget("TaskDialog-Route");
+  route =  new KFLogTreeWidget("TaskEditor-Route");
 
   route->setSortingEnabled( false );
   route->setAllColumnsShowFocus( true );
@@ -230,7 +230,7 @@ void TaskDialog::createDialog()
   middleLayout->addWidget(removeCmd);
   middleLayout->addStretch(1);
 
-  waypoints = new KFLogTreeWidget("TaskDialog-Waypoints");
+  waypoints = new KFLogTreeWidget("TaskEditor-Waypoints");
   waypoints->setSortingEnabled( true );
   waypoints->setAllColumnsShowFocus( true );
   waypoints->setFocusPolicy( Qt::StrongFocus );
@@ -290,7 +290,7 @@ void TaskDialog::createDialog()
   enableCommandButtons();
 }
 
-void TaskDialog::setEntriesInPointSourceBox()
+void TaskEditor::setEntriesInPointSourceBox()
 {
   if( m_pointSourceBox == 0 )
     {
@@ -358,7 +358,7 @@ void TaskDialog::setEntriesInPointSourceBox()
     }
 }
 
-void TaskDialog::slotLoadSelectableWaypoints( int index )
+void TaskEditor::slotLoadSelectableWaypoints( int index )
 {
   if( m_pointSourceBox == 0 || m_pointSourceBox->count() == 0 )
     {
@@ -527,7 +527,7 @@ void TaskDialog::slotLoadSelectableWaypoints( int index )
   else
     {
       // Unknown category
-      qWarning() << "TaskDialog::slotLoadSelectableWaypoints(): Unknown list item"
+      qWarning() << "TaskEditor::slotLoadSelectableWaypoints(): Unknown list item"
 	         << selectedItem;
       return;
     }
@@ -536,7 +536,7 @@ void TaskDialog::slotLoadSelectableWaypoints( int index )
   waypoints->slotResizeColumns2Content();
 }
 
-void TaskDialog::slotSetPlanningType( const QString& text )
+void TaskEditor::slotSetPlanningType( const QString& text )
 {
   int id = FlightTask::ttText2Item( text );
 
@@ -591,7 +591,7 @@ void TaskDialog::slotSetPlanningType( const QString& text )
   enableCommandButtons();
 }
 
-void TaskDialog::slotSetPlanningDirection(int)
+void TaskEditor::slotSetPlanningDirection(int)
 {
   int dir = 0;
 
@@ -608,7 +608,7 @@ void TaskDialog::slotSetPlanningDirection(int)
   pTask->setPlanningDirection(dir);
 }
 
-void TaskDialog::loadRouteWaypoints()
+void TaskEditor::loadRouteWaypoints()
 {
   Waypoint *wpPrev = 0;
 
@@ -674,7 +674,7 @@ void TaskDialog::loadRouteWaypoints()
   taskType->setText( pTask->getTaskTypeString() );
 }
 
-int TaskDialog::getCurrentPosition()
+int TaskEditor::getCurrentPosition()
 {
   QTreeWidgetItem* item = route->currentItem();
 
@@ -686,7 +686,7 @@ int TaskDialog::getCurrentPosition()
   return -1;
 }
 
-void TaskDialog::setSelected( int position )
+void TaskEditor::setSelected( int position )
 {
   if( position >= 0 && route->topLevelItemCount() > 0 )
     {
@@ -701,7 +701,7 @@ void TaskDialog::setSelected( int position )
   enableCommandButtons();
 }
 
-void TaskDialog::slotMoveUp()
+void TaskEditor::slotMoveUp()
 {
   int curPos = getCurrentPosition();
 
@@ -718,7 +718,7 @@ void TaskDialog::slotMoveUp()
   setSelected( curPos - 1 );
 }
 
-void TaskDialog::slotMoveDown()
+void TaskEditor::slotMoveDown()
 {
   int curPos = getCurrentPosition();
 
@@ -738,7 +738,7 @@ void TaskDialog::slotMoveDown()
   setSelected( curPos + 1 );
 }
 
-void TaskDialog::slotInvertWaypoints()
+void TaskEditor::slotInvertWaypoints()
 {
   if ( wpList.count() < 2 )
     {
@@ -761,7 +761,7 @@ void TaskDialog::slotInvertWaypoints()
   setSelected( 0 );
 }
 
-void TaskDialog::slotAddWaypoint()
+void TaskEditor::slotAddWaypoint()
 {
   int pos = getCurrentPosition();
 
@@ -821,7 +821,7 @@ void TaskDialog::slotAddWaypoint()
     }
   else
     {
-      qWarning() << "TaskDialog::slotAddWaypoint(): Item data not handled!";
+      qWarning() << "TaskEditor::slotAddWaypoint(): Item data not handled!";
       return;
     }
 
@@ -863,7 +863,7 @@ void TaskDialog::slotAddWaypoint()
   setSelected( pos );
 }
 
-void TaskDialog::slotRemoveWaypoint()
+void TaskEditor::slotRemoveWaypoint()
 {
   int curPos = getCurrentPosition();
 
@@ -889,7 +889,7 @@ void TaskDialog::slotRemoveWaypoint()
     }
 }
 
-void TaskDialog::setTask(FlightTask *task)
+void TaskEditor::setTask(FlightTask *task)
 {
   if( task == static_cast<FlightTask *>(0) )
     {
@@ -897,7 +897,7 @@ void TaskDialog::setTask(FlightTask *task)
       _task = FlightTask( MapContents::instance()->genTaskName() );
       pTask = &_task;
 
-      qWarning() << "TaskDialog::setTask(): Null object passed as task!";
+      qWarning() << "TaskEditor::setTask(): Null object passed as task!";
     }
   else
     {
@@ -920,7 +920,7 @@ void TaskDialog::setTask(FlightTask *task)
   slotSetPlanningType( FlightTask::ttItem2Text(pTask->getPlanningType()) );
 }
 
-void TaskDialog::slotItemClicked( QTreeWidgetItem* item, int column )
+void TaskEditor::slotItemClicked( QTreeWidgetItem* item, int column )
 {
   Q_UNUSED( item )
   Q_UNUSED( column )
@@ -928,7 +928,7 @@ void TaskDialog::slotItemClicked( QTreeWidgetItem* item, int column )
   enableCommandButtons();
 }
 
-void TaskDialog::enableCommandButtons()
+void TaskEditor::enableCommandButtons()
 {
   if( wpList.count() == 0 )
     {
@@ -978,7 +978,7 @@ void TaskDialog::enableCommandButtons()
     }
 }
 
-void TaskDialog::slotAccept()
+void TaskEditor::slotAccept()
 {
   // Here we check the task constrains.
   if( startName != name->text() )

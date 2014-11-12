@@ -124,7 +124,7 @@ SOURCES = \
     runway.cpp \
     singlepoint.cpp \
     taskdataprint.cpp \
-    taskdialog.cpp \
+    TaskEditor.cpp \
     tasklistviewitem.cpp \
     topolegend.cpp \
     waypoint.cpp \
@@ -208,7 +208,7 @@ HEADERS = \
     resource.h \
     runway.h \
     taskdataprint.h \
-    taskdialog.h \
+    TaskEditor.h \
     tasklistviewitem.h \
     topolegend.h \
     waypoint.h \

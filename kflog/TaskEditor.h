@@ -1,6 +1,6 @@
 /***********************************************************************
 **
-**   taskdialog.h
+**   TaskEditor.h
 **
 **   This file is part of KFLog.
 **
@@ -14,8 +14,8 @@
 **
 ***********************************************************************/
 
-#ifndef TASK_DIALOG_H
-#define TASK_DIALOG_H
+#ifndef TASK_EDITOR_H
+#define TASK_EDITOR_H
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -32,7 +32,7 @@
 #include "waypoint.h"
 
 /**
- * \class TaskDialog
+ * \class TaskEditor
  *
  * \brief Dialog widget to create or edit a flight task.
  *
@@ -42,22 +42,22 @@
  *
  * \date 2002-2014
  *
- * \version $Id$
+ * \version 1.0
  */
 
-class TaskDialog : public QDialog
+class TaskEditor : public QDialog
 {
   Q_OBJECT
 
 private:
 
-  Q_DISABLE_COPY ( TaskDialog )
+  Q_DISABLE_COPY ( TaskEditor )
 
 public:
 
-   TaskDialog( QWidget *parent=0 );
+   TaskEditor( QWidget *parent=0 );
 
-   virtual ~TaskDialog();
+   virtual ~TaskEditor();
 
    void setTask( FlightTask *orig );
 
