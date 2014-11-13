@@ -91,11 +91,11 @@ void TaskEditor::createDialog()
 
   //----------------------------------------------------------------------------
   // Row 1
-  name = new QLineEdit;
-  name->setReadOnly(false);
+  m_taskNameEditor = new QLineEdit;
+  m_taskNameEditor->setReadOnly(false);
   l = new QLabel(tr("Name") + ":");
   header->addWidget(l);
-  header->addWidget(name);
+  header->addWidget(m_taskNameEditor);
 
   //----------------------------------------------------------------------------
   // Row 2
@@ -131,14 +131,14 @@ void TaskEditor::createDialog()
   hbBox->addWidget(right);
   faiGroupBox->setLayout(hbBox);
 
-  taskType = new QLabel;
-  taskType->setMinimumWidth(100);
+  m_taskType = new QLabel;
+  m_taskType->setMinimumWidth(100);
 
   type->addWidget(l);
   type->addWidget(planningTypes);
   type->addWidget(faiGroupBox);
   type->addStretch(1);
-  type->addWidget(taskType);
+  type->addWidget(m_taskType);
 
   //----------------------------------------------------------------------------
   // Row 3
@@ -153,7 +153,7 @@ void TaskEditor::createDialog()
   route->setSelectionBehavior( QAbstractItemView::SelectRows );
   route->setAlternatingRowColors( true );
   route->addRowSpacing( 5 );
-  route->setColumnCount( 5 );
+  route->setColumnCount( 4 );
 
   route->setDragEnabled(true);
   route->viewport()->setAcceptDrops(true);
@@ -165,8 +165,7 @@ void TaskEditor::createDialog()
   headerLabels  << tr("Type")
                 << tr("Taskpoint")
                 << tr("Length")
-                << tr("Course")
-                << tr("");
+                << tr("Course");
 
   route->setHeaderLabels( headerLabels );
 
@@ -183,7 +182,6 @@ void TaskEditor::createDialog()
   colRouteWaypoint = 1;
   colRouteDist     = 2;
   colRouteCourse   = 3;
-  colRouteDummy    = 4;
 
   route->loadConfig();
 
@@ -243,15 +241,14 @@ void TaskEditor::createDialog()
   m_wpListView->setSelectionBehavior( QAbstractItemView::SelectRows );
   m_wpListView->setAlternatingRowColors( true );
   m_wpListView->addRowSpacing( 5 );
-  m_wpListView->setColumnCount( 5 );
+  m_wpListView->setColumnCount( 4 );
 
   headerLabels.clear();
 
   headerLabels  << tr("Name")
                 << tr("Description")
                 << tr("Country")
-                << tr("ICAO")
-                << tr("");
+                << tr("ICAO");
 
   m_wpListView->setHeaderLabels( headerLabels );
 
@@ -265,17 +262,50 @@ void TaskEditor::createDialog()
   colWpDescription = 1;
   colWpCountry     = 2;
   colWpIcao        = 3;
-  colWpDummy       = 4;
 
   m_wpListView->loadConfig();
 
   QHBoxLayout* hbox = new QHBoxLayout;
   hbox->setMargin(0);
-  hbox->addWidget(new QLabel(tr("Point Source:")));
+  hbox->addWidget(new QLabel(tr("WP Source:")));
 
   m_pointSourceBox = new QComboBox;
+  m_pointSourceBox->setToolTip( tr("Select list to be used as waypoint source.") );
   hbox->addWidget( m_pointSourceBox );
-  hbox->addStretch( 10 );
+
+  hbox->addStretch( 5 );
+
+  m_pointColumnSelector = new QComboBox;
+  m_pointColumnSelector->setToolTip( tr("Select list column to be searched"));
+  m_pointColumnSelector->addItem( "1", 0 );
+  m_pointColumnSelector->addItem( "2", 1 );
+  m_pointColumnSelector->setCurrentIndex( 0 );
+  hbox->addWidget( m_pointColumnSelector );
+
+  connect( m_pointColumnSelector, SIGNAL(currentIndexChanged(int)),
+	   this, SLOT(slotSearchColumnIndexChanged(int)) );
+
+  // The minimum input field length should be 12 characters. We calculate
+  // that as 12 characters M.
+  QFontMetrics fm( font() );
+  int charWidth = fm.width(QChar('M'));
+
+  m_pointSearchInput = new QLineEdit;
+  m_pointSearchInput->setToolTip( tr("Enter a search string, to navigate to a certain list entry.") );
+  m_pointSearchInput->setMinimumWidth( 12 * charWidth );
+  hbox->addWidget( m_pointSearchInput );
+
+  connect( m_pointSearchInput, SIGNAL(textEdited(const QString&)),
+	   this, SLOT(slotSearchInputEdited(const QString&)) );
+
+  connect( m_pointSearchInput, SIGNAL(returnPressed()),
+	   this, SLOT(slotTakeFoundItem()) );
+
+  QPushButton *m_clearPointSearchInput = new QPushButton( tr("Clear") );
+  m_clearPointSearchInput->setToolTip( tr("Click Clear to remove the search string.") );
+  hbox->addWidget( m_clearPointSearchInput );
+
+  connect( m_clearPointSearchInput, SIGNAL(clicked()), SLOT(slotClearSearchInput()));
 
   rightLayout->addLayout( hbox );
   rightLayout->addWidget(m_wpListView);
@@ -291,6 +321,21 @@ void TaskEditor::createDialog()
 
   setEntriesInPointSourceBox();
   enableCommandButtons();
+}
+
+void TaskEditor::showEvent( QShowEvent *event )
+{
+  // That is the trick to prevent dialog closing, if the return key is pressed.
+  // But note, it has only effect, if the dialog is shown!
+  QList<QPushButton *> buttonList = findChildren<QPushButton *>();
+
+  foreach( QPushButton *pb, buttonList )
+    {
+      pb->setDefault( false );
+      pb->setAutoDefault( false );
+    }
+
+  QDialog::showEvent( event );
 }
 
 void TaskEditor::setEntriesInPointSourceBox()
@@ -697,7 +742,7 @@ void TaskEditor::loadRouteWaypoints()
 
   route->slotResizeColumns2Content();
 
-  taskType->setText( m_editedTask->getTaskTypeString() );
+  m_taskType->setText( m_editedTask->getTaskTypeString() );
 }
 
 int TaskEditor::getCurrentPosition()
@@ -725,6 +770,62 @@ void TaskEditor::setSelected( int position )
     }
 
   enableCommandButtons();
+}
+
+void TaskEditor::slotClearSearchInput()
+{
+  m_pointSearchInput->clear();
+
+  if( m_wpListView->topLevelItemCount() > 0 )
+    {
+      m_wpListView->setCurrentItem( m_wpListView->topLevelItem(0) );
+    }
+}
+
+void TaskEditor::slotSearchInputEdited( const QString& text )
+{
+  if( m_wpListView->topLevelItemCount() == 0  ||
+      m_pointSearchInput->text().trimmed().isEmpty() )
+    {
+      // List is empty, do nothing.
+      return;
+    }
+
+  QList<QTreeWidgetItem *> items =
+      m_wpListView->findItems( text,
+			       Qt::MatchStartsWith,
+                               m_pointColumnSelector->currentIndex() );
+
+  if( items.size() > 0 )
+    {
+      m_wpListView->setCurrentItem( items.at(0) );
+    }
+}
+
+void TaskEditor::slotTakeFoundItem()
+{
+  if( m_wpListView->topLevelItemCount() == 0 ||
+      m_pointSearchInput->text().trimmed().isEmpty() )
+    {
+      // List or input are empty, do nothing.
+      return;
+    }
+
+  // TODO Maybe we should restricted that a little bit more,
+  // that the item must exist? Otherwise the current list item is taken.
+  slotAddWaypoint();
+}
+
+void TaskEditor::slotSearchColumnIndexChanged( int index )
+{
+  if( m_wpListView->topLevelItemCount() == 0 ||
+      m_pointSearchInput->text().trimmed().isEmpty() )
+    {
+      // List or input are empty, do nothing.
+      return;
+    }
+
+  slotSearchInputEdited( m_pointSearchInput->text() );
 }
 
 void TaskEditor::slotMoveUp()
@@ -822,9 +923,6 @@ void TaskEditor::slotAddWaypoint()
   else if( item->data(0, Qt::UserRole).canConvert<AirfieldPtr>() )
     {
       af = item->data(0, Qt::UserRole).value<AirfieldPtr>();
-
-      qDebug() << "AF=" << af << af->getName();
-
       newWp = new Waypoint;
       newWp->icao = af->getICAO();
       newWp->frequency = af->getFrequency();
@@ -933,10 +1031,10 @@ void TaskEditor::setTask(FlightTask *task)
   // get waypoint list of task
   m_taskWpList = m_editedTask->getWPList();
 
-  name->setText( m_editedTask->getFileName() );
+  m_taskNameEditor->setText( m_editedTask->getFileName() );
 
   // Save initial name of task. Is checked during accept for change.
-  startName = name->text();
+  m_taskInitName = m_taskNameEditor->text();
 
   planningTypes->setCurrentIndex( planningTypes->findText( FlightTask::ttItem2Text(m_editedTask->getPlanningType())) );
 
@@ -1007,11 +1105,11 @@ void TaskEditor::enableCommandButtons()
 void TaskEditor::slotAccept()
 {
   // Here we check the task constrains.
-  if( startName != name->text() )
+  if( m_taskInitName != m_taskNameEditor->text() )
     {
       // User has changed the task name. We must check, if the new name
       // is already in use.
-      if( _globalMapContents->taskNameInUse( name->text()) )
+      if( _globalMapContents->taskNameInUse( m_taskNameEditor->text()) )
         {
           QMessageBox::warning( this,
                                  tr("Task name already in use!"),
@@ -1045,6 +1143,6 @@ void TaskEditor::slotAccept()
       return;
     }
 
-  m_editedTask->setTaskName( name->text() );
+  m_editedTask->setTaskName( m_taskNameEditor->text() );
   accept();
 }

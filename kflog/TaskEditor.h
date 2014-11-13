@@ -41,7 +41,7 @@
  *
  * \date 2002-2014
  *
- * \version 1.1
+ * \version 1.2
  */
 
 class TaskEditor : public QDialog
@@ -54,13 +54,17 @@ private:
 
 public:
 
-   TaskEditor( QWidget *parent=0 );
+  TaskEditor( QWidget *parent=0 );
 
-   virtual ~TaskEditor();
+  virtual ~TaskEditor();
 
-   void setTask( FlightTask *orig );
+  void setTask( FlightTask *orig );
 
-   FlightTask *getTask() { return m_editedTask; }
+  FlightTask *getTask() { return m_editedTask; }
+
+protected:
+
+ void showEvent( QShowEvent *event );
 
 private:
 
@@ -76,6 +80,21 @@ private slots:
 
   /** Called, if the point source selection is changed. */
   void slotLoadSelectableWaypoints( int index );
+
+  /** Called, if the input in m_pointSearchInput has to be cleared. */
+  void slotClearSearchInput();
+
+  /** Called, if the input in m_pointSearchInput has been changed. */
+  void slotSearchInputEdited( const QString& text );
+
+  /**
+   * Called, if return key is pressed and m_pointSearchInput has the focus.
+   * The currently selected waypoint item is taken over in the task list.
+   */
+  void slotTakeFoundItem();
+
+  /** Called, if the search column selection is changed. */
+  void slotSearchColumnIndexChanged( int index );
 
   /** Called if an item is clicked in the route tree view. */
   void slotItemClicked( QTreeWidgetItem * item, int column );
@@ -131,9 +150,10 @@ private:
   /* Fall back task, if no task is setup. */
   FlightTask m_task;
 
-  QString    startName;
-  QLineEdit *name;
-  QLabel    *taskType;
+  /** Initial name of task. */
+  QString    m_taskInitName;
+  QLineEdit *m_taskNameEditor;
+  QLabel    *m_taskType;
 
   QComboBox *planningTypes;
   QCheckBox *left;
@@ -147,19 +167,26 @@ private:
   int colRouteWaypoint;
   int colRouteDist;
   int colRouteCourse;
-  int colRouteDummy;
 
   /** Waypoint list view. */
   KFLogTreeWidget *m_wpListView;
 
-  /** Combo box for point source selection. */
+  /** Combo box for waypoint source selection. */
   QComboBox *m_pointSourceBox;
+
+  /** Combo box for search column selection in m_wpListView. */
+  QComboBox *m_pointColumnSelector;
+
+  /** Line editor for text search input executed in m_wpListView. */
+  QLineEdit *m_pointSearchInput;
+
+  /** Clears the input of m_pointSearchInput. */
+  QPushButton *m_clearPointSearchInput;
 
   int colWpName;
   int colWpDescription;
   int colWpCountry;
   int colWpIcao;
-  int colWpDummy;
 
   QPushButton *addCmd;
   QPushButton *removeCmd;

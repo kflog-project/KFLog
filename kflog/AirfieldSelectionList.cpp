@@ -153,8 +153,8 @@ void AirfieldSelectionList::slotTextEdited( const QString& text )
 {
   int idx = m_selectionBox->findText( text, Qt::MatchStartsWith );
 
- if( idx != -1 )
-    {
-      m_selectionBox->setCurrentIndex( idx );
-    }
+   if( idx != -1 )
+      {
+	m_selectionBox->setCurrentIndex( idx );
+      }
 }

@@ -13,7 +13,13 @@
 
 2014-11-13 Axel Pauli <kflog.cumulus@gmail.com>
 
-  * Issue #33 Improve task editor help.
+  * Issue #36 Improve task editor list search.
+    I added a search function, that make it easier to navigate fast to a certain
+    waypoint list element, if its name is known. The found element can be taken
+    over by pressing the return kex, if the search input field has the keyboard
+    focus.
+
+  * Issue #35 Improve task editor help.
     I introduced a menubar with a help menu entry, connected to the shortcut F1.
     If the menu help is activated it opens a message box with the help text
     related to the selected task type.
