@@ -39,8 +39,8 @@ TaskEditor::TaskEditor( QWidget *parent ) :
   setWindowTitle(tr("Task Editor") );
   setModal( true );
   createDialog();
-  setMinimumWidth(500);
-  setMinimumHeight(300);
+  setMinimumWidth(800);
+  setMinimumHeight(450);
   restoreGeometry( _settings.value("/TaskEditor/Geometry").toByteArray() );
   show();
 }
