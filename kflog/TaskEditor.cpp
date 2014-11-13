@@ -142,8 +142,8 @@ void TaskEditor::createDialog()
 
   //----------------------------------------------------------------------------
   // Row 3
-  route =  new KFLogTreeWidget("TaskEditor-Route");
-
+  route = new KFLogTreeWidget("TaskEditor-Route");
+  route->setToolTip( tr("Open Help menu to get help about a task definition.") );
   route->setSortingEnabled( false );
   route->setAllColumnsShowFocus( true );
   route->setFocusPolicy( Qt::StrongFocus );
