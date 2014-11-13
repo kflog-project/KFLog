@@ -1,4 +1,3 @@
-
 <!-- KFLog resource file, containing eula, map and GUI icons. -->
 
 <!DOCTYPE RCC><RCC version="1.0">
@@ -117,6 +116,7 @@
     <file>mapicons/civmilair.xpm</file>
     <file>mapicons/closed.xpm</file>
     <file>mapicons/compoint.xpm</file>
+    <file>mapicons/empty.xpm</file>
     <file>mapicons/glider-18.png</file>
     <file>mapicons/glider2.xpm</file>
     <file>mapicons/glider_winch-18.png</file>
@@ -152,6 +152,7 @@
     <file>mapicons/small/civmilair.xpm</file>
     <file>mapicons/small/closed.xpm</file>
     <file>mapicons/small/compoint.xpm</file>
+    <file>mapicons/small/empty.xpm</file>
     <file>mapicons/small/glider-18.png</file>
     <file>mapicons/small/glider2.xpm</file>
     <file>mapicons/small/glider_winch-18.png</file>
