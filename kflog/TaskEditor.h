@@ -20,7 +20,6 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialog>
-#include <QErrorMessage>
 #include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
@@ -42,7 +41,7 @@
  *
  * \date 2002-2014
  *
- * \version 1.0
+ * \version 1.1
  */
 
 class TaskEditor : public QDialog
@@ -61,7 +60,7 @@ public:
 
    void setTask( FlightTask *orig );
 
-   FlightTask *getTask() { return pTask; }
+   FlightTask *getTask() { return m_editedTask; }
 
 private:
 
@@ -71,6 +70,9 @@ private:
   void loadRouteWaypoints();
 
 private slots:
+
+  /** Called to open the help window. */
+  void slotHelp();
 
   /** Called, if the point source selection is changed. */
   void slotLoadSelectableWaypoints( int index );
@@ -90,7 +92,7 @@ private slots:
   void slotAddWaypoint();
   void slotRemoveWaypoint();
 
-  /** Called if the ok button is pressed. */
+  /** Called if the OK button is pressed. */
   void slotAccept();
 
 private:
@@ -121,13 +123,13 @@ private:
     };
 
   /** Waypoint list of task. */
-  QList<Waypoint*> wpList;
+  QList<Waypoint*> m_taskWpList;
 
-  /* Flight task to be modified. */
-  FlightTask *pTask;
+  /* Flight task to be edited. */
+  FlightTask *m_editedTask;
 
   /* Fall back task, if no task is setup. */
-  FlightTask _task;
+  FlightTask m_task;
 
   QString    startName;
   QLineEdit *name;
@@ -148,7 +150,7 @@ private:
   int colRouteDummy;
 
   /** Waypoint list view. */
-  KFLogTreeWidget *waypoints;
+  KFLogTreeWidget *m_wpListView;
 
   /** Combo box for point source selection. */
   QComboBox *m_pointSourceBox;
@@ -164,9 +166,6 @@ private:
   QPushButton *upCmd;
   QPushButton *downCmd;
   QPushButton *invertCmd;
-
-  QErrorMessage* errorFai;
-  QErrorMessage* errorRoute;
 };
 
 #endif

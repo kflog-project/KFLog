@@ -11,7 +11,14 @@
 #
 ################################################################################
 
-2014-11-06 Axel Pauli <kflog.cumulus@gmail.com>
+2014-11-13 Axel Pauli <kflog.cumulus@gmail.com>
+
+  * Issue #33 Improve task editor help.
+    I introduced a menubar with a help menu entry, connected to the shortcut F1.
+    If the menu help is activated it opens a message box with the help text
+    related to the selected task type.
+
+2014-11-11 Axel Pauli <kflog.cumulus@gmail.com>
 
   * Task editor enhanced, that beside the waypoint list also other point data
     lists are available for the turnpoint selection. These other lists can be

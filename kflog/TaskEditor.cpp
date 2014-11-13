@@ -26,16 +26,15 @@
 #include "MetaTypes.h"
 #include "TaskEditor.h"
 
-extern MainWindow*    _mainWindow;
 extern MapConfig*     _globalMapConfig;
 extern MapContents*   _globalMapContents;
 extern MapMatrix*     _globalMapMatrix;
-extern QSettings       _settings;
+extern QSettings      _settings;
 
 TaskEditor::TaskEditor( QWidget *parent ) :
   QDialog(parent),
-  pTask(0),
-  _task(QString("task"))
+  m_editedTask(0),
+  m_task(QString("task"))
 {
   setWindowTitle(tr("Task Editor") );
   setModal( true );
@@ -57,17 +56,21 @@ void TaskEditor::createDialog()
   QLabel *l;
   QPushButton *b;
 
-  errorFai    = new QErrorMessage( this );
-  errorRoute  = new QErrorMessage( this );
-
-  errorFai->setWindowTitle( tr("Task selection") );
-  errorFai->resize(500, 250);
-  errorRoute->setWindowTitle( tr("Task selection") );
-  errorRoute->resize(500, 250);
-
   QVBoxLayout *topLayout = new QVBoxLayout( this );
-  topLayout->setSpacing( 10 );
+  //topLayout->setMargin( 0 );
 
+  //----------------------------------------------------------------------------
+  // Setup a menubar with a help menu entry
+  //----------------------------------------------------------------------------
+  QMenuBar *menuBar = new QMenuBar( this );
+  topLayout->addWidget( menuBar );
+
+  QMenu *help = menuBar->addMenu( tr("&Help") );
+
+  help->addAction( MainWindow::instance()->getPixmap( "kde_contexthelp_16.png"),
+						      tr("Help Task"),
+						      this,
+						      SLOT(slotHelp()), QKeySequence::HelpContents );
   QHBoxLayout *header = new QHBoxLayout;
   QHBoxLayout *type = new QHBoxLayout;
   QHBoxLayout *buttons = new QHBoxLayout;
@@ -189,14 +192,14 @@ void TaskEditor::createDialog()
 
   smallButtons->addStretch(1);
   upCmd = new QPushButton(this);
-  upCmd->setIcon(_mainWindow->getPixmap("kde_up_16.png"));
+  upCmd->setIcon(MainWindow::instance()->getPixmap("kde_up_16.png"));
   upCmd->setIconSize(QSize(16, 16));
   upCmd->setToolTip( tr("Moves selected task point up"));
   connect(upCmd, SIGNAL(clicked()), SLOT(slotMoveUp()));
   smallButtons->addWidget(upCmd);
 
   downCmd = new QPushButton(this);
-  downCmd->setIcon(_mainWindow->getPixmap("kde_down_16.png"));
+  downCmd->setIcon(MainWindow::instance()->getPixmap("kde_down_16.png"));
   downCmd->setIconSize(QSize(16, 16));
   downCmd->setToolTip( tr("Moves selected task point down"));
   connect(downCmd, SIGNAL(clicked()), SLOT(slotMoveDown()));
@@ -209,38 +212,38 @@ void TaskEditor::createDialog()
 
   middleLayout->addStretch(1);
   addCmd = new QPushButton;
-  addCmd->setIcon(_mainWindow->getPixmap("kde_back_16.png"));
+  addCmd->setIcon(MainWindow::instance()->getPixmap("kde_back_16.png"));
   addCmd->setIconSize(QSize(16, 16));
   addCmd->setToolTip( tr("Adds the selected waypoint to the task list"));
   connect(addCmd, SIGNAL(clicked()), SLOT(slotAddWaypoint()));
   middleLayout->addWidget(addCmd);
 
   invertCmd = new QPushButton(this);
-  invertCmd->setIcon(_mainWindow->getPixmap("kde_reload_16.png"));
+  invertCmd->setIcon(MainWindow::instance()->getPixmap("kde_reload_16.png"));
   invertCmd->setIconSize(QSize(16, 16));
   invertCmd->setToolTip( tr("Inverts the task. Last point becomes the first point, a.s.o."));
   connect(invertCmd, SIGNAL(clicked()), SLOT(slotInvertWaypoints()));
   middleLayout->addWidget(invertCmd);
 
   removeCmd = new QPushButton;
-  removeCmd->setIcon(_mainWindow->getPixmap("kde_forward_16.png"));
+  removeCmd->setIcon(MainWindow::instance()->getPixmap("kde_forward_16.png"));
   removeCmd->setIconSize(QSize(16, 16));
   removeCmd->setToolTip( tr("Removes the selected task point from the task list"));
   connect(removeCmd, SIGNAL(clicked()), SLOT(slotRemoveWaypoint()));
   middleLayout->addWidget(removeCmd);
   middleLayout->addStretch(1);
 
-  waypoints = new KFLogTreeWidget("TaskEditor-Waypoints");
-  waypoints->setSortingEnabled( true );
-  waypoints->setAllColumnsShowFocus( true );
-  waypoints->setFocusPolicy( Qt::StrongFocus );
-  waypoints->setRootIsDecorated( false );
-  waypoints->setItemsExpandable( true );
-  waypoints->setSelectionMode( QAbstractItemView::SingleSelection );
-  waypoints->setSelectionBehavior( QAbstractItemView::SelectRows );
-  waypoints->setAlternatingRowColors( true );
-  waypoints->addRowSpacing( 5 );
-  waypoints->setColumnCount( 5 );
+  m_wpListView = new KFLogTreeWidget("TaskEditor-Waypoints");
+  m_wpListView->setSortingEnabled( true );
+  m_wpListView->setAllColumnsShowFocus( true );
+  m_wpListView->setFocusPolicy( Qt::StrongFocus );
+  m_wpListView->setRootIsDecorated( false );
+  m_wpListView->setItemsExpandable( true );
+  m_wpListView->setSelectionMode( QAbstractItemView::SingleSelection );
+  m_wpListView->setSelectionBehavior( QAbstractItemView::SelectRows );
+  m_wpListView->setAlternatingRowColors( true );
+  m_wpListView->addRowSpacing( 5 );
+  m_wpListView->setColumnCount( 5 );
 
   headerLabels.clear();
 
@@ -250,9 +253,9 @@ void TaskEditor::createDialog()
                 << tr("ICAO")
                 << tr("");
 
-  waypoints->setHeaderLabels( headerLabels );
+  m_wpListView->setHeaderLabels( headerLabels );
 
-  headerItem = waypoints->headerItem();
+  headerItem = m_wpListView->headerItem();
   headerItem->setTextAlignment( 0, Qt::AlignCenter );
   headerItem->setTextAlignment( 1, Qt::AlignCenter );
   headerItem->setTextAlignment( 2, Qt::AlignCenter );
@@ -264,7 +267,7 @@ void TaskEditor::createDialog()
   colWpIcao        = 3;
   colWpDummy       = 4;
 
-  waypoints->loadConfig();
+  m_wpListView->loadConfig();
 
   QHBoxLayout* hbox = new QHBoxLayout;
   hbox->setMargin(0);
@@ -275,7 +278,7 @@ void TaskEditor::createDialog()
   hbox->addStretch( 10 );
 
   rightLayout->addLayout( hbox );
-  rightLayout->addWidget(waypoints);
+  rightLayout->addWidget(m_wpListView);
 
   topGroup->addLayout(leftLayout);
   topGroup->addLayout(middleLayout);
@@ -374,7 +377,7 @@ void TaskEditor::slotLoadSelectableWaypoints( int index )
     }
 
   // Clear the current content in the list.
-  waypoints->clear();
+  m_wpListView->clear();
 
   if( selectedItem == Waypoints )
     {
@@ -401,7 +404,7 @@ void TaskEditor::slotLoadSelectableWaypoints( int index )
 	  QVariant v;
 	  v.setValue(wp);
 	  item->setData( 0, Qt::UserRole, v );
-	  waypoints->insertTopLevelItem( i, item );
+	  m_wpListView->insertTopLevelItem( i, item );
 	}
     }
   else if( selectedItem == Airfields )
@@ -436,7 +439,7 @@ void TaskEditor::slotLoadSelectableWaypoints( int index )
 	      QVariant v;
 	      v.setValue(&af);
 	      item->setData( 0, Qt::UserRole, v );
-	      waypoints->insertTopLevelItem( i, item );
+	      m_wpListView->insertTopLevelItem( i, item );
 	    }
 	}
     }
@@ -465,7 +468,7 @@ void TaskEditor::slotLoadSelectableWaypoints( int index )
 	  QVariant v;
 	  v.setValue(&af);
 	  item->setData( 0, Qt::UserRole, v );
-	  waypoints->insertTopLevelItem( i, item );
+	  m_wpListView->insertTopLevelItem( i, item );
 	}
     }
   else if( selectedItem == Hotspots )
@@ -493,7 +496,7 @@ void TaskEditor::slotLoadSelectableWaypoints( int index )
 	  QVariant v;
 	  v.setValue(&sp);
 	  item->setData( 0, Qt::UserRole, v );
-	  waypoints->insertTopLevelItem( i, item );
+	  m_wpListView->insertTopLevelItem( i, item );
 	}
     }
   else if( selectedItem == Navaids )
@@ -521,7 +524,7 @@ void TaskEditor::slotLoadSelectableWaypoints( int index )
 	  QVariant v;
 	  v.setValue(&rp);
 	  item->setData( 0, Qt::UserRole, v );
-	  waypoints->insertTopLevelItem( i, item );
+	  m_wpListView->insertTopLevelItem( i, item );
 	}
     }
   else
@@ -532,8 +535,8 @@ void TaskEditor::slotLoadSelectableWaypoints( int index )
       return;
     }
 
-  waypoints->sortItems(0, Qt::AscendingOrder);
-  waypoints->slotResizeColumns2Content();
+  m_wpListView->sortItems(0, Qt::AscendingOrder);
+  m_wpListView->slotResizeColumns2Content();
 }
 
 void TaskEditor::slotSetPlanningType( const QString& text )
@@ -544,39 +547,24 @@ void TaskEditor::slotSetPlanningType( const QString& text )
   {
   case FlightTask::FAIArea:
     {
-      QString msg = tr("<b>Task Type FAI Area:</b><br><br>"
-          "You can define a FAI task with either Takeoff, Start, End and Landing or "
-          "Takeoff, Start, End, Landing and <b>one</b> additional Route point.<br>"
-          "The points <i>Takeoff</i>, <i>Start</i>, <i>End</i> and <i>Landing</i> "
-          "are <b>mandatory!</b><br><br>"
-          "The FAI area calculation will be made with Start and End point or Start "
-          "and Route point, depending weather the route point is defined or not.<br><br>"
-          "New points are inserted always after the selected one." );
-
-      if( wpList.size() > 5 )
+      if( m_taskWpList.size() > 5 )
         {
-          msg += tr( "<br><br><b>Your FAI task contains too much route points!"
-                     "<br>Please remove all not necessary route points.</b>" );
-        }
+          QString msg (tr( "FAI area task violation!"
+                           "<br><br>Please remove all not necessary route points."
+                           "<br><br>See Help menu for more information.") );
 
-      errorFai->showMessage( "<html>" + msg + "</html>" );
+          QMessageBox::warning( this, tr("Too much route points"), msg );
+        }
 
       left->setEnabled(true);
       right->setEnabled(true);
-      left->setChecked(pTask->getPlanningDirection() & FlightTask::leftOfRoute);
-      right->setChecked(pTask->getPlanningDirection() & FlightTask::rightOfRoute);
+      left->setChecked(m_editedTask->getPlanningDirection() & FlightTask::leftOfRoute);
+      right->setChecked(m_editedTask->getPlanningDirection() & FlightTask::rightOfRoute);
     }
 
     break;
 
   case FlightTask::Route:
-
-    errorRoute->showMessage(  tr("<html><b>Task Type Traditional Route:</b><br><br>"
-      "You can define a task with Takeoff, Start, End, Landing and Route points. "
-      "The points <i>Takeoff</i>, <i>Start</i>, <i>End</i> and <i>Landing</i> "
-      "are <b>mandatory!</b> "
-      "Additional route points can be added.<br><br>"
-      "New points are inserted always after the selected one.</html>") );
 
     left->setEnabled(false);
     right->setEnabled(false);
@@ -585,10 +573,48 @@ void TaskEditor::slotSetPlanningType( const QString& text )
     break;
   }
 
-  pTask->setPlanningType(id);
+  m_editedTask->setPlanningType(id);
   loadRouteWaypoints();
   route->setCurrentItem( route->topLevelItem(0) );
   enableCommandButtons();
+}
+
+void TaskEditor::slotHelp()
+{
+  QString msgFAI( tr("<b>Task Type FAI Area:</b><br><br>"
+      "You can define a FAI task with either Takeoff, Start, End and Landing or "
+      "Takeoff, Start, End, Landing and <b>one</b> additional Route point.<br>"
+      "The points <i>Takeoff</i>, <i>Start</i>, <i>End</i> and <i>Landing</i> "
+      "are <b>mandatory!</b><br><br>"
+      "The FAI area calculation will be made with Start and End point or Start "
+      "and Route point, depending weather the route point is defined or not.<br><br>"
+      "New points are inserted always after the selected one." ) );
+
+  QString msgRoute(  tr("<html><b>Task Type Traditional Route:</b><br><br>"
+    "You can define a task with Takeoff, Start, End, Landing and Route points. "
+    "The points <i>Takeoff</i>, <i>Start</i>, <i>End</i> and <i>Landing</i> "
+    "are <b>mandatory!</b> "
+    "Additional route points can be added.<br><br>"
+    "New points are inserted always after the selected one.</html>") );
+
+  switch( m_editedTask->getPlanningType() )
+  {
+    case FlightTask::Route:
+
+      QMessageBox::information( this, tr("Help Route"), msgRoute );
+      break;
+
+    case FlightTask::FAIArea:
+
+      QMessageBox::information( this, tr("Help FAI Area"), msgFAI );
+      break;
+
+    case FlightTask::AAT:
+      // Not yet supported.
+    default:
+
+      break;
+  }
 }
 
 void TaskEditor::slotSetPlanningDirection(int)
@@ -605,7 +631,7 @@ void TaskEditor::slotSetPlanningDirection(int)
       dir |= FlightTask::rightOfRoute;
     }
 
-  pTask->setPlanningDirection(dir);
+  m_editedTask->setPlanningDirection(dir);
 }
 
 void TaskEditor::loadRouteWaypoints()
@@ -614,11 +640,11 @@ void TaskEditor::loadRouteWaypoints()
 
   route->clear();
 
-  for( int i = 0; i < wpList.size(); i++ )
+  for( int i = 0; i < m_taskWpList.size(); i++ )
     {
       QString txt;
 
-      Waypoint *wp = wpList.at(i);
+      Waypoint *wp = m_taskWpList.at(i);
 
       switch( wp->tpType )
         {
@@ -671,7 +697,7 @@ void TaskEditor::loadRouteWaypoints()
 
   route->slotResizeColumns2Content();
 
-  taskType->setText( pTask->getTaskTypeString() );
+  taskType->setText( m_editedTask->getTaskTypeString() );
 }
 
 int TaskEditor::getCurrentPosition()
@@ -710,10 +736,10 @@ void TaskEditor::slotMoveUp()
       return;
     }
 
-  Waypoint *wp = wpList.takeAt( curPos );
-  wpList.insert( curPos - 1, wp );
+  Waypoint *wp = m_taskWpList.takeAt( curPos );
+  m_taskWpList.insert( curPos - 1, wp );
 
-  pTask->setWaypointList( wpList );
+  m_editedTask->setWaypointList( m_taskWpList );
   loadRouteWaypoints();
   setSelected( curPos - 1 );
 }
@@ -725,36 +751,36 @@ void TaskEditor::slotMoveDown()
   if( curPos < 0 ||
       route->topLevelItemCount() < 2 ||
       curPos >= route->topLevelItemCount() - 1 ||
-      curPos >= wpList.size() - 1 )
+      curPos >= m_taskWpList.size() - 1 )
     {
       return;
     }
 
-  Waypoint *wp = wpList.takeAt( curPos );
-  wpList.insert( curPos + 1, wp );
+  Waypoint *wp = m_taskWpList.takeAt( curPos );
+  m_taskWpList.insert( curPos + 1, wp );
 
-  pTask->setWaypointList( wpList );
+  m_editedTask->setWaypointList( m_taskWpList );
   loadRouteWaypoints();
   setSelected( curPos + 1 );
 }
 
 void TaskEditor::slotInvertWaypoints()
 {
-  if ( wpList.count() < 2 )
+  if ( m_taskWpList.count() < 2 )
     {
       // not possible to invert order, if elements are less 2
       return;
     }
 
   // invert list order
-  for( int i= wpList.count()-2; i >= 0; i-- )
+  for( int i= m_taskWpList.count()-2; i >= 0; i-- )
     {
-      Waypoint *wp = wpList.at(i);
-      wpList.removeAt(i);
-      wpList.append( wp );
+      Waypoint *wp = m_taskWpList.at(i);
+      m_taskWpList.removeAt(i);
+      m_taskWpList.append( wp );
     }
 
-  pTask->setWaypointList( wpList );
+  m_editedTask->setWaypointList( m_taskWpList );
   loadRouteWaypoints();
 
   // After an invert the first waypoint item is always selected.
@@ -771,7 +797,7 @@ void TaskEditor::slotAddWaypoint()
     }
 
   // Gets the selected item from the waypoint list.
-  QTreeWidgetItem* item = waypoints->currentItem();
+  QTreeWidgetItem* item = m_wpListView->currentItem();
 
   if( item == 0 )
     {
@@ -847,18 +873,18 @@ void TaskEditor::slotAddWaypoint()
   // Set projected coordinates
   newWp->projP = _globalMapMatrix->wgsToMap(newWp->origP);
 
-  if( pos >= wpList.size() || pos < 0 )
+  if( pos >= m_taskWpList.size() || pos < 0 )
     {
-      wpList.append( newWp );
-      pos = wpList.size() - 1;
+      m_taskWpList.append( newWp );
+      pos = m_taskWpList.size() - 1;
     }
   else
     {
-      wpList.insert(pos + 1, newWp);
+      m_taskWpList.insert(pos + 1, newWp);
       pos++;
     }
 
-  pTask->setWaypointList( wpList );
+  m_editedTask->setWaypointList( m_taskWpList );
   loadRouteWaypoints();
   setSelected( pos );
 }
@@ -867,21 +893,21 @@ void TaskEditor::slotRemoveWaypoint()
 {
   int curPos = getCurrentPosition();
 
-  if ( curPos < 0 || wpList.count() == 0 )
+  if ( curPos < 0 || m_taskWpList.count() == 0 )
     {
       return;
     }
 
   delete route->takeTopLevelItem( curPos );
-  delete wpList.takeAt( curPos );
+  delete m_taskWpList.takeAt( curPos );
 
-  pTask->setWaypointList( wpList );
+  m_editedTask->setWaypointList( m_taskWpList );
   loadRouteWaypoints();
 
   // Remember last position.
-  if( curPos >= wpList.size() )
+  if( curPos >= m_taskWpList.size() )
     {
-      setSelected( wpList.size() - 1);
+      setSelected( m_taskWpList.size() - 1);
     }
   else
     {
@@ -894,30 +920,30 @@ void TaskEditor::setTask(FlightTask *task)
   if( task == static_cast<FlightTask *>(0) )
     {
       // As fall back an internal empty task object is setup
-      _task = FlightTask( MapContents::instance()->genTaskName() );
-      pTask = &_task;
+      m_task = FlightTask( MapContents::instance()->genTaskName() );
+      m_editedTask = &m_task;
 
       qWarning() << "TaskEditor::setTask(): Null object passed as task!";
     }
   else
     {
-      pTask = task;
+      m_editedTask = task;
     }
 
   // get waypoint list of task
-  wpList = pTask->getWPList();
+  m_taskWpList = m_editedTask->getWPList();
 
-  name->setText( pTask->getFileName() );
+  name->setText( m_editedTask->getFileName() );
 
   // Save initial name of task. Is checked during accept for change.
   startName = name->text();
 
-  planningTypes->setCurrentIndex( planningTypes->findText( FlightTask::ttItem2Text(pTask->getPlanningType())) );
+  planningTypes->setCurrentIndex( planningTypes->findText( FlightTask::ttItem2Text(m_editedTask->getPlanningType())) );
 
-  left->setChecked(pTask->getPlanningDirection() & FlightTask::leftOfRoute);
-  right->setChecked(pTask->getPlanningDirection() & FlightTask::rightOfRoute);
+  left->setChecked(m_editedTask->getPlanningDirection() & FlightTask::leftOfRoute);
+  right->setChecked(m_editedTask->getPlanningDirection() & FlightTask::rightOfRoute);
 
-  slotSetPlanningType( FlightTask::ttItem2Text(pTask->getPlanningType()) );
+  slotSetPlanningType( FlightTask::ttItem2Text(m_editedTask->getPlanningType()) );
 }
 
 void TaskEditor::slotItemClicked( QTreeWidgetItem* item, int column )
@@ -930,7 +956,7 @@ void TaskEditor::slotItemClicked( QTreeWidgetItem* item, int column )
 
 void TaskEditor::enableCommandButtons()
 {
-  if( wpList.count() == 0 )
+  if( m_taskWpList.count() == 0 )
     {
       addCmd->setEnabled( true );
       removeCmd->setEnabled( false );
@@ -938,7 +964,7 @@ void TaskEditor::enableCommandButtons()
       downCmd->setEnabled( false );
       invertCmd->setEnabled( false );
     }
-  else if( wpList.count() == 1 )
+  else if( m_taskWpList.count() == 1 )
     {
       addCmd->setEnabled( true );
       removeCmd->setEnabled( true );
@@ -988,7 +1014,7 @@ void TaskEditor::slotAccept()
       if( _globalMapContents->taskNameInUse( name->text()) )
         {
           QMessageBox::warning( this,
-                                 tr("Task name in use"),
+                                 tr("Task name already in use!"),
                                  tr("<html>The chosen task name is already in use!<br><br>"
                                     "Please enter another one.</html>"),
                                  QMessageBox::Ok );
@@ -996,28 +1022,29 @@ void TaskEditor::slotAccept()
         }
     }
 
-  pTask->setTaskName( name->text() );
-
-  if( wpList.size() < 4 )
+  if( m_taskWpList.size() < 4 )
     {
       QMessageBox::warning( this,
-                             tr("Task is incomplete"),
+                             tr("Task is incomplete!"),
                              tr("<html>A task consist of at least four waypoints!<br><br>"
-                                "Please add the missing points.</html>"),
+                                "Please add the missing points."
+                        	"<br><br>See Help menu for more information.</html>"),
                              QMessageBox::Ok );
       return;
     }
 
-  if( wpList.size() > 5 && pTask->getPlanningType() == FlightTask::FAIArea )
+  if( m_taskWpList.size() > 5 && m_editedTask->getPlanningType() == FlightTask::FAIArea )
     {
       QMessageBox::warning( this,
-                             tr("FAI area task violation"),
+                             tr("FAI area task violation!"),
                              tr("<html>A FAI area task can have one additional "
                                  "route point only!<br><br>"
-                                 "Please remove all not needed other points.</html>"),
+                                 "Please remove all not needed other points."
+                        	 "<br><br>See Help menu for more information.</html>"),
                              QMessageBox::Ok );
       return;
     }
 
+  m_editedTask->setTaskName( name->text() );
   accept();
 }
