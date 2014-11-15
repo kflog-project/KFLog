@@ -705,16 +705,42 @@ void EvaluationView::__draw()
   qreal maxVario = 0.0;
   qreal maxSpeed = 0.0;
 
+#ifdef DebugMultiFlightsInOneIGCFile
+  // detect multiple flights in one IGC-File
+  // it is still unclear how we should handle this internally
+  // This poor algorithm will only work with low wind speeds
+  qreal lastSpeed = 0.0;
+  int StartTime = 0;
+#endif
+
   for(int loop = 0; loop < flight->getRouteLength(); loop++)
     {
       curTime = flight->getPoint(loop).time;
-
       // Correct time for overnight-flights:
       if(curTime < startTime)
         {
           curTime += 86400;
         }
+#ifdef DebugMultiFlightsInOneIGCFile
+      qreal currentSpeed = getSpeed(flight->getPoint(loop));
 
+      if (currentSpeed > 50.0)
+          {
+              if (lastSpeed < 50.0)
+              {
+                  StartTime = curTime;
+              }
+          }
+      else
+          {
+               if (lastSpeed > 50.0)
+                  {
+                    qDebug() << flight->getDate() << "," << printTime(StartTime,true,true) << "," << printTime(curTime, true, true) << "," << printTime(curTime - StartTime, true, true);
+                  }
+          }
+
+      lastSpeed = currentSpeed;
+#endif
       if( baro )
         {
           /* Das Array wird hier noch falsch gefüllt. Wenn über 3 Punkte geglättet wird, stimmt
