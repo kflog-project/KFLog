@@ -1936,16 +1936,21 @@ void Map::slotMapMoveTimeout()
     }
 }
 
-void Map::slotCenterToWaypoint(const int id)
+void Map::slotCenterToWaypoint(const int idx)
 {
-  if(id >= _globalMapContents->getFlight()->getWPList().count())
+  if( _globalMapContents->getFlight() == 0 )
     {
-      qWarning("KFLog: Map::slotCenterToWaypoint: wrong Waypoint-ID");
+      return;
+    }
+
+  if( idx >= _globalMapContents->getFlight()->getWPList().count() )
+    {
+      qWarning("KFLog: Map::slotCenterToWaypoint: Waypoint index out of range!");
       return;
     }
 
   _globalMapMatrix->centerToPoint(_globalMapMatrix->map(
-  _globalMapContents->getFlight()->getWPList().at(id)->projP));
+    _globalMapContents->getFlight()->getWPList().at(idx)->projP));
   _globalMapMatrix->slotSetScale(_globalMapMatrix->getScale(MapMatrix::LowerLimit));
 
   emit changed( size() );
@@ -1989,7 +1994,7 @@ void Map::slotCenterToFlight()
     }
 
   // check if the Rectangle is not zero
-  if( !r0.isNull() )
+  if( ! r0.isNull() )
     {
       _globalMapMatrix->centerToRect( r0 );
       __redrawMap();
@@ -3251,6 +3256,7 @@ bool Map::findMapPoint( int delta, const QPoint& mapPosition, Waypoint *w )
             w->country = sp->getCountry();
             w->type = sp->getTypeID();
             w->origP = sp->getWGSPosition();
+            w->projP = sp->getPosition();
             w->elevation = sp->getElevation();
             w->comment = sp->getComment();
             w->icao = "";

@@ -115,7 +115,7 @@ private:
     /** */
     void slotCenterToTask();
     /** */
-    void slotCenterToWaypoint(const int id);
+    void slotCenterToWaypoint(const int idx);
     /** */
     void slotDrawCursor(const QPoint& p1, const QPoint& p2);
     /** Clears the flight cursors. */

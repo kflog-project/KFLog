@@ -7,14 +7,13 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Heiner Lamprecht
-**                   2011 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
+
 #ifdef QT_5
     #include <QtWidgets>
 #else
@@ -52,7 +51,7 @@ DataView::~DataView()
 
 QString DataView::__writeTaskInfo(FlightTask* task)
 {
-  if( ! task )
+  if( task == static_cast<FlightTask *>(0) )
     {
       return "";
     }
@@ -199,7 +198,7 @@ QString DataView::__writeTaskInfo(FlightTask* task)
 
 void DataView::slotShowTaskText(FlightTask* task)
 {
-  if( ! task )
+  if( static_cast<FlightTask *>(0) )
     {
       return;
     }
@@ -244,7 +243,7 @@ void DataView::slotSetFlightData()
 
   BaseFlightElement* e = _globalMapContents->getFlight();
 
-  if( !e )
+  if( e == static_cast<BaseFlightElement *>(0) )
     {
       return;
     }
@@ -255,10 +254,15 @@ void DataView::slotSetFlightData()
         {
           Flight* flight = dynamic_cast<Flight *>(e);
 
+          if( flight == static_cast<Flight *>(0) )
+            {
+              return;
+            }
+
           h = flight->getHeader();
           //
           // For some strange reason, the widget adds a large vertical space
-          // between the the first table and the following rule. Therfore I
+          // between the the first table and the following rule. Therefore I
           // have removed the rule
           //                                                     Heiner, 2003-01-02
           //
@@ -288,41 +292,50 @@ void DataView::slotSetFlightData()
         break;
 
       case BaseMapElement::FlightGroup:
+	{
+	  htmlText = "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
+	      <TR><TD>" + tr("Flight group") + ":</TD><TD><A HREF=EDITGROUP>" +
+	      e->getFileName() +  + "</A></TD></TR>\
+	      </TABLE><HR NOSHADE>";
 
-        htmlText = "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
-            <TR><TD>" + tr("Flight group") + ":</TD><TD><A HREF=EDITGROUP>" +
-            e->getFileName() +  + "</A></TD></TR>\
-            </TABLE><HR NOSHADE>";
+	  FlightGroup* fg = dynamic_cast<FlightGroup *>(e);
 
-        fl = ((FlightGroup*)e)->getFlightList();
+	  if( fg == static_cast<FlightGroup *>(0) )
+	    {
+	      return;
+	    }
 
-        if(fl.count())
-          {
-            htmlText += "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
-                         <TR><TD COLSPAN=3 BGCOLOR=#BBBBBB><B>" +
-                         tr("Flights") + ":</B></TD></TR>";
+	  fl = fg->getFlightList();
 
-            for (int loop = 0; loop < fl.count(); loop++)
-              {
-                Flight *flight = fl.at(loop);
-                // store pointer of flight instead of index
-                // flight list of mapcontents will change
-                idString.sprintf("%lu", (unsigned long)flight);
-                fi.setFile(flight->getFileName());
+	  if(fl.count())
+	    {
+	      htmlText += "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
+			   <TR><TD COLSPAN=3 BGCOLOR=#BBBBBB><B>" +
+			   tr("Flights") + ":</B></TD></TR>";
 
-                htmlText += "<TR><TD><A HREF=" + idString + ">" +
-                            fi.fileName() + "</A></TD><TD ALIGN=right>" +
-                            flight->getDate() + "</TD></TR>\
-                            <TR><TD>" + flight->getDistance() + "</TD><TD ALIGN=right>" +
-                            printTime(flight->getLandTime() - flight->getStartTime()) +
-                            "</TD></TR>";
-              }
-          }
-        else
-          {
-            htmlText += tr("Click on the group name to start editing");
-          }
-        break;
+	      for (int loop = 0; loop < fl.count(); loop++)
+		{
+		  Flight *flight = fl.at(loop);
+		  // store pointer of flight instead of index
+		  // flight list of mapcontents will change
+		  idString.sprintf("%lu", (unsigned long)flight);
+		  fi.setFile(flight->getFileName());
+
+		  htmlText += "<TR><TD><A HREF=" + idString + ">" +
+			      fi.fileName() + "</A></TD><TD ALIGN=right>" +
+			      flight->getDate() + "</TD></TR>\
+			      <TR><TD>" + flight->getDistance() + "</TD><TD ALIGN=right>" +
+			      printTime(flight->getLandTime() - flight->getStartTime()) +
+			      "</TD></TR>";
+		}
+	    }
+	  else
+	    {
+	      htmlText += tr("Click on the group name to start editing");
+	    }
+
+	  break;
+	}
 
       default:
         break;
@@ -334,10 +347,9 @@ void DataView::slotSetFlightData()
 
 void DataView::slotWPSelected(const QUrl &link)
 {
-  extern MapContents *_globalMapContents;
   BaseFlightElement* e = _globalMapContents->getFlight();
 
-  if ( !e )
+  if ( e == static_cast<BaseFlightElement *>(0) )
     {
       return;
     }
@@ -355,8 +367,10 @@ void DataView::slotWPSelected(const QUrl &link)
 
         if (url == "EDITTASK")
           {
-            QMessageBox::information(0, tr("Edit task"), tr(
-                "This will bring up the task editing dialog"), QMessageBox::Ok);
+            QMessageBox::information( this,
+				      tr("Edit task"),
+				      tr("This will bring up the task editing dialog"),
+				      QMessageBox::Ok );
           }
         else
           {

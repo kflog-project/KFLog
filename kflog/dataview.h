@@ -7,12 +7,10 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Heiner Lamprecht, Florian Ehinger
-**                   2011 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -36,9 +34,9 @@ class FlightTask;
  *
  * Provides a widget for displaying the flight data.
  *
- * \date 2001-2011
+ * \date 2001-2014
  *
- * \version $Id$
+ * \version 1.0
  */
 class DataView : public QWidget
 {
@@ -53,22 +51,29 @@ class DataView : public QWidget
      * Creates a new DataView object
      */
     DataView(QWidget* parent);
+
     /**
      * Destructor
      */
-    ~DataView();
+    virtual ~DataView();
 
   signals:
+
     /**
      * Emitted when the user selects one waypoint in the list.
+     *
+     * \param idx Index of clicked waypoint in the list..
      */
-    void wpSelected(const int id);
+    void wpSelected(const int idx);
+
     /** No descriptions */
     void flightSelected(BaseFlightElement *);
+
     /** No descriptions */
     void editFlightGroup();
 
   public slots:
+
     /**
      * Writes the task and some header info about the flight into the widget.
      */
@@ -79,18 +84,20 @@ class DataView : public QWidget
     void slotWPSelected(const QUrl &link);
     /**
       * Sets the contents to the currently active task
-    	*/
+      */
     void slotShowTaskText(FlightTask* task);
     /**
-      * Clears the contents of the dataview
-      */
+     * Clears the contents of the dataview widget.
+     */
     void slotClearView();
 
   private:
+
     /** */
-    QString __writeTaskInfo(FlightTask*);
+    QString __writeTaskInfo(FlightTask* task);
+
     /**
-     * The textwidget
+     * The text widget
      */
     QTextBrowser* flightDataText;
 };
