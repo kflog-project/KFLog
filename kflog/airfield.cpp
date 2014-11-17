@@ -7,16 +7,18 @@
  ************************************************************************
  **
  **   Copyright (c):  2000      by Heiner Lamprecht, Florian Ehinger
- **                   2008-2011 by Axel Pauli
+ **                   2008-2014 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
  **
- **   $Id$
- **
  ***********************************************************************/
 
-#include <QtCore>
+#ifdef QT_5
+#include <QtWidgets>
+#else
+#include <QtGui>
+#endif
 
 #include "airfield.h"
 #include "altitude.h"

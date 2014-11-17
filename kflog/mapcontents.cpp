@@ -1458,7 +1458,7 @@ void MapContents::proofeSection(bool isPrint)
       emit airspacesLoaded();
     }
 
-  qDebug() << "MapContents::proofeSection() loadPoints=" << loadPoints;
+  // qDebug() << "MapContents::proofeSection() loadPoints=" << loadPoints;
 
   // Checking for point data
   if( loadPoints == true )

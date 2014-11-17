@@ -14,7 +14,11 @@
 **
 ***********************************************************************/
 
+#ifdef QT_5
+#include <QtWidgets>
+#else
 #include <QtGui>
+#endif
 
 #include "altitude.h"
 #include "singlepoint.h"
@@ -36,7 +40,7 @@ SinglePoint::SinglePoint( const QString& name,
                           const QString& country,
                           const unsigned short secID,
                           unsigned int lmType ) :
- BaseMapElement(name, typ, secID, country),
+  BaseMapElement(name, typ, secID, country),
   wgsPosition(wgsP),
   position(pos),
   shortName(shortName),
@@ -138,8 +142,17 @@ bool SinglePoint::drawMapElement(QPainter* targetP)
 
   QPixmap pixmap = glConfig->getPixmap(typeID);
 
-  targetP->drawPixmap( curPos.x() - pixmap.size().width() / 2,
-                       curPos.y() - pixmap.size().height() / 2,
+  int xoff = pixmap.size().width() / 2;
+  int yoff = pixmap.size().height() / 2;
+
+  if( typeID == BaseMapElement::Thermal || typeID == BaseMapElement::Turnpoint )
+    {
+      // The lower end of the flag shall directly point to the point at the map.
+      yoff = pixmap.size().height();
+    }
+
+  targetP->drawPixmap( curPos.x() - xoff,
+                       curPos.y() - yoff,
                        pixmap );
 
   return true;
