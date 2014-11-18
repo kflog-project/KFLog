@@ -626,32 +626,32 @@ void TaskEditor::slotSetPlanningType( const QString& text )
 
 void TaskEditor::slotHelp()
 {
-  QString msgFAI( tr("<b>Task Type FAI Area:</b><br><br>"
-      "You can define a FAI task with either Takeoff, Start, End and Landing or "
-      "Takeoff, Start, End, Landing and <b>one</b> additional Route point.<br>"
-      "The points <i>Takeoff</i>, <i>Start</i>, <i>End</i> and <i>Landing</i> "
+  QString msgFAI( tr("<html>"
+      "You can define a FAI task with either Take-off, Start, End and Landing or "
+      "Take-off, Start, End, Landing and <b>one</b> additional Route point.<br>"
+      "The points <i>Take-off</i>, <i>Start</i>, <i>End</i> and <i>Landing</i> "
       "are <b>mandatory!</b><br><br>"
       "The FAI area calculation will be made with Start and End point or Start "
       "and Route point, depending weather the route point is defined or not.<br><br>"
-      "New points are inserted always after the selected one." ) );
+      "New points are inserted always after the selected one.</html>" ) );
 
-  QString msgRoute(  tr("<html><b>Task Type Traditional Route:</b><br><br>"
-    "You can define a task with Takeoff, Start, End, Landing and Route points. "
-    "The points <i>Takeoff</i>, <i>Start</i>, <i>End</i> and <i>Landing</i> "
+  QString msgRoute(  tr("<html>"
+    "You can define a task with Take-off, Start, End, Landing and Route points. "
+    "The points <i>Take-off</i>, <i>Start</i>, <i>End</i> and <i>Landing</i> "
     "are <b>mandatory!</b> "
     "Additional route points can be added.<br><br>"
     "New points are inserted always after the selected one.</html>") );
 
   switch( m_editedTask->getPlanningType() )
   {
+    case FlightTask::FAIArea:
+
+      QMessageBox::information( this, tr("Help FAI"), msgFAI );
+      break;
+
     case FlightTask::Route:
 
       QMessageBox::information( this, tr("Help Route"), msgRoute );
-      break;
-
-    case FlightTask::FAIArea:
-
-      QMessageBox::information( this, tr("Help FAI Area"), msgFAI );
       break;
 
     case FlightTask::AAT:
@@ -816,7 +816,7 @@ void TaskEditor::slotTakeFoundItem()
   slotAddWaypoint();
 }
 
-void TaskEditor::slotSearchColumnIndexChanged( int index )
+void TaskEditor::slotSearchColumnIndexChanged( int /* index */ )
 {
   if( m_wpListView->topLevelItemCount() == 0 ||
       m_pointSearchInput->text().trimmed().isEmpty() )
