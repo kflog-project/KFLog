@@ -2893,6 +2893,12 @@ void Map::__createPopupMenu()
                                                 SLOT(slotMpDeleteWaypoint()));
   mapPopup->addSeparator();
 
+  miNewTaskAction = mapPopup->addAction( _mainWindow->getPixmap("kde_filenew_16.png"),
+                                         QObject::tr("New task"),
+                                         this,
+                                         SIGNAL(newTask()) );
+  mapPopup->addSeparator();
+
   miCenterMapAction = mapPopup->addAction( _mainWindow->getPixmap("centerto_22.png"),
                                            QObject::tr("&Center map"),
                                            this,

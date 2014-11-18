@@ -193,6 +193,7 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   connect(map, SIGNAL(setStatusBarMsg(const QString&)), this, SLOT(slotSetStatusMsg(const QString&)));
   connect(map, SIGNAL(flightTaskModified()), objectTree, SLOT(slotFlightChanged()));
   connect(map, SIGNAL(elevation(int)), this, SLOT(slotElevation(int)));
+  connect(map, SIGNAL(newTask()), this, SLOT(slotNewTask()));
 
   connect(mapControl, SIGNAL(scaleChanged(double)), _globalMapMatrix, SLOT(slotSetScale(double)));
 
@@ -1532,6 +1533,15 @@ void MainWindow::slotOpenTask()
     }
 
   slotSetStatusMsg( tr( "Ready." ) );
+}
+
+void MainWindow::slotNewTask()
+{
+  // Open the KFLog browser.
+  objectTreeDock->show();
+
+  // Create a new task in all related objects.
+  _globalMapContents->slotNewTask();
 }
 
 void MainWindow::slotOpenRecentFile( QAction *action )

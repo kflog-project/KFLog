@@ -229,6 +229,8 @@ private:
     void regWaypointDialog(QWidget *);
     /** Emitted, if the flight task has been modified. */
     void flightTaskModified();
+    /** Emitted, if the map menu item new task is activated. */
+    void newTask();
 
   protected:
     /**
@@ -503,6 +505,7 @@ private:
     QAction *miAddWaypointAction;
     QAction *miEditWaypointAction;
     QAction *miDeleteWaypointAction;
+    QAction *miNewTaskAction;
     QAction *miAddTaskPointAction;
     QAction *miShowMapInfoAction;
     QAction *miShowMapAirspaceInfoAction;

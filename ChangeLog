@@ -11,6 +11,11 @@
 #
 ################################################################################
 
+2014-11-18 Axel Pauli <kflog.cumulus@gmail.com>
+
+  * Map menu item new task introduced. The activation of the menu item will
+    open the KFLog browser and create a new empty task.
+
 2014-11-17 Axel Pauli <kflog.cumulus@gmail.com>
 
   * Issue #38 fixed. How did I get to here fixed.

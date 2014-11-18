@@ -26,7 +26,7 @@
  *
  * \date 2001-2014
  *
- * \version $Id$
+ * \version 1.0
  */
 
 #ifndef MAIN_WINDOW_H
@@ -161,6 +161,10 @@ public slots:
    * Opens a task-file-open-dialog.
    */
   void slotOpenTask();
+  /**
+   * Opens the KFLog browser and creates an new task.
+   */
+  void slotNewTask();
   /**
    * Opens a selected recently opened flight.
    */
