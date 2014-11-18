@@ -13,8 +13,13 @@
 
 2014-11-18 Axel Pauli <kflog.cumulus@gmail.com>
 
-  * Map menu item new task introduced. The activation of the menu item will
+  * Map menu item 'New task' introduced. The activation of the menu item will
     open the KFLog browser and create a new empty task.
+    
+  * Map task menu activation was changed to pressing Shift + left mouse button
+    together to enable also a map move with the left mouse button press in the
+    graphical planning state. Before that was not possible because left mouse
+    button press has been used for both action.
 
 2014-11-17 Axel Pauli <kflog.cumulus@gmail.com>
 

@@ -121,11 +121,9 @@ Map::Map( QWidget* parent ) :
      "if the <i>Show map data touched by Mouse</i> option is enabled."
      "<li>Pressing the right mouse button opens the map menu with different possible actions."
      "<li>Pressing the middle mouse button centers the map to the mouse point."
-     "<li>Pressing the left mouse button opens the task menu, if graphical task planning is activated."
-     " Otherwise you can move the map so long the left mouse button is pressed during move."
-     "<li>Pressing the shift key and the left mouse button over a map item"
-     " creates a new waypoint by using the item data. If no item is touched by the mouse"
-     " the waypoint dialog is opened and the user can enter the waypoint data."
+     "<li>Pressing the left mouse button you can move the map so long the left mouse button is pressed during move."
+     "<li>Pressing the Shift key + left mouse button together opens the task menu, "
+     "if graphical task planning is activated."
      "<li>Pressing the control key and the left mouse button "
      "and hold both down during drag will draw a frame at the map. Release the mouse "
      "button to zoom the map into the frame."
@@ -1108,13 +1106,6 @@ void Map::mousePressEvent(QMouseEvent* event)
 
   const QPoint current( event->pos() );
 
-  int delta = 16;
-
-  if( _globalMapMatrix->isSwitchScale() )
-    {
-      delta = 8;
-    }
-
   if( event->button() == Qt::MidButton )
     {
       // Center Map
@@ -1126,14 +1117,6 @@ void Map::mousePressEvent(QMouseEvent* event)
 
   if( event->button() == Qt::LeftButton )
     {
-      // Check if task planning is active. In this case allow only planning actions.
-      if( planning == 1 )
-        {
-          __graphicalPlanning( current, event );
-          event->accept();
-          return;
-        }
-
       if( event->modifiers() == Qt::ControlModifier )
         {
           // User wants to make a drag zoom action.
@@ -1160,23 +1143,13 @@ void Map::mousePressEvent(QMouseEvent* event)
 
       if( event->modifiers() == Qt::ShiftModifier )
         {
-          Waypoint *w = new Waypoint;
-
-          if( findMapPoint( delta, current, w ) == true )
-            {
-              // That adds the found item to the current waypoint list.
-              emit waypointSelected(w);
-            }
-          else
-            {
-              delete w;
-
-              // No map item found, we open the waypoint editor, that the user
-              // can create a new waypoint at the current position.
-              WaypointDialog* waypointDlg = __openWaypointDialog( current );
-              waypointDlg->exec();
-              delete waypointDlg;
-            }
+	  // Check if task planning is active.
+	  if( planning == 1 )
+	    {
+	      __graphicalPlanning( current, event );
+	      event->accept();
+	      return;
+	    }
         }
     }
   else if( event->button() == Qt::RightButton )
@@ -2867,30 +2840,43 @@ void Map::__createPopupMenu()
   mapPopup->addSeparator();
 
   miShowMapInfoAction = mapPopup->addAction( _mainWindow->getPixmap("kde_info_16.png"),
-                                             QObject::tr("&Show item info"),
+                                             QObject::tr("Show item info"),
                                              this,
                                              SLOT(slotMpShowMapItemInfo()) );
 
   miShowMapAirspaceInfoAction = mapPopup->addAction( _mainWindow->getPixmap("kde_info_16.png"),
-                                                     QObject::tr("&Show airspace info"),
+                                                     QObject::tr("Show airspace info"),
                                                      this,
                                                      SLOT(slotMpShowAirspaceInfo()) );
   mapPopup->addSeparator();
 
+  miAddAsWaypointAction = mapPopup->addAction( _mainWindow->getPixmap("kde_filenew_16.png"),
+					       "",
+					       this,
+					       SLOT(slotMpAddAsWaypoint()) );
+
+  miAddAsWaypointAction->setVisible( false );
+
+
   miAddWaypointAction = mapPopup->addAction( _mainWindow->getPixmap("kde_filenew_16.png"),
-                                             QObject::tr("&New waypoint"),
+                                             QObject::tr("New waypoint here"),
                                              this,
                                              SLOT(slotMpNewWaypoint()) );
 
   miEditWaypointAction = mapPopup->addAction( _mainWindow->getPixmap("kde_wizard_16.png"),
-                                              QObject::tr("&Edit waypoint"),
+                                              "",
                                               this,
                                               SLOT(slotMpEditWaypoint()) );
 
+  miEditWaypointAction->setVisible( false );
+
   miDeleteWaypointAction = mapPopup->addAction( _mainWindow->getPixmap("kde_editdelete_16.png"),
-                                                QObject::tr("&Delete waypoint"),
+                                                "",
                                                 this,
                                                 SLOT(slotMpDeleteWaypoint()));
+
+  miDeleteWaypointAction->setVisible( false );
+
   mapPopup->addSeparator();
 
   miNewTaskAction = mapPopup->addAction( _mainWindow->getPixmap("kde_filenew_16.png"),
@@ -2900,17 +2886,17 @@ void Map::__createPopupMenu()
   mapPopup->addSeparator();
 
   miCenterMapAction = mapPopup->addAction( _mainWindow->getPixmap("centerto_22.png"),
-                                           QObject::tr("&Center map"),
+                                           QObject::tr("Center map"),
                                            this,
                                            SLOT(slotMpCenterMap()) );
 
   miZoomInAction = mapPopup->addAction( _mainWindow->getPixmap("kde_viewmag+_16.png"),
-                                        QObject::tr("Zoom &In"),
+                                        QObject::tr("Zoom In"),
                                         _globalMapMatrix,
                                         SLOT(slotZoomIn()) );
 
   miZoomOutAction = mapPopup->addAction( _mainWindow->getPixmap("kde_viewmag-_16.png"),
-                                         QObject::tr("Zoom &Out"),
+                                         QObject::tr("Zoom Out"),
                                          _globalMapMatrix,
                                          SLOT(slotZoomOut()) );
   /*
@@ -2918,45 +2904,71 @@ void Map::__createPopupMenu()
  */
 }
 
-/** Enable/disable the correct items for the map menu and then shows it. */
 void Map::__showPopupMenu(QMouseEvent* event)
 {
-  if( findWaypoint( event->pos() ) )
+  Waypoint *wp = findWaypoint( event->pos() );
+
+  if( wp != 0 )
     {
-      miAddWaypointAction->setEnabled( false );
-      miEditWaypointAction->setEnabled( true );
-      miDeleteWaypointAction->setEnabled( true );
+      // There is found a waypoint at the map position in the waypoint list.
+      miAddWaypointAction->setVisible( false );
+
+      QString textEdit(tr("Edit waypoint %1").arg(wp->name));
+      miEditWaypointAction->setText( textEdit );
+      miEditWaypointAction->setVisible( true );
+
+      QString textDelete(tr("Delete waypoint %1").arg(wp->name));
+      miDeleteWaypointAction->setText( textDelete );
+      miDeleteWaypointAction->setVisible( true );
+
+      miAddAsWaypointAction->setVisible( false );
     }
   else
     {
-      miAddWaypointAction->setEnabled( true );
-      miEditWaypointAction->setEnabled( false );
-      miDeleteWaypointAction->setEnabled( false );
+      Waypoint w;
+
+      if( findMapPoint( 16, popupPos, &w ) == true )
+        {
+	  // There is found a point in the other lists
+          QString text(tr("Add %1 as waypoint").arg(w.name));
+          miAddAsWaypointAction->setText( text );
+          miAddAsWaypointAction->setVisible( true );
+
+          miAddWaypointAction->setVisible( false );
+        }
+      else
+	{
+	  miAddAsWaypointAction->setVisible( false );
+          miAddWaypointAction->setVisible( true );
+	}
+
+      miEditWaypointAction->setVisible( false );
+      miDeleteWaypointAction->setVisible( false );
     }
 
   mapPopup->exec( mapToGlobal( event->pos() ) );
 }
 
-/** called from the Map popup menu to add a new waypoint. */
 void Map::slotMpNewWaypoint()
+{
+  // Popup the waypoint editor with the map coordinates filled in.
+  WaypointDialog* waypointDlg = __openWaypointDialog( popupPos );
+  waypointDlg->exec();
+  delete waypointDlg;
+}
+
+void Map::slotMpAddAsWaypoint()
 {
   Waypoint *w = new Waypoint;
 
   if( findMapPoint( 16, popupPos, w ) == true )
     {
       emit waypointSelected( w );
-    }
-  else
-    {
-      delete w;
+      return;
     }
 
-  // create a new waypoint
-  WaypointDialog* waypointDlg = __openWaypointDialog( popupPos );
-  waypointDlg->exec();
-  delete waypointDlg;
+  delete w;
 }
-
 
 /** called from the Map Popup menu to edit waypoint. */
 void Map::slotMpEditWaypoint()

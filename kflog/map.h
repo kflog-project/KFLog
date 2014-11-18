@@ -169,9 +169,16 @@ private:
      */
     void slotMpCenterMap();
     /**
-     * called from the MapPopupmenu to add a new waypoint.
+     * Called from the MapPopupmenu to add a new waypoint. The new waypoint can
+     * be a found point item at the map. If no item is found, the waypoint
+     * editor will popup with the coordinates of the current mouse pointer
+     * position.
      */
     void slotMpNewWaypoint();
+    /**
+     * Called to add a map point item to the waypoint list.
+     */
+    void slotMpAddAsWaypoint();
     /**
      * called from the MapPopupmenu to edit waypoint.
      */
@@ -370,7 +377,8 @@ private:
     bool __getTaskWaypoint(const QPoint& current, Waypoint *wp, QList<Waypoint*> &taskPointList);
     /** Tries to locate the elevation for the given point, and emits a signal elevation if found. */
     void __findElevation(const QPoint& coord);
-    /** Selects the correct items to show from the menu and then shows it. */
+
+    /** Enable/disable the correct items for the map menu and then show it. */
     void __showPopupMenu(QMouseEvent * Event);
     /**
      * This pixmap is used to store the currently displayed map.
@@ -502,6 +510,7 @@ private:
      * Actions of menu items
      */
     QAction *miCenterMapAction;
+    QAction *miAddAsWaypointAction;
     QAction *miAddWaypointAction;
     QAction *miEditWaypointAction;
     QAction *miDeleteWaypointAction;
