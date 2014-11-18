@@ -459,7 +459,7 @@ void MainWindow::createMenuBar()
   fileNewTaskAction->setShortcut( Qt::CTRL + Qt::Key_N );
   fileNewTaskAction->setEnabled(true);
   connect( fileNewTaskAction, SIGNAL(triggered()),
-           _globalMapContents, SLOT(slotNewTask()) );
+           this, SLOT(slotNewTask()) );
 
   fileNewFlightGroupAction = new QAction( tr("New &Flight Group"), this );
   fileNewFlightGroupAction->setEnabled(true);
