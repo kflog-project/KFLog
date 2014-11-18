@@ -180,114 +180,114 @@
 <context>
     <name>DataView</name>
     <message>
-        <location filename="dataview.cpp" line="67"/>
+        <location filename="dataview.cpp" line="66"/>
         <source>Task</source>
         <translation>Aufgabe</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="148"/>
+        <location filename="dataview.cpp" line="147"/>
         <source>Total Distance</source>
         <translation>Gesamtdistanz</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="151"/>
-        <location filename="dataview.cpp" line="170"/>
+        <location filename="dataview.cpp" line="150"/>
+        <location filename="dataview.cpp" line="169"/>
         <source>Task Distance</source>
         <translation>Aufgabelänge</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="154"/>
+        <location filename="dataview.cpp" line="153"/>
         <source>Average Speed</source>
         <translation>Durchschnittsgeschwindigkeit</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="157"/>
-        <location filename="dataview.cpp" line="173"/>
+        <location filename="dataview.cpp" line="156"/>
+        <location filename="dataview.cpp" line="172"/>
         <source>Points</source>
         <translation>Punkte</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="167"/>
+        <location filename="dataview.cpp" line="166"/>
         <source>total Distance</source>
         <translation>Gesamtdistanz</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="188"/>
+        <location filename="dataview.cpp" line="187"/>
         <source>Leg Distance</source>
         <translation>Schenkellänge</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="191"/>
+        <location filename="dataview.cpp" line="190"/>
         <source>FAI Distance</source>
         <translation>FAI Distanz</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="209"/>
+        <location filename="dataview.cpp" line="208"/>
         <source>Task-Type: </source>
         <translation>Aufgabentyp: </translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="219"/>
+        <location filename="dataview.cpp" line="218"/>
         <source>Please select the &lt;b&gt;start point&lt;/b&gt; of the task at the map!</source>
         <translation>Bitte den &lt;b&gt;Startpunkt&lt;/b&gt; der Aufgabe auf der Karte wählen!</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="223"/>
+        <location filename="dataview.cpp" line="222"/>
         <source>Begin of task</source>
         <translation>Beginn der Aufgabe</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="227"/>
+        <location filename="dataview.cpp" line="226"/>
         <source>Next waypoint</source>
         <translation>Nächster Wegpunkt</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="266"/>
+        <location filename="dataview.cpp" line="270"/>
         <source>File</source>
         <translation>Datei</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="267"/>
+        <location filename="dataview.cpp" line="271"/>
         <source>Date</source>
         <translation>Datum</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="268"/>
+        <location filename="dataview.cpp" line="272"/>
         <source>Pilot</source>
         <translation>Pilot</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="269"/>
+        <location filename="dataview.cpp" line="273"/>
         <source>Glider</source>
         <translation>Segelflugzeug</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="279"/>
+        <location filename="dataview.cpp" line="283"/>
         <source>Flight contains no waypoints</source>
         <translation>Flug beinhaltet keine Wegpunkte</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="293"/>
+        <location filename="dataview.cpp" line="297"/>
         <source>Flight group</source>
         <translation>Fluggruppe</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="303"/>
+        <location filename="dataview.cpp" line="314"/>
         <source>Flights</source>
         <translation>Flüge</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="323"/>
+        <location filename="dataview.cpp" line="334"/>
         <source>Click on the group name to start editing</source>
         <translation>Auf den Gruppennamen klicken um die Bearbeitung zu beginnen</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="358"/>
+        <location filename="dataview.cpp" line="371"/>
         <source>Edit task</source>
         <translation>Aufgabe bearbeiten</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="358"/>
+        <location filename="dataview.cpp" line="372"/>
         <source>This will bring up the task editing dialog</source>
         <translation>Startet den Aufgabe-Bearbeiten-Dialog</translation>
     </message>
@@ -1476,532 +1476,532 @@
         <translation>Werkzeugleiste</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="387"/>
+        <location filename="mainwindow.cpp" line="388"/>
         <source>Flight Data</source>
         <translation>Flugdaten</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="395"/>
+        <location filename="mainwindow.cpp" line="396"/>
         <source>Flight Evaluation</source>
         <translation>Flugauswertung</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="403"/>
+        <location filename="mainwindow.cpp" line="404"/>
         <source>Help</source>
         <translation>Hilfe</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="411"/>
+        <location filename="mainwindow.cpp" line="412"/>
         <source>Terrain Profile</source>
         <translation>Gelände Profil</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="419"/>
+        <location filename="mainwindow.cpp" line="420"/>
         <source>Map Control</source>
         <translation>Versarten Kontrolle</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="427"/>
+        <location filename="mainwindow.cpp" line="428"/>
         <source>Loaded Objects</source>
         <translation>Geladene Objekte</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="435"/>
+        <location filename="mainwindow.cpp" line="436"/>
         <source>Waypoints</source>
         <translation>Wegpunkte</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="452"/>
+        <location filename="mainwindow.cpp" line="453"/>
         <source>New &amp;Waypoint</source>
         <translation>Neuer &amp;Wegpunkt</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="493"/>
-        <location filename="mainwindow.cpp" line="1865"/>
+        <location filename="mainwindow.cpp" line="494"/>
+        <location filename="mainwindow.cpp" line="1875"/>
         <source>Print Map</source>
         <translation>Drucke Karte</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="499"/>
+        <location filename="mainwindow.cpp" line="500"/>
         <source>Print Flight Data</source>
         <translation>Drucke Flugdaten</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="504"/>
+        <location filename="mainwindow.cpp" line="505"/>
         <source>Print Task Data</source>
         <translation>Drucke Aufgabendaten</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="509"/>
+        <location filename="mainwindow.cpp" line="510"/>
         <source>Open Recorder</source>
         <translation>Öffne Rekorder</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="524"/>
+        <location filename="mainwindow.cpp" line="525"/>
         <source>&amp;File</source>
         <translation>&amp;Datei</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="525"/>
+        <location filename="mainwindow.cpp" line="526"/>
         <source>&amp;New</source>
         <translation>&amp;Neu</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="623"/>
+        <location filename="mainwindow.cpp" line="624"/>
         <source>Move map NW</source>
         <translation>Verschiebe Karte NW</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="630"/>
+        <location filename="mainwindow.cpp" line="631"/>
         <source>Move map N</source>
         <translation>Verschiebe Karte N</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="637"/>
+        <location filename="mainwindow.cpp" line="638"/>
         <source>Move map NE</source>
         <translation>Verschiebe Karte NE</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="644"/>
-        <location filename="mainwindow.cpp" line="651"/>
+        <location filename="mainwindow.cpp" line="645"/>
+        <location filename="mainwindow.cpp" line="652"/>
         <source>Move map W</source>
         <translation>Verschiebe Karte W</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="658"/>
+        <location filename="mainwindow.cpp" line="659"/>
         <source>Move map SW</source>
         <translation>Verschiebe Karte SW</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="665"/>
+        <location filename="mainwindow.cpp" line="666"/>
         <source>Move map S</source>
         <translation>Verschiebe Karte S</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="672"/>
+        <location filename="mainwindow.cpp" line="673"/>
         <source>Move map SO</source>
         <translation>Verschiebe Karte SO</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="678"/>
+        <location filename="mainwindow.cpp" line="679"/>
         <source>Show map data touched by Mouse</source>
         <translation>Zeige Kartendaten unter Mauszeiger</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="716"/>
+        <location filename="mainwindow.cpp" line="717"/>
         <source>Move map</source>
         <translation>Verschiebe Karte</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="730"/>
+        <location filename="mainwindow.cpp" line="731"/>
         <source>Show &amp;Evaluation Window</source>
         <translation>Zeige B&amp;ewertungsfenster</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="747"/>
+        <location filename="mainwindow.cpp" line="748"/>
         <source>Optimize</source>
         <translation>Optimiere</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="753"/>
+        <location filename="mainwindow.cpp" line="754"/>
         <source>Optimize for OLC</source>
         <translation>Optimiere für OLC</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="759"/>
+        <location filename="mainwindow.cpp" line="760"/>
         <source>Altitude</source>
         <translation>Höhe</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="763"/>
+        <location filename="mainwindow.cpp" line="764"/>
         <source>Cycling</source>
         <translation>Kreisflug</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="767"/>
+        <location filename="mainwindow.cpp" line="768"/>
         <source>Speed</source>
         <translation>Geschwindigkeit</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="771"/>
+        <location filename="mainwindow.cpp" line="772"/>
         <source>Vario</source>
         <translation>Vario</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="775"/>
+        <location filename="mainwindow.cpp" line="776"/>
         <source>Airspace Violations</source>
         <translation>Luftraumverletzungen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="779"/>
+        <location filename="mainwindow.cpp" line="780"/>
         <source>Solid</source>
         <translation>Durchgezogen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1020"/>
+        <location filename="mainwindow.cpp" line="1021"/>
         <source>About &amp;Qt</source>
         <translation>Über &amp;Qt</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1023"/>
-        <location filename="mainwindow.cpp" line="1971"/>
+        <location filename="mainwindow.cpp" line="1024"/>
+        <location filename="mainwindow.cpp" line="1981"/>
         <source>About KFLog</source>
         <translation>Über KFLog</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1237"/>
+        <location filename="mainwindow.cpp" line="1238"/>
         <source>Plugin is missing!</source>
         <translation>Plugin nicht gefunden!</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1396"/>
-        <location filename="mainwindow.cpp" line="1447"/>
-        <location filename="mainwindow.cpp" line="1494"/>
+        <location filename="mainwindow.cpp" line="1397"/>
+        <location filename="mainwindow.cpp" line="1448"/>
+        <location filename="mainwindow.cpp" line="1495"/>
         <source>Opening file...</source>
         <translation>Öffne Datei...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1399"/>
+        <location filename="mainwindow.cpp" line="1400"/>
         <source>Open Flight</source>
         <translation>Öffne Flug</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1404"/>
+        <location filename="mainwindow.cpp" line="1405"/>
         <source>All types</source>
         <translation>Alle Typen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1405"/>
+        <location filename="mainwindow.cpp" line="1406"/>
         <source>IGC</source>
         <translation>IGC</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1406"/>
+        <location filename="mainwindow.cpp" line="1407"/>
         <source>Garmin</source>
         <translation>Garmin</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1442"/>
-        <location filename="mainwindow.cpp" line="1486"/>
-        <location filename="mainwindow.cpp" line="1534"/>
-        <location filename="mainwindow.cpp" line="1569"/>
-        <location filename="mainwindow.cpp" line="1896"/>
-        <location filename="mainwindow.cpp" line="1921"/>
+        <location filename="mainwindow.cpp" line="1443"/>
+        <location filename="mainwindow.cpp" line="1487"/>
+        <location filename="mainwindow.cpp" line="1535"/>
+        <location filename="mainwindow.cpp" line="1579"/>
+        <location filename="mainwindow.cpp" line="1906"/>
+        <location filename="mainwindow.cpp" line="1931"/>
         <source>Ready.</source>
         <translation>Fertig.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1497"/>
+        <location filename="mainwindow.cpp" line="1498"/>
         <source>Open Task</source>
         <translation>Öffne Aufgabe</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1974"/>
+        <location filename="mainwindow.cpp" line="1984"/>
         <source>&lt;html&gt;KFLog %1, &amp;copy; 2000-2014, The KFLog-Team&lt;/html&gt;</source>
         <translation>&lt;html&gt;KFLog %1, &amp;copy; 2000-2014, Das KFLog-Team&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1978"/>
+        <location filename="mainwindow.cpp" line="1988"/>
         <source>&lt;html&gt;KFLog %1, compiled at %2 with QT %3&lt;br&gt;&lt;br&gt;Homepage: &lt;a href=&quot;http://www.kflog.org/kflog/&quot;&gt;www.kflog.org/kflog/&lt;/a&gt;&lt;br&gt;&lt;br&gt;GitHub Software Repository: &lt;a href=&quot;https://github.com/kflog-project/KFLog&quot;&gt;https://github.com/kflog-project/KFLog&lt;/a&gt;&lt;br&gt;&lt;br&gt;ChangeLog &lt;a href=&quot;https://github.com/kflog-project/KFLog/blob/%1/ChangeLog&quot;&gt;%1&lt;/a&gt;&lt;br&gt;&lt;br&gt;Report bugs to: &lt;a href=&quot;https://github.com/kflog-project/KFLog/issues&quot;&gt;kflog-project/KFLog/issues&lt;/a&gt;&lt;br&gt;&lt;br&gt;Published under the &lt;a href=&quot;http://www.gnu.org/licenses/licenses.html#GPL&quot;&gt;GPL&lt;/a&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;KFLog %1, gebaut am %2 mit QT %3&lt;br&gt;&lt;br&gt;Internet Adresse: &lt;a href=&quot;http://www.kflog.org/kflog/&quot;&gt;www.kflog.org/kflog/&lt;/a&gt;&lt;br&gt;&lt;br&gt;GitHub Software Archiv: &lt;a href=&quot;https://github.com/kflog-project/KFLog&quot;&gt;https://github.com/kflog-project/KFLog&lt;/a&gt;&lt;br&gt;&lt;br&gt;ChangeLog &lt;a href=&quot;https://github.com/kflog-project/KFLog/blob/%1/ChangeLog&quot;&gt;%1&lt;/a&gt;&lt;br&gt;&lt;br&gt;Melde Fehler an: &lt;a href=&quot;https://github.com/kflog-project/KFLog/issues&quot;&gt;kflog-project/KFLog/issues&lt;/a&gt;&lt;br&gt;&lt;br&gt;Veröffentlicht unter der &lt;a href=&quot;http://www.gnu.org/licenses/licenses.html#GPL&quot;&gt;GPL&lt;/a&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1992"/>
+        <location filename="mainwindow.cpp" line="2002"/>
         <source>&lt;html&gt;&lt;b&gt;Temporarily Maintainer&lt;/b&gt;&lt;blockquote&gt;Axel Pauli &amp;lt;&lt;a href=&quot;mailto:kflog.cumulus&amp;#64;gmail.com&quot;&gt;kflog.cumulus&amp;#64;gmail.com&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;&lt;b&gt;Developers, Maintainers&lt;/b&gt;&lt;blockquote&gt;Axel Pauli (Developer, Portage to Qt4)&lt;br&gt;Constantijn Neeteson (Maintenance, Core-developer)&lt;br&gt;Florian Ehinger (Maintenance, Core-developer, Mapdata)&lt;br&gt;Heiner Lamprecht (Maintenance, Core-developer)&lt;br&gt;Andr&amp;eacute; Somers (Developer, Waypoint-handling, Plugin architecture, ...)&lt;br&gt;Christof Bodner (Developer, OLC Optimization)&lt;br&gt;Eggert Ehmke (Developer)&lt;br&gt;Harald Maier (Developer, Waypoint-Dialog, Task-handling)&lt;br&gt;Thomas Nielsen (Developer, 3D-Dialog)&lt;br&gt;Jan Kr&amp;uuml;ger (Developer, 3D-Dialog)&lt;br&gt;Matthias Degenkolb (Developer, MS-Windows portage)&lt;br&gt;Peter Simon (Developer, MS-Windows portage)&lt;/blockquote&gt;&lt;b&gt;Server Sponsor&lt;/b&gt;&lt;blockquote&gt;Heiner Lamprecht &amp;lt;&lt;a href=&quot;mailto:heiner&amp;#64;kflog.org&quot;&gt;heiner&amp;#64;kflog.org&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;Thanks to all, who have made available this software!&lt;br&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;b&gt;Augenblickliche Wartung durch&lt;/b&gt;&lt;blockquote&gt;Axel Pauli &amp;lt;&lt;a href=&quot;mailto:kflog.cumulus&amp;#64;gmail.com&quot;&gt;kflog.cumulus&amp;#64;gmail.com&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;&lt;b&gt;Entwickler und Instandhalter&lt;/b&gt;&lt;blockquote&gt;Axel Pauli (Entwickler, Portierung zu Qt4)&lt;br&gt;Constantijn Neeteson (Instandhalter, Kernentwickler)&lt;br&gt;Florian Ehinger (Instandhalter, Kernentwickler, Kartendaten)&lt;br&gt;Heiner Lamprecht (Instandhalter, Kernentwickler)&lt;br&gt;Andr&amp;eacute; Somers (Entwickler, Wegpunkte, Plugin Architektur, ...)&lt;br&gt;Christof Bodner (Entwickler, OLC Optimierung)&lt;br&gt;Eggert Ehmke (Entwickler)&lt;br&gt;Harald Maier (Entwickler, Wegpunkt-Dialog, Aufgaben)&lt;br&gt;Thomas Nielsen (Entwickler, 3D-Dialog)&lt;br&gt;Jan Kr&amp;uuml;ger (Entwickler, 3D-Dialog)&lt;br&gt;Matthias Degenkolb (Entwickler, MS-Windows Portierung)&lt;br&gt;Peter Simon (Entwickler, MS-Windows Portierung)&lt;/blockquote&gt;&lt;b&gt;Server Sponsor&lt;/b&gt;&lt;blockquote&gt;Heiner Lamprecht &amp;lt;&lt;a href=&quot;mailto:heiner&amp;#64;kflog.org&quot;&gt;heiner&amp;#64;kflog.org&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;Danke an alle, die beim Erstellen dieser Software mitgewirkt haben und sie weiter pflegen!&lt;br&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="457"/>
+        <location filename="mainwindow.cpp" line="458"/>
         <source>New &amp;Task</source>
         <translation>Neue &amp;Aufgabe</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="463"/>
+        <location filename="mainwindow.cpp" line="464"/>
         <source>New &amp;Flight Group</source>
         <translation>Neue &amp;Gruppe von Flügen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="469"/>
+        <location filename="mainwindow.cpp" line="470"/>
         <source>&amp;Open Flight</source>
         <translation>Flug &amp;öffnen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="475"/>
+        <location filename="mainwindow.cpp" line="476"/>
         <source>Open &amp;Task</source>
         <translation>&amp;Aufgabe öffnen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="481"/>
+        <location filename="mainwindow.cpp" line="482"/>
         <source>&amp;Close Flight/Task</source>
         <translation>&amp;Schließe Flug/Aufgabe</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="488"/>
+        <location filename="mainwindow.cpp" line="489"/>
         <source>Save map to PNG...</source>
         <translation>Speichere Karte als PNG...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="515"/>
+        <location filename="mainwindow.cpp" line="516"/>
         <source>&amp;Quit</source>
         <translation>&amp;Beenden</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="535"/>
+        <location filename="mainwindow.cpp" line="536"/>
         <source>&amp;Open recent files</source>
         <translation>Öffne &amp;kürzlich verwendete Dateien</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="569"/>
+        <location filename="mainwindow.cpp" line="570"/>
         <source>Center to &amp;Task</source>
         <translation>Zentriere in &amp;Aufgabe</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="576"/>
+        <location filename="mainwindow.cpp" line="577"/>
         <source>Center to &amp;Flight</source>
         <translation>Zentriere in &amp;Flug</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="583"/>
+        <location filename="mainwindow.cpp" line="584"/>
         <source>Center to &amp;Homesite</source>
         <translation>Zentriere auf &amp;Heimatflugplatz</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="590"/>
+        <location filename="mainwindow.cpp" line="591"/>
         <source>&amp;Center to...</source>
         <translation>&amp;Zentriere auf Position</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="597"/>
+        <location filename="mainwindow.cpp" line="598"/>
         <source>Zoom &amp;In</source>
         <translation>Vergrößern</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="604"/>
+        <location filename="mainwindow.cpp" line="605"/>
         <source>Zoom &amp;Out</source>
         <translation>Verkleinern</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="611"/>
+        <location filename="mainwindow.cpp" line="612"/>
         <source>&amp;Zoom into mouse rectangle</source>
         <translation>&amp;Vergrößere in Mausausschnitt</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="617"/>
+        <location filename="mainwindow.cpp" line="618"/>
         <source>&amp;Redraw</source>
         <translation>Neu Zeichnen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="688"/>
+        <location filename="mainwindow.cpp" line="689"/>
         <source>Show waypoint labels</source>
         <translation>Zeige Wegpunktbeschriftung</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="700"/>
+        <location filename="mainwindow.cpp" line="701"/>
         <source>&amp;View</source>
         <translation>Ansicht</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="740"/>
+        <location filename="mainwindow.cpp" line="741"/>
         <source>Set QNH</source>
         <translation>Setze QNH</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="798"/>
+        <location filename="mainwindow.cpp" line="799"/>
         <source>View flight in 3D</source>
         <translation>Zeige Flug in 3D</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="805"/>
+        <location filename="mainwindow.cpp" line="806"/>
         <source>View flight in 3D (OpenGL)</source>
         <translation>Zeige Flug in 3D (OpenGL)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="811"/>
+        <location filename="mainwindow.cpp" line="812"/>
         <source>&amp;Start Flight Animation</source>
         <translation>&amp;Starten Flug Animation</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="818"/>
+        <location filename="mainwindow.cpp" line="819"/>
         <source>&amp;Pause Flight Animation</source>
         <translation>&amp;Pausieren Flug Animation</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="825"/>
+        <location filename="mainwindow.cpp" line="826"/>
         <source>Stop Flight &amp;Animation</source>
         <translation>Stoppen Flug &amp;Animation</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="832"/>
+        <location filename="mainwindow.cpp" line="833"/>
         <source>Next Flight Point</source>
         <translation>Nächster Flugpunkt</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="838"/>
+        <location filename="mainwindow.cpp" line="839"/>
         <source>Prev Flight Point</source>
         <translation>Vorheriger Flugpunkt</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="844"/>
+        <location filename="mainwindow.cpp" line="845"/>
         <source>Step +10 Flight Points</source>
         <translation>Spinge +10 Flugpunkte</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="850"/>
+        <location filename="mainwindow.cpp" line="851"/>
         <source>Step -10 Flight Points</source>
         <translation>Spinge -10 Flugpunkte</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="856"/>
+        <location filename="mainwindow.cpp" line="857"/>
         <source>First Flight Point</source>
         <translation>Erster Flugpunkt</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="862"/>
+        <location filename="mainwindow.cpp" line="863"/>
         <source>Last Flight Point</source>
         <translation>Letzter Flugpunkt</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="870"/>
+        <location filename="mainwindow.cpp" line="871"/>
         <source>F&amp;light</source>
         <translation>F&amp;lug</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="876"/>
+        <location filename="mainwindow.cpp" line="877"/>
         <source>Show Flight Data</source>
         <translation>Zeige Flugdaten</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="901"/>
+        <location filename="mainwindow.cpp" line="902"/>
         <source>&amp;Flights</source>
         <translation>&amp;Flüge</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="914"/>
+        <location filename="mainwindow.cpp" line="915"/>
         <source>Show Flight &amp;Data</source>
         <translation>Zeige Flug&amp;daten</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="923"/>
+        <location filename="mainwindow.cpp" line="924"/>
         <source>Show Help Window</source>
         <translation>Zeige Hilfefenster</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="932"/>
+        <location filename="mainwindow.cpp" line="933"/>
         <source>Show KFLog &amp;Browser</source>
         <translation>Zeige KFLog-&amp;Browser</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="941"/>
+        <location filename="mainwindow.cpp" line="942"/>
         <source>Show Terrain Profile</source>
         <translation>Zeige Geländeprofil</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="951"/>
+        <location filename="mainwindow.cpp" line="952"/>
         <source>Show &amp;Map</source>
         <translation>Zeige &amp;Karte</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="957"/>
+        <location filename="mainwindow.cpp" line="958"/>
         <source>Show Map&amp; Control</source>
         <translation>Zeige Karten&amp;kontrolle</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="963"/>
+        <location filename="mainwindow.cpp" line="964"/>
         <source>Show Toolbar</source>
         <translation>Zeige Werkzeugleiste</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="972"/>
+        <location filename="mainwindow.cpp" line="973"/>
         <source>Show Statusbar</source>
         <translation>Zeige Statusleiste</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="980"/>
+        <location filename="mainwindow.cpp" line="981"/>
         <source>Show &amp;Waypoints</source>
         <translation>Zeige &amp;Wegpunkte</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="989"/>
+        <location filename="mainwindow.cpp" line="990"/>
         <source>&amp;Windows</source>
         <translation>&amp;Fenster</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1001"/>
+        <location filename="mainwindow.cpp" line="1002"/>
         <source>&amp;Settings</source>
         <translation>&amp;Einstellungen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1003"/>
+        <location filename="mainwindow.cpp" line="1004"/>
         <source>KFLog &amp;Setup...</source>
         <translation>KFLog Ein&amp;stellungen...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1013"/>
+        <location filename="mainwindow.cpp" line="1014"/>
         <source>&amp;Help</source>
         <translation>&amp;Hilfe</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1016"/>
+        <location filename="mainwindow.cpp" line="1017"/>
         <source>What&apos;s This?</source>
         <translation>Direkthilfe</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1238"/>
+        <location filename="mainwindow.cpp" line="1239"/>
         <source>Cannot open plugin library:</source>
         <translation>Kann Plugin nicht öffnen:</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1502"/>
+        <location filename="mainwindow.cpp" line="1503"/>
         <source>KFLog tasks</source>
         <translation>KFLog Aufgaben</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1544"/>
+        <location filename="mainwindow.cpp" line="1554"/>
         <source>Opening File...</source>
         <translation>Öffne Datei...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1638"/>
+        <location filename="mainwindow.cpp" line="1648"/>
         <source>Save map as image</source>
         <translation>Speichere Karte als Bild</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1640"/>
+        <location filename="mainwindow.cpp" line="1650"/>
         <source>Image (*.png)</source>
         <translation>Bild (*.png)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1855"/>
+        <location filename="mainwindow.cpp" line="1865"/>
         <source>Printing map ...</source>
         <translation>Drucke Karte ...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1908"/>
+        <location filename="mainwindow.cpp" line="1918"/>
         <source>Printing flight ...</source>
         <translation>Drucke Flug ...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1912"/>
+        <location filename="mainwindow.cpp" line="1922"/>
         <source>Printing task ...</source>
         <translation>Drucke Aufgabe ...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1916"/>
+        <location filename="mainwindow.cpp" line="1926"/>
         <source>Not yet available for type: %1</source>
         <translation>Nicht verfügbar für Typ: %1</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1917"/>
+        <location filename="mainwindow.cpp" line="1927"/>
         <source>Type not available</source>
         <translation>Typ nicht verfügbar</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="281"/>
+        <location filename="mainwindow.cpp" line="282"/>
         <source>Welcome to KFLog</source>
         <translation>Willkommen bei KFLog</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="260"/>
+        <location filename="mainwindow.cpp" line="261"/>
         <source>Welcome to KFLog, the Linux flight analyser.&lt;br&gt;&lt;br&gt;After a first installation you should open the setup menu and configure the following things:&lt;p&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Airspaces:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Define the countries to be downloaded and used.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Points:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Define the point source and the countries to be downloaded and used.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Identity:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Define your personal data and your home airfield.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/p&gt;&lt;br&gt;Have fun with KFLog ;-)&lt;br&gt;&lt;br&gt;Show this message again?</source>
         <translation>&lt;p align=&quot;center&quot;&gt;&lt;big&gt;&lt;br&gt;&lt;b&gt;Willkommen bei KFLog&lt;/b&gt;&lt;/big&gt;&lt;br&gt;&lt;br&gt; dem freien Flug Analysewerkzeug!&lt;/p&gt;&lt;br&gt;Drei kleine Konfigurationsschritte trennen Dich noch von der vollständigen Konfiguration von KFLog:&lt;p&gt;&lt;table style=&quot;spacing:10px&quot;&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Lufträume:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Auswahl der herunterzuladenen und anzuzeigenden Luftraumdaten.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Orte:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Auswahl der Datenquelle und Länder der anzuzeigenden Flugplätze, Thermikquellen und Radio-Navigationspunkt.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Identität:&lt;/b&gt;&lt;/td&gt;&lt;td&gt;Angaben zu Deiner Person für die Definition von Flug-Aufgaben, Dein Heimatflugplatz sowie die Sprache der Benutzeroberfläche.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/p&gt;&lt;br&gt;Zur Konfiguration wähle jetzt Einstellungen - KFLog Einstellungen...&lt;br&gt;&lt;br&gt;Viel Spaß mit KFLog ;-)&lt;br&gt;&lt;br&gt;Diese Meldung wieder zeigen?</translation>
     </message>
@@ -2009,93 +2009,123 @@
 <context>
     <name>Map</name>
     <message>
-        <location filename="map.cpp" line="776"/>
+        <location filename="map.cpp" line="774"/>
         <source>Airspace&amp;nbsp;Structure</source>
         <translation>Luftraum&amp;nbsp;Struktur</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="858"/>
-        <location filename="map.cpp" line="874"/>
+        <location filename="map.cpp" line="856"/>
+        <location filename="map.cpp" line="872"/>
         <source>Task Menu</source>
         <translation>Aufgaben Menü</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="864"/>
+        <location filename="map.cpp" line="862"/>
         <source>Create waypoint here</source>
         <translation>Erzeuge Wegpunkt hier</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="869"/>
-        <location filename="map.cpp" line="903"/>
+        <location filename="map.cpp" line="867"/>
+        <location filename="map.cpp" line="901"/>
         <source>End task planning</source>
         <translation>Aufgabenplanungsende</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="885"/>
+        <location filename="map.cpp" line="883"/>
         <source>Add waypoint 1x</source>
         <translation>Wegpunkt 1x hinzufügen</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="889"/>
+        <location filename="map.cpp" line="887"/>
         <source>Add waypoint 2x</source>
         <translation>Wegpunkt 2x hinzufügen</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="898"/>
+        <location filename="map.cpp" line="896"/>
         <source>Delete all waypoints</source>
         <translation>Alle Wegpunkte löschen</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="977"/>
-        <location filename="map.cpp" line="1015"/>
-        <location filename="map.cpp" line="1072"/>
+        <location filename="map.cpp" line="975"/>
+        <location filename="map.cpp" line="1013"/>
+        <location filename="map.cpp" line="1070"/>
         <source>Ready.</source>
         <translation>Fertig.</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="2859"/>
+        <location filename="map.cpp" line="2837"/>
         <source>Map Menu</source>
         <translation>Karten Menü</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="3041"/>
+        <location filename="map.cpp" line="2916"/>
+        <source>Edit waypoint %1</source>
+        <translation>Bearbeite Wegpunkt %1</translation>
+    </message>
+    <message>
+        <location filename="map.cpp" line="2920"/>
+        <source>Delete waypoint %1</source>
+        <translation>Lösche Wegpunkt %1</translation>
+    </message>
+    <message>
+        <location filename="map.cpp" line="2933"/>
+        <source>Add %1 as waypoint</source>
+        <translation>Füge %1 als Wendepunkt hinzu</translation>
+    </message>
+    <message>
+        <location filename="map.cpp" line="3064"/>
         <source>Create a new Waypoint</source>
         <translation>Erzeuge neuen Wegpunkt</translation>
     </message>
     <message>
         <location filename="map.cpp" line="107"/>
-        <source>&lt;html&gt;&lt;B&gt;The map&lt;/B&gt;&lt;P&gt;To move or scale the map, you can use the buttons in the &lt;B&gt;Map control area&lt;/B&gt;.&lt;/P&gt;&lt;P&gt;To zoom in or out, use the slider or the two buttons on the toolbar. You can also zoom with &quot;&amp;lt;Ctrl&amp;gt;&amp;lt;+&amp;gt;&quot; or &quot;+&quot; (zoom in) and &quot;&amp;lt;Ctrl&amp;gt;&amp;lt;-&amp;gt;&quot; or &quot;-&quot;(zoom out).&lt;/P&gt;&lt;P&gt;The cursor keys and the keys on the NumPad can also pan the map, if NumLock is switched on.&lt;/P&gt;&lt;P&gt;With the menu item &lt;b&gt;Settings-&amp;gt;KFLog Setup-&amp;gt;Map Elements&lt;/b&gt; you can configure, which map elements should be displayed at which scale.&lt;/P&gt;&lt;b&gt;Supported mouse actions at the map:&lt;/b&gt;&lt;ul&gt;&lt;li&gt;Moving the mouse pointer at a map item will display the item data after a short delay, if the &lt;i&gt;Show map data touched by Mouse&lt;/i&gt; option is enabled.&lt;li&gt;Pressing the right mouse button opens the map menu with different possible actions.&lt;li&gt;Pressing the middle mouse button centers the map to the mouse point.&lt;li&gt;Pressing the left mouse button opens the task menu, if graphical task planning is activated. Otherwise you can move the map so long the left mouse button is pressed during move.&lt;li&gt;Pressing the shift key and the left mouse button over a map item creates a new waypoint by using the item data. If no item is touched by the mouse the waypoint dialog is opened and the user can enter the waypoint data.&lt;li&gt;Pressing the control key and the left mouse button and hold both down during drag will draw a frame at the map. Release the mouse button to zoom the map into the frame.&lt;li&gt;Turning the mouse wheel will zoom into or out the map.&lt;/ul&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;B&gt;Die Karte&lt;/B&gt;&lt;P&gt;Verwende die Buttons im &lt;B&gt;Karten-Kontrollbereich&lt;/B&gt; um die Karte zu verschieben oder zu skalieren.&lt;/P&gt;&lt;P&gt;Zum Zoomen verwende den Schieber oder die zwei Buttons in der Toolbar. Du kannst auch mit der Tastenkombination &quot;&amp;lt;STRG&amp;gt;&amp;lt;+&amp;gt;&quot; oder &quot;+&quot; (vergrößern) und &quot;&amp;lt;STRG&amp;gt;&amp;lt;-&amp;gt;&quot; oder &quot;-&quot;(verkleinern).&lt;/P&gt;&lt;P&gt;Die Pfeiltasten und,falls NumLock  aktiviert wurde, die Tasten auf dem Nummernblock können zum Verschieben der Karte verwendet werden.&lt;/P&gt;&lt;P&gt;Unter dem Menueintrag&lt;b&gt; Einstellungen -&amp;gt; KFLog Einstellungen... -&amp;gt; Kartenelemente&lt;/b&gt; kann eingestellt werden, welche Kartenelemente bei welchem Maßstab angezeigt werden sollen.&lt;/P&gt;&lt;b&gt;Unterstützte Mausbedienung in der Karte:&lt;/b&gt;&lt;ul&gt;&lt;li&gt;Bewegen des Mauszeiger über ein Kartenelement: die Details für das Element werden nach kurzer Zeit eingeblendet, falls die Option &lt;i&gt;Zeige Details bei Mausberührung&lt;/i&gt; aktiviert wurde.&lt;li&gt;Das Drücken der rechten Maustaste auf der Karte öffnet ein Menu mit verschiedenen Aktionen.&lt;li&gt;Das Drücken der mittleren Maustaste zentriert die Karte auf die Position des Mauszeigers.&lt;li&gt;Das Drücken der linken Maustaste öffnet das Aufgaben-Menu falls die &lt;i&gt;Grafische Aufgabenplanung&lt;/i&gt; gewählt wurde. Falls diese Option nicht aktiv ist, kann die Karte mit gedrücktem linken Mausbutton verschoben werden. &lt;li&gt;Umschalten-Linke-Maustaste über einem Kartenelement erzeugt einen neuen Wegpunkt unter Verwendung der Elementdaten. Falls kein Element von der Maus dabei berührt wurde, wird der Wegpunkt Dialog zum Definieren eines neuen Wegpunkts an der Mausposition geöffnet.&lt;li&gt;STRG-Linke-Maustaste während des Bewegens der Maus über die Karte erzeugt einen Rahmen, in den beim Loslassen der Maustaste hineingezoomt wird. &lt;li&gt;Drehen des Mausrades vergrößert/verkleinert den Kartenausschnitt.&lt;/ul&gt;&lt;/html&gt;</translation>
+        <source>&lt;html&gt;&lt;B&gt;The map&lt;/B&gt;&lt;P&gt;To move or scale the map, you can use the buttons in the &lt;B&gt;Map control area&lt;/B&gt;.&lt;/P&gt;&lt;P&gt;To zoom in or out, use the slider or the two buttons on the toolbar. You can also zoom with &quot;&amp;lt;Ctrl&amp;gt;&amp;lt;+&amp;gt;&quot; or &quot;+&quot; (zoom in) and &quot;&amp;lt;Ctrl&amp;gt;&amp;lt;-&amp;gt;&quot; or &quot;-&quot;(zoom out).&lt;/P&gt;&lt;P&gt;The cursor keys and the keys on the NumPad can also pan the map, if NumLock is switched on.&lt;/P&gt;&lt;P&gt;With the menu item &lt;b&gt;Settings-&amp;gt;KFLog Setup-&amp;gt;Map Elements&lt;/b&gt; you can configure, which map elements should be displayed at which scale.&lt;/P&gt;&lt;b&gt;Supported mouse actions at the map:&lt;/b&gt;&lt;ul&gt;&lt;li&gt;Moving the mouse pointer at a map item will display the item data after a short delay, if the &lt;i&gt;Show map data touched by Mouse&lt;/i&gt; option is enabled.&lt;li&gt;Pressing the right mouse button opens the map menu with different possible actions.&lt;li&gt;Pressing the middle mouse button centers the map to the mouse point.&lt;li&gt;Pressing the left mouse button you can move the map so long the left mouse button is pressed during move.&lt;li&gt;Pressing the Shift key + left mouse button together opens the task menu, if graphical task planning is activated.&lt;li&gt;Pressing the control key and the left mouse button and hold both down during drag will draw a frame at the map. Release the mouse button to zoom the map into the frame.&lt;li&gt;Turning the mouse wheel will zoom into or out the map.&lt;/ul&gt;&lt;/html&gt;</source>
+        <oldsource>&lt;html&gt;&lt;B&gt;The map&lt;/B&gt;&lt;P&gt;To move or scale the map, you can use the buttons in the &lt;B&gt;Map control area&lt;/B&gt;.&lt;/P&gt;&lt;P&gt;To zoom in or out, use the slider or the two buttons on the toolbar. You can also zoom with &quot;&amp;lt;Ctrl&amp;gt;&amp;lt;+&amp;gt;&quot; or &quot;+&quot; (zoom in) and &quot;&amp;lt;Ctrl&amp;gt;&amp;lt;-&amp;gt;&quot; or &quot;-&quot;(zoom out).&lt;/P&gt;&lt;P&gt;The cursor keys and the keys on the NumPad can also pan the map, if NumLock is switched on.&lt;/P&gt;&lt;P&gt;With the menu item &lt;b&gt;Settings-&amp;gt;KFLog Setup-&amp;gt;Map Elements&lt;/b&gt; you can configure, which map elements should be displayed at which scale.&lt;/P&gt;&lt;b&gt;Supported mouse actions at the map:&lt;/b&gt;&lt;ul&gt;&lt;li&gt;Moving the mouse pointer at a map item will display the item data after a short delay, if the &lt;i&gt;Show map data touched by Mouse&lt;/i&gt; option is enabled.&lt;li&gt;Pressing the right mouse button opens the map menu with different possible actions.&lt;li&gt;Pressing the middle mouse button centers the map to the mouse point.&lt;li&gt;Pressing the left mouse button opens the task menu, if graphical task planning is activated. Otherwise you can move the map so long the left mouse button is pressed during move.&lt;li&gt;Pressing the shift key and the left mouse button over a map item creates a new waypoint by using the item data. If no item is touched by the mouse the waypoint dialog is opened and the user can enter the waypoint data.&lt;li&gt;Pressing the control key and the left mouse button and hold both down during drag will draw a frame at the map. Release the mouse button to zoom the map into the frame.&lt;li&gt;Turning the mouse wheel will zoom into or out the map.&lt;/ul&gt;&lt;/html&gt;</oldsource>
+        <translation>&lt;html&gt;&lt;B&gt;Die Karte&lt;/B&gt;
+&lt;P&gt;Verwende die Buttons im 
+&lt;B&gt;Karten-Kontrollbereich&lt;/B&gt; um die Karte zu verschieben oder zu zoomen.&lt;/P&gt;
+&lt;P&gt;Zum Zoomen verwende den Schieber oder die zwei Buttons in der Werkzeugleiste. Du kannst auch mit der Tastenkombination &quot;&amp;lt;STRG&amp;gt;&amp;lt;+&amp;gt;&quot; oder &quot;+&quot; (vergrößern) und &quot;&amp;lt;STRG&amp;gt;&amp;lt;-&amp;gt;&quot; oder &quot;-&quot;(verkleinern).&lt;/P&gt;&lt;P&gt;Die Pfeiltasten und falls NumLock aktiv ist die Tasten auf dem Nummernblock können zum Verschieben der Karte verwendet werden.&lt;/P&gt;
+&lt;P&gt;Unter dem Menueintrag&lt;b&gt; Einstellungen -&amp;gt; KFLog Einstellungen... -&amp;gt; Kartenelemente&lt;/b&gt; kann eingestellt werden, welche Kartenelemente bei welchem Maßstab angezeigt werden sollen.&lt;/P&gt;
+&lt;b&gt;Unterstützte Mausbedienung in der Karte:&lt;/b&gt;
+&lt;ul&gt;
+&lt;li&gt;Bewegen des Mauszeiger über ein Kartenelement: die Details für das Element werden nach kurzer Zeit eingeblendet, falls die Option &lt;i&gt;Zeige Details bei Mausberührung&lt;/i&gt; aktiviert wurde.
+&lt;li&gt;Das Drücken der rechten Maustaste auf der Karte öffnet ein Menu mit verschiedenen Aktionen.
+&lt;li&gt;Das Drücken der mittleren Maustaste zentriert die Karte auf die Position des Mauszeigers.
+&lt;li&gt;Das Drücken der linken Maustaste bei gleichzeitigem Bewegen der Maus verschiebt den Kartenausschnitt.
+&lt;li&gt;Das Drücken der Umschalten(Shift)-taste+Linke-Maustaste öffnet das Aufgaben-Menü, falls die &lt;i&gt;graphische Aufgabenplanung&lt;/i&gt; aktiv ist.
+&lt;li&gt;STRG-Taste+Linke-Maustaste während des Bewegens der Maus über die Karte erzeugt einen Rahmen, in den beim Loslassen der Maustaste hineingezoomt wird. 
+&lt;li&gt;Drehen des Mausrades vergrößert/verkleinert den Kartenausschnitt.
+&lt;/ul&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="816"/>
-        <location filename="map.cpp" line="1792"/>
+        <location filename="map.cpp" line="814"/>
+        <location filename="map.cpp" line="1765"/>
         <source>Task planning on</source>
         <translation>Aufgabenplanung ein</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="893"/>
+        <location filename="map.cpp" line="891"/>
         <source>Delete waypoint 1x</source>
         <translation>Lösche Wegpunkt 1x</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="1101"/>
-        <location filename="map.cpp" line="1140"/>
+        <location filename="map.cpp" line="1099"/>
+        <location filename="map.cpp" line="1123"/>
         <source>Drag zooming on</source>
         <translation>Ausschnitt vergrößern ein</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="1153"/>
+        <location filename="map.cpp" line="1136"/>
         <source>Map move on</source>
         <translation>Karte verschieben ein</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="1747"/>
+        <location filename="map.cpp" line="1720"/>
         <source>%1 with %2 (%3) on %4</source>
         <translation>%1 mit %2 (%3) am %4</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="1913"/>
+        <location filename="map.cpp" line="1886"/>
         <source>Drag zooming activated</source>
         <translation>Ausschnittvergrößung ist aktiviert</translation>
     </message>
@@ -2610,8 +2640,8 @@ Alle Downloads verworfen!</translation>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="airfield.cpp" line="118"/>
-        <location filename="map.cpp" line="546"/>
+        <location filename="airfield.cpp" line="120"/>
+        <location filename="map.cpp" line="544"/>
         <source>unknown</source>
         <translation>unbekannt</translation>
     </message>
@@ -2694,7 +2724,7 @@ Alle Downloads verworfen!</translation>
         <translation>Punkte</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="701"/>
+        <location filename="map.cpp" line="699"/>
         <source>Begin of task</source>
         <translation>Beginn der Aufgabe</translation>
     </message>
@@ -2751,46 +2781,46 @@ Alle Downloads verworfen!</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="airfield.cpp" line="89"/>
+        <location filename="airfield.cpp" line="91"/>
         <location filename="radiopoint.cpp" line="93"/>
-        <location filename="singlepoint.cpp" line="179"/>
+        <location filename="singlepoint.cpp" line="192"/>
         <source>(unknown object)</source>
         <translation>(unbekanntes Objekt)</translation>
     </message>
     <message>
-        <location filename="airfield.cpp" line="98"/>
+        <location filename="airfield.cpp" line="100"/>
         <source>Runway: </source>
         <translation>Landebahn:</translation>
     </message>
     <message>
-        <location filename="airfield.cpp" line="105"/>
+        <location filename="airfield.cpp" line="107"/>
         <source>Length:</source>
         <translation>Länge:</translation>
     </message>
     <message>
-        <location filename="airfield.cpp" line="110"/>
+        <location filename="airfield.cpp" line="112"/>
         <location filename="radiopoint.cpp" line="98"/>
         <source>Frequency:</source>
         <translation>Frequenz:</translation>
     </message>
     <message>
-        <location filename="airfield.cpp" line="114"/>
+        <location filename="airfield.cpp" line="116"/>
         <location filename="radiopoint.cpp" line="102"/>
         <source>MHz</source>
         <translation>Mhz</translation>
     </message>
     <message>
-        <location filename="airfield.cpp" line="135"/>
-        <location filename="airfield.cpp" line="141"/>
+        <location filename="airfield.cpp" line="137"/>
+        <location filename="airfield.cpp" line="143"/>
         <location filename="radiopoint.cpp" line="170"/>
         <location filename="radiopoint.cpp" line="176"/>
-        <location filename="singlepoint.cpp" line="198"/>
-        <location filename="singlepoint.cpp" line="204"/>
+        <location filename="singlepoint.cpp" line="211"/>
+        <location filename="singlepoint.cpp" line="217"/>
         <source>Elevation:</source>
         <translation>Höhe über NN:</translation>
     </message>
     <message>
-        <location filename="airfield.cpp" line="148"/>
+        <location filename="airfield.cpp" line="150"/>
         <source>Comment:</source>
         <translation>Kommentar:</translation>
     </message>
@@ -3183,7 +3213,7 @@ Alle Downloads verworfen!</translation>
         <location filename="flight.cpp" line="1028"/>
         <location filename="flight.cpp" line="1199"/>
         <location filename="flightdataprint.cpp" line="124"/>
-        <location filename="map.cpp" line="707"/>
+        <location filename="map.cpp" line="705"/>
         <location filename="tasklistviewitem.cpp" line="117"/>
         <source>Landing</source>
         <translation>Landung</translation>
@@ -3633,89 +3663,116 @@ F:...............Vordergrund
 </translation>
     </message>
     <message>
-        <location filename="map.cpp" line="535"/>
+        <location filename="map.cpp" line="533"/>
         <source>Waypoint:</source>
         <translation>Wegpunkt:</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="677"/>
+        <location filename="map.cpp" line="675"/>
         <source>Sector 1</source>
         <translation>Sektor 1</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="682"/>
+        <location filename="map.cpp" line="680"/>
         <source>Sector 2</source>
         <translation>Sektor 2</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="688"/>
+        <location filename="map.cpp" line="686"/>
         <source>FAI-Sector</source>
         <translation>FAI-Sektor</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="692"/>
+        <location filename="map.cpp" line="690"/>
         <source>not reached</source>
         <translation>nicht erreicht</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="698"/>
+        <location filename="map.cpp" line="696"/>
         <source>Take Off</source>
         <translation>Start</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="704"/>
+        <location filename="map.cpp" line="702"/>
         <source>End of task</source>
         <translation>Aufgaben Ende</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="854"/>
+        <location filename="map.cpp" line="852"/>
         <source>Task Menu</source>
         <translation>Aufgaben Menü</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="2857"/>
+        <location filename="map.cpp" line="2835"/>
         <source>Map Menu</source>
         <translation>Karten Menü</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="2865"/>
+        <location filename="map.cpp" line="2843"/>
+        <source>Show item info</source>
+        <translation>Zeige Elementinformation</translation>
+    </message>
+    <message>
+        <location filename="map.cpp" line="2848"/>
+        <source>Show airspace info</source>
+        <translation>Zeige Luftrauminformation</translation>
+    </message>
+    <message>
+        <location filename="map.cpp" line="2862"/>
+        <source>New waypoint here</source>
+        <translation>Erzeuge Wegpunkt hier</translation>
+    </message>
+    <message>
+        <location filename="map.cpp" line="2883"/>
+        <source>New task</source>
+        <translation>Neue Aufgabe</translation>
+    </message>
+    <message>
+        <location filename="map.cpp" line="2889"/>
+        <source>Center map</source>
+        <translation>Karte zentrieren</translation>
+    </message>
+    <message>
+        <location filename="map.cpp" line="2894"/>
+        <source>Zoom In</source>
+        <translation>Vergrößern</translation>
+    </message>
+    <message>
+        <location filename="map.cpp" line="2899"/>
+        <source>Zoom Out</source>
+        <translation>Verkleinern</translation>
+    </message>
+    <message>
         <source>&amp;Show item info</source>
-        <translation>&amp;Zeige Elementinformation</translation>
+        <translation type="vanished">&amp;Zeige Elementinformation</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="2870"/>
         <source>&amp;Show airspace info</source>
-        <translation>&amp;Zeige Luftrauminformation</translation>
+        <translation type="vanished">&amp;Zeige Luftrauminformation</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="2876"/>
         <source>&amp;New waypoint</source>
-        <translation>Neuer &amp;Wegpunkt</translation>
+        <translation type="vanished">Neuer &amp;Wegpunkt</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="2881"/>
         <source>&amp;Edit waypoint</source>
-        <translation>Wegpunkt &amp;bearbeiten</translation>
+        <translation type="vanished">Wegpunkt &amp;bearbeiten</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="2886"/>
         <source>&amp;Delete waypoint</source>
-        <translation>&amp;Lösche Wegpunkt</translation>
+        <translation type="vanished">&amp;Lösche Wegpunkt</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="2892"/>
         <source>&amp;Center map</source>
-        <translation>Karte &amp;zentrieren</translation>
+        <translation type="vanished">Karte &amp;zentrieren</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="2897"/>
         <source>Zoom &amp;In</source>
-        <translation>Ver&amp;größern</translation>
+        <translation type="vanished">Ver&amp;größern</translation>
     </message>
     <message>
-        <location filename="map.cpp" line="2902"/>
         <source>Zoom &amp;Out</source>
-        <translation>Ver&amp;kleinern</translation>
+        <translation type="vanished">Ver&amp;kleinern</translation>
     </message>
     <message>
         <location filename="radiopoint.cpp" line="109"/>
@@ -5318,23 +5375,20 @@ Bitte Kabel und Verbindungseinstellungen überprüfen.</translation>
     </message>
     <message>
         <location filename="TaskEditor.cpp" line="629"/>
-        <source>&lt;b&gt;Task Type FAI Area:&lt;/b&gt;&lt;br&gt;&lt;br&gt;You can define a FAI task with either Takeoff, Start, End and Landing or Takeoff, Start, End, Landing and &lt;b&gt;one&lt;/b&gt; additional Route point.&lt;br&gt;The points &lt;i&gt;Takeoff&lt;/i&gt;, &lt;i&gt;Start&lt;/i&gt;, &lt;i&gt;End&lt;/i&gt; and &lt;i&gt;Landing&lt;/i&gt; are &lt;b&gt;mandatory!&lt;/b&gt;&lt;br&gt;&lt;br&gt;The FAI area calculation will be made with Start and End point or Start and Route point, depending weather the route point is defined or not.&lt;br&gt;&lt;br&gt;New points are inserted always after the selected one.</source>
-        <translation>&lt;b&gt;Aufgabentyp FAI Region:&lt;/b&gt;&lt;br&gt;&lt;br&gt;Du kannst eine FAI Aufgabe mit entweder Startort, Abflugpunkt, Zielpunkt und Landeort oder Startort,Abflugpunkt, Zielpunkt, Landeort und &lt;b&gt;einem&lt;/b&gt; weiteren Wegpunkt definieren.&gt;br&gt;Die Punkte &lt;i&gt;Startort&lt;/i&gt;, &lt;i&gt;Startpunkt&lt;/i&gt;, &lt;i&gt;Zielpunkt&lt;/i&gt; und &lt;i&gt;Landeort&lt;/i&gt; sind &lt;b&gt;Pflichtangaben!&lt;/b&gt;&lt;br&gt;&lt;br&gt;Die FAI Regionsberechnung wird mit Abflugpunkt und Zielpunkt oder mit Abflugpunkt und Wegpunkt durchgeführt unabhängig davon ob Wegpunkte definiert wurden oder nicht.&lt;br&gt;&lt;br&gt;Neue Punkte werden hinter dem ausgewählten Punkt eingefügt.</translation>
+        <source>&lt;html&gt;You can define a FAI task with either Take-off, Start, End and Landing or Take-off, Start, End, Landing and &lt;b&gt;one&lt;/b&gt; additional Route point.&lt;br&gt;The points &lt;i&gt;Take-off&lt;/i&gt;, &lt;i&gt;Start&lt;/i&gt;, &lt;i&gt;End&lt;/i&gt; and &lt;i&gt;Landing&lt;/i&gt; are &lt;b&gt;mandatory!&lt;/b&gt;&lt;br&gt;&lt;br&gt;The FAI area calculation will be made with Start and End point or Start and Route point, depending weather the route point is defined or not.&lt;br&gt;&lt;br&gt;New points are inserted always after the selected one.&lt;/html&gt;</source>
+        <oldsource>&lt;b&gt;Task Type FAI Area:&lt;/b&gt;&lt;br&gt;&lt;br&gt;You can define a FAI task with either Takeoff, Start, End and Landing or Takeoff, Start, End, Landing and &lt;b&gt;one&lt;/b&gt; additional Route point.&lt;br&gt;The points &lt;i&gt;Takeoff&lt;/i&gt;, &lt;i&gt;Start&lt;/i&gt;, &lt;i&gt;End&lt;/i&gt; and &lt;i&gt;Landing&lt;/i&gt; are &lt;b&gt;mandatory!&lt;/b&gt;&lt;br&gt;&lt;br&gt;The FAI area calculation will be made with Start and End point or Start and Route point, depending weather the route point is defined or not.&lt;br&gt;&lt;br&gt;New points are inserted always after the selected one.</oldsource>
+        <translation>&lt;html&gt;Du kannst eine FAI Aufgabe mit entweder Startort, Abflugpunkt, Zielpunkt und Landeort oder Startort,Abflugpunkt, Zielpunkt, Landeort und &lt;b&gt;einem&lt;/b&gt; weiteren Wegpunkt definieren.&lt;br&gt;Die Punkte &lt;i&gt;Startort&lt;/i&gt;, &lt;i&gt;Startpunkt&lt;/i&gt;, &lt;i&gt;Zielpunkt&lt;/i&gt; und &lt;i&gt;Landeort&lt;/i&gt; sind &lt;b&gt;Pflichtangaben!&lt;/b&gt;&lt;br&gt;&lt;br&gt;Die Berechnung der FAI Regions wird mit Abflugpunkt und Zielpunkt oder mit Abflugpunkt und Wegpunkt durchgeführt abhängig davon ob ein Wegpunkte definiert wurde oder nicht.&lt;br&gt;&lt;br&gt;Neue Punkte werden hinter dem ausgewählten Punkt eingefügt.&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="TaskEditor.cpp" line="638"/>
-        <source>&lt;html&gt;&lt;b&gt;Task Type Traditional Route:&lt;/b&gt;&lt;br&gt;&lt;br&gt;You can define a task with Takeoff, Start, End, Landing and Route points. The points &lt;i&gt;Takeoff&lt;/i&gt;, &lt;i&gt;Start&lt;/i&gt;, &lt;i&gt;End&lt;/i&gt; and &lt;i&gt;Landing&lt;/i&gt; are &lt;b&gt;mandatory!&lt;/b&gt; Additional route points can be added.&lt;br&gt;&lt;br&gt;New points are inserted always after the selected one.&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;b&gt;Aufgabentyp traditionelle Strecke:&lt;/b&gt;&lt;br&gt;&lt;br&gt;Du kannst eine Aufgabe mit Startpunkt, Abflugpunkt, Zielpunkt, Landeort und Wendepunkten definieren. Die Punkte &lt;i&gt;Startort&lt;/i&gt;, &lt;i&gt;Abflugpunkt&lt;/i&gt;,&lt;i&gt;Zielpunkt&lt;/i&gt; und &lt;i&gt;Landeort&lt;/i&gt; sind &lt;b&gt;Pflichtangaben&lt;/b&gt;. Weitere Wendepunkte können hinzugefügt werden.&lt;br&gt;&lt;br&gt;Neue Punkte werden hinter dem gewählten Punkt eingefügt.&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location filename="TaskEditor.cpp" line="649"/>
-        <source>Help Route</source>
-        <translation>Hilfe Route</translation>
+        <source>&lt;html&gt;You can define a task with Take-off, Start, End, Landing and Route points. The points &lt;i&gt;Take-off&lt;/i&gt;, &lt;i&gt;Start&lt;/i&gt;, &lt;i&gt;End&lt;/i&gt; and &lt;i&gt;Landing&lt;/i&gt; are &lt;b&gt;mandatory!&lt;/b&gt; Additional route points can be added.&lt;br&gt;&lt;br&gt;New points are inserted always after the selected one.&lt;/html&gt;</source>
+        <oldsource>&lt;html&gt;&lt;b&gt;Task Type Traditional Route:&lt;/b&gt;&lt;br&gt;&lt;br&gt;You can define a task with Takeoff, Start, End, Landing and Route points. The points &lt;i&gt;Takeoff&lt;/i&gt;, &lt;i&gt;Start&lt;/i&gt;, &lt;i&gt;End&lt;/i&gt; and &lt;i&gt;Landing&lt;/i&gt; are &lt;b&gt;mandatory!&lt;/b&gt; Additional route points can be added.&lt;br&gt;&lt;br&gt;New points are inserted always after the selected one.&lt;/html&gt;</oldsource>
+        <translation>&lt;html&gt;Du kannst eine Aufgabe mit Startpunkt, Abflugpunkt, Zielpunkt, Landeort und Wendepunkten definieren. Die Punkte &lt;i&gt;Startort&lt;/i&gt;, &lt;i&gt;Abflugpunkt&lt;/i&gt;,&lt;i&gt;Zielpunkt&lt;/i&gt; und &lt;i&gt;Landeort&lt;/i&gt; sind &lt;b&gt;Pflichtangaben&lt;/b&gt;. Weitere Wendepunkte können hinzugefügt werden.&lt;br&gt;&lt;br&gt;Neue Wendepunkte werden hinter dem gewählten Punkt eingefügt.&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="TaskEditor.cpp" line="654"/>
-        <source>Help FAI Area</source>
-        <translation>Hilfe FAI-Region</translation>
+        <source>Help Route</source>
+        <translation>Hilfe Route</translation>
     </message>
     <message>
         <location filename="TaskEditor.cpp" line="697"/>
