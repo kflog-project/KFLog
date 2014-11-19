@@ -911,7 +911,7 @@ void MainWindow::createMenuBar()
   // Settings menu creation
   //----------------------------------------------------------------------------
   settingsFlightDataAction = new QAction( getPixmap("kde_view_detailed_16.png"),
-                                          tr("Show Flight &Data"), this );
+                                          tr("Show Flight Data"), this );
   settingsFlightDataAction->setShortcut( Qt::CTRL + Qt::Key_D );
   settingsFlightDataAction->setEnabled( true );
   connect( settingsFlightDataAction, SIGNAL(triggered()),
@@ -929,7 +929,7 @@ void MainWindow::createMenuBar()
            settingsHelpWindowAction, SLOT(setDisabled(bool)) );
 
   settingsObjectTreeAction = new QAction( getPixmap("kde_view_tree_16.png"),
-                                          tr("Show KFLog &Browser"), this );
+                                          tr("Show KFLog Browser"), this );
   settingsObjectTreeAction->setShortcut( Qt::CTRL + Qt::Key_B );
   settingsObjectTreeAction->setEnabled( true );
   connect( settingsObjectTreeAction, SIGNAL(triggered()),
@@ -946,15 +946,17 @@ void MainWindow::createMenuBar()
   connect( legendDock, SIGNAL(visibilityChanged(bool)),
            settingsLegendAction, SLOT(setDisabled(bool)) );
 
-
 #if 0
-  settingsMapAction = new QAction(tr("Show &Map"), this );
+  settingsMapAction = new QAction(tr("Show Map"), this );
   settingsMapAction->setCheckable( true );
   connect(settingsMapAction, SIGNAL(triggered()), this, SLOT(slotToggleMap()) );
 #endif
 
   settingsMapControlAction = new QAction( getPixmap("kde_move_16.png"),
-                                          tr("Show Map& Control"), this );
+                                          tr("Show Map Control"), this );
+  settingsMapControlAction->setShortcut( Qt::CTRL + Qt::Key_M );
+  settingsMapControlAction->setEnabled( true );
+
   connect( settingsMapControlAction, SIGNAL(triggered()),
            mapControlDock, SLOT(show()) );
   connect( mapControlDock, SIGNAL(visibilityChanged(bool)),
@@ -977,7 +979,7 @@ void MainWindow::createMenuBar()
            statusBar(), SLOT(setVisible(bool)) );
 
   settingsWaypointsAction = new QAction( getPixmap("waypoint_16.png"),
-                                         tr("Show &Waypoints"), this );
+                                         tr("Show Waypoints"), this );
   // We can't use CTRL-W, because this shortcut is reserved for closing a file ...
   settingsWaypointsAction->setShortcut( Qt::CTRL + Qt::Key_V );
   settingsWaypointsAction->setEnabled( true );
