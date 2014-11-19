@@ -123,7 +123,7 @@ Map::Map( QWidget* parent ) :
      "<ul>"
      "<li>Moving the mouse pointer at a map item will display the item data after a short delay, "
      "if the <i>Show map data touched by Mouse</i> menu option is enabled."
-     "<li>Pressing the <i>right</i> mouse button opens the map menu with different possible actions."
+     "<li>Pressing the <i>right</i> mouse button opens the <i>Map<i> menu with different possible actions."
      "<li>Pressing the <i>middle</i> mouse button centers the map to the mouse point."
      "<li>Pressing the <i>left</i> mouse button you can move the map so long the left mouse button is pressed during move."
      "<li>Pressing the <i>Shift</i> key + <i>left</i> mouse button together opens the task menu, "

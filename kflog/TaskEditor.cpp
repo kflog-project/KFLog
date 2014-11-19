@@ -38,6 +38,7 @@ TaskEditor::TaskEditor( QWidget *parent ) :
 {
   setWindowTitle(tr("Task Editor") );
   setModal( true );
+  setSizeGripEnabled( true );
   createDialog();
   setMinimumWidth(800);
   setMinimumHeight(450);

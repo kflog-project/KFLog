@@ -48,6 +48,7 @@
 #include "mapcontrolview.h"
 #include "mapdefaults.h"
 #include "mapmatrix.h"
+#include "MessageHelpBox.h"
 #include "objecttree.h"
 #include "recorderdialog.h"
 #include "taskdataprint.h"
@@ -274,17 +275,15 @@ void MainWindow::showWelcome()
                 	"</td></tr></table></p><br>"
                 	"Have fun with KFLog ;-)"
                 	"<br><br>"
-                	"Show this message again?"
                       ) +
                     "</html>";
 
-  int button = QMessageBox::information( this,
-					 tr("Welcome to KFLog"),
-					 welcome,
-					 QMessageBox::Yes|QMessageBox::No,
-					 QMessageBox::Yes );
+  MessageHelpBox mhb( this, tr("Welcome to KFLog") );
 
-  if( button == QMessageBox::No )
+  mhb.showMessage( welcome );
+  int again = mhb.exec();
+
+  if( again == 0 )
     {
       _settings.setValue( "/GeneralOptions/ShowWelcome", false );
     }
@@ -1542,6 +1541,43 @@ void MainWindow::slotNewTask()
 
   // Create a new task in all related objects.
   _globalMapContents->slotNewTask();
+
+  if( _settings.value( "/Help/NewTask", true ).toBool() == false )
+    {
+      return;
+    }
+
+  QString help( tr(
+    "<html>"
+    "Pressing <i>Shift</i> and <i>Left</i> mouse button together at the map "
+    "provides a <i>Task</i> popup menu with the following actions for task definition support."
+    "<ul>"
+    "<li><i>Create waypoint here</i> At the current mouse position a new waypoint "
+    "will be created and added to the task list. "
+    "The waypoint editor is opened and requires to fill out all empty data fields."
+    "<li><i>Add waypoint 1x</i> The selected waypoint from the map is added once to the task list."
+    "<li><i>Add waypoint 2x</i> The selected waypoint  from the map is added twice to the task list."
+    "<li><i>Delete waypoint 1x</i> The selected waypoint from the map is deleted from the task list."
+    "<li><i>Delete all waypoints</i> All waypoint are deleted from the task list."
+    "<li><i>End task planning</i> The graphical task planning support is closed. "
+    "After that you can never activate again the graphical task planning at the moment."
+    "</ul>"
+    "Flight tasks can be also handled in the object tree browser. Press the <i>Right</i> "
+    "mouse button in the browser, that opens a popup menu with different actions. "
+    "To modify a selected task in the object tree, you have to select the menu item "
+    "<i>Edit task</i>. That opens the task editor where you can modify the loaded task."
+    "<br></html>"
+  ) );
+
+  MessageHelpBox mhb( this, tr("Help Task menu") );
+
+  mhb.showMessage( help );
+
+  if( mhb.exec() == 0 )
+    {
+      // Don't show again.
+      _settings.setValue( "/Help/NewTask", false );
+    }
 }
 
 void MainWindow::slotOpenRecentFile( QAction *action )

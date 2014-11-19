@@ -109,6 +109,7 @@ SOURCES = \
     mapcontents.cpp \
     mapcontrolview.cpp \
     mapmatrix.cpp \
+    MessageHelpBox.cpp \
     objecttree.cpp \
     OpenAip.cpp \
     OpenAipPoiLoader.cpp \
@@ -191,6 +192,7 @@ HEADERS = \
     mapcontrolview.h \
     mapdefaults.h \
     mapmatrix.h \
+    MessageHelpBox.h \
     MetaTypes.h \
     objecttree.h \
     OpenAip.h \
