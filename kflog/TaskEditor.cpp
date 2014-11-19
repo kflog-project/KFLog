@@ -247,8 +247,8 @@ void TaskEditor::createDialog()
 
   headerLabels  << tr("Name")
                 << tr("Description")
-                << tr("Country")
-                << tr("ICAO");
+                << tr("ICAO")
+                << tr("Country");
 
   m_wpListView->setHeaderLabels( headerLabels );
 
@@ -260,8 +260,8 @@ void TaskEditor::createDialog()
 
   colWpName        = 0;
   colWpDescription = 1;
-  colWpCountry     = 2;
-  colWpIcao        = 3;
+  colWpIcao        = 2;
+  colWpCountry     = 3;
 
   m_wpListView->loadConfig();
 
@@ -279,6 +279,8 @@ void TaskEditor::createDialog()
   m_pointColumnSelector->setToolTip( tr("Select list column to be searched"));
   m_pointColumnSelector->addItem( "1", 0 );
   m_pointColumnSelector->addItem( "2", 1 );
+  m_pointColumnSelector->addItem( "3", 2 );
+  m_pointColumnSelector->addItem( "4", 3 );
   m_pointColumnSelector->setCurrentIndex( 0 );
   hbox->addWidget( m_pointColumnSelector );
 
@@ -784,10 +786,16 @@ void TaskEditor::slotClearSearchInput()
 
 void TaskEditor::slotSearchInputEdited( const QString& text )
 {
-  if( m_wpListView->topLevelItemCount() == 0  ||
-      m_pointSearchInput->text().trimmed().isEmpty() )
+  if( m_wpListView->topLevelItemCount() == 0 )
     {
       // List is empty, do nothing.
+      return;
+    }
+
+  if( m_pointSearchInput->text().trimmed().isEmpty() )
+    {
+      // Search input is empty, go back to first list entry.
+      m_wpListView->setCurrentItem( m_wpListView->topLevelItem(0) );
       return;
     }
 

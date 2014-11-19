@@ -20,6 +20,8 @@
     together to enable also a map move with the left mouse button press in the
     graphical planning state. Before that was not possible because left mouse
     button press has been used for both action.
+    
+  * Map help about text updated.
 
 2014-11-17 Axel Pauli <kflog.cumulus@gmail.com>
 
