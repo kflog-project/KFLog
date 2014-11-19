@@ -16,6 +16,12 @@
   * Selection box for column search in waypoint list of task editor enlarged
     to all avaialable list columns. Column order between icao and country
     changed. Icao has now the 3. position in the list.
+    
+  * New widget MessageHelpBox introduced for user help display with checkbox
+    for redisplay or not.
+    
+  * New column Leg in percent added to route list in task editor, to show the
+    leg length in percent.
 
 2014-11-18 Axel Pauli <kflog.cumulus@gmail.com>
 

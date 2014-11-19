@@ -167,6 +167,7 @@ private:
   int colRouteWaypoint;
   int colRouteDist;
   int colRouteCourse;
+  int colRouteLeg;
 
   /** Waypoint list view. */
   KFLogTreeWidget *m_wpListView;

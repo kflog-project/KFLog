@@ -154,7 +154,7 @@ void TaskEditor::createDialog()
   route->setSelectionBehavior( QAbstractItemView::SelectRows );
   route->setAlternatingRowColors( true );
   route->addRowSpacing( 5 );
-  route->setColumnCount( 4 );
+  route->setColumnCount( 5 );
 
   route->setDragEnabled(true);
   route->viewport()->setAcceptDrops(true);
@@ -166,7 +166,8 @@ void TaskEditor::createDialog()
   headerLabels  << tr("Type")
                 << tr("Taskpoint")
                 << tr("Length")
-                << tr("Course");
+                << tr("Course")
+		<< tr("Leg");
 
   route->setHeaderLabels( headerLabels );
 
@@ -175,6 +176,7 @@ void TaskEditor::createDialog()
   headerItem->setTextAlignment( 1, Qt::AlignCenter );
   headerItem->setTextAlignment( 2, Qt::AlignCenter );
   headerItem->setTextAlignment( 3, Qt::AlignCenter );
+  headerItem->setTextAlignment( 4, Qt::AlignCenter );
 
   connect( route, SIGNAL(itemClicked( QTreeWidgetItem*, int )),
            this, SLOT( slotItemClicked( QTreeWidgetItem*, int )) );
@@ -183,6 +185,7 @@ void TaskEditor::createDialog()
   colRouteWaypoint = 1;
   colRouteDist     = 2;
   colRouteCourse   = 3;
+  colRouteLeg      = 4;
 
   route->loadConfig();
 
@@ -688,6 +691,15 @@ void TaskEditor::loadRouteWaypoints()
 
   route->clear();
 
+  int number = 0;
+  double distanceTotal = 0.0;
+
+  for( int i = 2; i < m_taskWpList.size() -1; i++ )
+     {
+	distanceTotal += m_taskWpList.at(i)->distance;
+	number++;
+     }
+
   for( int i = 0; i < m_taskWpList.size(); i++ )
     {
       QString txt;
@@ -733,10 +745,19 @@ void TaskEditor::loadRouteWaypoints()
                        .arg(QChar(Qt::Key_degree)) );
         }
 
+      if( distanceTotal > 0.0 && wp->distance> 0.0 &&
+	  i > 1 && i < m_taskWpList.size() -1 )
+	{
+	  double leg = wp->distance/distanceTotal*100;
+
+	  item->setText(colRouteLeg, QString("%1 %").arg(leg, 2, 'f', 1));
+	}
+
       item->setTextAlignment( colRouteType, Qt::AlignLeft|Qt::AlignVCenter );
       item->setTextAlignment( colRouteWaypoint, Qt::AlignLeft|Qt::AlignVCenter );
       item->setTextAlignment( colRouteDist, Qt::AlignRight|Qt::AlignVCenter );
       item->setTextAlignment( colRouteCourse, Qt::AlignCenter );
+      item->setTextAlignment( colRouteLeg, Qt::AlignCenter );
 
       route->insertTopLevelItem( i, item );
 
