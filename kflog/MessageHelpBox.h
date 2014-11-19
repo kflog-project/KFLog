@@ -85,6 +85,11 @@ class MessageHelpBox : public QDialog
    */
   void	done( int r );
 
+  /**
+   * Overwriting of reject method to prevent an unwanted dialog close.
+   */
+  void reject();
+
  private:
 
   QTextEdit *m_display;

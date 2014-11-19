@@ -83,3 +83,9 @@ void MessageHelpBox::done( int /* r */ )
       QDialog::done( 0 );
     }
 }
+
+void MessageHelpBox::reject()
+{
+  // Prevent dialog closing by catching reject call in base class.
+  return;
+}
