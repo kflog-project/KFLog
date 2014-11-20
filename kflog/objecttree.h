@@ -12,8 +12,6 @@
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
 /**
@@ -30,7 +28,7 @@
   *
   * \date 2003-2014
   *
-  * \version 1.0
+  * \version 1.1
   */
 
 #ifndef OBJECT_TREE_H
@@ -76,6 +74,7 @@ private:
    * Contains the ID of the Name column
    */
   int colName;
+
   /**
    * Contains the ID of the Description column
    */
@@ -85,23 +84,37 @@ private:
    * Contains a reference to the root node for flights
    */
   QTreeWidgetItem* FlightRoot;
+
   /**
    * Contains a reference to the root node for flight groups
    */
   QTreeWidgetItem* FlightGroupRoot;
+
   /**
    * Contains a reference to the root node for tasks
    */
   QTreeWidgetItem* TaskRoot;
 
-  QMenu *objectTreeMenu;
+  /**
+   * The popup flight menu of the object tree.
+   */
+  QMenu *flightMenu;
+
+  /**
+   * The popup task menu of the object tree.
+   */
+  QMenu *taskMenu;
+
   /**
    * References for task-related items in the popup menu
    */
+  QAction* actionTaskNew;
+  QAction* actionTaskOpen;
   QAction* actionTaskEdit;
-  QAction* actionTaskDelete;
+  QAction* actionTaskClose;
   QAction* actionTaskSave;
   QAction* actionTaskSaveAll;
+
   /**
    * References for flight-related items in the popup menu
    */
@@ -116,6 +129,12 @@ private:
   QString path;
 
   int currentFlightElementType();
+
+  /** Creates the popup menus provided by this widget. */
+  void createMenus();
+
+  /** Sets the what that help text. */
+  void setHelpText();
 
 public slots:
 
@@ -238,9 +257,6 @@ protected:
 
   /** No descriptions */
   void addTaskWindow(QWidget *parent);
-
-  /** Creates the popup menu provided by this widget. */
-  void createMenu();
 };
 
 #endif

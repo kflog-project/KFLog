@@ -7,12 +7,10 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by André Somers
-**                   2011 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -70,15 +68,15 @@ void TaskListViewItem::createChildren()
   QStringList sl = (QStringList() << QObject::tr("Type")
                                   << task->getPlanningTypeString() );
 
-  QTreeWidgetItem* subItem = new QTreeWidgetItem( this, sl );
+  QTreeWidgetItem* subItem = new QTreeWidgetItem( this, sl, TASK_LIST_VIEW_ITEM_TYPEID );
   subItem->setFlags( Qt::ItemIsEnabled );
 
   sl = (QStringList() << QObject::tr("Distance") << task->getTaskDistanceString() );
-  subItem = new QTreeWidgetItem( this, sl );
+  subItem = new QTreeWidgetItem( this, sl, TASK_LIST_VIEW_ITEM_TYPEID );
   subItem->setFlags( Qt::ItemIsEnabled );
 
   sl = (QStringList() << QObject::tr("Points") << task->getPointsString() );
-  subItem = new QTreeWidgetItem( this, sl );
+  subItem = new QTreeWidgetItem( this, sl, TASK_LIST_VIEW_ITEM_TYPEID );
   subItem->setFlags( Qt::ItemIsEnabled );
 
   if( task->getWPList().isEmpty() )
@@ -90,7 +88,7 @@ void TaskListViewItem::createChildren()
 
   sl = (QStringList() << QObject::tr("Waypoints")
                       << QObject::tr("%1 waypoints in task").arg(wpCount) );
-  QTreeWidgetItem* wpSubItem = new QTreeWidgetItem( this, sl );
+  QTreeWidgetItem* wpSubItem = new QTreeWidgetItem( this, sl, TASK_LIST_VIEW_ITEM_TYPEID );
   wpSubItem->setFlags( Qt::ItemIsEnabled );
   wpSubItem->setIcon( 0, _mainWindow->getPixmap("waypoint_16.png") );
   wpSubItem->setExpanded( true );
@@ -122,7 +120,7 @@ void TaskListViewItem::createChildren()
         }
 
       sl = (QStringList() << wpName << task->getWPList().at( i )->name );
-      subItem = new QTreeWidgetItem( wpSubItem, sl );
+      subItem = new QTreeWidgetItem( wpSubItem, sl, TASK_LIST_VIEW_ITEM_TYPEID );
       subItem->setFlags( Qt::ItemIsEnabled );
       subItem->setIcon( 0, _mainWindow->getPixmap( "centerwaypoint_16.png" ) );
     }

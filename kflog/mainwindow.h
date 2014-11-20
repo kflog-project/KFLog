@@ -403,7 +403,17 @@ private:
   QAction *solidAction;
 
   /**
-   * Action for the flights menu Window
+   * Flight root menu.
+   */
+  QMenu* flightMenu;
+
+  /**
+   * Flight data submenu.
+   */
+  QMenu *fdtMenu;
+
+  /**
+   * Flights root menu.
    */
   QMenu* flightsMenu;
 

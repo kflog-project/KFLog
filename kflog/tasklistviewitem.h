@@ -7,12 +7,10 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by André Somers
-**                   2011 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 /**
@@ -26,7 +24,7 @@
   * children, all you need to do is invoke it with the
   * @ref TaskListViewItem(QTreeWidgetItem* parent, Flight* flight) constructor.
   *
-  * \date 2003-2011
+  * \date 2003-2014
   *
   * \version $Id$
   */

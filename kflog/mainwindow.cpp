@@ -466,8 +466,8 @@ void MainWindow::createMenuBar()
            _globalMapContents, SLOT(slotNewFlightGroup()) );
 
   fileOpenFlightAction = new QAction( getPixmap("kde_fileopen_16.png"),
-                                     tr("&Open Flight"), this );
-  fileOpenFlightAction->setShortcut( Qt::CTRL + Qt::Key_O );
+                                     tr("Open &Flight"), this );
+  fileOpenFlightAction->setShortcut( Qt::CTRL + Qt::Key_F );
   fileOpenFlightAction->setEnabled(true);
   connect( fileOpenFlightAction, SIGNAL(triggered()), this, SLOT(slotOpenFile()) );
 
@@ -506,7 +506,8 @@ void MainWindow::createMenuBar()
   connect( filePrintTaskAction, SIGNAL(triggered()), this, SLOT(slotPrintFlight()) );
 
   fileOpenRecorderAction = new QAction( getPixmap("kde_connect_no_16.png"),
-                                        tr("Open Recorder"), this );
+                                        tr("Open &Recorder"), this );
+  fileOpenRecorderAction->setShortcut( Qt::CTRL + Qt::Key_R );
   fileOpenRecorderAction->setEnabled(true);
   connect( fileOpenRecorderAction, SIGNAL(triggered()),
            this, SLOT(slotOpenRecorderDialog()) );
@@ -595,14 +596,14 @@ void MainWindow::createMenuBar()
 
   viewZoomInAction = new QAction( getPixmap("kde_viewmag+_16.png"),
                                   tr("Zoom &In"), this );
-  viewZoomInAction->setShortcut( Qt::CTRL + Qt::Key_Plus );
+  viewZoomInAction->setShortcut( QKeySequence::ZoomIn );
   viewZoomInAction->setEnabled( true );
   connect( viewZoomInAction, SIGNAL(triggered()),
            _globalMapMatrix, SLOT(slotZoomIn()) );
 
   viewZoomOutAction = new QAction( getPixmap("kde_viewmag-_16.png"),
                                    tr("Zoom &Out"), this );
-  viewZoomOutAction->setShortcut( Qt::CTRL + Qt::Key_Minus );
+  viewZoomOutAction->setShortcut( QKeySequence::ZoomOut );
   viewZoomOutAction->setEnabled( true );
   connect( viewZoomOutAction, SIGNAL(triggered()),
           _globalMapMatrix, SLOT(slotZoomOut()) );
@@ -742,7 +743,6 @@ void MainWindow::createMenuBar()
   connect( flightSetQNHAction, SIGNAL(triggered()),
            this, SLOT(slotsetFlightQNH()) );
 
-
   flightOptimizationAction = new QAction( getPixmap("kde_wizard_16.png"),
                                           tr("Optimize"), this );
   flightOptimizationAction->setEnabled(true);
@@ -796,7 +796,7 @@ void MainWindow::createMenuBar()
 
   flightIgc3DAction = new QAction( getPixmap("kde_vectorgfx_16.png"),
                                    tr("View flight in 3D"), this );
-  flightIgc3DAction->setShortcut( Qt::CTRL + Qt::Key_R );
+  flightIgc3DAction->setShortcut( Qt::CTRL + Qt::Key_3 );
   flightIgc3DAction->setEnabled(true);
   connect( flightIgc3DAction, SIGNAL(triggered()),
            this, SLOT(slotFlightViewIgc3D()) );
@@ -867,13 +867,13 @@ void MainWindow::createMenuBar()
   //----------------------------------------------------------------------------
   // Flight menu creation
   //----------------------------------------------------------------------------
-  QMenu *fm = menuBar()->addMenu( tr("F&light") );
-  fm->addAction( flightEvaluationWindowAction );
-  fm->addAction( flightSetQNHAction );
-  fm->addAction( flightOptimizationAction );
-  fm->addAction( flightOptimizationOLCAction );
+  flightMenu = menuBar()->addMenu( tr("F&light") );
+  flightMenu->addAction( flightEvaluationWindowAction );
+  flightMenu->addAction( flightSetQNHAction );
+  flightMenu->addAction( flightOptimizationAction );
+  flightMenu->addAction( flightOptimizationOLCAction );
 
-  QMenu *fdtMenu = fm->addMenu( getPixmap("kde_idea_16.png"), tr("Show Flight Data") );
+  fdtMenu = flightMenu->addMenu( getPixmap("kde_idea_16.png"), tr("Show Flight Data") );
   fdtMenu->addAction( altitudeAction );
   fdtMenu->addAction( cyclingAction );
   fdtMenu->addAction( speedAction );
@@ -881,24 +881,24 @@ void MainWindow::createMenuBar()
   fdtMenu->addAction( airspaceAction );
   fdtMenu->addAction( solidAction );
 
-  fm->addAction( flightIgc3DAction );
-  fm->addAction( flightIgcOpenGLAction );
-  fm->addSeparator();
-  fm->addAction( flightAnimateStartAction );
-  fm->addAction( flightAnimatePauseAction );
-  fm->addAction( flightAnimateStopAction );
-  fm->addSeparator();
-  fm->addAction( flightAnimateHomeAction );
-  fm->addAction( flightAnimateNextAction );
-  fm->addAction( flightAnimatePrevAction );
-  fm->addAction( flightAnimate10NextAction );
-  fm->addAction( flightAnimate10PrevAction );
-  fm->addAction( flightAnimateEndAction );
+  flightMenu->addAction( flightIgc3DAction );
+  flightMenu->addAction( flightIgcOpenGLAction );
+  flightMenu->addSeparator();
+  flightMenu->addAction( flightAnimateStartAction );
+  flightMenu->addAction( flightAnimatePauseAction );
+  flightMenu->addAction( flightAnimateStopAction );
+  flightMenu->addSeparator();
+  flightMenu->addAction( flightAnimateHomeAction );
+  flightMenu->addAction( flightAnimateNextAction );
+  flightMenu->addAction( flightAnimatePrevAction );
+  flightMenu->addAction( flightAnimate10NextAction );
+  flightMenu->addAction( flightAnimate10PrevAction );
+  flightMenu->addAction( flightAnimateEndAction );
 
   //----------------------------------------------------------------------------
-  // Flight navigation menu creation
+  // Flights/Tasks navigation menu creation
   //----------------------------------------------------------------------------
-  flightsMenu = menuBar()->addMenu( tr("&Flights") );
+  flightsMenu = menuBar()->addMenu( tr("&Goto") );
   connect( flightsMenu, SIGNAL(aboutToShow()),
            this, SLOT(slotFlightsMenuAboutToShow()) );
   connect( flightsMenu, SIGNAL(triggered(QAction *)),
@@ -1015,16 +1015,16 @@ void MainWindow::createMenuBar()
   QMenu *help = menuBar()->addMenu( tr("&Help") );
 
   help->addAction( getPixmap("kde_contexthelp_16.png"),
-                             tr("What's This?"),
-                             this,
-                             SLOT(slotWhatsThis()), Qt::CTRL + Qt::Key_F1 );
+		   tr("&What's This?"),
+		   this,
+		   SLOT(slotWhatsThis()),
+		   QKeySequence::WhatsThis );
 
   help->addAction( getPixmap("qt_logo_32x32.png"), tr("About &Qt"),
-                   qApp, SLOT(aboutQt()), Qt::Key_Q );
+                   qApp, SLOT(aboutQt()), Qt::ALT + Qt::Key_Q );
 
-  help->addAction( getPixmap("kflog_16.png"), tr("About KFLog"),
-                   this, SLOT(slotShowAbout()) );
-
+  help->addAction( getPixmap("kflog_16.png"), tr("About &KFLog"),
+                   this, SLOT(slotShowAbout()), Qt::ALT + Qt::Key_K);
 
   //FIXME: link to manual must be added
   //help->insertItem(getPixmap("kde_idea_16.png"), tr("Tip of the day") );//, this, SLOT(slotTipOfDay()));
@@ -1276,111 +1276,62 @@ void MainWindow::slotFlightViewIgcOpenGL()
 /** set menu items enabled/disabled */
 void MainWindow::slotModifyMenu()
 {
-  if( _globalMapContents->getFlightList()->count() > 0 &&
-      _globalMapContents->getFlight() != 0 )
-    {
-      // Note AP: The flight list number is incremented when a new task is
-      // created but the current flight maybe NULL!!! I got a core dump here.
-      // Added check above to if clause.
-      //flightsMenu->setVisible(true);
-      //flightsMenu->setEnabled(true);
+  bool toggle = false;
 
-      switch(_globalMapContents->getFlight()->getTypeID())
+  QList<BaseFlightElement*> *fl = _globalMapContents->getFlightList();
+
+  if( fl->count() > 0 && _globalMapContents->getFlight() != 0 )
+    {
+      toggle = true;
+    }
+
+  fileCloseAction->setEnabled(toggle);
+  flightsMenu->setEnabled(toggle);
+
+  fileNewFlightGroupAction->setEnabled(false);
+
+  for(int i = 0; i < fl->count(); i++)
+    {
+      BaseFlightElement* f = fl->value(i);
+
+      if (f->getTypeID() == BaseMapElement::Flight)
+        {
+	  fileNewFlightGroupAction->setEnabled(true);
+	  break;
+        }
+    }
+
+  flightMenu->setEnabled(false);
+  filePrintFlightAction->setEnabled(false);
+  filePrintTaskAction->setEnabled(false);
+  viewCenterTaskAction->setEnabled(false);
+  viewCenterFlightAction->setEnabled(false);
+
+  BaseFlightElement *f = _globalMapContents->getFlight();
+
+  if(f)
+    {
+      switch (f->getTypeID())
         {
           case BaseMapElement::Flight:
-            fileCloseAction->setEnabled(true);
+            flightMenu->setEnabled(true);
             filePrintFlightAction->setEnabled(true);
             filePrintTaskAction->setEnabled(false);
-            viewCenterTaskAction->setEnabled(true);
             viewCenterFlightAction->setEnabled(true);
-//            flightEvaluation->setEnabled(true);
-            flightOptimizationAction->setEnabled(true);
-            flightOptimizationOLCAction->setEnabled(true);
-            flightIgc3DAction->setEnabled(true);
-            flightIgcOpenGLAction->setEnabled(true);
-            flightAnimateStartAction->setEnabled(true);
-            flightAnimatePauseAction->setEnabled(true);
-            flightAnimateStopAction->setEnabled(true);
-            flightAnimateNextAction->setEnabled(true);
-            flightAnimatePrevAction->setEnabled(true);
-            flightAnimate10NextAction->setEnabled(true);
-            flightAnimate10PrevAction->setEnabled(true);
-            flightAnimateHomeAction->setEnabled(true);
-            flightAnimateEndAction->setEnabled(true);
+            viewCenterTaskAction->setEnabled(false);
             break;
 
           case BaseMapElement::Task:
-            fileCloseAction->setEnabled(true);
+            flightMenu->setEnabled(false);
             filePrintFlightAction->setEnabled(false);
             filePrintTaskAction->setEnabled(true);
-            viewCenterTaskAction->setEnabled(true);
             viewCenterFlightAction->setEnabled(false);
-//            flightEvaluation->setEnabled(false);
-            flightOptimizationAction->setEnabled(false);
-            flightOptimizationOLCAction->setEnabled(false);
-            flightIgc3DAction->setEnabled(false);
-            flightIgcOpenGLAction->setEnabled(false);
-            flightAnimateStartAction->setEnabled(false);
-            flightAnimatePauseAction->setEnabled(true);
-            flightAnimateStopAction->setEnabled(false);
-            flightAnimateNextAction->setEnabled(false);
-            flightAnimatePrevAction->setEnabled(false);
-            flightAnimate10NextAction->setEnabled(false);
-            flightAnimate10PrevAction->setEnabled(false);
-            flightAnimateHomeAction->setEnabled(false);
-            flightAnimateEndAction->setEnabled(false);
-            break;
-
-          case BaseMapElement::FlightGroup:
-            fileCloseAction->setEnabled(true);
-            filePrintFlightAction->setEnabled(true);
-            filePrintTaskAction->setEnabled(false);
             viewCenterTaskAction->setEnabled(true);
-            viewCenterFlightAction->setEnabled(true);
-//            flightEvaluation->setEnabled(true);
-            flightOptimizationAction->setEnabled(true);
-            flightOptimizationOLCAction->setEnabled(true);
-            flightIgc3DAction->setEnabled(true);
-            flightIgcOpenGLAction->setEnabled(true);
-            flightAnimateStartAction->setEnabled(true);
-            flightAnimatePauseAction->setEnabled(true);
-            flightAnimateStopAction->setEnabled(true);
-            flightAnimateNextAction->setEnabled(true);
-            flightAnimatePrevAction->setEnabled(true);
-            flightAnimate10NextAction->setEnabled(true);
-            flightAnimate10PrevAction->setEnabled(true);
-            flightAnimateHomeAction->setEnabled(true);
-            flightAnimateEndAction->setEnabled(true);
             break;
 
           default:
-            break;
+           break;
         }
-    }
-  else
-    {
-      fileCloseAction->setEnabled( false );
-      filePrintFlightAction->setEnabled( false );
-      filePrintTaskAction->setEnabled( false );
-
-      viewCenterTaskAction->setEnabled( false );
-      viewCenterFlightAction->setEnabled( false );
-      // flightEvaluation->setEnabled(false);
-      flightOptimizationAction->setEnabled( false );
-      flightOptimizationOLCAction->setEnabled( false );
-      flightIgc3DAction->setEnabled( false );
-      flightIgcOpenGLAction->setEnabled( false );
-      flightAnimateStartAction->setEnabled( false );
-      flightAnimatePauseAction->setEnabled( false );
-      flightAnimateStopAction->setEnabled( false );
-      flightAnimateNextAction->setEnabled( false );
-      flightAnimatePrevAction->setEnabled( false );
-      flightAnimate10NextAction->setEnabled( false );
-      flightAnimate10PrevAction->setEnabled( false );
-      flightAnimateHomeAction->setEnabled( false );
-      flightAnimateEndAction->setEnabled( false );
-      flightsMenu->setVisible(false);
-      flightsMenu->setEnabled(false);
     }
 }
 
@@ -2090,25 +2041,25 @@ void MainWindow::slotShowAbout()
 
 void MainWindow::slotElevation(int height)
 {
-    QString text;
-    text.sprintf(" %4d m MSL",height);
+    QString text = QString(" %1 m MSL").arg(height);
     statusTerrainElevation->setText(text);
 }
 
 void MainWindow::slotsetFlightQNH()
 {
-    Flight *flight = dynamic_cast<Flight *> (_globalMapContents->getFlight());
+  Flight *flight = dynamic_cast<Flight *> (_globalMapContents->getFlight ());
 
-    if( flight != 0 && flight->getTypeID() == BaseMapElement::Flight )
-      {
-        FlightLoader fl;
-        if (fl.resetQNH(flight->getFileName()))
-        {
-            // Okay, update flight data and redraw the map
-            dataView->slotSetFlightData();
-            evaluationWindow->slotShowFlightData();
-            map->slotRedrawFlight();
-            objectTree->slotFlightChanged();
-        }
-      }
+  if (flight != 0 && flight->getTypeID () == BaseMapElement::Flight)
+    {
+      FlightLoader fl;
+
+      if (fl.resetQNH (flight->getFileName ()))
+	{
+	  // Okay, update flight data and redraw the map
+	  dataView->slotSetFlightData ();
+	  evaluationWindow->slotShowFlightData ();
+	  map->slotRedrawFlight ();
+	  objectTree->slotFlightChanged ();
+	}
+    }
 }

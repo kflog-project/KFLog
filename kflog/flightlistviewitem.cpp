@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by André Somers
-**                   2011-2013 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -67,7 +67,7 @@ void FlightListViewItem::createChildren()
   setText( 1, m_flight->getDate() + ": " + m_flight->getPilot() );
 
   QStringList sl = (QStringList() << QObject::tr("Pilot") << m_flight->getPilot() );
-  QTreeWidgetItem* subItem = new QTreeWidgetItem( sl );
+  QTreeWidgetItem* subItem = new QTreeWidgetItem( sl, FLIGHT_LIST_VIEW_ITEM_TYPEID );
   subItem->setFlags( Qt::ItemIsEnabled );
   addChild( subItem );
 
@@ -75,20 +75,20 @@ void FlightListViewItem::createChildren()
     {
       sl = (QStringList() << QObject::tr("Copilot")
                           << m_flight->getCopilot() );
-      subItem = new QTreeWidgetItem( sl );
+      subItem = new QTreeWidgetItem( sl, FLIGHT_LIST_VIEW_ITEM_TYPEID );
       subItem->setFlags( Qt::ItemIsEnabled );
       addChild( subItem );
     }
 
   sl = (QStringList() << QObject::tr("Date")
                       << m_flight->getDate());
-  subItem = new QTreeWidgetItem( sl );
+  subItem = new QTreeWidgetItem( sl, FLIGHT_LIST_VIEW_ITEM_TYPEID );
   subItem->setFlags( Qt::ItemIsEnabled );
   addChild( subItem );
 
   sl = (QStringList() << QObject::tr("Glider")
                       << m_flight->getGliderType() + ", " + m_flight->getGliderRegistration() );
-  subItem = new QTreeWidgetItem( sl );
+  subItem = new QTreeWidgetItem( sl, FLIGHT_LIST_VIEW_ITEM_TYPEID );
   subItem->setFlags( Qt::ItemIsEnabled );
   addChild( subItem );
 
@@ -96,7 +96,7 @@ void FlightListViewItem::createChildren()
     {
       sl = (QStringList() << QObject::tr("Competition Id")
                           << m_flight->getFlightStaticData().competitionId );
-      subItem = new QTreeWidgetItem( sl );
+      subItem = new QTreeWidgetItem( sl, FLIGHT_LIST_VIEW_ITEM_TYPEID );
       subItem->setFlags( Qt::ItemIsEnabled );
       addChild( subItem );
     }
@@ -105,14 +105,14 @@ void FlightListViewItem::createChildren()
     {
       sl = (QStringList() << QObject::tr("Competition class")
                           << m_flight->getFlightStaticData().competitionClass );
-      subItem = new QTreeWidgetItem( sl );
+      subItem = new QTreeWidgetItem( sl, FLIGHT_LIST_VIEW_ITEM_TYPEID );
       subItem->setFlags( Qt::ItemIsEnabled );
       addChild( subItem );
     }
 
   sl = (QStringList() << QObject::tr("Points")
                       << m_flight->getPoints(true) );
-  subItem =new QTreeWidgetItem( sl );
+  subItem =new QTreeWidgetItem( sl, FLIGHT_LIST_VIEW_ITEM_TYPEID );
   subItem->setFlags( Qt::ItemIsEnabled );
   addChild( subItem );
 
@@ -121,19 +121,19 @@ void FlightListViewItem::createChildren()
       sl = (QStringList() << QObject::tr("Points (optimized)")
                           << m_flight->getPoints(false) );
 
-      subItem = new QTreeWidgetItem( sl );
+      subItem = new QTreeWidgetItem( sl, FLIGHT_LIST_VIEW_ITEM_TYPEID );
       subItem->setFlags( Qt::ItemIsEnabled );
       addChild( subItem );
     }
 
   sl = (QStringList() << QObject::tr("Total distance")
                       << m_flight->getDistance(true) );
-  subItem = new QTreeWidgetItem( sl );
+  subItem = new QTreeWidgetItem( sl,  FLIGHT_LIST_VIEW_ITEM_TYPEID );
   subItem->setFlags( Qt::ItemIsEnabled );
   addChild( subItem );
 
   // Flight recorder data
-  subItem = new QTreeWidgetItem( sl );
+  subItem = new QTreeWidgetItem( sl, FLIGHT_LIST_VIEW_ITEM_TYPEID );
   subItem->setText(0, QObject::tr("FR-Device") );
   subItem->setText(1, QObject::tr("Data") );
   subItem->setFlags( Qt::ItemIsEnabled );
@@ -145,49 +145,49 @@ void FlightListViewItem::createChildren()
   sl = (QStringList() << QObject::tr("Manufacturer")
                       << m_flight->getFlightStaticData().frManufacturer );
 
-  subItem = new QTreeWidgetItem( parent, sl );
+  subItem = new QTreeWidgetItem( parent, sl,  FLIGHT_LIST_VIEW_ITEM_TYPEID );
   subItem->setFlags( Qt::ItemIsEnabled );
   addChild( subItem );
 
   sl = (QStringList() << QObject::tr("FR-Type")
                       << m_flight->getFlightStaticData().frType );
 
-  subItem = new QTreeWidgetItem( parent, sl );
+  subItem = new QTreeWidgetItem( parent, sl,  FLIGHT_LIST_VIEW_ITEM_TYPEID );
   subItem->setFlags( Qt::ItemIsEnabled );
   addChild( subItem );
 
   sl = (QStringList() << QObject::tr("Firmware version")
                       << m_flight->getFlightStaticData().firmewareVersion );
 
-  subItem = new QTreeWidgetItem( parent, sl );
+  subItem = new QTreeWidgetItem( parent, sl,  FLIGHT_LIST_VIEW_ITEM_TYPEID );
   subItem->setFlags( Qt::ItemIsEnabled );
   addChild( subItem );
 
   sl = (QStringList() << QObject::tr("Hardware version")
                       << m_flight->getFlightStaticData().hardwareVersion );
 
-  subItem = new QTreeWidgetItem( parent, sl );
+  subItem = new QTreeWidgetItem( parent, sl,  FLIGHT_LIST_VIEW_ITEM_TYPEID );
   subItem->setFlags( Qt::ItemIsEnabled );
   addChild( subItem );
 
   sl = (QStringList() << QObject::tr("Pressure altitude sensor")
                       << m_flight->getFlightStaticData().altitudePressureSensor );
 
-  subItem = new QTreeWidgetItem( parent, sl );
+  subItem = new QTreeWidgetItem( parent, sl,  FLIGHT_LIST_VIEW_ITEM_TYPEID );
   subItem->setFlags( Qt::ItemIsEnabled );
   addChild( subItem );
 
   sl = (QStringList() << QObject::tr("GPS manufacturer")
                       << m_flight->getFlightStaticData().gpsManufacturer );
 
-  subItem = new QTreeWidgetItem( parent, sl );
+  subItem = new QTreeWidgetItem( parent, sl,  FLIGHT_LIST_VIEW_ITEM_TYPEID );
   subItem->setFlags( Qt::ItemIsEnabled );
   addChild( subItem );
 
   sl = (QStringList() << QObject::tr("GPS Datum")
                       << m_flight->getFlightStaticData().gpsDatum );
 
-  subItem = new QTreeWidgetItem( parent, sl );
+  subItem = new QTreeWidgetItem( parent, sl,  FLIGHT_LIST_VIEW_ITEM_TYPEID );
   subItem->setFlags( Qt::ItemIsEnabled );
   addChild( subItem );
 

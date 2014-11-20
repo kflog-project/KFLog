@@ -190,7 +190,7 @@ void AirSpaceListViewItem::createChildren()
       else
         {
           QStringList sl = (QStringList() << QObject::tr( "<<none found>>" ));
-          QTreeWidgetItem* subItem = new QTreeWidgetItem( this, sl );
+          QTreeWidgetItem* subItem = new QTreeWidgetItem( this, sl, AIRSPACE_LIST_VIEW_ITEM_TYPEID );
           subItem->setFlags( Qt::ItemIsEnabled );
         }
     }
