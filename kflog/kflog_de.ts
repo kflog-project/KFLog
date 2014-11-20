@@ -1161,22 +1161,22 @@
     <message>
         <location filename="kflogconfig.cpp" line="1920"/>
         <source>*_hot.api containing Hotspot points</source>
-        <translation>*_hot.api beinhaltet Thermikquellen&lt;br&gt;</translation>
+        <translation>*_hot.api mit Thermikquellen</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1999"/>
         <source>openAIP Airspaces: www.openaip.net</source>
-        <translation>Luftraumquelle: www.openaip.net</translation>
+        <translation>openAIP Lufträume: www.openaip.net</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="2009"/>
         <source>Add countries to be downloaded as 2 letter code according to ISO 3166-1.</source>
-        <translation>Ländercode der zu ladenden Objekte (2 Zeichen nach ISO 3166-1).</translation>
+        <translation>Ländercode der runter zu ladenden Objekte (2 Zeichen nach ISO 3166-1).</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="2019"/>
         <source>Press button to download the desired openAIP airspace files.</source>
-        <translation>Betätige Knopf zum Herunterladen der ausgewählten Luftraumdaten.</translation>
+        <translation>Betätige Knopf zum Download der gewünschten openAIP Luftraumdaten.</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="2026"/>
@@ -1346,7 +1346,7 @@
         <location filename="kflogconfig.cpp" line="1919"/>
         <location filename="kflogconfig.cpp" line="2039"/>
         <source>Uncheck All to enable loading of single files.</source>
-        <translation>Entferne Markierung vor &lt;b&gt;Alle&lt;/b&gt;, um einzelne Dateien laden zu können.</translation>
+        <translation>Entferne Markierung vor Alle, um einzelne Dateien laden zu können.</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1922"/>
@@ -1366,7 +1366,7 @@
     <message>
         <location filename="kflogconfig.cpp" line="2041"/>
         <source>*.aip containing openAIP data</source>
-        <translation>*.aip mit openAIP Daten </translation>
+        <translation>*.aip mit openAIP Daten</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="2178"/>
