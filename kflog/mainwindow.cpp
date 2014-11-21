@@ -620,62 +620,6 @@ void MainWindow::createMenuBar()
   viewRedrawAction->setEnabled( true );
   connect( viewRedrawAction, SIGNAL(triggered()), map, SLOT(slotRedrawMap()) );
 
-  viewMoveNWAction = new QAction( getPixmap("movemap_nw_22.png"),
-                                  tr("Move map NW"), this );
-  viewMoveNWAction->setShortcut( Qt::Key_7 );
-  viewMoveNWAction->setEnabled( true );
-  connect( viewMoveNWAction, SIGNAL(triggered()),
-           _globalMapMatrix, SLOT(slotMoveMapNW()) );
-
-  viewMoveNAction = new QAction( getPixmap("movemap_n_22.png"),
-                                 tr("Move map N"), this );
-  viewMoveNAction->setShortcut( Qt::Key_8 );
-  viewMoveNAction->setEnabled( true );
-  connect( viewMoveNAction, SIGNAL(triggered()),
-           _globalMapMatrix, SLOT(slotMoveMapN()) );
-
-  viewMoveNEAction = new QAction( getPixmap("movemap_ne_22.png"),
-                                  tr("Move map NE"), this );
-  viewMoveNEAction->setShortcut( Qt::Key_9 );
-  viewMoveNEAction->setEnabled( true );
-  connect( viewMoveNEAction, SIGNAL(triggered()),
-           _globalMapMatrix, SLOT(slotMoveMapNE()) );
-
-  viewMoveWAction = new QAction( getPixmap("movemap_w_22.png"),
-                                 tr("Move map W"), this );
-  viewMoveWAction->setShortcut( Qt::Key_4 );
-  viewMoveWAction->setEnabled( true );
-  connect( viewMoveWAction, SIGNAL(triggered()),
-           _globalMapMatrix, SLOT(slotMoveMapW()) );
-
-  viewMoveEAction = new QAction( getPixmap("movemap_e_22.png"),
-                                tr("Move map W"), this );
-  viewMoveEAction->setShortcut( Qt::Key_6 );
-  viewMoveEAction->setEnabled( true );
-  connect( viewMoveEAction, SIGNAL(triggered()),
-           _globalMapMatrix, SLOT(slotMoveMapE()) );
-
-  viewMoveSWAction = new QAction( getPixmap("movemap_sw_22.png"),
-                                  tr("Move map SW"), this );
-  viewMoveSWAction->setShortcut( Qt::Key_1 );
-  viewMoveSWAction->setEnabled( true );
-  connect( viewMoveSWAction, SIGNAL(triggered()),
-           _globalMapMatrix, SLOT(slotMoveMapSW()) );
-
-  viewMoveSAction = new QAction( getPixmap("movemap_s_22.png"),
-                                 tr("Move map S"), this );
-  viewMoveSAction->setShortcut( Qt::Key_2 );
-  viewMoveSAction->setEnabled( true );
-  connect( viewMoveSAction, SIGNAL(triggered()),
-           _globalMapMatrix, SLOT(slotMoveMapS()) );
-
-  viewMoveSEAction = new QAction( getPixmap("movemap_se_22.png"),
-                                  tr("Move map SO"), this );
-  viewMoveSEAction->setShortcut( Qt::Key_3 );
-  viewMoveSEAction->setEnabled( true );
-  connect( viewMoveSEAction, SIGNAL(triggered()),
-           _globalMapMatrix, SLOT(slotMoveMapSE()) );
-
   viewMapDataUnderMouseCursor = new QAction( tr("Show map data touched by Mouse"),
                                              this );
 
@@ -712,17 +656,6 @@ void MainWindow::createMenuBar()
   vm->addAction( viewWaypointLabels );
   vm->addAction( viewMapDataUnderMouseCursor );
   vm->addSeparator();
-
-  // Move map submenu
-  QMenu *vmmMenu = vm->addMenu( getPixmap("kde_move_16.png"), tr("Move map") );
-  vmmMenu->addAction( viewMoveNAction );
-  vmmMenu->addAction( viewMoveNWAction );
-  vmmMenu->addAction( viewMoveWAction );
-  vmmMenu->addAction( viewMoveSWAction );
-  vmmMenu->addAction( viewMoveSAction );
-  vmmMenu->addAction( viewMoveSEAction );
-  vmmMenu->addAction( viewMoveEAction );
-  vmmMenu->addAction( viewMoveNEAction );
 
   //----------------------------------------------------------------------------
   // Flight menu actions

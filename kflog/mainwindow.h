@@ -365,14 +365,6 @@ private:
   QAction* viewZoomOutAction;
   QAction* viewZoomAction;
   QAction* viewRedrawAction;
-  QAction* viewMoveNWAction;
-  QAction* viewMoveNAction;
-  QAction* viewMoveNEAction;
-  QAction* viewMoveWAction;
-  QAction* viewMoveEAction;
-  QAction* viewMoveSWAction;
-  QAction* viewMoveSAction;
-  QAction* viewMoveSEAction;
   QAction* viewMapDataUnderMouseCursor;
   QAction* viewWaypointLabels;
   /**
