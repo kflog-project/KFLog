@@ -124,7 +124,7 @@ void ObjectTree::setHelpText()
    "The object tree depicts the opened flights and tasks under three root nodes:"
    "<ul>"
    "<li><i>Flights</i> Contains all opened single flights."
-   "<li><i>Groups</i>  Contains groups of single flights."
+   "<li><i>Groups</i>  Contains groups of single flights. All flights of a group are drawn together at the map."
    "<li><i>Tasks</i>   Contains all opened single flight tasks."
    "</ul>"
    "Node related actions are provided via popup menus. Select a tree node and "
@@ -867,6 +867,7 @@ void ObjectTree::slotSaveAllTask()
 
 void ObjectTree::dragEnterEvent( QDragEnterEvent* event )
 {
+  qDebug() << "ObjectTree::dragEnterEvent: event->mimeData()->hasUrls()" << event->mimeData()->hasUrls();
   if( event->mimeData()->hasUrls() )
     {
       event->acceptProposedAction();
@@ -875,10 +876,13 @@ void ObjectTree::dragEnterEvent( QDragEnterEvent* event )
 
 void ObjectTree::dropEvent( QDropEvent* event )
 {
+  qDebug() << "ObjectTree::dropEvent()";
+
   QList<QUrl> urlList = event->mimeData()->urls();
 
   for( int i = 0; i < urlList.size(); i++ )
     {
+      qDebug() << "URL" << urlList.at(i);
       emit openFile( urlList.at(i) );
     }
 }

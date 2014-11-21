@@ -141,7 +141,7 @@ private:
   /** Creates the popup menus provided by this widget. */
   void createMenus();
 
-  /** Sets the what that help text. */
+  /** Sets the what's that help text. */
   void setHelpText();
 
 public slots:
