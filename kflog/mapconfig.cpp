@@ -540,9 +540,6 @@ QPen MapConfig::getDrawPen( FlightPoint* fP,
   //   I would prefer colors adjusted for each flights histogram.
   //
   // Colors are configurable in KFLogConfig.
-
-  extern QSettings _settings;
-
   int width = 4;
   float vario_range;
   QColor color;

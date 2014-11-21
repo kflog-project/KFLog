@@ -64,6 +64,10 @@ public:
    */
   virtual ~ObjectTree();
 
+protected:
+
+  void dragMoveEvent( QDragMoveEvent * event );
+
   void dragEnterEvent(QDragEnterEvent* event);
 
   void dropEvent(QDropEvent* event);

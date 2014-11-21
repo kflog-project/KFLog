@@ -2316,158 +2316,158 @@ Alle Downloads verworfen!</translation>
 <context>
     <name>ObjectTree</name>
     <message>
-        <location filename="objecttree.cpp" line="84"/>
-        <location filename="objecttree.cpp" line="531"/>
+        <location filename="objecttree.cpp" line="87"/>
+        <location filename="objecttree.cpp" line="536"/>
         <source>Flights</source>
         <translation>Flüge</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="66"/>
+        <location filename="objecttree.cpp" line="69"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="48"/>
+        <location filename="objecttree.cpp" line="47"/>
         <source>Select a tree node and press right mouse button to open the action menu.</source>
         <translation>Wähle einen Baumknoten und drücke die rechte Maustaste um das Aktionsmenü zu öffnen.</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="67"/>
+        <location filename="objecttree.cpp" line="70"/>
         <source>Description</source>
         <translation>Beschreibung</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="83"/>
+        <location filename="objecttree.cpp" line="86"/>
         <source>All your loaded flights are to find under this node.</source>
         <oldsource>All your read flights are to find under this node.</oldsource>
         <translation>Alle deine geladenen Flüge sind unter diesem Knoten zu finden.</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="89"/>
+        <location filename="objecttree.cpp" line="92"/>
         <source>Grouped single flights are to find under this node.</source>
         <translation>Gruppierte Einzelflüge sind unter diesem Knoten zu finden.</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="90"/>
+        <location filename="objecttree.cpp" line="93"/>
         <source>Groups</source>
         <translation>Gruppen</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="95"/>
+        <location filename="objecttree.cpp" line="98"/>
         <source>All yours tasks are to find under this node.</source>
         <translation>Alle deine Aufgaben sind unter diesem Konten zu finden.</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="96"/>
-        <location filename="objecttree.cpp" line="578"/>
+        <location filename="objecttree.cpp" line="99"/>
+        <location filename="objecttree.cpp" line="583"/>
         <source>Tasks</source>
         <translation>Aufgaben</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="554"/>
+        <location filename="objecttree.cpp" line="125"/>
+        <source>&lt;html&gt;&lt;b&gt;The object tree help&lt;/b&gt;&lt;br&gt;&lt;br&gt;The object tree depicts the opened flights and tasks under three root nodes:&lt;ul&gt;&lt;li&gt;&lt;i&gt;Flights&lt;/i&gt; Contains all opened flights.&lt;li&gt;&lt;i&gt;Groups&lt;/i&gt;  Contains groups of flights. All flights of a group are drawn together at the map.&lt;li&gt;&lt;i&gt;Tasks&lt;/i&gt;   Contains all opened flight tasks.&lt;/ul&gt;Node related actions are provided via popup menus. Select a tree node and press the &lt;i&gt;Right&lt;/i&gt; mouse button to open the menu.&lt;br&gt;&lt;br&gt;Flight and task files can be also imported by using drop and drag actions.&lt;br&gt;&lt;br&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;b&gt;Die Objektbaum Hilfe&lt;/b&gt;&lt;br&gt;&lt;br&gt;Der Objektbaum stellt die geöffneten Flüge und Aufgaben unter 3 Wurzelknoten da:&lt;ul&gt;&lt;li&gt;&lt;i&gt;Flüge&lt;/i&gt; Enthält alle geöffneten Flüge.&lt;li&gt;&lt;i&gt;Gruppen&lt;/i&gt;  Enthält Gruppen von Flügen. Alle Flüge einer Gruppe werden immer zusammen auf der Karte gezeichnet.&lt;li&gt;&lt;i&gt;Aufgaben&lt;/i&gt; Enthält alle geöffneten Flugaufgaben.&lt;/ul&gt;Knoten bezogene Aktionen werden über eingeblendete Menüs angeboten. Wähle einen Baumknoten aus und drücke die &lt;i&gt;Rechte&lt;/i&gt; Maustaste, um das zugehörige Menü zu öffnen.&lt;br&gt;&lt;br&gt;Flüge und Aufgaben Dateien können auch durch Ziehen und Ablegen in den Objektbaum hinein importiert werden.&lt;br&gt;&lt;br&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="objecttree.cpp" line="559"/>
         <source>Close flight</source>
         <translation>Schließe Flug</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="573"/>
+        <location filename="objecttree.cpp" line="578"/>
         <source>Close flight group</source>
         <translation>Schließe Flug Gruppe</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="568"/>
+        <location filename="objecttree.cpp" line="573"/>
         <source>Edit flight group</source>
         <translation>Editiere Fluggruppe</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="122"/>
-        <source>&lt;html&gt;&lt;b&gt;The object tree help&lt;/b&gt;&lt;br&gt;&lt;br&gt;The object tree depicts the opened flights and tasks under three root nodes:&lt;ul&gt;&lt;li&gt;&lt;i&gt;Flights&lt;/i&gt; Contains all opened single flights.&lt;li&gt;&lt;i&gt;Groups&lt;/i&gt;  Contains groups of single flights. All flights of a group are drawn together at the map.&lt;li&gt;&lt;i&gt;Tasks&lt;/i&gt;   Contains all opened single flight tasks.&lt;/ul&gt;Node related actions are provided via popup menus. Select a tree node and press the &lt;i&gt;Right&lt;/i&gt; mouse button to open the menu.&lt;br&gt;&lt;br&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;b&gt;Die Objektbaum Hilfe&lt;/b&gt;&lt;br&gt;&lt;br&gt;Der Objektbaum stellt die geöffneten Flüge und Aufgaben unter 3 Wurzelknoten da:&lt;ul&gt;&lt;li&gt;&lt;i&gt;Flüge&lt;/i&gt; Enthält alle geöffneten einzelnen Flüge.&lt;li&gt;&lt;i&gt;Gruppen&lt;/i&gt;  Enthält Gruppen von einzelnen Flügen, die alle zusammen auf der Karte gezeichnet werden.&lt;li&gt;&lt;i&gt;Aufgaben&lt;/i&gt; Enthält alle geöffneten einzelnen Flugaufgaben.&lt;/ul&gt;Knoten bezogene Aktionen werden über eingeblendete Menüs angeboten. Wähle einen Baumknoten aus und drücke die &lt;i&gt;Rechte&lt;/i&gt; Maustaste, um das Menü zu öffnen.&lt;br&gt;&lt;br&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location filename="objecttree.cpp" line="559"/>
+        <location filename="objecttree.cpp" line="564"/>
         <source>Flight Groups</source>
         <translation>Fluggruppen</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="666"/>
+        <location filename="objecttree.cpp" line="671"/>
         <source>Save task</source>
         <translation>Speicher Aufgabe</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="668"/>
-        <location filename="objecttree.cpp" line="783"/>
+        <location filename="objecttree.cpp" line="673"/>
+        <location filename="objecttree.cpp" line="788"/>
         <source>KFLOG tasks (*.kflogtsk *.KFLOGTSK)</source>
         <translation>KFLOG Aufgaben (*.kflogtsk *.KFLOGTSK)</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="738"/>
+        <location filename="objecttree.cpp" line="743"/>
         <source>No permission</source>
         <translation>Kein Zugriff</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="740"/>
-        <location filename="objecttree.cpp" line="860"/>
+        <location filename="objecttree.cpp" line="745"/>
+        <location filename="objecttree.cpp" line="865"/>
         <source>&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;permission denied!</source>
         <translation>&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;Zugriff verweigert!</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="608"/>
-        <location filename="objecttree.cpp" line="781"/>
+        <location filename="objecttree.cpp" line="613"/>
+        <location filename="objecttree.cpp" line="786"/>
         <source>Save all tasks</source>
         <translation>Speicher alle Aufgaben</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="534"/>
+        <location filename="objecttree.cpp" line="539"/>
         <source>Open flight</source>
         <translation>Öffne Flug</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="563"/>
+        <location filename="objecttree.cpp" line="568"/>
         <source>New flight group</source>
         <translation>Neue Fluggruppe</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="539"/>
+        <location filename="objecttree.cpp" line="544"/>
         <source>Optimize flight</source>
         <translation>Optimiere Flug</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="544"/>
+        <location filename="objecttree.cpp" line="549"/>
         <source>Set QNH</source>
         <translation>Setze QNH</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="549"/>
+        <location filename="objecttree.cpp" line="554"/>
         <source>Optimize flight for OLC</source>
         <translation>Optimiere Flug für OLC</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="581"/>
+        <location filename="objecttree.cpp" line="586"/>
         <source>New task</source>
         <translation>Neue Aufgabe</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="586"/>
+        <location filename="objecttree.cpp" line="591"/>
         <source>Open task</source>
         <translation>Öffne Aufgabe</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="591"/>
+        <location filename="objecttree.cpp" line="596"/>
         <source>Edit task</source>
         <translation>Editiere Aufgabe</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="596"/>
+        <location filename="objecttree.cpp" line="601"/>
         <source>Close task</source>
         <translation>Schließe Aufgabe</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="603"/>
+        <location filename="objecttree.cpp" line="608"/>
         <source>Save this task</source>
         <translation>Speicher diese Aufgabe</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="859"/>
+        <location filename="objecttree.cpp" line="864"/>
         <source>Permission denied</source>
         <translation>Zugriff verweigert</translation>
     </message>

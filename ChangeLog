@@ -11,6 +11,12 @@
 #
 ################################################################################
 
+2014-11-21 Axel Pauli <kflog.cumulus@gmail.com>
+
+  * Menu structures and shortcuts reworked.
+  
+  * Flight and task file import in object tree made possible via drag and drop.
+
 2014-11-19 Axel Pauli <kflog.cumulus@gmail.com>
 
   * Selection box for column search in waypoint list of task editor enlarged

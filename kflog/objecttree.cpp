@@ -44,8 +44,11 @@ ObjectTree::ObjectTree( QWidget *parent ) :
   currentFlightElement(0)
 {
   setObjectName( "ObjectTree" );
-  setAcceptDrops(true);
   setToolTip( tr("Select a tree node and press right mouse button to open the action menu.") );
+
+  // Enable drag drop of file to export them.
+  setAcceptDrops(true);
+  setDropIndicatorShown(true);
 
   setHelpText();
   createMenus();
@@ -123,12 +126,14 @@ void ObjectTree::setHelpText()
    "<html><b>The object tree help</b><br><br>"
    "The object tree depicts the opened flights and tasks under three root nodes:"
    "<ul>"
-   "<li><i>Flights</i> Contains all opened single flights."
-   "<li><i>Groups</i>  Contains groups of single flights. All flights of a group are drawn together at the map."
-   "<li><i>Tasks</i>   Contains all opened single flight tasks."
+   "<li><i>Flights</i> Contains all opened flights."
+   "<li><i>Groups</i>  Contains groups of flights. All flights of a group are drawn together at the map."
+   "<li><i>Tasks</i>   Contains all opened flight tasks."
    "</ul>"
    "Node related actions are provided via popup menus. Select a tree node and "
    "press the <i>Right</i> mouse button to open the menu."
+   "<br><br>"
+   "Flight and task files can be also imported by using drop and drag actions."
    "<br><br></html>"
   ) );
 }
@@ -867,22 +872,26 @@ void ObjectTree::slotSaveAllTask()
 
 void ObjectTree::dragEnterEvent( QDragEnterEvent* event )
 {
-  qDebug() << "ObjectTree::dragEnterEvent: event->mimeData()->hasUrls()" << event->mimeData()->hasUrls();
   if( event->mimeData()->hasUrls() )
     {
       event->acceptProposedAction();
     }
 }
 
+void ObjectTree::dragMoveEvent( QDragMoveEvent * event )
+  {
+    if( event->mimeData()->hasUrls() )
+      {
+        event->acceptProposedAction();
+      }
+  }
+
 void ObjectTree::dropEvent( QDropEvent* event )
 {
-  qDebug() << "ObjectTree::dropEvent()";
-
   QList<QUrl> urlList = event->mimeData()->urls();
 
   for( int i = 0; i < urlList.size(); i++ )
     {
-      qDebug() << "URL" << urlList.at(i);
       emit openFile( urlList.at(i) );
     }
 }
