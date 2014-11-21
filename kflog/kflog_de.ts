@@ -1517,7 +1517,7 @@
     </message>
     <message>
         <location filename="mainwindow.cpp" line="493"/>
-        <location filename="mainwindow.cpp" line="1864"/>
+        <location filename="mainwindow.cpp" line="1797"/>
         <source>Print Map</source>
         <translation>Drucke Karte</translation>
     </message>
@@ -1548,195 +1548,154 @@
         <translation>&amp;Neu</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="624"/>
-        <source>Move map NW</source>
-        <translation>Verschiebe Karte NW</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="631"/>
-        <source>Move map N</source>
-        <translation>Verschiebe Karte N</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="638"/>
-        <source>Move map NE</source>
-        <translation>Verschiebe Karte NE</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="645"/>
-        <location filename="mainwindow.cpp" line="652"/>
-        <source>Move map W</source>
-        <translation>Verschiebe Karte W</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="659"/>
-        <source>Move map SW</source>
-        <translation>Verschiebe Karte SW</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="666"/>
-        <source>Move map S</source>
-        <translation>Verschiebe Karte S</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="673"/>
-        <source>Move map SO</source>
-        <translation>Verschiebe Karte SO</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="679"/>
+        <location filename="mainwindow.cpp" line="623"/>
         <source>Show map data touched by Mouse</source>
         <translation>Zeige Kartendaten unter Mauszeiger</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="717"/>
-        <source>Move map</source>
-        <translation>Verschiebe Karte</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="731"/>
+        <location filename="mainwindow.cpp" line="664"/>
         <source>Show &amp;Evaluation Window</source>
         <translation>Zeige B&amp;ewertungsfenster</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="747"/>
+        <location filename="mainwindow.cpp" line="680"/>
         <source>Optimize</source>
         <translation>Optimiere</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="753"/>
+        <location filename="mainwindow.cpp" line="686"/>
         <source>Optimize for OLC</source>
         <translation>Optimiere für OLC</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="759"/>
+        <location filename="mainwindow.cpp" line="692"/>
         <source>Altitude</source>
         <translation>Höhe</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="763"/>
+        <location filename="mainwindow.cpp" line="696"/>
         <source>Cycling</source>
         <translation>Kreisflug</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="767"/>
+        <location filename="mainwindow.cpp" line="700"/>
         <source>Speed</source>
         <translation>Geschwindigkeit</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="771"/>
+        <location filename="mainwindow.cpp" line="704"/>
         <source>Vario</source>
         <translation>Vario</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="775"/>
+        <location filename="mainwindow.cpp" line="708"/>
         <source>Airspace Violations</source>
         <translation>Luftraumverletzungen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="779"/>
+        <location filename="mainwindow.cpp" line="712"/>
         <source>Solid</source>
         <translation>Durchgezogen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="901"/>
+        <location filename="mainwindow.cpp" line="834"/>
         <source>&amp;Goto</source>
         <translation>&amp;Gehe zu</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="950"/>
+        <location filename="mainwindow.cpp" line="883"/>
         <source>Show Map</source>
         <translation>Zeige Karte</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="956"/>
+        <location filename="mainwindow.cpp" line="889"/>
         <source>Show Map Control</source>
         <translation>Zeige Karten Kontrolle</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="982"/>
+        <location filename="mainwindow.cpp" line="915"/>
         <source>Show Waypoints</source>
         <translation>Zeige Wegpunkte</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1018"/>
+        <location filename="mainwindow.cpp" line="951"/>
         <source>&amp;What&apos;s This?</source>
         <translation>&amp;Was ist das?</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1023"/>
+        <location filename="mainwindow.cpp" line="956"/>
         <source>About &amp;Qt</source>
         <translation>Über &amp;Qt</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1026"/>
+        <location filename="mainwindow.cpp" line="959"/>
         <source>About &amp;KFLog</source>
         <translation>Über &amp;KFLog</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1970"/>
+        <location filename="mainwindow.cpp" line="1903"/>
         <source>About KFLog</source>
         <translation>Über KFLog</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1239"/>
+        <location filename="mainwindow.cpp" line="1172"/>
         <source>Plugin is missing!</source>
         <translation>Plugin nicht gefunden!</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1349"/>
-        <location filename="mainwindow.cpp" line="1400"/>
-        <location filename="mainwindow.cpp" line="1447"/>
+        <location filename="mainwindow.cpp" line="1282"/>
+        <location filename="mainwindow.cpp" line="1333"/>
+        <location filename="mainwindow.cpp" line="1380"/>
         <source>Opening file...</source>
         <translation>Öffne Datei...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1352"/>
+        <location filename="mainwindow.cpp" line="1285"/>
         <source>Open Flight</source>
         <translation>Öffne Flug</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1357"/>
+        <location filename="mainwindow.cpp" line="1290"/>
         <source>All types</source>
         <translation>Alle Typen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1358"/>
+        <location filename="mainwindow.cpp" line="1291"/>
         <source>IGC</source>
         <translation>IGC</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1359"/>
+        <location filename="mainwindow.cpp" line="1292"/>
         <source>Garmin</source>
         <translation>Garmin</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1395"/>
-        <location filename="mainwindow.cpp" line="1439"/>
-        <location filename="mainwindow.cpp" line="1487"/>
-        <location filename="mainwindow.cpp" line="1568"/>
-        <location filename="mainwindow.cpp" line="1895"/>
-        <location filename="mainwindow.cpp" line="1920"/>
+        <location filename="mainwindow.cpp" line="1328"/>
+        <location filename="mainwindow.cpp" line="1372"/>
+        <location filename="mainwindow.cpp" line="1420"/>
+        <location filename="mainwindow.cpp" line="1501"/>
+        <location filename="mainwindow.cpp" line="1828"/>
+        <location filename="mainwindow.cpp" line="1853"/>
         <source>Ready.</source>
         <translation>Fertig.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1450"/>
+        <location filename="mainwindow.cpp" line="1383"/>
         <source>Open Task</source>
         <translation>Öffne Aufgabe</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1973"/>
+        <location filename="mainwindow.cpp" line="1906"/>
         <source>&lt;html&gt;KFLog %1, &amp;copy; 2000-2014, The KFLog-Team&lt;/html&gt;</source>
         <translation>&lt;html&gt;KFLog %1, &amp;copy; 2000-2014, Das KFLog-Team&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1977"/>
+        <location filename="mainwindow.cpp" line="1910"/>
         <source>&lt;html&gt;KFLog %1, compiled at %2 with QT %3&lt;br&gt;&lt;br&gt;Homepage: &lt;a href=&quot;http://www.kflog.org/kflog/&quot;&gt;www.kflog.org/kflog/&lt;/a&gt;&lt;br&gt;&lt;br&gt;GitHub Software Repository: &lt;a href=&quot;https://github.com/kflog-project/KFLog&quot;&gt;https://github.com/kflog-project/KFLog&lt;/a&gt;&lt;br&gt;&lt;br&gt;ChangeLog &lt;a href=&quot;https://github.com/kflog-project/KFLog/blob/%1/ChangeLog&quot;&gt;%1&lt;/a&gt;&lt;br&gt;&lt;br&gt;Report bugs to: &lt;a href=&quot;https://github.com/kflog-project/KFLog/issues&quot;&gt;kflog-project/KFLog/issues&lt;/a&gt;&lt;br&gt;&lt;br&gt;Published under the &lt;a href=&quot;http://www.gnu.org/licenses/licenses.html#GPL&quot;&gt;GPL&lt;/a&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;KFLog %1, gebaut am %2 mit QT %3&lt;br&gt;&lt;br&gt;Internet Adresse: &lt;a href=&quot;http://www.kflog.org/kflog/&quot;&gt;www.kflog.org/kflog/&lt;/a&gt;&lt;br&gt;&lt;br&gt;GitHub Software Archiv: &lt;a href=&quot;https://github.com/kflog-project/KFLog&quot;&gt;https://github.com/kflog-project/KFLog&lt;/a&gt;&lt;br&gt;&lt;br&gt;ChangeLog &lt;a href=&quot;https://github.com/kflog-project/KFLog/blob/%1/ChangeLog&quot;&gt;%1&lt;/a&gt;&lt;br&gt;&lt;br&gt;Melde Fehler an: &lt;a href=&quot;https://github.com/kflog-project/KFLog/issues&quot;&gt;kflog-project/KFLog/issues&lt;/a&gt;&lt;br&gt;&lt;br&gt;Veröffentlicht unter der &lt;a href=&quot;http://www.gnu.org/licenses/licenses.html#GPL&quot;&gt;GPL&lt;/a&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1991"/>
+        <location filename="mainwindow.cpp" line="1924"/>
         <source>&lt;html&gt;&lt;b&gt;Temporarily Maintainer&lt;/b&gt;&lt;blockquote&gt;Axel Pauli &amp;lt;&lt;a href=&quot;mailto:kflog.cumulus&amp;#64;gmail.com&quot;&gt;kflog.cumulus&amp;#64;gmail.com&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;&lt;b&gt;Developers, Maintainers&lt;/b&gt;&lt;blockquote&gt;Axel Pauli (Developer, Portage to Qt4)&lt;br&gt;Constantijn Neeteson (Maintenance, Core-developer)&lt;br&gt;Florian Ehinger (Maintenance, Core-developer, Mapdata)&lt;br&gt;Heiner Lamprecht (Maintenance, Core-developer)&lt;br&gt;Andr&amp;eacute; Somers (Developer, Waypoint-handling, Plugin architecture, ...)&lt;br&gt;Christof Bodner (Developer, OLC Optimization)&lt;br&gt;Eggert Ehmke (Developer)&lt;br&gt;Harald Maier (Developer, Waypoint-Dialog, Task-handling)&lt;br&gt;Thomas Nielsen (Developer, 3D-Dialog)&lt;br&gt;Jan Kr&amp;uuml;ger (Developer, 3D-Dialog)&lt;br&gt;Matthias Degenkolb (Developer, MS-Windows portage)&lt;br&gt;Peter Simon (Developer, MS-Windows portage)&lt;/blockquote&gt;&lt;b&gt;Server Sponsor&lt;/b&gt;&lt;blockquote&gt;Heiner Lamprecht &amp;lt;&lt;a href=&quot;mailto:heiner&amp;#64;kflog.org&quot;&gt;heiner&amp;#64;kflog.org&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;Thanks to all, who have made available this software!&lt;br&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;b&gt;Augenblickliche Wartung durch&lt;/b&gt;&lt;blockquote&gt;Axel Pauli &amp;lt;&lt;a href=&quot;mailto:kflog.cumulus&amp;#64;gmail.com&quot;&gt;kflog.cumulus&amp;#64;gmail.com&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;&lt;b&gt;Entwickler und Instandhalter&lt;/b&gt;&lt;blockquote&gt;Axel Pauli (Entwickler, Portierung zu Qt4)&lt;br&gt;Constantijn Neeteson (Instandhalter, Kernentwickler)&lt;br&gt;Florian Ehinger (Instandhalter, Kernentwickler, Kartendaten)&lt;br&gt;Heiner Lamprecht (Instandhalter, Kernentwickler)&lt;br&gt;Andr&amp;eacute; Somers (Entwickler, Wegpunkte, Plugin Architektur, ...)&lt;br&gt;Christof Bodner (Entwickler, OLC Optimierung)&lt;br&gt;Eggert Ehmke (Entwickler)&lt;br&gt;Harald Maier (Entwickler, Wegpunkt-Dialog, Aufgaben)&lt;br&gt;Thomas Nielsen (Entwickler, 3D-Dialog)&lt;br&gt;Jan Kr&amp;uuml;ger (Entwickler, 3D-Dialog)&lt;br&gt;Matthias Degenkolb (Entwickler, MS-Windows Portierung)&lt;br&gt;Peter Simon (Entwickler, MS-Windows Portierung)&lt;/blockquote&gt;&lt;b&gt;Server Sponsor&lt;/b&gt;&lt;blockquote&gt;Heiner Lamprecht &amp;lt;&lt;a href=&quot;mailto:heiner&amp;#64;kflog.org&quot;&gt;heiner&amp;#64;kflog.org&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;Danke an alle, die beim Erstellen dieser Software mitgewirkt haben und sie weiter pflegen!&lt;br&gt;&lt;/html&gt;</translation>
     </message>
@@ -1827,144 +1786,144 @@
         <translation>&amp;Neu Zeichnen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="689"/>
+        <location filename="mainwindow.cpp" line="633"/>
         <source>Show waypoint labels</source>
         <translation>Zeige Wegpunktbeschriftung</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="701"/>
+        <location filename="mainwindow.cpp" line="645"/>
         <source>&amp;View</source>
         <translation>&amp;Ansicht</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="741"/>
+        <location filename="mainwindow.cpp" line="674"/>
         <source>Set QNH</source>
         <translation>Setze QNH</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="798"/>
+        <location filename="mainwindow.cpp" line="731"/>
         <source>View flight in 3D</source>
         <translation>Zeige Flug in 3D</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="805"/>
+        <location filename="mainwindow.cpp" line="738"/>
         <source>View flight in 3D (OpenGL)</source>
         <translation>Zeige Flug in 3D (OpenGL)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="811"/>
+        <location filename="mainwindow.cpp" line="744"/>
         <source>&amp;Start Flight Animation</source>
         <translation>&amp;Starten Flug Animation</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="818"/>
+        <location filename="mainwindow.cpp" line="751"/>
         <source>&amp;Pause Flight Animation</source>
         <translation>&amp;Pausieren Flug Animation</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="825"/>
+        <location filename="mainwindow.cpp" line="758"/>
         <source>Stop Flight &amp;Animation</source>
         <translation>Stoppen Flug &amp;Animation</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="832"/>
+        <location filename="mainwindow.cpp" line="765"/>
         <source>Next Flight Point</source>
         <translation>Nächster Flugpunkt</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="838"/>
+        <location filename="mainwindow.cpp" line="771"/>
         <source>Prev Flight Point</source>
         <translation>Vorheriger Flugpunkt</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="844"/>
+        <location filename="mainwindow.cpp" line="777"/>
         <source>Step +10 Flight Points</source>
         <translation>Spinge +10 Flugpunkte</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="850"/>
+        <location filename="mainwindow.cpp" line="783"/>
         <source>Step -10 Flight Points</source>
         <translation>Spinge -10 Flugpunkte</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="856"/>
+        <location filename="mainwindow.cpp" line="789"/>
         <source>First Flight Point</source>
         <translation>Erster Flugpunkt</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="862"/>
+        <location filename="mainwindow.cpp" line="795"/>
         <source>Last Flight Point</source>
         <translation>Letzter Flugpunkt</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="870"/>
+        <location filename="mainwindow.cpp" line="803"/>
         <source>F&amp;light</source>
         <translation>F&amp;lug</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="876"/>
-        <location filename="mainwindow.cpp" line="914"/>
+        <location filename="mainwindow.cpp" line="809"/>
+        <location filename="mainwindow.cpp" line="847"/>
         <source>Show Flight Data</source>
         <translation>Zeige Flugdaten</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="923"/>
+        <location filename="mainwindow.cpp" line="856"/>
         <source>Show Help Window</source>
         <translation>Zeige Hilfefenster</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="932"/>
+        <location filename="mainwindow.cpp" line="865"/>
         <source>Show KFLog Browser</source>
         <oldsource>Show KFLog &amp;Browser</oldsource>
         <translation>Zeige KFLog Browser</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="941"/>
+        <location filename="mainwindow.cpp" line="874"/>
         <source>Show Terrain Profile</source>
         <translation>Zeige Geländeprofil</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="965"/>
+        <location filename="mainwindow.cpp" line="898"/>
         <source>Show Toolbar</source>
         <translation>Zeige Werkzeugleiste</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="974"/>
+        <location filename="mainwindow.cpp" line="907"/>
         <source>Show Statusbar</source>
         <translation>Zeige Statusleiste</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="991"/>
+        <location filename="mainwindow.cpp" line="924"/>
         <source>&amp;Windows</source>
         <translation>&amp;Fenster</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1003"/>
+        <location filename="mainwindow.cpp" line="936"/>
         <source>&amp;Settings</source>
         <translation>&amp;Einstellungen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1005"/>
+        <location filename="mainwindow.cpp" line="938"/>
         <source>KFLog &amp;Setup...</source>
         <translation>KFLog Ein&amp;stellungen...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1015"/>
+        <location filename="mainwindow.cpp" line="948"/>
         <source>&amp;Help</source>
         <translation>&amp;Hilfe</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1240"/>
+        <location filename="mainwindow.cpp" line="1173"/>
         <source>Cannot open plugin library:</source>
         <translation>Kann Plugin nicht öffnen:</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1455"/>
+        <location filename="mainwindow.cpp" line="1388"/>
         <source>KFLog tasks</source>
         <translation>KFLog Aufgaben</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1503"/>
+        <location filename="mainwindow.cpp" line="1436"/>
         <source>&lt;html&gt;Pressing &lt;i&gt;Shift&lt;/i&gt; and &lt;i&gt;Left&lt;/i&gt; mouse button together at the map provides a &lt;i&gt;Task&lt;/i&gt; popup menu with the following actions for task definition support.&lt;ul&gt;&lt;li&gt;&lt;i&gt;Create waypoint here&lt;/i&gt; At the current mouse position a new waypoint will be created and added to the task list. The waypoint editor is opened and requires to fill out all empty data fields.&lt;li&gt;&lt;i&gt;Add waypoint 1x&lt;/i&gt; The selected waypoint from the map is added once to the task list.&lt;li&gt;&lt;i&gt;Add waypoint 2x&lt;/i&gt; The selected waypoint  from the map is added twice to the task list.&lt;li&gt;&lt;i&gt;Delete waypoint 1x&lt;/i&gt; The selected waypoint from the map is deleted from the task list.&lt;li&gt;&lt;i&gt;Delete all waypoints&lt;/i&gt; All waypoint are deleted from the task list.&lt;li&gt;&lt;i&gt;End task planning&lt;/i&gt; The graphical task planning support is closed. After that you can never activate again the graphical task planning at the moment.&lt;/ul&gt;Flight tasks can be also handled in the object tree browser. Press the &lt;i&gt;Right&lt;/i&gt; mouse button in the browser, that opens a popup menu with different actions. To modify a selected task in the object tree, you have to select the menu item &lt;i&gt;Edit task&lt;/i&gt;. That opens the task editor where you can modify the loaded task.&lt;br&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;
 Gleichzeitiges Drücken von &lt;i&gt;Shift&lt;/i&gt;+&lt;i&gt;Linke&lt;/i&gt; Maustaste zeigt das &lt;i&gt;Aufgaben&lt;/i&gt;-Menü mit folgenden Bearbeitungsfunktionen der Flugaufgabe:
@@ -1979,47 +1938,47 @@ Gleichzeitiges Drücken von &lt;i&gt;Shift&lt;/i&gt;+&lt;i&gt;Linke&lt;/i&gt; Ma
 Flugaufgaben können ebenso mit dem Flugaufgaben-Editor bearbeite werden: &lt;i&gt;Rechte&lt;/i&gt;-Maustaste + &lt;i&gt;Bearbeite Aufgabe&lt;/i&gt; über einer Aufgabe im KFLog-Browser startet den Flugaufgaben-Editor.&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1525"/>
+        <location filename="mainwindow.cpp" line="1458"/>
         <source>Help Task menu</source>
         <translation>Aufgabenhilfe Menü</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1543"/>
+        <location filename="mainwindow.cpp" line="1476"/>
         <source>Opening File...</source>
         <translation>Öffne Datei...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1637"/>
+        <location filename="mainwindow.cpp" line="1570"/>
         <source>Save map as image</source>
         <translation>Speichere Karte als Bild</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1639"/>
+        <location filename="mainwindow.cpp" line="1572"/>
         <source>Image (*.png)</source>
         <translation>Bild (*.png)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1854"/>
+        <location filename="mainwindow.cpp" line="1787"/>
         <source>Printing map ...</source>
         <translation>Drucke Karte ...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1907"/>
+        <location filename="mainwindow.cpp" line="1840"/>
         <source>Printing flight ...</source>
         <translation>Drucke Flug ...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1911"/>
+        <location filename="mainwindow.cpp" line="1844"/>
         <source>Printing task ...</source>
         <translation>Drucke Aufgabe ...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1915"/>
+        <location filename="mainwindow.cpp" line="1848"/>
         <source>Not yet available for type: %1</source>
         <translation>Nicht verfügbar für Typ: %1</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1916"/>
+        <location filename="mainwindow.cpp" line="1849"/>
         <source>Type not available</source>
         <translation>Typ nicht verfügbar</translation>
     </message>
@@ -2314,19 +2273,31 @@ Alle Downloads verworfen!</translation>
 <context>
     <name>MapControlView</name>
     <message>
-        <location filename="mapcontrolview.cpp" line="111"/>
+        <location filename="mapcontrolview.cpp" line="63"/>
+        <source>Center to Home position</source>
+        <oldsource>Goto Home position</oldsource>
+        <translation>Zentriere auf Heimat Position</translation>
+    </message>
+    <message>
+        <location filename="mapcontrolview.cpp" line="113"/>
         <source>Height/Width [km]:</source>
         <translation>Höhe/Breite [km]:</translation>
     </message>
     <message>
-        <location filename="mapcontrolview.cpp" line="121"/>
+        <location filename="mapcontrolview.cpp" line="123"/>
         <source>Scale:</source>
         <translation>Skala:</translation>
     </message>
     <message>
-        <location filename="mapcontrolview.cpp" line="127"/>
+        <location filename="mapcontrolview.cpp" line="129"/>
         <source>Change Scale:</source>
         <translation>Ändere Skale:</translation>
+    </message>
+    <message>
+        <location filename="mapcontrolview.cpp" line="177"/>
+        <source>&lt;html&gt;&lt;b&gt;The map control help&lt;/b&gt;&lt;br&gt;&lt;br&gt;The map control provides the following actions:&lt;ul&gt;&lt;li&gt;&lt;i&gt;Moving&lt;/i&gt; the map by pressing an arrow button.&lt;li&gt;&lt;i&gt;Center&lt;/i&gt; the map to the &lt;i&gt;Home&lt;/i&gt; position by pressing the house button.&lt;li&gt;&lt;i&gt;Zooming&lt;/i&gt; the map by moving the slider.&lt;/ul&gt;&lt;br&gt;&lt;br&gt;&lt;/html&gt;</source>
+        <oldsource>&lt;html&gt;&lt;b&gt;The map control help&lt;/b&gt;&lt;br&gt;&lt;br&gt;The map control provides the following actions:&lt;ul&gt;&lt;li&gt;&lt;i&gt;Moving the map&lt;/i&gt; by pressing an arrow button.&lt;li&gt;&lt;i&gt;Center the map&lt;/i&gt; to the &lt;i&gt;Home&lt;/i&gt; position by pressing the house button.&lt;li&gt;&lt;i&gt;Zooming the map&lt;/i&gt; by moving the slider.&lt;/ul&gt;&lt;br&gt;&lt;br&gt;&lt;/html&gt;</oldsource>
+        <translation>&lt;html&gt;&lt;b&gt;Die Karten-Kontroll Hilfe&lt;/b&gt;&lt;br&gt;&lt;br&gt;Die Karten-Kontrolle bietet die folgenden Aktionen an:&lt;ul&gt;&lt;li&gt;&lt;i&gt;Verschieben&lt;/i&gt; der Karte durch drücken einer Pfeiltaste.&lt;li&gt;&lt;i&gt;Zentrieren&lt;/i&gt; der Karte auf die &lt;i&gt;Heimat&lt;/i&gt; Position durch drücken auf die Haustaste.&lt;li&gt;&lt;i&gt;Zoomen&lt;/i&gt; der Karte durch bewegen des Schiebers.&lt;/ul&gt;&lt;br&gt;&lt;br&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -2345,158 +2316,158 @@ Alle Downloads verworfen!</translation>
 <context>
     <name>ObjectTree</name>
     <message>
-        <location filename="objecttree.cpp" line="79"/>
-        <location filename="objecttree.cpp" line="482"/>
+        <location filename="objecttree.cpp" line="84"/>
+        <location filename="objecttree.cpp" line="531"/>
         <source>Flights</source>
         <translation>Flüge</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="61"/>
+        <location filename="objecttree.cpp" line="66"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="43"/>
+        <location filename="objecttree.cpp" line="48"/>
         <source>Select a tree node and press right mouse button to open the action menu.</source>
         <translation>Wähle einen Baumknoten und drücke die rechte Maustaste um das Aktionsmenü zu öffnen.</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="62"/>
+        <location filename="objecttree.cpp" line="67"/>
         <source>Description</source>
         <translation>Beschreibung</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="78"/>
+        <location filename="objecttree.cpp" line="83"/>
         <source>All your loaded flights are to find under this node.</source>
         <oldsource>All your read flights are to find under this node.</oldsource>
         <translation>Alle deine geladenen Flüge sind unter diesem Knoten zu finden.</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="84"/>
+        <location filename="objecttree.cpp" line="89"/>
         <source>Grouped single flights are to find under this node.</source>
         <translation>Gruppierte Einzelflüge sind unter diesem Knoten zu finden.</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="85"/>
+        <location filename="objecttree.cpp" line="90"/>
         <source>Groups</source>
         <translation>Gruppen</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="91"/>
+        <location filename="objecttree.cpp" line="95"/>
         <source>All yours tasks are to find under this node.</source>
         <translation>Alle deine Aufgaben sind unter diesem Konten zu finden.</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="92"/>
-        <location filename="objecttree.cpp" line="520"/>
+        <location filename="objecttree.cpp" line="96"/>
+        <location filename="objecttree.cpp" line="578"/>
         <source>Tasks</source>
         <translation>Aufgaben</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="118"/>
-        <source>&lt;html&gt;&lt;b&gt;The object tree help&lt;/b&gt;&lt;br&gt;&lt;br&gt;The object tree depicts the opened flights and tasks under three root nodes:&lt;ul&gt;&lt;li&gt;&lt;i&gt;Flights&lt;/i&gt; Contains all opened single flights.&lt;li&gt;&lt;i&gt;Groups&lt;/i&gt;  Contains groups of single flights.&lt;li&gt;&lt;i&gt;Tasks&lt;/i&gt;   Contains all opened single flight tasks.&lt;/ul&gt;Node related actions are provided via popup menus. Select a tree node and press the &lt;i&gt;Right&lt;/i&gt; mouse button to open the menu.&lt;br&gt;&lt;br&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;b&gt;Die Objektbaum Hilfe&lt;/b&gt;&lt;br&gt;&lt;br&gt;Der Objektbaum stellt die geöffneten Flüge und Aufgaben unter 3 Wurzelknoten da:&lt;ul&gt;&lt;li&gt;&lt;i&gt;Flüge&lt;/i&gt; Enthält alle geöffneten einzelnen Flüge.&lt;li&gt;&lt;i&gt;Gruppen&lt;/i&gt;  Enthält Gruppen von einzelnen Flügen.&lt;li&gt;&lt;i&gt;Aufgaben&lt;/i&gt; Enthält alle geöffnete einzelne Flugaufgaben.&lt;/ul&gt;Knoten bezogene Aktionen werden über eingeblendete Menüs angeboten. Wähle einen Baumknoten aus und drücke die &lt;i&gt;Rechte&lt;/i&gt; Maustaste, um das Menü zu öffnen.&lt;br&gt;&lt;br&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location filename="objecttree.cpp" line="455"/>
+        <location filename="objecttree.cpp" line="554"/>
         <source>Close flight</source>
         <translation>Schließe Flug</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="460"/>
+        <location filename="objecttree.cpp" line="573"/>
         <source>Close flight group</source>
         <translation>Schließe Flug Gruppe</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="495"/>
+        <location filename="objecttree.cpp" line="568"/>
         <source>Edit flight group</source>
         <translation>Editiere Fluggruppe</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="608"/>
+        <location filename="objecttree.cpp" line="122"/>
+        <source>&lt;html&gt;&lt;b&gt;The object tree help&lt;/b&gt;&lt;br&gt;&lt;br&gt;The object tree depicts the opened flights and tasks under three root nodes:&lt;ul&gt;&lt;li&gt;&lt;i&gt;Flights&lt;/i&gt; Contains all opened single flights.&lt;li&gt;&lt;i&gt;Groups&lt;/i&gt;  Contains groups of single flights. All flights of a group are drawn together at the map.&lt;li&gt;&lt;i&gt;Tasks&lt;/i&gt;   Contains all opened single flight tasks.&lt;/ul&gt;Node related actions are provided via popup menus. Select a tree node and press the &lt;i&gt;Right&lt;/i&gt; mouse button to open the menu.&lt;br&gt;&lt;br&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;b&gt;Die Objektbaum Hilfe&lt;/b&gt;&lt;br&gt;&lt;br&gt;Der Objektbaum stellt die geöffneten Flüge und Aufgaben unter 3 Wurzelknoten da:&lt;ul&gt;&lt;li&gt;&lt;i&gt;Flüge&lt;/i&gt; Enthält alle geöffneten einzelnen Flüge.&lt;li&gt;&lt;i&gt;Gruppen&lt;/i&gt;  Enthält Gruppen von einzelnen Flügen, die alle zusammen auf der Karte gezeichnet werden.&lt;li&gt;&lt;i&gt;Aufgaben&lt;/i&gt; Enthält alle geöffneten einzelnen Flugaufgaben.&lt;/ul&gt;Knoten bezogene Aktionen werden über eingeblendete Menüs angeboten. Wähle einen Baumknoten aus und drücke die &lt;i&gt;Rechte&lt;/i&gt; Maustaste, um das Menü zu öffnen.&lt;br&gt;&lt;br&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="objecttree.cpp" line="559"/>
+        <source>Flight Groups</source>
+        <translation>Fluggruppen</translation>
+    </message>
+    <message>
+        <location filename="objecttree.cpp" line="666"/>
         <source>Save task</source>
         <translation>Speicher Aufgabe</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="610"/>
-        <location filename="objecttree.cpp" line="725"/>
+        <location filename="objecttree.cpp" line="668"/>
+        <location filename="objecttree.cpp" line="783"/>
         <source>KFLOG tasks (*.kflogtsk *.KFLOGTSK)</source>
         <translation>KFLOG Aufgaben (*.kflogtsk *.KFLOGTSK)</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="680"/>
+        <location filename="objecttree.cpp" line="738"/>
         <source>No permission</source>
         <translation>Kein Zugriff</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="682"/>
-        <location filename="objecttree.cpp" line="802"/>
+        <location filename="objecttree.cpp" line="740"/>
+        <location filename="objecttree.cpp" line="860"/>
         <source>&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;permission denied!</source>
         <translation>&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;Zugriff verweigert!</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="550"/>
-        <location filename="objecttree.cpp" line="723"/>
+        <location filename="objecttree.cpp" line="608"/>
+        <location filename="objecttree.cpp" line="781"/>
         <source>Save all tasks</source>
         <translation>Speicher alle Aufgaben</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="485"/>
+        <location filename="objecttree.cpp" line="534"/>
         <source>Open flight</source>
         <translation>Öffne Flug</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="490"/>
+        <location filename="objecttree.cpp" line="563"/>
         <source>New flight group</source>
         <translation>Neue Fluggruppe</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="500"/>
+        <location filename="objecttree.cpp" line="539"/>
         <source>Optimize flight</source>
         <translation>Optimiere Flug</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="505"/>
+        <location filename="objecttree.cpp" line="544"/>
         <source>Set QNH</source>
         <translation>Setze QNH</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="510"/>
+        <location filename="objecttree.cpp" line="549"/>
         <source>Optimize flight for OLC</source>
         <translation>Optimiere Flug für OLC</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="515"/>
-        <source>Close flight or flight group</source>
-        <translation>Schließe Flug oder Fluggruppe</translation>
-    </message>
-    <message>
-        <location filename="objecttree.cpp" line="523"/>
+        <location filename="objecttree.cpp" line="581"/>
         <source>New task</source>
         <translation>Neue Aufgabe</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="528"/>
+        <location filename="objecttree.cpp" line="586"/>
         <source>Open task</source>
         <translation>Öffne Aufgabe</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="533"/>
+        <location filename="objecttree.cpp" line="591"/>
         <source>Edit task</source>
         <translation>Editiere Aufgabe</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="538"/>
+        <location filename="objecttree.cpp" line="596"/>
         <source>Close task</source>
         <translation>Schließe Aufgabe</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="545"/>
+        <location filename="objecttree.cpp" line="603"/>
         <source>Save this task</source>
         <translation>Speicher diese Aufgabe</translation>
     </message>
     <message>
-        <location filename="objecttree.cpp" line="801"/>
+        <location filename="objecttree.cpp" line="859"/>
         <source>Permission denied</source>
         <translation>Zugriff verweigert</translation>
     </message>
