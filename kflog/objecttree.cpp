@@ -34,6 +34,11 @@
 
 extern MainWindow  *_mainWindow;
 
+// Item types to be used for root items
+#define FlightRootItem 		1
+#define FlightRootGroupItem 	2
+#define TaskRootItem 		3
+
 ObjectTree::ObjectTree( QWidget *parent ) :
   KFLogTreeWidget( "ObjectTree", parent ),
   currentFlightElement(0)
@@ -74,20 +79,19 @@ ObjectTree::ObjectTree( QWidget *parent ) :
   // Load the save header configuration.
   loadConfig();
 
-  FlightRoot = new QTreeWidgetItem(this, FLIGHT_LIST_VIEW_ITEM_TYPEID);
+  FlightRoot = new QTreeWidgetItem(this, FlightRootItem);
   FlightRoot->setToolTip( 0, tr("All your loaded flights are to find under this node.") );
   FlightRoot->setText(0,tr("Flights"));
   FlightRoot->setFlags( Qt::ItemIsEnabled );
   FlightRoot->setIcon(0, _mainWindow->getPixmap("igc_16.png"));
 
-  FlightGroupRoot = new QTreeWidgetItem(this, FLIGHT_GROUP_LIST_VIEW_ITEM_TYPEID);
+  FlightGroupRoot = new QTreeWidgetItem(this, FlightRootGroupItem);
   FlightGroupRoot->setToolTip( 0, tr("Grouped single flights are to find under this node.") );
   FlightGroupRoot->setText(0,tr("Groups"));
   FlightGroupRoot->setFlags( Qt::ItemIsEnabled );
   FlightGroupRoot->setIcon(0, _mainWindow->getPixmap("igc_16.png"));
 
-
-  TaskRoot = new QTreeWidgetItem(this, TASK_LIST_VIEW_ITEM_TYPEID);
+  TaskRoot = new QTreeWidgetItem(this, TaskRootItem);
   TaskRoot->setToolTip( 0, tr("All yours tasks are to find under this node.") );
   TaskRoot->setText(0,tr("Tasks"));
   TaskRoot->setFlags( Qt::ItemIsEnabled );
@@ -166,6 +170,8 @@ void ObjectTree::slotNewTaskAdded( FlightTask* task )
 /** Called if the user has changed the selection. */
 void ObjectTree::slotSelectionChanged( QTreeWidgetItem* item, int column )
 {
+  // qDebug() << "ObjectTree::slotSelectionChanged() text(0)=" << item->text(0) << "Type=" << item->type();
+
   Q_UNUSED( column )
 
   if( item == static_cast<QTreeWidgetItem *>(0) )
@@ -179,25 +185,65 @@ void ObjectTree::slotSelectionChanged( QTreeWidgetItem* item, int column )
   switch( item->type() )
     {
       // The Run Time Type Identification is used, to see what kind of
-      // list view item we are dealing with:
+      // list view item we are dealing with. The passed item can also be a
+      // root item of the list.
       case FLIGHT_LIST_VIEW_ITEM_TYPEID:
-        bfe = ((FlightListViewItem*) item)->getFlight();
-        break;
+	{
+	  FlightListViewItem *fi = dynamic_cast<FlightListViewItem *>(item);
+
+	  if( fi )
+	    {
+	      bfe = fi->getFlight();
+	    }
+
+	  break;
+	}
       case FLIGHT_GROUP_LIST_VIEW_ITEM_TYPEID:
-        bfe = ((FlightGroupListViewItem*) item)->flightGroup;
-        break;
+	{
+	  FlightGroupListViewItem *fgi = dynamic_cast<FlightGroupListViewItem *>(item);
+
+	  if( fgi )
+	    {
+	      bfe = fgi->flightGroup;
+	    }
+
+	  break;
+	}
       case TASK_LIST_VIEW_ITEM_TYPEID:
-        bfe = ((TaskListViewItem*) item)->task;
-        break;
+	{
+	  TaskListViewItem *ti = dynamic_cast<TaskListViewItem *>(item);
+
+	  if( ti )
+	    {
+	      bfe = ti->task;
+	    }
+
+	  break;
+	}
       case AIRSPACE_FLAG_LIST_VIEW_ITEM_TYPEID:
-        bfe = ((AirSpaceListViewItem::AirSpaceFlagListViewItem*) item)->getFlight();
-        break;
+	{
+	  AirSpaceListViewItem::AirSpaceFlagListViewItem *aai =
+	      dynamic_cast<AirSpaceListViewItem::AirSpaceFlagListViewItem *>(item);
+
+	  if( aai )
+	    {
+	      bfe = aai->getFlight();
+	    }
+
+	  break;
+	}
       default:
         bfe = static_cast<BaseFlightElement *>(0);
         break;
     }
 
-  if( bfe && bfe != MapContents::instance()->getFlight() )
+  if( bfe == 0 )
+    {
+      // Seems to be a root item, ignore that selection.
+      return;
+    }
+
+  if( bfe != MapContents::instance()->getFlight() )
     {
       emit newFlightSelected( bfe );
       return;
@@ -433,45 +479,48 @@ void ObjectTree::slotShowObjectTreeMenu(QTreeWidgetItem *item, const QPoint &pos
 {
   Q_UNUSED( position )
 
-  // task items
-  actionTaskEdit->setEnabled(TaskRoot->childCount() && currentFlightElementType() == BaseMapElement::Task);
-  actionTaskClose->setEnabled(TaskRoot->childCount() && currentFlightElementType() == BaseMapElement::Task);
-  actionTaskSave->setEnabled(TaskRoot->childCount() && currentFlightElementType() == BaseMapElement::Task);
-  actionTaskSaveAll->setEnabled(TaskRoot->childCount() && currentFlightElementType() == BaseMapElement::Task);
+  bool enable = false;
 
-  // flight items
-  actionFlightGroupNew->setEnabled(FlightRoot->childCount());
-  actionFlightGroupEdit->setEnabled(FlightRoot->childCount() && currentFlightElementType() == BaseMapElement::FlightGroup);
-  actionFlightSetQNH->setEnabled(FlightRoot->childCount());
-  actionFlightOptimize->setEnabled(FlightRoot->childCount() && currentFlightElementType() == BaseMapElement::Flight);
-  actionFlightOptimizeOLC->setEnabled(FlightRoot->childCount() && currentFlightElementType() == BaseMapElement::Flight);
+  // Show only the related menu depending on the item's tree position
 
   if( item )
     {
-      // We allow the close of an item only, when the right child item is selected.
-      if( item->parent() == FlightRoot )
-        {
-          actionFlightClose->setEnabled( true );
-          actionFlightClose->setText( tr("Close flight") );
-        }
-      else if( item->parent() == FlightGroupRoot )
-        {
-          actionFlightClose->setEnabled( true );
-          actionFlightClose->setText( tr("Close flight group") );
-        }
-      else
-        {
-          actionFlightClose->setEnabled( false );
-        }
-
-      // Show only the related menu depending on tree position
-      if( item->type() == TASK_LIST_VIEW_ITEM_TYPEID )
+      if( item->type() == TaskRootItem ||
+	  item->type() == TASK_LIST_VIEW_ITEM_TYPEID )
 	{
+	  enable = ( TaskRoot->childCount() ) ? true : false;
+
+	  actionTaskEdit->setEnabled(enable);
+	  actionTaskClose->setEnabled(enable);
+	  actionTaskSave->setEnabled(enable);
+	  actionTaskSaveAll->setEnabled(enable);
+
 	  taskMenu->exec( QCursor::pos() );
 	}
-      else
+      else if( item->type() == FlightRootItem ||
+	       item->type() == FLIGHT_LIST_VIEW_ITEM_TYPEID )
 	{
+	  bool enable = ( FlightRoot->childCount() > 0 ) ? true : false;
+
+	  actionFlightClose->setEnabled(enable);
+	  actionFlightSetQNH->setEnabled(enable);
+	  actionFlightOptimize->setEnabled(enable);
+	  actionFlightOptimizeOLC->setEnabled(enable);
+
 	  flightMenu->exec( QCursor::pos() );
+	}
+      else if( item->type() == FlightRootGroupItem ||
+	       item->type() == FLIGHT_GROUP_LIST_VIEW_ITEM_TYPEID )
+	{
+	  enable = ( FlightGroupRoot->childCount() ) ? true : false;
+
+	  actionFlightGroupEdit->setEnabled(enable);
+	  actionFlightGroupClose->setEnabled(enable);
+
+	  if( FlightRoot->childCount() > 0 )
+	    {
+	      flightGroupMenu->exec( QCursor::pos() );
+	    }
 	}
     }
 }
@@ -481,20 +530,10 @@ void ObjectTree::createMenus()
   flightMenu = new QMenu(this);
   flightMenu->setTitle( tr("Flights") );
 
-  flightMenu->addAction( _mainWindow->getPixmap("kde_fileopen_16.png"),
-			     tr("Open flight"),
-			     this,
-			     SIGNAL(openFlight()) );
-
-  actionFlightGroupNew = flightMenu->addAction( _mainWindow->getPixmap("kde_filenew_16.png"),
-						tr("New flight group"),
-						this,
-						SIGNAL(newFlightGroup()) );
-
-  actionFlightGroupEdit = flightMenu->addAction( _mainWindow->getPixmap("kde_wizard_16.png"),
-						 tr("Edit flight group"),
-						 this,
-						 SIGNAL(editFlightGroup()) );
+  actionFlightOpen = flightMenu->addAction( _mainWindow->getPixmap("kde_fileopen_16.png"),
+					   tr("Open flight"),
+					   this,
+					   SIGNAL(openFlight()) );
 
   actionFlightOptimize = flightMenu->addAction( _mainWindow->getPixmap("kde_wizard_16.png"),
 						tr("Optimize flight"),
@@ -512,9 +551,28 @@ void ObjectTree::createMenus()
 						   SIGNAL(optimizeFlightOLC()) );
 
   actionFlightClose = flightMenu->addAction( _mainWindow->getPixmap("kde_fileclose_16.png"),
-					     tr("Close flight or flight group"),
+					     tr("Close flight"),
 					     this,
 					     SLOT(slotCloseFlightElement()) );
+
+  flightGroupMenu = new QMenu(this);
+  flightGroupMenu->setTitle( tr("Flight Groups") );
+
+
+  actionFlightGroupNew = flightGroupMenu->addAction( _mainWindow->getPixmap("kde_filenew_16.png"),
+						     tr("New flight group"),
+						     this,
+						     SIGNAL(newFlightGroup()) );
+
+  actionFlightGroupEdit = flightGroupMenu->addAction( _mainWindow->getPixmap("kde_wizard_16.png"),
+						      tr("Edit flight group"),
+						      this,
+						      SIGNAL(editFlightGroup()) );
+
+  actionFlightGroupClose = flightGroupMenu->addAction( _mainWindow->getPixmap("kde_fileclose_16.png"),
+						       tr("Close flight group"),
+						       this,
+						       SLOT(slotCloseFlightElement()) );
 
   taskMenu = new QMenu(this);
   taskMenu->setTitle( tr("Tasks") );

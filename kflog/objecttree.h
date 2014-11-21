@@ -101,6 +101,11 @@ private:
   QMenu *flightMenu;
 
   /**
+   * The popup flight group menu of the object tree.
+   */
+  QMenu *flightGroupMenu;
+
+  /**
    * The popup task menu of the object tree.
    */
   QMenu *taskMenu;
@@ -118,12 +123,15 @@ private:
   /**
    * References for flight-related items in the popup menu
    */
-  QAction* actionFlightGroupNew;
-  QAction* actionFlightGroupEdit;
+  QAction* actionFlightOpen;
   QAction* actionFlightClose;
   QAction* actionFlightSetQNH;
   QAction* actionFlightOptimize;
   QAction* actionFlightOptimizeOLC;
+
+  QAction* actionFlightGroupNew;
+  QAction* actionFlightGroupEdit;
+  QAction* actionFlightGroupClose;
 
   BaseFlightElement* currentFlightElement;
   QString path;
