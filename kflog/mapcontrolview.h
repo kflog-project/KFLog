@@ -7,12 +7,10 @@
 ************************************************************************
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
-**                   2011 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -28,9 +26,9 @@
  * two labels showing the dimension of the current map view and a slider
  * to set the scale.
  *
- * \date 2000-2011
+ * \date 2000-2014
  *
- * \version $Id$
+ * \version 1.0
  */
 
 #ifndef MAP_CONTROL_VIEW_H
@@ -84,6 +82,10 @@ private:
     void scaleChanged(double);
 
   private:
+
+    /** Sets the what's that help text. */
+    void setHelpText();
+
     /** */
     int __setScaleValue(int value);
 

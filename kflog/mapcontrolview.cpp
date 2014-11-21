@@ -7,12 +7,10 @@
 ************************************************************************
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
-**                   2011 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -35,6 +33,9 @@ extern MapMatrix* _globalMapMatrix;
 
 MapControlView::MapControlView(QWidget* parent) : QWidget(parent)
 {
+  setObjectName( "MapControlView" );
+  setHelpText();
+
   QFrame* navFrame = new QFrame(this);
 
   QPushButton* nwB = new QPushButton(navFrame);
@@ -59,6 +60,7 @@ MapControlView::MapControlView(QWidget* parent) : QWidget(parent)
 
   QPushButton* cenB = new QPushButton(navFrame);
   cenB->setIcon(_mainWindow->getPixmap("kde_gohome_22.png"));
+  cenB->setToolTip( tr("Center to Home position") );
   cenB->setFixedHeight(cenB->sizeHint().height() + DELTA);
   cenB->setFixedWidth(cenB->sizeHint().width() + DELTA);
 
@@ -168,6 +170,20 @@ MapControlView::MapControlView(QWidget* parent) : QWidget(parent)
 
 MapControlView::~MapControlView()
 {
+}
+
+void MapControlView::setHelpText()
+{
+  setWhatsThis( tr(
+   "<html><b>The map control help</b><br><br>"
+   "The map control provides the following actions:"
+   "<ul>"
+   "<li><i>Moving</i> the map by pressing an arrow button."
+   "<li><i>Center</i> the map to the <i>Home</i> position by pressing the house button."
+   "<li><i>Zooming</i> the map by moving the slider."
+   "</ul>"
+   "<br><br></html>"
+  ) );
 }
 
 void MapControlView::slotShowMapData(QSize mapSize)
