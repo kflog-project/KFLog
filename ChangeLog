@@ -13,6 +13,10 @@
 
 2014-11-21 Axel Pauli <kflog.cumulus@gmail.com>
 
+  * Neu mouse menu added to task editor route list, to make actions easier.
+
+2014-11-21 Axel Pauli <kflog.cumulus@gmail.com>
+
   * Menu structures and shortcuts reworked.
   
   * Flight and task file import in object tree made possible via drag and drop.

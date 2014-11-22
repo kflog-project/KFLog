@@ -17,6 +17,7 @@
 #ifndef TASK_EDITOR_H
 #define TASK_EDITOR_H
 
+#include <QAction>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialog>
@@ -71,7 +72,12 @@ private:
   /** creates the widget elements used by the dialog. */
   void createDialog();
 
+  /** Loads the route waypoints in the list view. */
   void loadRouteWaypoints();
+
+public slots:
+
+  void slotRightButtonPressed( QTreeWidgetItem *item, const QPoint &position );
 
 private slots:
 
@@ -110,6 +116,7 @@ private slots:
   void slotInvertWaypoints();
   void slotAddWaypoint();
   void slotRemoveWaypoint();
+  void slotDuplicateWayoint();
 
   /** Called if the OK button is pressed. */
   void slotAccept();
@@ -194,6 +201,12 @@ private:
   QPushButton *upCmd;
   QPushButton *downCmd;
   QPushButton *invertCmd;
+
+  QAction *actionMoveUp;
+  QAction *actionMoveDown;
+  QAction *actionDuplicate;
+  QAction *actionRemove;
+  QAction *actionInvert;
 };
 
 #endif

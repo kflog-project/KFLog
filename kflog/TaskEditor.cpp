@@ -181,6 +181,9 @@ void TaskEditor::createDialog()
   connect( route, SIGNAL(itemClicked( QTreeWidgetItem*, int )),
            this, SLOT( slotItemClicked( QTreeWidgetItem*, int )) );
 
+  connect( route, SIGNAL(rightButtonPressed( QTreeWidgetItem*, const QPoint& )),
+           this, SLOT( slotRightButtonPressed( QTreeWidgetItem*, const QPoint& )) );
+
   colRouteType     = 0;
   colRouteWaypoint = 1;
   colRouteDist     = 2;
@@ -342,6 +345,51 @@ void TaskEditor::showEvent( QShowEvent *event )
     }
 
   QDialog::showEvent( event );
+}
+
+void TaskEditor::slotRightButtonPressed( QTreeWidgetItem *item,
+                                         const QPoint &position )
+{
+  Q_UNUSED(item)
+  Q_UNUSED(position)
+
+  if( m_taskWpList.size() == 0 )
+    {
+      return;
+    }
+
+  QMenu *menu = new QMenu(this);
+
+  actionDuplicate = menu->addAction( tr("Duplicate"),
+                                     this,
+                                     SLOT(slotDuplicateWayoint()) );
+  menu->addAction( actionDuplicate );
+
+  actionRemove = menu->addAction( tr("Remove"),
+                                  this,
+                                  SLOT(slotRemoveWaypoint()) );
+  menu->addAction( actionRemove );
+
+  if( m_taskWpList.size() > 1 )
+    {
+      actionMoveUp = menu->addAction( tr("Move up"),
+                                      this,
+                                      SLOT(slotMoveUp()) );
+      menu->addAction( actionMoveUp );
+
+
+      actionMoveDown = menu->addAction( tr("Move down"),
+                                        this,
+                                        SLOT(slotMoveDown()) );
+      menu->addAction( actionMoveDown );
+
+      actionInvert = menu->addAction( tr("Invert"),
+                                      this,
+                                      SLOT(slotInvertWaypoints()) );
+      menu->addAction( actionInvert );
+    }
+
+  menu->exec(  QCursor::pos() );
 }
 
 void TaskEditor::setEntriesInPointSourceBox()
@@ -888,6 +936,25 @@ void TaskEditor::slotMoveDown()
     }
 
   Waypoint *wp = m_taskWpList.takeAt( curPos );
+  m_taskWpList.insert( curPos + 1, wp );
+
+  m_editedTask->setWaypointList( m_taskWpList );
+  loadRouteWaypoints();
+  setSelected( curPos + 1 );
+}
+
+void TaskEditor::slotDuplicateWayoint()
+{
+  int curPos = getCurrentPosition();
+
+  if( curPos < 0 || m_taskWpList.count() == 0 )
+    {
+      // not possible to duplicate nothing
+      return;
+    }
+
+  // Make a deep copy of waypoint before insert
+  Waypoint *wp = new Waypoint(m_taskWpList.at( curPos ));
   m_taskWpList.insert( curPos + 1, wp );
 
   m_editedTask->setWaypointList( m_taskWpList );
