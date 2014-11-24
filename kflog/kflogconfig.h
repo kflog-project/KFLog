@@ -140,6 +140,11 @@ class KFLogConfig : public QDialog
   void downloadWelt2000( bool askUser );
 
   /**
+   * Emitted to request a Welt2000 update check.
+   */
+  void checkWelt20004Update();
+
+  /**
    * Emitted to request point data reload after a configuration change.
    */
   void reloadPointData();
@@ -158,6 +163,11 @@ class KFLogConfig : public QDialog
    * Emitted to request an openAIP point data file download.
    */
   void downloadOpenAipPointFiles( bool askUser );
+
+  /**
+   * Emitted to initiate an openAIP point data update check.
+   */
+  void checkOpenAipPointData4Update();
 
   /**
    * Emitted, if the map elements should be set to their default values.
@@ -316,6 +326,15 @@ class KFLogConfig : public QDialog
   */
  void slotWelt2000UpdatePeriodChanged( int newValue );
 
+ /**
+  * Called, if the openAIP update checkbox is clicked.
+  */
+ void slotPointsOpenAipUpdateStateChanged( int state );
+
+ /**
+  * Called, if the value in the openAIP update box is changed.
+  */
+ void slotPointsOpenAipUpdatePeriodChanged( int newValue );
 
  private:
 
@@ -441,6 +460,8 @@ class KFLogConfig : public QDialog
   QComboBox* pointsSourceBox;
   QLineEdit* pointsOpenAipCountries;
   QSpinBox*  pointsOpenAipHomeRadius;
+  QCheckBox* pointsOpenAipEnableUpdates;
+  QSpinBox*  pointsOpenAipUpdatePeriod;
 
   QLineEdit* asOpenAipCountries;
 
@@ -460,7 +481,12 @@ class KFLogConfig : public QDialog
   bool m_welt2000ReadOlValue;
 
   /**
-   * Initial value of update spinbox.
+   * Initial value of Welt2000 update checkbox.
+   */
+  bool m_welt2000UpdateCheck;
+
+  /**
+   * Initial value of Welt2000 update spinbox.
    */
   int m_welt2000UpdateValue;
 
@@ -473,6 +499,16 @@ class KFLogConfig : public QDialog
    * Initial value of openAIP airfield countries
    */
   QString m_afOpenAipCountryValue;
+
+  /**
+   * Initial value of openAIP point update checkbox.
+   */
+  bool m_afOpenAipUpdateCheck;
+
+  /**
+   * Initial value of openAIP point update spinbox.
+   */
+  int m_afOpenAipUpdateValue;
 
   QSlider* lLimit;
   QSlider* uLimit;

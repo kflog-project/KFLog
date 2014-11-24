@@ -269,6 +269,21 @@ void MapContents::slotNetworkError()
                         msg );
 }
 
+void MapContents::slotCheckWelt20004Update()
+{
+  if( _settings.value( "/Points/Source", 0 ).toInt() != 1 )
+    {
+      return;
+    }
+
+  Welt2000 w2000;
+
+  if( w2000.check4update() == true )
+    {
+      slotDownloadWelt2000( true );
+    }
+}
+
 /**
  * This slot is called to download the Welt2000 file from the Internet.
  */
@@ -599,6 +614,70 @@ void MapContents::slotOpenAipPoiNetworkError()
   QMessageBox::warning( _mainWindow,
                         tr("Network Error"),
                         msg );
+}
+
+void MapContents::slotCheckOpenAipPointData4Update()
+{
+  qDebug() << "MapContents::slotCheckOpenAipPointData4Update()";
+
+  if( _settings.value( "/Points/Source", 1 ).toInt() != 0 )
+    {
+      // Not selected as source.
+      return;
+    }
+
+  if( _settings.value( "/Points/EnableUpdates", true ).toBool() == false )
+    {
+      // Updates disabled
+      return;
+    }
+
+  // Get the update period in days
+  int days = _settings.value( "/Points/UpdatePeriod", 30 ).toInt();
+
+  QStringList countries = _settings.value( "/Points/Countries", "" ).toString().split(QRegExp("[ ,;]"));
+
+  if( countries.isEmpty() )
+    {
+      qDebug() << "MapContents::slotCheckOpenAipPointData4Update(): no countries defined!";
+      return;
+    }
+
+  QStringList files;
+
+  for( int i = 0; i < countries.size(); i++ )
+    {
+      files << countries.at(i) + "_hot.aip";
+      files << countries.at(i) + "_nav.aip";
+      files << countries.at(i) + "_wpt.aip";
+    }
+
+  QString mapDir = getMapRootDirectory();
+
+  for( int j = 0; j < files.size(); j++ )
+    {
+      // Search for the Welt2000 source file.
+      QString path2File = mapDir + QDir::separator() +
+	                  "points" + QDir::separator() + files.at(j);
+
+      QFileInfo test( path2File );
+
+      if( ! test.exists() )
+        {
+          // No file exists. In this case we ignore that because not all three
+	  // files are exist in every country.
+          continue;
+        }
+
+      // Check if update period has expired. Default are 30 days.
+      if( test.lastModified().secsTo(QDateTime::currentDateTime()) < 3600 * 24 * days )
+        {
+          continue;
+        }
+
+      // If one file is out of date we download all files.
+      slotDownloadOpenAipPointFiles( true );
+    }
 }
 
 void MapContents::slotGetOpenAipPoints()
@@ -1486,10 +1565,7 @@ void MapContents::proofeSection(bool isPrint)
           Welt2000 welt2000;
           bool loadOk = welt2000.load( airfieldList, gliderfieldList, outLandingList );
 
-          // As next make the update check
-          bool check4update = welt2000.check4update();
-
-          if( loadOk == false || check4update == true )
+          if( loadOk == false )
             {
               // Welt2000 update available or load failed, try to download a new
               // Welt2000 File from the Internet web page.

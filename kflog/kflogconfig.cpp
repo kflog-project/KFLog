@@ -283,6 +283,8 @@ void KFLogConfig::slotOk()
   _settings.setValue( "/Points/Source", pointsSourceBox->currentIndex() );
   _settings.setValue( "/Points/Countries", pointsOpenAipCountries->text().trimmed().toLower() );
   _settings.setValue( "/Points/HomeRadius", pointsOpenAipHomeRadius->value() );
+  _settings.setValue( "/Points/EnableUpdates", pointsOpenAipEnableUpdates->isChecked() );
+  _settings.setValue( "/Points/UpdatePeriod", pointsOpenAipUpdatePeriod->value() );
 
   _settings.setValue( "/Welt2000/CountryFilter", welt2000CountryFilter->text().trimmed().toUpper() );
   _settings.setValue( "/Welt2000/HomeRadius", welt2000HomeRadius->value() );
@@ -396,12 +398,22 @@ void KFLogConfig::slotOk()
     {
       emit reloadPointData();
     }
-  // Check, if openAIP point data must be updated
-  else if( pointsSourceBox->currentIndex() == 0 &&
-      ( m_afOpenAipHomeRadiusValue !=  pointsOpenAipHomeRadius->value() ||
-        m_afOpenAipCountryValue != pointsOpenAipCountries->text() ) )
+  else if( pointsSourceBox->currentIndex() == 0 )
     {
-      emit reloadPointData();
+      // Check, if openAIP point data must be updated
+      if( m_afOpenAipHomeRadiusValue !=  pointsOpenAipHomeRadius->value() ||
+          m_afOpenAipCountryValue != pointsOpenAipCountries->text() )
+	{
+	  emit reloadPointData();
+	}
+      // Check update period of openAIP point data and initiate an update, if the
+      // update time period has expired.
+      else if( pointsOpenAipEnableUpdates->isChecked() &&
+	      ( m_afOpenAipUpdateCheck != pointsOpenAipEnableUpdates->isChecked() ||
+	        m_afOpenAipUpdateValue != pointsOpenAipUpdatePeriod->value() ) )
+	{
+	  emit checkOpenAipPointData4Update();
+	}
     }
   else if( pointsSourceBox->currentIndex() == 1 )
     {
@@ -415,10 +427,10 @@ void KFLogConfig::slotOk()
       // Check update period of Welt2000 data and initiate an update, if the
       // update time period has expired.
       else if( welt2000EnableUpdates->isChecked() &&
-	       m_welt2000UpdateValue != welt2000UpdatePeriod->value() )
+	       ( m_welt2000UpdateCheck != welt2000EnableUpdates->isChecked() ||
+	         m_welt2000UpdateValue != welt2000UpdatePeriod->value() ) )
 	{
-	  Welt2000 w2000;
-	  w2000.check4update();
+	  checkWelt20004Update();
 	}
     }
 
@@ -1932,6 +1944,25 @@ void KFLogConfig::__addPointsTab()
   pointsOpenAipCountries->setValidator( new QRegExpValidator(rx, this) );
   pointsOpenAipCountries->setToolTip( toolTip );
   oaipLayout->addWidget( pointsOpenAipCountries, grow, 2 );
+
+  pointsOpenAipEnableUpdates = new QCheckBox( tr("Enable updates after:") );
+  pointsOpenAipEnableUpdates->setChecked( false );
+  oaipLayout->addWidget( pointsOpenAipEnableUpdates, grow, 3 );
+
+  connect( pointsOpenAipEnableUpdates, SIGNAL(stateChanged(int)),
+	   this, SLOT(slotPointsOpenAipUpdateStateChanged(int)) );
+
+  pointsOpenAipUpdatePeriod = new QSpinBox;
+  pointsOpenAipUpdatePeriod->setRange( 1, 365 );
+  pointsOpenAipUpdatePeriod->setSingleStep( 1 );
+  pointsOpenAipUpdatePeriod->setButtonSymbols( QSpinBox::PlusMinus );
+  pointsOpenAipUpdatePeriod->setSuffix( tr(" day") );
+  pointsOpenAipUpdatePeriod->setEnabled( false );
+  oaipLayout->addWidget( pointsOpenAipUpdatePeriod, grow, 4 );
+
+  connect( pointsOpenAipUpdatePeriod, SIGNAL(valueChanged( int)),
+	   this, SLOT(slotPointsOpenAipUpdatePeriodChanged(int)) );
+
   grow++;
 
   oaipLayout->addWidget( new QLabel( tr("Home Radius:") ), grow, 0 );
@@ -1950,7 +1981,7 @@ void KFLogConfig::__addPointsTab()
   grow++;
 
   QLabel* hint = new QLabel( tr("Select point data files to be used") );
-  oaipLayout->addWidget( hint, grow, 0, 1, 3 );
+  oaipLayout->addWidget( hint, grow, 0, 1, 5 );
   grow++;
 
   QString tip = tr("Uncheck All to enable loading of single files.") + "\n\n" +
@@ -1962,7 +1993,7 @@ void KFLogConfig::__addPointsTab()
   m_pointFileTable->setToolTip( tip );
   m_pointFileTable->setSelectionBehavior( QAbstractItemView::SelectRows );
   m_pointFileTable->setShowGrid( true );
-  oaipLayout->addWidget( m_pointFileTable, grow, 0, 1, 3 );
+  oaipLayout->addWidget( m_pointFileTable, grow, 0, 1, 5 );
 
   connect( m_pointFileTable, SIGNAL(cellClicked ( int, int )),
            SLOT(slotToggleAfCheckBox( int, int )) );
@@ -2003,19 +2034,24 @@ void KFLogConfig::__addPointsTab()
   m_wel2000HomeRadiusValue     = _settings.value( "/Welt2000/HomeRadius", 0 ).toInt();
   m_welt2000CountryFilterValue = _settings.value( "/Welt2000/CountryFilter", "" ).toString();
   m_welt2000ReadOlValue        = _settings.value( "/Welt2000/LoadOutlandings", true ).toBool();
+  m_welt2000UpdateCheck        = _settings.value( "/Welt2000/EnableUpdates", true ).toBool();
   m_welt2000UpdateValue        = _settings.value( "/Welt2000/UpdatePeriod", 30 ).toInt();
 
   welt2000HomeRadius->setValue( m_wel2000HomeRadiusValue );
   welt2000CountryFilter->setText( m_welt2000CountryFilterValue );
   welt2000ReadOl->setChecked( m_welt2000ReadOlValue );
-  welt2000EnableUpdates->setChecked( _settings.value( "/Welt2000/EnableUpdates", true ).toBool() );
+  welt2000EnableUpdates->setChecked( m_welt2000UpdateCheck );
   welt2000UpdatePeriod->setValue( m_welt2000UpdateValue );
 
   m_afOpenAipHomeRadiusValue = _settings.value( "/Points/HomeRadius", 0 ).toInt();
   m_afOpenAipCountryValue    = _settings.value( "/Points/Countries", "" ).toString();
+  m_afOpenAipUpdateCheck     = _settings.value( "/Points/EnableUpdates", true ).toBool();
+  m_afOpenAipUpdateValue     = _settings.value( "/Points/UpdatePeriod", 30 ).toInt();
 
   pointsOpenAipHomeRadius->setValue( m_afOpenAipHomeRadiusValue );
   pointsOpenAipCountries->setText( m_afOpenAipCountryValue );
+  pointsOpenAipEnableUpdates->setChecked( m_afOpenAipUpdateCheck );
+  pointsOpenAipUpdatePeriod->setValue( m_afOpenAipUpdateValue );
 }
 
 /** Add a tab for airspace file management.*/
@@ -2787,7 +2823,7 @@ bool KFLogConfig::setGuiLanguage( QString newLanguage )
     {
       QCoreApplication::installTranslator( s_qtTranslator );
       qDebug() << "Using Library translation file"
-           << langDir + "/" + langFile
+               << langDir + "/" + langFile
 	       << "for language"
 	       << newLanguage;
 
@@ -2817,4 +2853,21 @@ void KFLogConfig::slotWelt2000UpdatePeriodChanged( int newValue )
 void KFLogConfig::slotWelt2000UpdateStateChanged( int state )
 {
   welt2000UpdatePeriod->setEnabled( state == Qt::Checked ? true : false );
+}
+
+void KFLogConfig::slotPointsOpenAipUpdatePeriodChanged( int newValue )
+{
+  if( newValue == 1 )
+    {
+      pointsOpenAipUpdatePeriod->setSuffix( tr(" day") );
+    }
+  else
+    {
+      pointsOpenAipUpdatePeriod->setSuffix( tr(" days") );
+    }
+}
+
+void KFLogConfig::slotPointsOpenAipUpdateStateChanged( int state )
+{
+  pointsOpenAipUpdatePeriod->setEnabled( state == Qt::Checked ? true : false );
 }
