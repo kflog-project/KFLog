@@ -4,8 +4,6 @@
  **
  **   This file is part of KFLog.
  **
- **   $Id$
- **
  ************************************************************************
  **
  **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
@@ -14,8 +12,8 @@
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
  **
- **
  ***********************************************************************/
+
 #ifndef _MSC_VER
 #include <unistd.h>
 #endif
@@ -618,8 +616,6 @@ void MapContents::slotOpenAipPoiNetworkError()
 
 void MapContents::slotCheckOpenAipPointData4Update()
 {
-  qDebug() << "MapContents::slotCheckOpenAipPointData4Update()";
-
   if( _settings.value( "/Points/Source", 1 ).toInt() != 0 )
     {
       // Not selected as source.

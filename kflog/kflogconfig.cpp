@@ -1980,7 +1980,7 @@ void KFLogConfig::__addPointsTab()
   oaipLayout->setRowMinimumHeight ( grow, 20 );
   grow++;
 
-  QLabel* hint = new QLabel( tr("Select point data files to be used") );
+  QLabel* hint = new QLabel( tr("Select files to be used") );
   oaipLayout->addWidget( hint, grow, 0, 1, 5 );
   grow++;
 
