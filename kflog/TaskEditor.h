@@ -77,6 +77,13 @@ private:
 
 public slots:
 
+  /**
+   * Called, if the right mouse button is pressed in the route tree widget.
+   *
+   * \param item Selected item in the route tree widget.
+   *
+   * \param position Position of selected item in the route tree widget.
+   */
   void slotRightButtonPressed( QTreeWidgetItem *item, const QPoint &position );
 
 private slots:
@@ -162,14 +169,14 @@ private:
   QLineEdit *m_taskNameEditor;
   QLabel    *m_taskType;
 
-  QComboBox *planningTypes;
-  QCheckBox *left;
-  QCheckBox *right;
+  QComboBox *m_planningTypes;
+  QCheckBox *m_left;
+  QCheckBox *m_right;
 
   /** overview with task points */
-  KFLogTreeWidget *route;
+  KFLogTreeWidget *m_route;
 
-  /** Columns used by route display. */
+  /** Column variables used in route tree display. */
   int colRouteType;
   int colRouteWaypoint;
   int colRouteDist;
@@ -191,22 +198,24 @@ private:
   /** Clears the input of m_pointSearchInput. */
   QPushButton *m_clearPointSearchInput;
 
+  /** Column variables used in waypoint tree display. */
   int colWpName;
   int colWpDescription;
   int colWpCountry;
   int colWpIcao;
 
-  QPushButton *addCmd;
-  QPushButton *removeCmd;
-  QPushButton *upCmd;
-  QPushButton *downCmd;
-  QPushButton *invertCmd;
+  QPushButton *m_addCmd;
+  QPushButton *m_removeCmd;
+  QPushButton *m_upCmd;
+  QPushButton *m_downCmd;
+  QPushButton *m_invertCmd;
 
-  QAction *actionMoveUp;
-  QAction *actionMoveDown;
-  QAction *actionDuplicate;
-  QAction *actionRemove;
-  QAction *actionInvert;
+  /** Actions used in route tree mouse popup menu. */
+  QAction *m_actionMoveUp;
+  QAction *m_actionMoveDown;
+  QAction *m_actionDuplicate;
+  QAction *m_actionRemove;
+  QAction *m_actionInvert;
 };
 
 #endif

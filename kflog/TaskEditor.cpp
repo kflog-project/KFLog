@@ -101,15 +101,15 @@ void TaskEditor::createDialog()
   //----------------------------------------------------------------------------
   // Row 2
   // Create a combo box for task types
-  planningTypes = new QComboBox;
-  connect( planningTypes, SIGNAL(activated(const QString&)),
+  m_planningTypes = new QComboBox;
+  connect( m_planningTypes, SIGNAL(activated(const QString&)),
            SLOT(slotSetPlanningType(const QString&)) );
 
   l = new QLabel( tr( "Task Type" ) + ":" );
-  l->setBuddy( planningTypes );
+  l->setBuddy( m_planningTypes );
 
   // Load task types into combo box
-  planningTypes->addItems( FlightTask::ttGetSortedTranslationList() );
+  m_planningTypes->addItems( FlightTask::ttGetSortedTranslationList() );
 
   // Create an non-exclusive button group
   QButtonGroup *bgrp2 = new QButtonGroup( this );
@@ -117,49 +117,49 @@ void TaskEditor::createDialog()
   bgrp2->setExclusive(false);
 
   // insert 2 check buttons
-  left = new QCheckBox(tr("left"));
-  left->setChecked(true);
-  bgrp2->addButton( left, 0 );
-  right = new QCheckBox(tr("right"));
-  left->setChecked(false);
-  bgrp2->addButton( right, 1 );
+  m_left = new QCheckBox(tr("left"));
+  m_left->setChecked(true);
+  bgrp2->addButton( m_left, 0 );
+  m_right = new QCheckBox(tr("right"));
+  m_left->setChecked(false);
+  bgrp2->addButton( m_right, 1 );
 
   // Align check boxes into a group box.
   QGroupBox *faiGroupBox = new QGroupBox(tr("Side of FAI area"));
 
   QHBoxLayout *hbBox = new QHBoxLayout;
-  hbBox->addWidget(left);
-  hbBox->addWidget(right);
+  hbBox->addWidget(m_left);
+  hbBox->addWidget(m_right);
   faiGroupBox->setLayout(hbBox);
 
   m_taskType = new QLabel;
   m_taskType->setMinimumWidth(100);
 
   type->addWidget(l);
-  type->addWidget(planningTypes);
+  type->addWidget(m_planningTypes);
   type->addWidget(faiGroupBox);
   type->addStretch(1);
   type->addWidget(m_taskType);
 
   //----------------------------------------------------------------------------
   // Row 3
-  route = new KFLogTreeWidget("TaskEditor-Route");
-  route->setToolTip( tr("Open Help menu to get help about a task definition.") );
-  route->setSortingEnabled( false );
-  route->setAllColumnsShowFocus( true );
-  route->setFocusPolicy( Qt::StrongFocus );
-  route->setRootIsDecorated( false );
-  route->setItemsExpandable( true );
-  route->setSelectionMode( QAbstractItemView::SingleSelection );
-  route->setSelectionBehavior( QAbstractItemView::SelectRows );
-  route->setAlternatingRowColors( true );
-  route->addRowSpacing( 5 );
-  route->setColumnCount( 5 );
+  m_route = new KFLogTreeWidget("TaskEditor-Route");
+  m_route->setToolTip( tr("Open Help menu to get help about a task definition.") );
+  m_route->setSortingEnabled( false );
+  m_route->setAllColumnsShowFocus( true );
+  m_route->setFocusPolicy( Qt::StrongFocus );
+  m_route->setRootIsDecorated( false );
+  m_route->setItemsExpandable( true );
+  m_route->setSelectionMode( QAbstractItemView::SingleSelection );
+  m_route->setSelectionBehavior( QAbstractItemView::SelectRows );
+  m_route->setAlternatingRowColors( true );
+  m_route->addRowSpacing( 5 );
+  m_route->setColumnCount( 5 );
 
-  route->setDragEnabled(true);
-  route->viewport()->setAcceptDrops(true);
-  route->setDropIndicatorShown(true);
-  route->setDragDropMode(QAbstractItemView::InternalMove);
+  m_route->setDragEnabled(true);
+  m_route->viewport()->setAcceptDrops(true);
+  m_route->setDropIndicatorShown(true);
+  m_route->setDragDropMode(QAbstractItemView::InternalMove);
 
   QStringList headerLabels;
 
@@ -169,19 +169,19 @@ void TaskEditor::createDialog()
                 << tr("Course")
 		<< tr("Leg");
 
-  route->setHeaderLabels( headerLabels );
+  m_route->setHeaderLabels( headerLabels );
 
-  QTreeWidgetItem* headerItem = route->headerItem();
+  QTreeWidgetItem* headerItem = m_route->headerItem();
   headerItem->setTextAlignment( 0, Qt::AlignCenter );
   headerItem->setTextAlignment( 1, Qt::AlignCenter );
   headerItem->setTextAlignment( 2, Qt::AlignCenter );
   headerItem->setTextAlignment( 3, Qt::AlignCenter );
   headerItem->setTextAlignment( 4, Qt::AlignCenter );
 
-  connect( route, SIGNAL(itemClicked( QTreeWidgetItem*, int )),
+  connect( m_route, SIGNAL(itemClicked( QTreeWidgetItem*, int )),
            this, SLOT( slotItemClicked( QTreeWidgetItem*, int )) );
 
-  connect( route, SIGNAL(rightButtonPressed( QTreeWidgetItem*, const QPoint& )),
+  connect( m_route, SIGNAL(rightButtonPressed( QTreeWidgetItem*, const QPoint& )),
            this, SLOT( slotRightButtonPressed( QTreeWidgetItem*, const QPoint& )) );
 
   colRouteType     = 0;
@@ -190,52 +190,52 @@ void TaskEditor::createDialog()
   colRouteCourse   = 3;
   colRouteLeg      = 4;
 
-  route->loadConfig();
+  m_route->loadConfig();
 
   l = new QLabel(tr("Task"));
-  l->setBuddy( route );
+  l->setBuddy( m_route );
 
   smallButtons->addStretch(1);
-  upCmd = new QPushButton(this);
-  upCmd->setIcon(MainWindow::instance()->getPixmap("kde_up_16.png"));
-  upCmd->setIconSize(QSize(16, 16));
-  upCmd->setToolTip( tr("Moves selected task point up"));
-  connect(upCmd, SIGNAL(clicked()), SLOT(slotMoveUp()));
-  smallButtons->addWidget(upCmd);
+  m_upCmd = new QPushButton(this);
+  m_upCmd->setIcon(MainWindow::instance()->getPixmap("kde_up_16.png"));
+  m_upCmd->setIconSize(QSize(16, 16));
+  m_upCmd->setToolTip( tr("Moves selected task point up"));
+  connect(m_upCmd, SIGNAL(clicked()), SLOT(slotMoveUp()));
+  smallButtons->addWidget(m_upCmd);
 
-  downCmd = new QPushButton(this);
-  downCmd->setIcon(MainWindow::instance()->getPixmap("kde_down_16.png"));
-  downCmd->setIconSize(QSize(16, 16));
-  downCmd->setToolTip( tr("Moves selected task point down"));
-  connect(downCmd, SIGNAL(clicked()), SLOT(slotMoveDown()));
-  smallButtons->addWidget(downCmd);
+  m_downCmd = new QPushButton(this);
+  m_downCmd->setIcon(MainWindow::instance()->getPixmap("kde_down_16.png"));
+  m_downCmd->setIconSize(QSize(16, 16));
+  m_downCmd->setToolTip( tr("Moves selected task point down"));
+  connect(m_downCmd, SIGNAL(clicked()), SLOT(slotMoveDown()));
+  smallButtons->addWidget(m_downCmd);
   smallButtons->addStretch(1);
 
   leftLayout->addWidget(l);
-  leftLayout->addWidget(route);
+  leftLayout->addWidget(m_route);
   leftLayout->addLayout(smallButtons);
 
   middleLayout->addStretch(1);
-  addCmd = new QPushButton;
-  addCmd->setIcon(MainWindow::instance()->getPixmap("kde_back_16.png"));
-  addCmd->setIconSize(QSize(16, 16));
-  addCmd->setToolTip( tr("Adds the selected waypoint to the task list"));
-  connect(addCmd, SIGNAL(clicked()), SLOT(slotAddWaypoint()));
-  middleLayout->addWidget(addCmd);
+  m_addCmd = new QPushButton;
+  m_addCmd->setIcon(MainWindow::instance()->getPixmap("kde_back_16.png"));
+  m_addCmd->setIconSize(QSize(16, 16));
+  m_addCmd->setToolTip( tr("Adds the selected waypoint to the task list"));
+  connect(m_addCmd, SIGNAL(clicked()), SLOT(slotAddWaypoint()));
+  middleLayout->addWidget(m_addCmd);
 
-  invertCmd = new QPushButton(this);
-  invertCmd->setIcon(MainWindow::instance()->getPixmap("kde_reload_16.png"));
-  invertCmd->setIconSize(QSize(16, 16));
-  invertCmd->setToolTip( tr("Inverts the task. Last point becomes the first point, a.s.o."));
-  connect(invertCmd, SIGNAL(clicked()), SLOT(slotInvertWaypoints()));
-  middleLayout->addWidget(invertCmd);
+  m_invertCmd = new QPushButton(this);
+  m_invertCmd->setIcon(MainWindow::instance()->getPixmap("kde_reload_16.png"));
+  m_invertCmd->setIconSize(QSize(16, 16));
+  m_invertCmd->setToolTip( tr("Inverts the task. Last point becomes the first point, a.s.o."));
+  connect(m_invertCmd, SIGNAL(clicked()), SLOT(slotInvertWaypoints()));
+  middleLayout->addWidget(m_invertCmd);
 
-  removeCmd = new QPushButton;
-  removeCmd->setIcon(MainWindow::instance()->getPixmap("kde_forward_16.png"));
-  removeCmd->setIconSize(QSize(16, 16));
-  removeCmd->setToolTip( tr("Removes the selected task point from the task list"));
-  connect(removeCmd, SIGNAL(clicked()), SLOT(slotRemoveWaypoint()));
-  middleLayout->addWidget(removeCmd);
+  m_removeCmd = new QPushButton;
+  m_removeCmd->setIcon(MainWindow::instance()->getPixmap("kde_forward_16.png"));
+  m_removeCmd->setIconSize(QSize(16, 16));
+  m_removeCmd->setToolTip( tr("Removes the selected task point from the task list"));
+  connect(m_removeCmd, SIGNAL(clicked()), SLOT(slotRemoveWaypoint()));
+  middleLayout->addWidget(m_removeCmd);
   middleLayout->addStretch(1);
 
   m_wpListView = new KFLogTreeWidget("TaskEditor-Waypoints");
@@ -353,40 +353,46 @@ void TaskEditor::slotRightButtonPressed( QTreeWidgetItem *item,
   Q_UNUSED(item)
   Q_UNUSED(position)
 
-  if( m_taskWpList.size() == 0 )
+  if( m_taskWpList.size() == 0 || item == 0 )
     {
       return;
     }
 
   QMenu *menu = new QMenu(this);
 
-  actionDuplicate = menu->addAction( tr("Duplicate"),
+  m_actionDuplicate = menu->addAction( tr("Duplicate"),
                                      this,
                                      SLOT(slotDuplicateWayoint()) );
-  menu->addAction( actionDuplicate );
+  menu->addAction( m_actionDuplicate );
 
-  actionRemove = menu->addAction( tr("Remove"),
+  m_actionRemove = menu->addAction( tr("Remove"),
                                   this,
                                   SLOT(slotRemoveWaypoint()) );
-  menu->addAction( actionRemove );
+  menu->addAction( m_actionRemove );
 
   if( m_taskWpList.size() > 1 )
     {
-      actionMoveUp = menu->addAction( tr("Move up"),
-                                      this,
-                                      SLOT(slotMoveUp()) );
-      menu->addAction( actionMoveUp );
 
+      if( m_route->indexOfTopLevelItem(item) > 0 )
+	{
+	  m_actionMoveUp = menu->addAction( tr("Move up"),
+					  this,
+					  SLOT(slotMoveUp()) );
+	  menu->addAction( m_actionMoveUp );
+	}
 
-      actionMoveDown = menu->addAction( tr("Move down"),
-                                        this,
-                                        SLOT(slotMoveDown()) );
-      menu->addAction( actionMoveDown );
+      if( m_route->indexOfTopLevelItem(item) < m_route->topLevelItemCount() - 1 )
+	{
+	  m_actionMoveDown = menu->addAction( tr("Move down"),
+					    this,
+					    SLOT(slotMoveDown()) );
+	  menu->addAction( m_actionMoveDown );
+	}
 
-      actionInvert = menu->addAction( tr("Invert"),
+      m_actionInvert = menu->addAction( tr("Invert"),
                                       this,
                                       SLOT(slotInvertWaypoints()) );
-      menu->addAction( actionInvert );
+      menu->addAction( m_actionInvert );
     }
 
   menu->exec(  QCursor::pos() );
@@ -655,26 +661,26 @@ void TaskEditor::slotSetPlanningType( const QString& text )
           QMessageBox::warning( this, tr("Too much route points"), msg );
         }
 
-      left->setEnabled(true);
-      right->setEnabled(true);
-      left->setChecked(m_editedTask->getPlanningDirection() & FlightTask::leftOfRoute);
-      right->setChecked(m_editedTask->getPlanningDirection() & FlightTask::rightOfRoute);
+      m_left->setEnabled(true);
+      m_right->setEnabled(true);
+      m_left->setChecked(m_editedTask->getPlanningDirection() & FlightTask::leftOfRoute);
+      m_right->setChecked(m_editedTask->getPlanningDirection() & FlightTask::rightOfRoute);
     }
 
     break;
 
   case FlightTask::Route:
 
-    left->setEnabled(false);
-    right->setEnabled(false);
-    left->setChecked(false);
-    right->setChecked(false);
+    m_left->setEnabled(false);
+    m_right->setEnabled(false);
+    m_left->setChecked(false);
+    m_right->setChecked(false);
     break;
   }
 
   m_editedTask->setPlanningType(id);
   loadRouteWaypoints();
-  route->setCurrentItem( route->topLevelItem(0) );
+  m_route->setCurrentItem( m_route->topLevelItem(0) );
   enableCommandButtons();
 }
 
@@ -720,12 +726,12 @@ void TaskEditor::slotSetPlanningDirection(int)
 {
   int dir = 0;
 
-  if( left->isChecked() )
+  if( m_left->isChecked() )
     {
       dir |= FlightTask::leftOfRoute;
     }
 
-  if( right->isChecked() )
+  if( m_right->isChecked() )
     {
       dir |= FlightTask::rightOfRoute;
     }
@@ -737,7 +743,7 @@ void TaskEditor::loadRouteWaypoints()
 {
   Waypoint *wpPrev = 0;
 
-  route->clear();
+  m_route->clear();
 
   int number = 0;
   double distanceTotal = 0.0;
@@ -807,23 +813,23 @@ void TaskEditor::loadRouteWaypoints()
       item->setTextAlignment( colRouteCourse, Qt::AlignCenter );
       item->setTextAlignment( colRouteLeg, Qt::AlignCenter );
 
-      route->insertTopLevelItem( i, item );
+      m_route->insertTopLevelItem( i, item );
 
       wpPrev = wp;
     }
 
-  route->slotResizeColumns2Content();
+  m_route->slotResizeColumns2Content();
 
   m_taskType->setText( m_editedTask->getTaskTypeString() );
 }
 
 int TaskEditor::getCurrentPosition()
 {
-  QTreeWidgetItem* item = route->currentItem();
+  QTreeWidgetItem* item = m_route->currentItem();
 
   if( item )
     {
-      return route->indexOfTopLevelItem( item );
+      return m_route->indexOfTopLevelItem( item );
     }
 
   return -1;
@@ -831,13 +837,13 @@ int TaskEditor::getCurrentPosition()
 
 void TaskEditor::setSelected( int position )
 {
-  if( position >= 0 && route->topLevelItemCount() > 0 )
+  if( position >= 0 && m_route->topLevelItemCount() > 0 )
     {
-      QTreeWidgetItem* item = route->topLevelItem( position );
+      QTreeWidgetItem* item = m_route->topLevelItem( position );
 
       if( item )
         {
-          route->setCurrentItem( item );
+          m_route->setCurrentItem( item );
         }
     }
 
@@ -910,7 +916,7 @@ void TaskEditor::slotMoveUp()
 {
   int curPos = getCurrentPosition();
 
-  if( curPos < 1 || route->topLevelItemCount() < 2 )
+  if( curPos < 1 || m_route->topLevelItemCount() < 2 )
     {
       return;
     }
@@ -928,8 +934,8 @@ void TaskEditor::slotMoveDown()
   int curPos = getCurrentPosition();
 
   if( curPos < 0 ||
-      route->topLevelItemCount() < 2 ||
-      curPos >= route->topLevelItemCount() - 1 ||
+      m_route->topLevelItemCount() < 2 ||
+      curPos >= m_route->topLevelItemCount() - 1 ||
       curPos >= m_taskWpList.size() - 1 )
     {
       return;
@@ -1093,7 +1099,7 @@ void TaskEditor::slotRemoveWaypoint()
       return;
     }
 
-  delete route->takeTopLevelItem( curPos );
+  delete m_route->takeTopLevelItem( curPos );
   delete m_taskWpList.takeAt( curPos );
 
   m_editedTask->setWaypointList( m_taskWpList );
@@ -1133,10 +1139,10 @@ void TaskEditor::setTask(FlightTask *task)
   // Save initial name of task. Is checked during accept for change.
   m_taskInitName = m_taskNameEditor->text();
 
-  planningTypes->setCurrentIndex( planningTypes->findText( FlightTask::ttItem2Text(m_editedTask->getPlanningType())) );
+  m_planningTypes->setCurrentIndex( m_planningTypes->findText( FlightTask::ttItem2Text(m_editedTask->getPlanningType())) );
 
-  left->setChecked(m_editedTask->getPlanningDirection() & FlightTask::leftOfRoute);
-  right->setChecked(m_editedTask->getPlanningDirection() & FlightTask::rightOfRoute);
+  m_left->setChecked(m_editedTask->getPlanningDirection() & FlightTask::leftOfRoute);
+  m_right->setChecked(m_editedTask->getPlanningDirection() & FlightTask::rightOfRoute);
 
   slotSetPlanningType( FlightTask::ttItem2Text(m_editedTask->getPlanningType()) );
 }
@@ -1153,48 +1159,48 @@ void TaskEditor::enableCommandButtons()
 {
   if( m_taskWpList.count() == 0 )
     {
-      addCmd->setEnabled( true );
-      removeCmd->setEnabled( false );
-      upCmd->setEnabled( false );
-      downCmd->setEnabled( false );
-      invertCmd->setEnabled( false );
+      m_addCmd->setEnabled( true );
+      m_removeCmd->setEnabled( false );
+      m_upCmd->setEnabled( false );
+      m_downCmd->setEnabled( false );
+      m_invertCmd->setEnabled( false );
     }
   else if( m_taskWpList.count() == 1 )
     {
-      addCmd->setEnabled( true );
-      removeCmd->setEnabled( true );
-      upCmd->setEnabled( false );
-      downCmd->setEnabled( false );
-      invertCmd->setEnabled( false );
+      m_addCmd->setEnabled( true );
+      m_removeCmd->setEnabled( true );
+      m_upCmd->setEnabled( false );
+      m_downCmd->setEnabled( false );
+      m_invertCmd->setEnabled( false );
     }
   else
     {
-      addCmd->setEnabled( true );
-      removeCmd->setEnabled( true );
-      invertCmd->setEnabled( true );
+      m_addCmd->setEnabled( true );
+      m_removeCmd->setEnabled( true );
+      m_invertCmd->setEnabled( true );
 
-      if( route->topLevelItemCount() && route->currentItem() == 0 )
+      if( m_route->topLevelItemCount() && m_route->currentItem() == 0 )
         {
           // If no item is selected we select the first one.
-          route->setCurrentItem(route->topLevelItem(route->indexOfTopLevelItem(0)));
+          m_route->setCurrentItem(m_route->topLevelItem(m_route->indexOfTopLevelItem(0)));
         }
 
-      if( route->indexOfTopLevelItem(route->currentItem()) > 0 )
+      if( m_route->indexOfTopLevelItem(m_route->currentItem()) > 0 )
         {
-          upCmd->setEnabled( true );
+          m_upCmd->setEnabled( true );
         }
       else
         {
-          upCmd->setEnabled( false );
+          m_upCmd->setEnabled( false );
         }
 
-      if( route->indexOfTopLevelItem(route->currentItem()) < route->topLevelItemCount() - 1 )
+      if( m_route->indexOfTopLevelItem(m_route->currentItem()) < m_route->topLevelItemCount() - 1 )
         {
-          downCmd->setEnabled( true );
+          m_downCmd->setEnabled( true );
         }
       else
         {
-          downCmd->setEnabled( false );
+          m_downCmd->setEnabled( false );
         }
     }
 }
