@@ -11,6 +11,11 @@
 #
 ################################################################################
 
+2014-11-24 Axel Pauli <kflog.cumulus@gmail.com>
+
+  * Enhancements for issue #6. A Welt2000 update is done after a configurable
+    period of days under the configuration points menu.
+
 2014-11-21 Axel Pauli <kflog.cumulus@gmail.com>
 
   * Neu mouse menu added to task editor route list, to make actions easier.

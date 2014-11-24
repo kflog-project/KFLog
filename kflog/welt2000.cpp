@@ -78,18 +78,11 @@ Welt2000::~Welt2000()
 
 bool Welt2000::check4update()
 {
-  static bool hasCalled = false;
-
-  qDebug() << "Welt2000::check4update(): hasCalled=" << hasCalled;
-
-
-  if( hasCalled == true )
+  // Check configuration, if updates are allowed.
+  if( _settings.value( "/Welt2000/EnableUpdates", true ).toBool() == false )
     {
-      // This method is callable only once to avoid a call dead lock.
       return false;
     }
-
-  hasCalled = true;
 
   QString wu = "WELT2000.TXT";
   QString sd = "/points/";
@@ -107,10 +100,13 @@ bool Welt2000::check4update()
       return false;
     }
 
-  if( test.lastModified().secsTo(QDateTime::currentDateTime()) < 3600 * 24 * 30 )
+  // Get update period as days. Default are 30 days.
+  int days = _settings.value( "/Welt2000/UpdatePeriod", 30 ).toInt();
+
+  if( test.lastModified().secsTo(QDateTime::currentDateTime()) < 3600 * 24 * days )
     {
-      qDebug() << "Welt2000::check4update(): last update < 30 days, return false.";
-      // The file was already updated in the last 30 days. Don't allow an update.
+      qDebug() << "Welt2000::check4update(): last update <" << days << "day(s), ignoring call.";
+      // The file was already updated in the last days. Don't allow an update.
       return false;
     }
 

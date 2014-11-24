@@ -26,7 +26,7 @@
  *
  * \date 2000-2014
  *
- * @version $Id$
+ * \version 1.1
  */
 
 #ifndef KFLOG_CONFIG_H
@@ -306,6 +306,17 @@ class KFLogConfig : public QDialog
   */
  void slotSetMapElements2Default();
 
+ /**
+  * Called, if the Welt2000 update checkbox is clicked.
+  */
+ void slotWelt2000UpdateStateChanged( int state );
+
+ /**
+  * Called, if the value in the Welt2000 update box is changed.
+  */
+ void slotWelt2000UpdatePeriodChanged( int newValue );
+
+
  private:
 
  /** */
@@ -424,6 +435,8 @@ class KFLogConfig : public QDialog
   QLineEdit* welt2000CountryFilter;
   QSpinBox*  welt2000HomeRadius;
   QCheckBox* welt2000ReadOl;
+  QCheckBox* welt2000EnableUpdates;
+  QSpinBox*  welt2000UpdatePeriod;
 
   QComboBox* pointsSourceBox;
   QLineEdit* pointsOpenAipCountries;
@@ -445,6 +458,11 @@ class KFLogConfig : public QDialog
    * Initial value of outlanding checkbox.
    */
   bool m_welt2000ReadOlValue;
+
+  /**
+   * Initial value of update spinbox.
+   */
+  int m_welt2000UpdateValue;
 
   /**
    * Initial value of openAIP airfield home radius.

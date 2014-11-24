@@ -7,7 +7,6 @@
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
  **
- **   $Id: welt2000.h 4502 2010-12-09 22:32:02Z axel $
  **
  *************************************************************************
  **
@@ -74,7 +73,7 @@
  *
  * \date 2006-2014
  *
- * \version $Id$
+ * \version 1.1
  */
 
 class Welt2000
@@ -105,9 +104,9 @@ public:
                QList<Airfield>& outlandingList );
 
     /**
-     * Check if a Welt2000 download shall be done. That is allowed only onetimes
-     * per 30 days by comparing the last modification date of the current installed
-     * Welt2000 file and the current date.
+     * Checks if a Welt2000 download shall be done. That is allowed only after
+     * the user defined update period by comparing the last modification date
+     * of the current installed Welt2000 file and the current date.
      *
      * \return true, if an update shall be made otherwise false
      */

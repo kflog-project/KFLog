@@ -28,6 +28,7 @@
 #include "wgspoint.h"
 #include "mainwindow.h"
 #include "rowdelegate.h"
+#include "welt2000.h"
 
 extern Map          *_globalMap;
 extern MapContents  *_globalMapContents;
@@ -286,6 +287,8 @@ void KFLogConfig::slotOk()
   _settings.setValue( "/Welt2000/CountryFilter", welt2000CountryFilter->text().trimmed().toUpper() );
   _settings.setValue( "/Welt2000/HomeRadius", welt2000HomeRadius->value() );
   _settings.setValue( "/Welt2000/LoadOutlandings", welt2000ReadOl->isChecked() );
+  _settings.setValue( "/Welt2000/EnableUpdates", welt2000EnableUpdates->isChecked() );
+  _settings.setValue( "/Welt2000/UpdatePeriod", welt2000UpdatePeriod->value() );
 
   _settings.setValue( "/FlightColor/LeftTurn", flightTypeLeftTurnColor.name() );
   _settings.setValue( "/FlightColor/RightTurn", flightTypeRightTurnColor.name() );
@@ -400,13 +403,23 @@ void KFLogConfig::slotOk()
     {
       emit reloadPointData();
     }
-  // Check, if Welt2000 airfields must be updated
-  else if( pointsSourceBox->currentIndex() == 1 &&
-          ( m_wel2000HomeRadiusValue !=  welt2000HomeRadius->value() ||
-            m_welt2000CountryFilterValue != welt2000CountryFilter->text() ||
-            m_welt2000ReadOlValue != welt2000ReadOl->isChecked()) )
+  else if( pointsSourceBox->currentIndex() == 1 )
     {
-      emit reloadPointData();
+      // Check, if Welt2000 data must be updated
+      if( m_wel2000HomeRadiusValue !=  welt2000HomeRadius->value() ||
+          m_welt2000CountryFilterValue != welt2000CountryFilter->text() ||
+          m_welt2000ReadOlValue != welt2000ReadOl->isChecked() )
+	{
+	  emit reloadPointData();
+	}
+      // Check update period of Welt2000 data and initiate an update, if the
+      // update time period has expired.
+      else if( welt2000EnableUpdates->isChecked() &&
+	       m_welt2000UpdateValue != welt2000UpdatePeriod->value() )
+	{
+	  Welt2000 w2000;
+	  w2000.check4update();
+	}
     }
 
   emit configOk();
@@ -1855,7 +1868,7 @@ void KFLogConfig::__addPointsTab()
   welt2000HomeRadius->setSpecialValueText(tr("Off"));
   welt2000HomeRadius->setToolTip( toolTip1 );
 
-  welt2000ReadOl = new QCheckBox( tr("Read Outlandings:") );
+  welt2000ReadOl = new QCheckBox( tr("Read Outlandings") );
   welt2000ReadOl->setToolTip( tr("Activate checkbox, if outlandings should be read in.") );
 
   QPushButton* downloadWelt2000 = new QPushButton( tr("Download") );
@@ -1864,14 +1877,38 @@ void KFLogConfig::__addPointsTab()
   downloadWelt2000->setMinimumHeight(downloadWelt2000->sizeHint().height() + 2);
   connect( downloadWelt2000, SIGNAL(clicked()), this, SLOT(slotDownloadWelt2000()) );
 
-  QFormLayout* weltLayout = new QFormLayout();
+  welt2000EnableUpdates = new QCheckBox( tr("Enable Welt2000 update after:") );
+  welt2000EnableUpdates->setChecked( false );
+
+  connect( welt2000EnableUpdates, SIGNAL(stateChanged(int)),
+	   this, SLOT(slotWelt2000UpdateStateChanged(int)) );
+
+  welt2000UpdatePeriod = new QSpinBox;
+  welt2000UpdatePeriod->setRange( 1, 365 );
+  welt2000UpdatePeriod->setSingleStep( 1 );
+  welt2000UpdatePeriod->setButtonSymbols( QSpinBox::PlusMinus );
+  welt2000UpdatePeriod->setSuffix( tr(" day") );
+  welt2000UpdatePeriod->setEnabled( false );
+
+  connect( welt2000UpdatePeriod, SIGNAL(valueChanged( int)),
+	   this, SLOT(slotWelt2000UpdatePeriodChanged(int)) );
+
+  QFormLayout* weltLayout = new QFormLayout;
   weltLayout->setSpacing( 10 );
   weltLayout->addRow( tr( "Country Filter" ) + ":", welt2000CountryFilter );
   weltLayout->addRow( tr( "Home Radius" )  + ":", welt2000HomeRadius );
 
+  QHBoxLayout* updateLayout = new QHBoxLayout;
+  updateLayout->setMargin( 0 );
+  updateLayout->addWidget( welt2000EnableUpdates );
+  //updateLayout->addSpacing( 10 );
+  updateLayout->addWidget( welt2000UpdatePeriod );
+  updateLayout->addStretch( 10 );
+
   QVBoxLayout* weltGroupLayout = new QVBoxLayout;
   weltGroupLayout->addLayout( weltLayout );
   weltGroupLayout->addWidget( welt2000ReadOl );
+  weltGroupLayout->addLayout( updateLayout );
   weltGroupLayout->addSpacing( 10 );
   weltGroupLayout->addWidget( downloadWelt2000, Qt::AlignLeft );
 
@@ -1966,10 +2003,13 @@ void KFLogConfig::__addPointsTab()
   m_wel2000HomeRadiusValue     = _settings.value( "/Welt2000/HomeRadius", 0 ).toInt();
   m_welt2000CountryFilterValue = _settings.value( "/Welt2000/CountryFilter", "" ).toString();
   m_welt2000ReadOlValue        = _settings.value( "/Welt2000/LoadOutlandings", true ).toBool();
+  m_welt2000UpdateValue        = _settings.value( "/Welt2000/UpdatePeriod", 30 ).toInt();
 
   welt2000HomeRadius->setValue( m_wel2000HomeRadiusValue );
   welt2000CountryFilter->setText( m_welt2000CountryFilterValue );
   welt2000ReadOl->setChecked( m_welt2000ReadOlValue );
+  welt2000EnableUpdates->setChecked( _settings.value( "/Welt2000/EnableUpdates", true ).toBool() );
+  welt2000UpdatePeriod->setValue( m_welt2000UpdateValue );
 
   m_afOpenAipHomeRadiusValue = _settings.value( "/Points/HomeRadius", 0 ).toInt();
   m_afOpenAipCountryValue    = _settings.value( "/Points/Countries", "" ).toString();
@@ -2760,4 +2800,21 @@ bool KFLogConfig::setGuiLanguage( QString newLanguage )
     }
 
   return ok;
+}
+
+void KFLogConfig::slotWelt2000UpdatePeriodChanged( int newValue )
+{
+  if( newValue == 1 )
+    {
+      welt2000UpdatePeriod->setSuffix( tr(" day") );
+    }
+  else
+    {
+      welt2000UpdatePeriod->setSuffix( tr(" days") );
+    }
+}
+
+void KFLogConfig::slotWelt2000UpdateStateChanged( int state )
+{
+  welt2000UpdatePeriod->setEnabled( state == Qt::Checked ? true : false );
 }

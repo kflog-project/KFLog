@@ -646,806 +646,822 @@
 <context>
     <name>KFLogConfig</name>
     <message>
-        <location filename="kflogconfig.cpp" line="52"/>
+        <location filename="kflogconfig.cpp" line="53"/>
         <source>KFLog Configuration</source>
         <translation>KFLog Konfiguration</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="67"/>
+        <location filename="kflogconfig.cpp" line="68"/>
         <source>Menu</source>
         <translation>Menü</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="81"/>
+        <location filename="kflogconfig.cpp" line="82"/>
         <source>&amp;Save</source>
         <translation>&amp;Speichern</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="83"/>
+        <location filename="kflogconfig.cpp" line="84"/>
         <source>&amp;Cancel</source>
         <translation>&amp;Abbrechen</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="326"/>
+        <location filename="kflogconfig.cpp" line="329"/>
         <source>You have changed the GUI language.</source>
         <translation>Die Sprache der KFLog Benutzeroberfläche wurde geändert.</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="328"/>
+        <location filename="kflogconfig.cpp" line="331"/>
         <source>Please restart KFLog to make the new language available.</source>
         <translation>Bitte KFLog neu starten, um die gewählte Sprache vollständig zu laden.</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="552"/>
+        <location filename="kflogconfig.cpp" line="565"/>
         <source>Select a directory for the IGC-Files</source>
         <translation>Wähle ein Verzeichnis für IGC-Ablage</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="565"/>
+        <location filename="kflogconfig.cpp" line="578"/>
         <source>Select a directory for the Map-Files</source>
         <translation>Wähle ein Verzeichnis für die Karten-Ablage</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="578"/>
+        <location filename="kflogconfig.cpp" line="591"/>
         <source>Select a directory for the Task-Files</source>
         <translation>Wähle ein Verzeichnis für die Aufgaben-Ablage</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="591"/>
+        <location filename="kflogconfig.cpp" line="604"/>
         <source>Select a directory for the Waypoint-Files</source>
         <translation>Wähle ein Verzeichnis für die Wegpunkte-Ablage</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="812"/>
+        <location filename="kflogconfig.cpp" line="825"/>
         <source>Map Elements</source>
         <translation>Karten Elemente</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="824"/>
+        <location filename="kflogconfig.cpp" line="837"/>
         <source>Visible Map Elements</source>
         <translation>Sichtbare Kartenelemente</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="828"/>
+        <location filename="kflogconfig.cpp" line="841"/>
         <source>Airspace A</source>
         <translation>Luftraum A</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="829"/>
+        <location filename="kflogconfig.cpp" line="842"/>
         <source>Airspace B</source>
         <translation>Luftraum B</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="830"/>
+        <location filename="kflogconfig.cpp" line="843"/>
         <source>Airspace C</source>
         <translation>Luftraum C</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="831"/>
+        <location filename="kflogconfig.cpp" line="844"/>
         <source>Airspace D</source>
         <translation>Luftraum D</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="832"/>
+        <location filename="kflogconfig.cpp" line="845"/>
         <source>Airspace E (low)</source>
         <translation>Luftraum D (tief)</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="833"/>
+        <location filename="kflogconfig.cpp" line="846"/>
         <source>Airspace E</source>
         <translation>Luftraum E</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="834"/>
+        <location filename="kflogconfig.cpp" line="847"/>
         <source>Airspace F</source>
         <translation>Luftraum F</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="835"/>
+        <location filename="kflogconfig.cpp" line="848"/>
         <source>Airspace FIR</source>
         <translation>Luftraum FIR</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="838"/>
+        <location filename="kflogconfig.cpp" line="851"/>
         <source>Danger/Prohibited</source>
         <translation>Gefahr/Verbot</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="839"/>
+        <location filename="kflogconfig.cpp" line="852"/>
         <source>Glider Sector</source>
         <translation>Segelflugsektor</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="840"/>
+        <location filename="kflogconfig.cpp" line="853"/>
         <source>Low Flight Area</source>
         <translation>Tieffluggebiet</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="841"/>
+        <location filename="kflogconfig.cpp" line="854"/>
         <source>Restricted</source>
         <translation>Beschränkt</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="843"/>
+        <location filename="kflogconfig.cpp" line="856"/>
         <source>WaveWindow</source>
         <translation>Wellenfenster</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="847"/>
+        <location filename="kflogconfig.cpp" line="860"/>
         <source>Aerial Cable</source>
         <translation>Seilbahn</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="848"/>
+        <location filename="kflogconfig.cpp" line="861"/>
         <source>Canal</source>
         <translation>Kanal</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="849"/>
+        <location filename="kflogconfig.cpp" line="862"/>
         <source>City</source>
         <translation>Stadt</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="850"/>
+        <location filename="kflogconfig.cpp" line="863"/>
         <source>Forest</source>
         <translation>Wald</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="851"/>
+        <location filename="kflogconfig.cpp" line="864"/>
         <source>Motorway</source>
         <translation>Autobahn</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="852"/>
+        <location filename="kflogconfig.cpp" line="865"/>
         <source>Road</source>
         <translation>Straße</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="853"/>
+        <location filename="kflogconfig.cpp" line="866"/>
         <source>Railway</source>
         <translation>Eisenbahnline</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="854"/>
+        <location filename="kflogconfig.cpp" line="867"/>
         <source>Railway Double</source>
         <translation>Eisenbahn zweispurig</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="855"/>
+        <location filename="kflogconfig.cpp" line="868"/>
         <source>River / Lake</source>
         <translation>Fluss/See</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="856"/>
+        <location filename="kflogconfig.cpp" line="869"/>
         <source>Temporarily River / Lake</source>
         <translation>Wadi</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="857"/>
+        <location filename="kflogconfig.cpp" line="870"/>
         <source>Glacier</source>
         <translation>Gletscher</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="858"/>
+        <location filename="kflogconfig.cpp" line="871"/>
         <source>Pack Ice</source>
         <translation>Packeis</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="860"/>
+        <location filename="kflogconfig.cpp" line="873"/>
         <source>FAI Area &lt;500 km</source>
         <translation>FAI Zone &lt; 500 km</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="861"/>
+        <location filename="kflogconfig.cpp" line="874"/>
         <source>FAI Area &gt;500 km</source>
         <translation>FAI Zone &gt; 500 km</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="862"/>
+        <location filename="kflogconfig.cpp" line="875"/>
         <source>Trail</source>
         <translation>Pfad</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="872"/>
+        <location filename="kflogconfig.cpp" line="885"/>
         <source>Display</source>
         <translation>Anzeige</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="873"/>
+        <location filename="kflogconfig.cpp" line="886"/>
         <source>Print</source>
         <translation>Drucken</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="886"/>
+        <location filename="kflogconfig.cpp" line="899"/>
         <source>Defaults</source>
         <translation>Standard</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="887"/>
+        <location filename="kflogconfig.cpp" line="900"/>
         <source>All map elements are set to their default values.</source>
         <translation>Alle Kartenelement werden auf die Standardwerte zurückgesetzt.</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="926"/>
+        <location filename="kflogconfig.cpp" line="939"/>
         <source>Flight Display</source>
         <translation>Flugweganzeige</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="971"/>
+        <location filename="kflogconfig.cpp" line="984"/>
         <source>Flight Path Line Width</source>
         <translation>Flugweg Linienbreite</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="972"/>
+        <location filename="kflogconfig.cpp" line="985"/>
         <source>Set pen line width in pixel.</source>
         <translation>Definiere die Stiftbreite in Pixel.</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1010"/>
-        <location filename="kflogconfig.cpp" line="1127"/>
-        <location filename="kflogconfig.cpp" line="1213"/>
-        <location filename="kflogconfig.cpp" line="1479"/>
-        <location filename="kflogconfig.cpp" line="1604"/>
-        <location filename="kflogconfig.cpp" line="2119"/>
+        <location filename="kflogconfig.cpp" line="1023"/>
+        <location filename="kflogconfig.cpp" line="1140"/>
+        <location filename="kflogconfig.cpp" line="1226"/>
+        <location filename="kflogconfig.cpp" line="1492"/>
+        <location filename="kflogconfig.cpp" line="1617"/>
+        <location filename="kflogconfig.cpp" line="2159"/>
         <source>Default</source>
         <translation>Standard</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1020"/>
-        <location filename="kflogconfig.cpp" line="2176"/>
+        <location filename="kflogconfig.cpp" line="1033"/>
+        <location filename="kflogconfig.cpp" line="2216"/>
         <source>Altitude</source>
         <translation>Höhe</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1023"/>
+        <location filename="kflogconfig.cpp" line="1036"/>
         <source>Cycling</source>
         <translation>Kreisend</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1027"/>
+        <location filename="kflogconfig.cpp" line="1040"/>
         <source>Speed</source>
         <translation>Geschwindigkeit</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1030"/>
+        <location filename="kflogconfig.cpp" line="1043"/>
         <source>Vario</source>
         <translation>Vario</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1034"/>
-        <location filename="kflogconfig.cpp" line="1112"/>
+        <location filename="kflogconfig.cpp" line="1047"/>
+        <location filename="kflogconfig.cpp" line="1125"/>
         <source>Solid</source>
         <translation>durchgezogen</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1037"/>
+        <location filename="kflogconfig.cpp" line="1050"/>
         <source>Engine</source>
         <translation>Motor</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1052"/>
+        <location filename="kflogconfig.cpp" line="1065"/>
         <source>Flight Path Colors</source>
         <translation>Flugwegfarben</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1068"/>
+        <location filename="kflogconfig.cpp" line="1081"/>
         <source>Left turn</source>
         <translation>Linkskreis</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1079"/>
+        <location filename="kflogconfig.cpp" line="1092"/>
         <source>Right turn</source>
         <translation>Rechtskreis</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1090"/>
+        <location filename="kflogconfig.cpp" line="1103"/>
         <source>Mixed turn</source>
         <translation>beidseitig</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1101"/>
+        <location filename="kflogconfig.cpp" line="1114"/>
         <source>Straight</source>
         <translation>Geradeaus</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1123"/>
+        <location filename="kflogconfig.cpp" line="1136"/>
         <source>Engine noise</source>
         <translation>Motorgeräusch</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1160"/>
+        <location filename="kflogconfig.cpp" line="1173"/>
         <source>Map Projection</source>
         <translation>Kartenprojektion</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1172"/>
+        <location filename="kflogconfig.cpp" line="1185"/>
         <source>Type of Projection</source>
         <translation>Projektionstyp</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1188"/>
+        <location filename="kflogconfig.cpp" line="1201"/>
         <source>Setup Projection</source>
         <translation>Konfiguration der Projektion</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1204"/>
+        <location filename="kflogconfig.cpp" line="1217"/>
         <source>Origin Longitude</source>
         <translation>Original Längengrad</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1250"/>
+        <location filename="kflogconfig.cpp" line="1263"/>
         <source>Map Scales</source>
         <translation>Kartenskala</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1262"/>
+        <location filename="kflogconfig.cpp" line="1275"/>
         <source>Scale Range (Meters per Pixel)</source>
         <translation>Skalenwert (Meter pro Pixel)</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1264"/>
+        <location filename="kflogconfig.cpp" line="1277"/>
         <source>Lower limit</source>
         <translation>Untere Grenze</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1287"/>
+        <location filename="kflogconfig.cpp" line="1300"/>
         <source>Upper limit</source>
         <translation>Obere Grenze</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1325"/>
+        <location filename="kflogconfig.cpp" line="1338"/>
         <source>Scale Thresholds (Meters per Pixel)</source>
         <translation>Skalaschwellen (Meter pro Pixel)</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1327"/>
+        <location filename="kflogconfig.cpp" line="1340"/>
         <source>Use small icons</source>
         <translation>Kleine Symbole</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1347"/>
+        <location filename="kflogconfig.cpp" line="1360"/>
         <source>Draw waypoint labels</source>
         <translation>Zeichne Wegpunktbeschriftung</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1369"/>
-        <location filename="kflogconfig.cpp" line="1393"/>
-        <location filename="kflogconfig.cpp" line="1417"/>
+        <location filename="kflogconfig.cpp" line="1382"/>
+        <location filename="kflogconfig.cpp" line="1406"/>
+        <location filename="kflogconfig.cpp" line="1430"/>
         <source>Threshold</source>
         <translation>Grenzwert</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1514"/>
+        <location filename="kflogconfig.cpp" line="1527"/>
         <source>Paths</source>
         <translation>Verzeichnisse</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1528"/>
+        <location filename="kflogconfig.cpp" line="1541"/>
         <source>Flight Directory</source>
         <translation>Flugweg Verzeichnis</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1547"/>
+        <location filename="kflogconfig.cpp" line="1560"/>
         <source>Task Directory</source>
         <translation>Aufgaben Verzeichnis</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1566"/>
+        <location filename="kflogconfig.cpp" line="1579"/>
         <source>Waypoint Directory</source>
         <translation>Wegpunkt Verzeichnis</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1585"/>
+        <location filename="kflogconfig.cpp" line="1598"/>
         <source>Map Directory</source>
         <translation>Karten Verzeichnis</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1633"/>
+        <location filename="kflogconfig.cpp" line="1646"/>
         <source>Identity</source>
         <translation>Idendität</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1648"/>
+        <location filename="kflogconfig.cpp" line="1661"/>
         <source>Pilot</source>
         <translation>Pilot</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1662"/>
+        <location filename="kflogconfig.cpp" line="1675"/>
         <source>Forename</source>
         <translation>Vorname</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1663"/>
+        <location filename="kflogconfig.cpp" line="1676"/>
         <source>Surname</source>
         <translation>Nachname</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1664"/>
+        <location filename="kflogconfig.cpp" line="1677"/>
         <source>Birthday</source>
         <translation>Geburtsdatum</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1665"/>
+        <location filename="kflogconfig.cpp" line="1678"/>
         <source>Language</source>
         <translation>Sprache</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1670"/>
-        <location filename="kflogconfig.cpp" line="1693"/>
+        <location filename="kflogconfig.cpp" line="1683"/>
+        <location filename="kflogconfig.cpp" line="1706"/>
         <source>Homesite</source>
         <translation>Heimatflugplatz</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1679"/>
+        <location filename="kflogconfig.cpp" line="1692"/>
         <source>Add country as two letter code according to ISO 3166-1-alpha-2</source>
         <translation>Zwei-Buchstabe Länderkennzeichen nach ISO 3166-1-alpha-2 angeben</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1694"/>
+        <location filename="kflogconfig.cpp" line="1707"/>
         <source>Country</source>
         <translation>Land</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1695"/>
+        <location filename="kflogconfig.cpp" line="1708"/>
         <source>Latitude</source>
         <translation>Breite</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1696"/>
+        <location filename="kflogconfig.cpp" line="1709"/>
         <source>Longitude</source>
         <translation>Länge</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1699"/>
+        <location filename="kflogconfig.cpp" line="1712"/>
         <source>Homesite choice</source>
         <translation>Auswahl Heimatflugplatz</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1839"/>
+        <location filename="kflogconfig.cpp" line="1852"/>
         <source>Add countries to be loaded as 2 letter code according to ISO 3166-1.</source>
         <translation>Ländercode der zu ladenden Objekte (2 Zeichen nach ISO 3166-1).</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1840"/>
+        <location filename="kflogconfig.cpp" line="1853"/>
         <source>Read in all objects inside home site radius.</source>
         <translation>Lese alle Objekte innerhalb des Heimat-Flugplatz-Radiuses ein.</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1855"/>
-        <location filename="kflogconfig.cpp" line="1907"/>
+        <location filename="kflogconfig.cpp" line="1868"/>
+        <location filename="kflogconfig.cpp" line="1944"/>
         <source>Off</source>
         <translation>Aus</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1858"/>
-        <source>Read Outlandings:</source>
-        <translation>Lese Aussenlandefelder:</translation>
+        <location filename="kflogconfig.cpp" line="2813"/>
+        <source> days</source>
+        <translation> Tage</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1859"/>
+        <location filename="kflogconfig.cpp" line="1872"/>
         <source>Activate checkbox, if outlandings should be read in.</source>
         <translation>Markiere Kontrolkästchen zum Einlesen der Außenlandefelder.</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1861"/>
-        <location filename="kflogconfig.cpp" line="1886"/>
-        <location filename="kflogconfig.cpp" line="2018"/>
+        <location filename="kflogconfig.cpp" line="1874"/>
+        <location filename="kflogconfig.cpp" line="1923"/>
+        <location filename="kflogconfig.cpp" line="2058"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1862"/>
+        <location filename="kflogconfig.cpp" line="1875"/>
         <source>Press button to download the Welt2000 file.</source>
         <translation>Betätige Knopf zum Herunterladen der Welt2000 Datei.</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1869"/>
+        <location filename="kflogconfig.cpp" line="1880"/>
+        <source>Enable Welt2000 update after:</source>
+        <translation>Erlaube Welt2000 Aktualisierung nach:</translation>
+    </message>
+    <message>
+        <location filename="kflogconfig.cpp" line="1890"/>
+        <location filename="kflogconfig.cpp" line="2809"/>
+        <source> day</source>
+        <translation> Tag</translation>
+    </message>
+    <message>
+        <location filename="kflogconfig.cpp" line="1898"/>
         <source>Country Filter</source>
         <translation>Länderfilter</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1870"/>
+        <location filename="kflogconfig.cpp" line="1899"/>
         <source>Home Radius</source>
         <translation>Heimatflugplatz-Radius</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1891"/>
+        <location filename="kflogconfig.cpp" line="1928"/>
         <source>Countries:</source>
         <translation>Länder:</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1900"/>
+        <location filename="kflogconfig.cpp" line="1937"/>
         <source>Home Radius:</source>
         <translation>Heimatflugplatz-Radius:</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1920"/>
+        <location filename="kflogconfig.cpp" line="1957"/>
         <source>*_hot.api containing Hotspot points</source>
         <translation>*_hot.api mit Thermikquellen</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1999"/>
+        <location filename="kflogconfig.cpp" line="2039"/>
         <source>openAIP Airspaces: www.openaip.net</source>
         <translation>openAIP Lufträume: www.openaip.net</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2009"/>
+        <location filename="kflogconfig.cpp" line="2049"/>
         <source>Add countries to be downloaded as 2 letter code according to ISO 3166-1.</source>
         <translation>Ländercode der runter zu ladenden Objekte (2 Zeichen nach ISO 3166-1).</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2019"/>
+        <location filename="kflogconfig.cpp" line="2059"/>
         <source>Press button to download the desired openAIP airspace files.</source>
         <translation>Betätige Knopf zum Download der gewünschten openAIP Luftraumdaten.</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2026"/>
+        <location filename="kflogconfig.cpp" line="2066"/>
         <source>Countries</source>
         <translation>Länder</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2066"/>
+        <location filename="kflogconfig.cpp" line="2106"/>
         <source>Waypoint Catalog</source>
         <translation>Wegpunkt-Katalog</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2078"/>
+        <location filename="kflogconfig.cpp" line="2118"/>
         <source>Default Catalog</source>
         <translation>Standard-Katalog</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2087"/>
+        <location filename="kflogconfig.cpp" line="2127"/>
         <source>Empty</source>
         <translation>Leer</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2090"/>
+        <location filename="kflogconfig.cpp" line="2130"/>
         <source>Last used</source>
         <translation>Letzter benutzte</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2093"/>
+        <location filename="kflogconfig.cpp" line="2133"/>
         <source>Specific</source>
         <translation>Bestimmter</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2102"/>
+        <location filename="kflogconfig.cpp" line="2142"/>
         <source>Press button to make a specific catalog selection.</source>
         <translation>Betätige Knopf um einen bestimmten Katalog auszuwählen.</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2140"/>
-        <location filename="kflogconfig.cpp" line="2152"/>
+        <location filename="kflogconfig.cpp" line="2180"/>
+        <location filename="kflogconfig.cpp" line="2192"/>
         <source>Units</source>
         <translation>Einheiten</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2157"/>
+        <location filename="kflogconfig.cpp" line="2197"/>
         <source>meters</source>
         <translation>Meter</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2158"/>
+        <location filename="kflogconfig.cpp" line="2198"/>
         <source>feet</source>
         <translation>Fuß</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2163"/>
+        <location filename="kflogconfig.cpp" line="2203"/>
         <source>kilometers</source>
         <translation>Kilometer</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2164"/>
+        <location filename="kflogconfig.cpp" line="2204"/>
         <source>statute miles</source>
         <translation>Landmeilen</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2165"/>
+        <location filename="kflogconfig.cpp" line="2205"/>
         <source>nautical miles</source>
         <translation>Nautische Meilen</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2177"/>
+        <location filename="kflogconfig.cpp" line="2217"/>
         <source>Distance</source>
         <translation>Entfernung</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2230"/>
+        <location filename="kflogconfig.cpp" line="2270"/>
         <source>All formats</source>
         <translation>Alle Formate</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2241"/>
+        <location filename="kflogconfig.cpp" line="2281"/>
         <source>Select a default catalog</source>
         <translation>Setze Standard-Katalog</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2380"/>
+        <location filename="kflogconfig.cpp" line="2420"/>
         <source>Airspace Files in </source>
         <translation>Luftraumdateien in </translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2394"/>
-        <location filename="kflogconfig.cpp" line="2471"/>
+        <location filename="kflogconfig.cpp" line="2434"/>
+        <location filename="kflogconfig.cpp" line="2511"/>
         <source>Check/Uncheck all</source>
         <translation>Alle Ein-/Ausschalten</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2541"/>
-        <location filename="kflogconfig.cpp" line="2567"/>
+        <location filename="kflogconfig.cpp" line="2581"/>
+        <location filename="kflogconfig.cpp" line="2607"/>
         <source>Wrong country entries</source>
         <translation>Falsche Länderkennzeichen</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2543"/>
+        <location filename="kflogconfig.cpp" line="2583"/>
         <source>Please check the openAIP country entries!</source>
         <translation>Bitte openAIP Länderkürzel überprüfen!</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2545"/>
-        <location filename="kflogconfig.cpp" line="2571"/>
+        <location filename="kflogconfig.cpp" line="2585"/>
+        <location filename="kflogconfig.cpp" line="2611"/>
         <source>The expected format is a two letter country code separated by spaces</source>
         <translation>Das erwartete Format sind ein oder mehrere zwei-Zeichen Ländercodes getrennt durch Leerzeichen</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2569"/>
+        <location filename="kflogconfig.cpp" line="2609"/>
         <source>Please check the Welt2000 country entries!</source>
         <translation>Bitte die Welt2000 Ländercodes überprüfen!</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2629"/>
+        <location filename="kflogconfig.cpp" line="2669"/>
         <source>Reset to Defaults?</source>
         <translation>Auf Standardwerte zurücksetzen?</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2631"/>
+        <location filename="kflogconfig.cpp" line="2671"/>
         <source>Please note that all map elements are reset to their default values!</source>
         <translation>Bitte beachten: Die Werte aller Kartenelemente werden auf ihren Standardwert zurückgesetzt!</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2633"/>
+        <location filename="kflogconfig.cpp" line="2673"/>
         <source>Do you really want that?</source>
         <translation>Wollen Sie das wirklich?</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="324"/>
+        <location filename="kflogconfig.cpp" line="327"/>
         <source>Restart KFLog</source>
         <translation>KFLog neu starten</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="836"/>
+        <location filename="kflogconfig.cpp" line="849"/>
         <source>Control C</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="837"/>
+        <location filename="kflogconfig.cpp" line="850"/>
         <source>Control D</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="842"/>
+        <location filename="kflogconfig.cpp" line="855"/>
         <source>TMZ</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1178"/>
+        <location filename="kflogconfig.cpp" line="1191"/>
         <source>Conical orthomorphic (Lambert)</source>
         <translation>Lambert</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1206"/>
+        <location filename="kflogconfig.cpp" line="1219"/>
         <source>1. Standard Parallel</source>
         <translation>1. Standard Parallele</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1203"/>
+        <location filename="kflogconfig.cpp" line="1216"/>
         <source>2. Standard Parallel</source>
         <translation>2. Standard Parallele</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1919"/>
-        <location filename="kflogconfig.cpp" line="2039"/>
+        <location filename="kflogconfig.cpp" line="1871"/>
+        <source>Read Outlandings</source>
+        <translation>Lese Außenlandefelder</translation>
+    </message>
+    <message>
+        <location filename="kflogconfig.cpp" line="1956"/>
+        <location filename="kflogconfig.cpp" line="2079"/>
         <source>Uncheck All to enable loading of single files.</source>
         <translation>Entferne Markierung vor Alle, um einzelne Dateien laden zu können.</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1922"/>
+        <location filename="kflogconfig.cpp" line="1959"/>
         <source>*_wpt.api containing Airfield points</source>
         <translation>*_wpt_api mit Flugplatzdaten</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1944"/>
+        <location filename="kflogconfig.cpp" line="1981"/>
         <source>Point data source:</source>
         <translation>Datenquelle Orte:</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2040"/>
+        <location filename="kflogconfig.cpp" line="2080"/>
         <source>*.txt containing OpenAir data</source>
         <translation>*.txt mit OpenAir Daten</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2041"/>
+        <location filename="kflogconfig.cpp" line="2081"/>
         <source>*.aip containing openAIP data</source>
         <translation>*.aip mit openAIP Daten</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2178"/>
+        <location filename="kflogconfig.cpp" line="2218"/>
         <source>Position</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2231"/>
+        <location filename="kflogconfig.cpp" line="2271"/>
         <source>KFLog</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2232"/>
+        <location filename="kflogconfig.cpp" line="2272"/>
         <source>Cumulus</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2233"/>
+        <location filename="kflogconfig.cpp" line="2273"/>
         <source>Cambridge</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2234"/>
+        <location filename="kflogconfig.cpp" line="2274"/>
         <source>Filser txt</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2235"/>
+        <location filename="kflogconfig.cpp" line="2275"/>
         <source>Filser da4</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2236"/>
+        <location filename="kflogconfig.cpp" line="2276"/>
         <source>SeeYou</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2237"/>
+        <location filename="kflogconfig.cpp" line="2277"/>
         <source>Volkslogger</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2238"/>
+        <location filename="kflogconfig.cpp" line="2278"/>
         <source>Welt2000</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2457"/>
+        <location filename="kflogconfig.cpp" line="2497"/>
         <source>Point Files in </source>
         <translation>Punktdateien in </translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1921"/>
+        <location filename="kflogconfig.cpp" line="1958"/>
         <source>*_nav.api containing Navaid points</source>
         <translation>*_nav.api mit Funknavigationshilfen</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1179"/>
+        <location filename="kflogconfig.cpp" line="1192"/>
         <source>Cylindrical Equidistant (Plate CarrÃ©)</source>
         <oldsource>Cylindrical Equidistant (Plate Carré)</oldsource>
         <translation>Zylinder</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1824"/>
+        <location filename="kflogconfig.cpp" line="1837"/>
         <source>Points</source>
         <translation>Orte</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1985"/>
+        <location filename="kflogconfig.cpp" line="2025"/>
         <source>Airspaces</source>
         <translation>Lufträume</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="1915"/>
+        <location filename="kflogconfig.cpp" line="1952"/>
         <source>Select point data files to be used</source>
         <translation>Wähle die zu benutzenden Punktdateien aus</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="2036"/>
+        <location filename="kflogconfig.cpp" line="2076"/>
         <source>Select airspace files to be used</source>
         <translation>Wähle die zu benutzenden Luftraumdateien aus</translation>
     </message>
@@ -4028,7 +4044,7 @@ F:...............Vordergrund
     </message>
     <message>
         <location filename="waypointcatalog.cpp" line="1825"/>
-        <location filename="welt2000.cpp" line="369"/>
+        <location filename="welt2000.cpp" line="365"/>
         <source>Emergency Field No: </source>
         <translation>Notfeld No: </translation>
     </message>
@@ -5120,144 +5136,144 @@ Bitte Kabel und Verbindungseinstellungen überprüfen.</translation>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="375"/>
+        <location filename="TaskEditor.cpp" line="378"/>
         <source>Move up</source>
         <translation>Verschiebe hoch</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="381"/>
+        <location filename="TaskEditor.cpp" line="386"/>
         <source>Move down</source>
         <translation>Verschiebe runter</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="386"/>
+        <location filename="TaskEditor.cpp" line="392"/>
         <source>Invert</source>
         <translation>Umdrehen</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="419"/>
+        <location filename="TaskEditor.cpp" line="425"/>
         <source>Waypoints</source>
         <translation>Wegpunkte</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="424"/>
+        <location filename="TaskEditor.cpp" line="430"/>
         <source>Airfields</source>
         <translation>Flugplätze</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="429"/>
+        <location filename="TaskEditor.cpp" line="435"/>
         <source>Outlandings</source>
         <translation>Außenlandefelder</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="434"/>
+        <location filename="TaskEditor.cpp" line="440"/>
         <source>Hotspots</source>
         <translation>Thermikquellen</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="439"/>
+        <location filename="TaskEditor.cpp" line="445"/>
         <source>Navaids</source>
         <translation>Funknavigationspunkte</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="444"/>
+        <location filename="TaskEditor.cpp" line="450"/>
         <source>No point data found</source>
         <translation>Keine Punkte gefunden</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="651"/>
+        <location filename="TaskEditor.cpp" line="657"/>
         <source>FAI area task violation!&lt;br&gt;&lt;br&gt;Please remove all not necessary route points.&lt;br&gt;&lt;br&gt;See Help menu for more information.</source>
         <translation>Verletzung der FAI Regions Aufgabe!&lt;br&gt;&lt;br&gt;Bitte alle unbenötigten Punkte aus der Aufgabe entfernen.&lt;br&gt;&lt;br&gt;Für Details siehe Hilfe-Menü.</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="655"/>
+        <location filename="TaskEditor.cpp" line="661"/>
         <source>Too much route points</source>
         <translation>Zu viele Wendepunkte</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="683"/>
+        <location filename="TaskEditor.cpp" line="689"/>
         <source>&lt;html&gt;You can define a FAI task with either Take-off, Start, End and Landing or Take-off, Start, End, Landing and &lt;b&gt;one&lt;/b&gt; additional Route point.&lt;br&gt;The points &lt;i&gt;Take-off&lt;/i&gt;, &lt;i&gt;Start&lt;/i&gt;, &lt;i&gt;End&lt;/i&gt; and &lt;i&gt;Landing&lt;/i&gt; are &lt;b&gt;mandatory!&lt;/b&gt;&lt;br&gt;&lt;br&gt;The FAI area calculation will be made with Start and End point or Start and Route point, depending weather the route point is defined or not.&lt;br&gt;&lt;br&gt;New points are inserted always after the selected one.&lt;/html&gt;</source>
         <oldsource>&lt;b&gt;Task Type FAI Area:&lt;/b&gt;&lt;br&gt;&lt;br&gt;You can define a FAI task with either Takeoff, Start, End and Landing or Takeoff, Start, End, Landing and &lt;b&gt;one&lt;/b&gt; additional Route point.&lt;br&gt;The points &lt;i&gt;Takeoff&lt;/i&gt;, &lt;i&gt;Start&lt;/i&gt;, &lt;i&gt;End&lt;/i&gt; and &lt;i&gt;Landing&lt;/i&gt; are &lt;b&gt;mandatory!&lt;/b&gt;&lt;br&gt;&lt;br&gt;The FAI area calculation will be made with Start and End point or Start and Route point, depending weather the route point is defined or not.&lt;br&gt;&lt;br&gt;New points are inserted always after the selected one.</oldsource>
         <translation>&lt;html&gt;Du kannst eine FAI Aufgabe mit entweder Startort, Abflugpunkt, Zielpunkt und Landeort oder Startort,Abflugpunkt, Zielpunkt, Landeort und &lt;b&gt;einem&lt;/b&gt; weiteren Wegpunkt definieren.&lt;br&gt;Die Punkte &lt;i&gt;Startort&lt;/i&gt;, &lt;i&gt;Startpunkt&lt;/i&gt;, &lt;i&gt;Zielpunkt&lt;/i&gt; und &lt;i&gt;Landeort&lt;/i&gt; sind &lt;b&gt;Pflichtangaben!&lt;/b&gt;&lt;br&gt;&lt;br&gt;Die Berechnung der FAI Regions wird mit Abflugpunkt und Zielpunkt oder mit Abflugpunkt und Wegpunkt durchgeführt abhängig davon ob ein Wegpunkte definiert wurde oder nicht.&lt;br&gt;&lt;br&gt;Neue Punkte werden hinter dem ausgewählten Punkt eingefügt.&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="692"/>
+        <location filename="TaskEditor.cpp" line="698"/>
         <source>&lt;html&gt;You can define a task with Take-off, Start, End, Landing and Route points. The points &lt;i&gt;Take-off&lt;/i&gt;, &lt;i&gt;Start&lt;/i&gt;, &lt;i&gt;End&lt;/i&gt; and &lt;i&gt;Landing&lt;/i&gt; are &lt;b&gt;mandatory!&lt;/b&gt; Additional route points can be added.&lt;br&gt;&lt;br&gt;New points are inserted always after the selected one.&lt;/html&gt;</source>
         <oldsource>&lt;html&gt;&lt;b&gt;Task Type Traditional Route:&lt;/b&gt;&lt;br&gt;&lt;br&gt;You can define a task with Takeoff, Start, End, Landing and Route points. The points &lt;i&gt;Takeoff&lt;/i&gt;, &lt;i&gt;Start&lt;/i&gt;, &lt;i&gt;End&lt;/i&gt; and &lt;i&gt;Landing&lt;/i&gt; are &lt;b&gt;mandatory!&lt;/b&gt; Additional route points can be added.&lt;br&gt;&lt;br&gt;New points are inserted always after the selected one.&lt;/html&gt;</oldsource>
         <translation>&lt;html&gt;Du kannst eine Aufgabe mit Startpunkt, Abflugpunkt, Zielpunkt, Landeort und Wendepunkten definieren. Die Punkte &lt;i&gt;Startort&lt;/i&gt;, &lt;i&gt;Abflugpunkt&lt;/i&gt;,&lt;i&gt;Zielpunkt&lt;/i&gt; und &lt;i&gt;Landeort&lt;/i&gt; sind &lt;b&gt;Pflichtangaben&lt;/b&gt;. Weitere Wendepunkte können hinzugefügt werden.&lt;br&gt;&lt;br&gt;Neue Wendepunkte werden hinter dem gewählten Punkt eingefügt.&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="703"/>
+        <location filename="TaskEditor.cpp" line="709"/>
         <source>Help FAI</source>
         <translation>Hilfe FAI</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="708"/>
+        <location filename="TaskEditor.cpp" line="714"/>
         <source>Help Route</source>
         <translation>Hilfe Route</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="760"/>
+        <location filename="TaskEditor.cpp" line="766"/>
         <source>Take Off</source>
         <translation>Start</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="763"/>
+        <location filename="TaskEditor.cpp" line="769"/>
         <source>Begin of Task</source>
         <translation>Begin der Aufgabe</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="766"/>
+        <location filename="TaskEditor.cpp" line="772"/>
         <source>Route Point</source>
         <translation>Wendepunkt</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="769"/>
+        <location filename="TaskEditor.cpp" line="775"/>
         <source>End of Task</source>
         <translation>Aufgaben Ende</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="772"/>
+        <location filename="TaskEditor.cpp" line="778"/>
         <source>Free Point</source>
         <translation>Freier Punkt</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="775"/>
+        <location filename="TaskEditor.cpp" line="781"/>
         <source>Landing</source>
         <translation>Landeort</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="778"/>
+        <location filename="TaskEditor.cpp" line="784"/>
         <source>Unkown</source>
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="1212"/>
+        <location filename="TaskEditor.cpp" line="1218"/>
         <source>Task name already in use!</source>
         <translation>Aufgabenname wird schon verwendet!</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="1213"/>
+        <location filename="TaskEditor.cpp" line="1219"/>
         <source>&lt;html&gt;The chosen task name is already in use!&lt;br&gt;&lt;br&gt;Please enter another one.&lt;/html&gt;</source>
         <translation>&lt;html&gt;Der gewählte Aufgabename ist bereits in Verwendung!&lt;br&gt;&lt;br&gt;Bitte einen anderen wählen.&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="1223"/>
+        <location filename="TaskEditor.cpp" line="1229"/>
         <source>Task is incomplete!</source>
         <translation>Aufgabe ist unvollständig!</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="1224"/>
+        <location filename="TaskEditor.cpp" line="1230"/>
         <source>&lt;html&gt;A task consist of at least four waypoints!&lt;br&gt;&lt;br&gt;Please add the missing points.&lt;br&gt;&lt;br&gt;See Help menu for more information.&lt;/html&gt;</source>
         <translation>&lt;html&gt;Eine Aufgabe besteht aus mindestens vier Punkten&lt;br&gt;&lt;br&gt;Bitte die fehlenden Punkte hinzufügen.&lt;br&gt;&lt;br&gt;Siehe Hilfe-Menü für Details.&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="1234"/>
+        <location filename="TaskEditor.cpp" line="1240"/>
         <source>FAI area task violation!</source>
         <translation>Verletzung FAI-Region-Regeln!</translation>
     </message>
     <message>
-        <location filename="TaskEditor.cpp" line="1235"/>
+        <location filename="TaskEditor.cpp" line="1241"/>
         <source>&lt;html&gt;A FAI area task can have one additional route point only!&lt;br&gt;&lt;br&gt;Please remove all not needed other points.&lt;br&gt;&lt;br&gt;See Help menu for more information.&lt;/html&gt;</source>
         <translation>&lt;html&gt;Eine FAI-Region-Aufgabe kann nur einen zusätzlichen Wegpunkt haben!&lt;br&gt;&lt;br&gt;Bitte alle nicht benötigten Wendepunkte entfernen&lt;br&gt;&lt;br&gt;Siehe Hilfe-Menü für Details.&lt;/html&gt;</translation>
     </message>
