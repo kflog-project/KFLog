@@ -11,10 +11,18 @@
 #
 ################################################################################
 
+2014-11-25 Axel Pauli <kflog.cumulus@gmail.com>
+
+  * Enhancements for issue #6. An openAIP airspace data update is done after a
+    configurable period of days under the configuration airspace menu.
+
 2014-11-24 Axel Pauli <kflog.cumulus@gmail.com>
 
   * Enhancements for issue #6. A Welt2000 update is done after a configurable
     period of days under the configuration points menu.
+    
+  * Enhancements for issue #6. An openAIP point data update is done after a
+    configurable period of days under the configuration points menu.
 
 2014-11-21 Axel Pauli <kflog.cumulus@gmail.com>
 

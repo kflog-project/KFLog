@@ -30,10 +30,10 @@
 #include "rowdelegate.h"
 #include "welt2000.h"
 
-extern Map          *_globalMap;
-extern MapContents  *_globalMapContents;
-extern MainWindow   *_mainWindow;
-extern QSettings    _settings;
+extern Map         *_globalMap;
+extern MapContents *_globalMapContents;
+extern MainWindow  *_mainWindow;
+extern QSettings   _settings;
 
 QTranslator* KFLogConfig::s_guiTranslator = static_cast<QTranslator *>(0);
 QTranslator* KFLogConfig::s_qtTranslator  = static_cast<QTranslator *>(0);
@@ -248,11 +248,11 @@ void KFLogConfig::slotOk()
 
   slotSelectProjection( ProjectionBase::Unknown );
 
-  // Check for airfield source change
-  bool airfieldSourceHasChanged =
-      ( _settings.value( "/Points/Source", 0 ).toInt() != pointsSourceBox->currentIndex() );
+  // Check for point source change
+  bool pointSourceHasChanged =
+      ( _settings.value( "/Points/Source", OpenAIP ).toInt() != pointsSourceBox->currentIndex() );
 
-  // check for home latitude and longitude change
+  // Check for home latitude and longitude change
   bool homeLatitudeChanged =
       (homeLatE->KFLogDegree() != _settings.value("/Homesite/Latitude", HOME_DEFAULT_LAT).toInt());
 
@@ -283,6 +283,8 @@ void KFLogConfig::slotOk()
   _settings.setValue( "/Points/Source", pointsSourceBox->currentIndex() );
   _settings.setValue( "/Points/Countries", pointsOpenAipCountries->text().trimmed().toLower() );
   _settings.setValue( "/Points/HomeRadius", pointsOpenAipHomeRadius->value() );
+  _settings.setValue( "/Points/EnableUpdates", pointsOpenAipEnableUpdates->isChecked() );
+  _settings.setValue( "/Points/UpdatePeriod", pointsOpenAipUpdatePeriod->value() );
 
   _settings.setValue( "/Welt2000/CountryFilter", welt2000CountryFilter->text().trimmed().toUpper() );
   _settings.setValue( "/Welt2000/HomeRadius", welt2000HomeRadius->value() );
@@ -355,8 +357,10 @@ void KFLogConfig::slotOk()
       _settings.setValue( "/Waypoints/DefaultCatalogName", catalogPathE->text() );
     }
 
-  _settings.setValue( "/Airspace/Countries",
-                      asOpenAipCountries->text().trimmed().toLower() );
+  // Save airspace data items
+  _settings.setValue( "/Airspace/Countries", asOpenAipCountries->text().trimmed().toLower() );
+  _settings.setValue( "/Airspace/EnableUpdates", asOpenAipEnableUpdates->isChecked() );
+  _settings.setValue( "/Airspace/UpdatePeriod", asOpenAipUpdatePeriod->value() );
 
   // Save units
   int altUnit  = m_unitAltitude->itemData( m_unitAltitude->currentIndex() ).toInt();
@@ -380,6 +384,8 @@ void KFLogConfig::slotOk()
       _settings.setValue( "/CylindricalProjection/Parallel", m_cylinPar );
     }
 
+  // Check entries in airspace file table and trigger a reload, if selections
+  // have been changed.
   __checkAirspaceFileTable();
 
   // Configuration subwidgets shall save their configuration.
@@ -387,23 +393,34 @@ void KFLogConfig::slotOk()
 
   emit scaleChanged((int)lLimitN->value(), (int)uLimitN->value());
 
-  // Check, if airfield source has been changed.
-  // Check, if airfield load list has been changed.
+  // Check, if point source has been changed.
+  // Check, if point load list has been changed.
   // Check, if homesite has been modified.
-  if( airfieldSourceHasChanged == true ||
-      __checkAirfieldFileTable() == true ||
+  // Check, if automatic update has been enabled and if period of days has been modified.
+  if( pointSourceHasChanged == true ||
+      __checkPointFileTable() == true ||
       homeLatitudeChanged == true || homeLongitudeChanged == true )
     {
       emit reloadPointData();
     }
-  // Check, if openAIP point data must be updated
-  else if( pointsSourceBox->currentIndex() == 0 &&
-      ( m_afOpenAipHomeRadiusValue !=  pointsOpenAipHomeRadius->value() ||
-        m_afOpenAipCountryValue != pointsOpenAipCountries->text() ) )
+  else if( pointsSourceBox->currentIndex() == OpenAIP )
     {
-      emit reloadPointData();
+      // Check, if openAIP point data must be updated
+      if( m_afOpenAipHomeRadiusValue !=  pointsOpenAipHomeRadius->value() ||
+          m_afOpenAipCountryValue != pointsOpenAipCountries->text() )
+	{
+	  emit reloadPointData();
+	}
+      // Check update period of openAIP point data and initiate an update, if the
+      // update time period has expired.
+      else if( pointsOpenAipEnableUpdates->isChecked() &&
+	      ( m_afOpenAipUpdateCheck != pointsOpenAipEnableUpdates->isChecked() ||
+	        m_afOpenAipUpdateValue != pointsOpenAipUpdatePeriod->value() ) )
+	{
+	  emit checkOpenAipPointData4Update();
+	}
     }
-  else if( pointsSourceBox->currentIndex() == 1 )
+  else if( pointsSourceBox->currentIndex() == Welt2000 )
     {
       // Check, if Welt2000 data must be updated
       if( m_wel2000HomeRadiusValue !=  welt2000HomeRadius->value() ||
@@ -415,20 +432,30 @@ void KFLogConfig::slotOk()
       // Check update period of Welt2000 data and initiate an update, if the
       // update time period has expired.
       else if( welt2000EnableUpdates->isChecked() &&
-	       m_welt2000UpdateValue != welt2000UpdatePeriod->value() )
+	       ( m_welt2000UpdateCheck != welt2000EnableUpdates->isChecked() ||
+	         m_welt2000UpdateValue != welt2000UpdatePeriod->value() ) )
 	{
-	  Welt2000 w2000;
-	  w2000.check4update();
+	  checkWelt20004Update();
 	}
     }
 
+  // If countries are defined for airspace downloading, we check, if automatic
+  // updates are desired.
+  if( asOpenAipCountries->text().trimmed().toLower().isEmpty() == false )
+    {
+      if( asOpenAipEnableUpdates->isChecked() &&
+	  ( m_asOpenAipUpdateCheck != asOpenAipEnableUpdates->isChecked() ||
+	    m_asOpenAipUpdateValue != asOpenAipUpdatePeriod->value() ) )
+      	{
+      	  emit checkOpenAipAsData4Update();
+      	}
+    }
+
+  _settings.sync();
   emit configOk();
   accept();
 }
 
-/**
- * Checks the airspace file table for changes.
- */
 void KFLogConfig::__checkAirspaceFileTable()
 {
   QTableWidgetItem* asItem = m_asFileTable->item( 0, 0 );
@@ -486,7 +513,7 @@ void KFLogConfig::__checkAirspaceFileTable()
     }
 }
 
-bool KFLogConfig::__checkAirfieldFileTable()
+bool KFLogConfig::__checkPointFileTable()
 {
   QTableWidgetItem* asItem = m_pointFileTable->item( 0, 0 );
 
@@ -494,7 +521,7 @@ bool KFLogConfig::__checkAirfieldFileTable()
 
   if( asItem != 0 )
     {
-      // Save Airspace files to be loaded, if airspace tabulator was opened
+      // Save files items to be loaded, if file table was opened
       // by the user.
       QStringList files;
 
@@ -543,7 +570,7 @@ bool KFLogConfig::__checkAirfieldFileTable()
             }
         }
 
-      if( changed == true && _settings.value( "/Points/Source", 0 ).toInt() == 0 )
+      if( changed == true && _settings.value( "/Points/Source", OpenAIP ).toInt() == 0 )
 	{
 	  // Return true, if this source is selected.
 	  return true;
@@ -555,7 +582,7 @@ bool KFLogConfig::__checkAirfieldFileTable()
 
 void KFLogConfig::slotTextEditedCountry( const QString& text )
 {
-  // Change edited text to upper cases
+  // Change edited text to upper cases.
   homeCountryE->setText( text.toUpper() );
 }
 
@@ -1920,18 +1947,40 @@ void KFLogConfig::__addPointsTab()
 
   int grow = 0;
   QGridLayout *oaipLayout = new QGridLayout(m_openAipGroup);
-  QPushButton* downloadOpenAip = new QPushButton( tr("Download") );
-  oaipLayout->addWidget( downloadOpenAip, grow, 0 );
 
-  connect( downloadOpenAip, SIGNAL(clicked()), this, SLOT(slotDownloadOpenAipAf()));
-
-  oaipLayout->addWidget(new QLabel( tr("Countries:") ), grow, 1);
+  oaipLayout->addWidget( new QLabel( tr("Countries:") ), grow, 0 );
 
   pointsOpenAipCountries = new QLineEdit;
   pointsOpenAipCountries->setMinimumWidth( 150 );
   pointsOpenAipCountries->setValidator( new QRegExpValidator(rx, this) );
   pointsOpenAipCountries->setToolTip( toolTip );
-  oaipLayout->addWidget( pointsOpenAipCountries, grow, 2 );
+  oaipLayout->addWidget( pointsOpenAipCountries, grow, 1, 1, 3 );
+  grow++;
+
+  QPushButton* downloadOpenAip = new QPushButton( tr("Download") );
+  downloadOpenAip->setToolTip( tr("Press button to download the entered countries.") );
+  oaipLayout->addWidget( downloadOpenAip, grow, 0 );
+
+  connect( downloadOpenAip, SIGNAL(clicked()), this, SLOT(slotDownloadOpenAipPointData()));
+
+  pointsOpenAipEnableUpdates = new QCheckBox( tr("Enable updates after:") );
+  pointsOpenAipEnableUpdates->setChecked( false );
+  oaipLayout->addWidget( pointsOpenAipEnableUpdates, grow, 1 );
+
+  connect( pointsOpenAipEnableUpdates, SIGNAL(stateChanged(int)),
+	   this, SLOT(slotPointsOpenAipUpdateStateChanged(int)) );
+
+  pointsOpenAipUpdatePeriod = new QSpinBox;
+  pointsOpenAipUpdatePeriod->setRange( 1, 365 );
+  pointsOpenAipUpdatePeriod->setSingleStep( 1 );
+  pointsOpenAipUpdatePeriod->setButtonSymbols( QSpinBox::PlusMinus );
+  pointsOpenAipUpdatePeriod->setSuffix( tr(" day") );
+  pointsOpenAipUpdatePeriod->setEnabled( false );
+  oaipLayout->addWidget( pointsOpenAipUpdatePeriod, grow, 2 );
+
+  connect( pointsOpenAipUpdatePeriod, SIGNAL(valueChanged( int)),
+	   this, SLOT(slotPointsOpenAipUpdatePeriodChanged(int)) );
+
   grow++;
 
   oaipLayout->addWidget( new QLabel( tr("Home Radius:") ), grow, 0 );
@@ -1943,13 +1992,16 @@ void KFLogConfig::__addPointsTab()
   pointsOpenAipHomeRadius->setSuffix( " Km" );
   pointsOpenAipHomeRadius->setSpecialValueText(tr("Off"));
   pointsOpenAipHomeRadius->setToolTip( toolTip1 );
-  oaipLayout->addWidget( pointsOpenAipHomeRadius, grow, 1 );
+  QHBoxLayout *spinLayout = new QHBoxLayout;
+  spinLayout->setMargin( 0 );
+  spinLayout->addWidget( pointsOpenAipHomeRadius, 5, Qt::AlignLeft );
+  oaipLayout->addLayout( spinLayout, grow, 1 );
   grow++;
 
   oaipLayout->setRowMinimumHeight ( grow, 20 );
   grow++;
 
-  QLabel* hint = new QLabel( tr("Select point data files to be used") );
+  QLabel* hint = new QLabel( tr("Select files to be used") );
   oaipLayout->addWidget( hint, grow, 0, 1, 3 );
   grow++;
 
@@ -1962,16 +2014,16 @@ void KFLogConfig::__addPointsTab()
   m_pointFileTable->setToolTip( tip );
   m_pointFileTable->setSelectionBehavior( QAbstractItemView::SelectRows );
   m_pointFileTable->setShowGrid( true );
-  oaipLayout->addWidget( m_pointFileTable, grow, 0, 1, 3 );
+  oaipLayout->addWidget( m_pointFileTable, grow, 0, 1, 4 );
 
   connect( m_pointFileTable, SIGNAL(cellClicked ( int, int )),
-           SLOT(slotToggleAfCheckBox( int, int )) );
+           SLOT(slotTogglePointSourceCheckBox( int, int )) );
 
   QHeaderView* hHeader = m_pointFileTable->horizontalHeader();
   hHeader->setStretchLastSection( true );
 
   oaipLayout->setRowStretch( grow, 5 );
-  oaipLayout->setColumnStretch( 2, 5 );
+  oaipLayout->setColumnStretch( 3, 5 );
 
   //----------------------------------------------------------------------------
 
@@ -1986,7 +2038,7 @@ void KFLogConfig::__addPointsTab()
   sourceLayout->setColumnStretch( 2, 10 );
 
   connect( pointsSourceBox, SIGNAL(currentIndexChanged(int)),
-           this, SLOT(slotAirfieldSourceChanged(int)) );
+           this, SLOT(slotPointSourceChanged(int)) );
 
   afLayout->addLayout( sourceLayout );
   afLayout->addSpacing(10);
@@ -1996,26 +2048,32 @@ void KFLogConfig::__addPointsTab()
 
   pointsPage->setLayout( afLayout );
 
-  int afSourceIndex = _settings.value( "/Points/Source", 0 ).toInt();
-  pointsSourceBox->setCurrentIndex( afSourceIndex );
-  slotAirfieldSourceChanged( afSourceIndex );
+  int sourceIndex = _settings.value( "/Points/Source", OpenAIP ).toInt();
+  pointsSourceBox->setCurrentIndex( sourceIndex );
+  slotPointSourceChanged( sourceIndex );
 
   m_wel2000HomeRadiusValue     = _settings.value( "/Welt2000/HomeRadius", 0 ).toInt();
   m_welt2000CountryFilterValue = _settings.value( "/Welt2000/CountryFilter", "" ).toString();
   m_welt2000ReadOlValue        = _settings.value( "/Welt2000/LoadOutlandings", true ).toBool();
+  m_welt2000UpdateCheck        = _settings.value( "/Welt2000/EnableUpdates", true ).toBool();
   m_welt2000UpdateValue        = _settings.value( "/Welt2000/UpdatePeriod", 30 ).toInt();
 
   welt2000HomeRadius->setValue( m_wel2000HomeRadiusValue );
   welt2000CountryFilter->setText( m_welt2000CountryFilterValue );
   welt2000ReadOl->setChecked( m_welt2000ReadOlValue );
-  welt2000EnableUpdates->setChecked( _settings.value( "/Welt2000/EnableUpdates", true ).toBool() );
+  welt2000EnableUpdates->setChecked( m_welt2000UpdateCheck );
   welt2000UpdatePeriod->setValue( m_welt2000UpdateValue );
 
+  // Save initial values for later check of change.
   m_afOpenAipHomeRadiusValue = _settings.value( "/Points/HomeRadius", 0 ).toInt();
   m_afOpenAipCountryValue    = _settings.value( "/Points/Countries", "" ).toString();
+  m_afOpenAipUpdateCheck     = _settings.value( "/Points/EnableUpdates", true ).toBool();
+  m_afOpenAipUpdateValue     = _settings.value( "/Points/UpdatePeriod", 30 ).toInt();
 
   pointsOpenAipHomeRadius->setValue( m_afOpenAipHomeRadiusValue );
   pointsOpenAipCountries->setText( m_afOpenAipCountryValue );
+  pointsOpenAipEnableUpdates->setChecked( m_afOpenAipUpdateCheck );
+  pointsOpenAipUpdatePeriod->setValue( m_afOpenAipUpdateValue );
 }
 
 /** Add a tab for airspace file management.*/
@@ -2055,21 +2113,43 @@ void KFLogConfig::__addAirspaceTab()
       asOpenAipCountries->setText(countries);
     }
 
+  asOpenAipEnableUpdates = new QCheckBox( tr("Enable updates after:") );
+  asOpenAipEnableUpdates->setChecked( false );
+
+  connect( asOpenAipEnableUpdates, SIGNAL(stateChanged(int)),
+	   this, SLOT(slotAsOpenAipUpdateStateChanged(int)) );
+
+  asOpenAipUpdatePeriod = new QSpinBox;
+  asOpenAipUpdatePeriod->setRange( 1, 365 );
+  asOpenAipUpdatePeriod->setSingleStep( 1 );
+  asOpenAipUpdatePeriod->setButtonSymbols( QSpinBox::PlusMinus );
+  asOpenAipUpdatePeriod->setSuffix( tr(" day") );
+  asOpenAipUpdatePeriod->setEnabled( false );
+
+  connect( pointsOpenAipUpdatePeriod, SIGNAL(valueChanged( int)),
+	   this, SLOT(slotAsOpenAipUpdatePeriodChanged(int)) );
+
   QPushButton* downloadAs = new QPushButton( tr("Download") );
   downloadAs->setToolTip( tr("Press button to download the desired openAIP airspace files.") );
   downloadAs->setMaximumWidth(downloadAs->sizeHint().width() + 10);
   downloadAs->setMinimumHeight(downloadAs->sizeHint().height() + 2);
   connect( downloadAs, SIGNAL(clicked()), this, SLOT(slotDownloadOpenAipAs()) );
 
-  QFormLayout* openAipFormLayout = new QFormLayout();
-  openAipFormLayout->setSpacing( 10 );
-  openAipFormLayout->addRow( tr( "Countries" ) + ":", asOpenAipCountries );
+  int row = 0;
+  QGridLayout* openAipGridLayout = new QGridLayout;
+  openAipGridLayout->addWidget( new QLabel(tr( "Countries" ) + ":"), row, 0 );
+  openAipGridLayout->addWidget( asOpenAipCountries, row, 1, 1, 2 );
+  row++;
 
-  QVBoxLayout* openAipLayout = new QVBoxLayout;
-  openAipLayout->addLayout( openAipFormLayout );
-  openAipLayout->addWidget( downloadAs, Qt::AlignLeft );
-  openAipGroup->setLayout( openAipLayout );
+  openAipGridLayout->addWidget( downloadAs, row, 0 );
+  openAipGridLayout->addWidget( asOpenAipEnableUpdates, row, 1 );
 
+  QHBoxLayout *spinLayout = new QHBoxLayout;
+  spinLayout->setMargin( 0 );
+  spinLayout->addWidget( asOpenAipUpdatePeriod, 5, Qt::AlignLeft );
+  openAipGridLayout->addLayout( spinLayout, row, 2 );
+
+  openAipGroup->setLayout( openAipGridLayout );
   topLayout->addWidget( openAipGroup );
 
   topLayout->addSpacing( 20 );
@@ -2093,6 +2173,13 @@ void KFLogConfig::__addAirspaceTab()
 
   topLayout->addWidget( m_asFileTable, 10 );
   airspacePage->setLayout( topLayout );
+
+  // Save initial values for later check of change.
+  m_asOpenAipUpdateCheck = _settings.value( "/Airspace/EnableUpdates", true ).toBool();
+  m_asOpenAipUpdateValue = _settings.value( "/Airspace/UpdatePeriod", 30 ).toInt();
+
+  asOpenAipEnableUpdates->setChecked( m_asOpenAipUpdateCheck );
+  asOpenAipUpdatePeriod->setValue( m_asOpenAipUpdateValue );
 }
 
 /** Add a tab for waypoint catalog configuration at sartup
@@ -2338,7 +2425,7 @@ void KFLogConfig::slotDownloadOpenAipAs()
   emit downloadOpenAipAirspaces( false );
 }
 
-void KFLogConfig::slotDownloadOpenAipAf()
+void KFLogConfig::slotDownloadOpenAipPointData()
 {
   QString input = pointsOpenAipCountries->text().trimmed();
 
@@ -2382,11 +2469,7 @@ void KFLogConfig::slotToggleAsCheckBox( int row, int column )
     }
 }
 
-/**
- * Called to toggle the check box of the clicked table cell in the airfield
- * file table.
- */
-void KFLogConfig::slotToggleAfCheckBox( int row, int column )
+void KFLogConfig::slotTogglePointSourceCheckBox( int row, int column )
 {
   QTableWidgetItem* item = m_pointFileTable->item( row, column );
 
@@ -2648,7 +2731,7 @@ QByteArray KFLogConfig::rot47( const QByteArray& input )
   return out;
 }
 
-void KFLogConfig::slotAirfieldSourceChanged( int index )
+void KFLogConfig::slotPointSourceChanged( int index )
 {
   // Toggle source visibility
   if( index == 0 )
@@ -2787,7 +2870,7 @@ bool KFLogConfig::setGuiLanguage( QString newLanguage )
     {
       QCoreApplication::installTranslator( s_qtTranslator );
       qDebug() << "Using Library translation file"
-           << langDir + "/" + langFile
+               << langDir + "/" + langFile
 	       << "for language"
 	       << newLanguage;
 
@@ -2817,4 +2900,38 @@ void KFLogConfig::slotWelt2000UpdatePeriodChanged( int newValue )
 void KFLogConfig::slotWelt2000UpdateStateChanged( int state )
 {
   welt2000UpdatePeriod->setEnabled( state == Qt::Checked ? true : false );
+}
+
+void KFLogConfig::slotPointsOpenAipUpdatePeriodChanged( int newValue )
+{
+  if( newValue == 1 )
+    {
+      pointsOpenAipUpdatePeriod->setSuffix( tr(" day") );
+    }
+  else
+    {
+      pointsOpenAipUpdatePeriod->setSuffix( tr(" days") );
+    }
+}
+
+void KFLogConfig::slotPointsOpenAipUpdateStateChanged( int state )
+{
+  pointsOpenAipUpdatePeriod->setEnabled( state == Qt::Checked ? true : false );
+}
+
+void KFLogConfig::slotAsOpenAipUpdatePeriodChanged( int newValue )
+{
+  if( newValue == 1 )
+    {
+      asOpenAipUpdatePeriod->setSuffix( tr(" day") );
+    }
+  else
+    {
+      asOpenAipUpdatePeriod->setSuffix( tr(" days") );
+    }
+}
+
+void KFLogConfig::slotAsOpenAipUpdateStateChanged( int state )
+{
+  asOpenAipUpdatePeriod->setEnabled( state == Qt::Checked ? true : false );
 }

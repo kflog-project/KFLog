@@ -244,6 +244,11 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   connect( evaluationWindow, SIGNAL(evaluationHelp(QString&)),
            helpWindow, SLOT(slotShowHelpText(QString&)) );
 
+  // Trigger data update checks after 30s
+  QTimer::singleShot(30000, _globalMapContents, SLOT(slotCheckWelt20004Update()));
+  QTimer::singleShot(30000, _globalMapContents, SLOT(slotCheckOpenAipPointData4Update()));
+  QTimer::singleShot(40000, _globalMapContents, SLOT(slotCheckOpenAipAsData4Update()));
+
   slotModifyMenu();
 }
 
@@ -1753,6 +1758,15 @@ void MainWindow::slotConfigureKFLog()
   connect(confDlg, SIGNAL(configOk()), _globalMapConfig, SLOT(slotReadConfig()));
 
   connect(confDlg, SIGNAL(configOk()), _globalMapContents, SLOT(reProject()));
+
+  connect(confDlg, SIGNAL(checkWelt20004Update()),
+	  _globalMapContents, SLOT(slotCheckWelt20004Update()));
+
+  connect(confDlg, SIGNAL(checkOpenAipPointData4Update()),
+	  _globalMapContents, SLOT(slotCheckOpenAipPointData4Update()));
+
+  connect(confDlg, SIGNAL(checkOpenAipAsData4Update()),
+	  _globalMapContents, SLOT(slotCheckOpenAipAsData4Update()));
 
   connect(confDlg, SIGNAL(configOk()), map, SLOT(slotRedrawMap()));
 

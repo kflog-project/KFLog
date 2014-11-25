@@ -80,6 +80,11 @@ class KFLogConfig : public QDialog
 
   enum DefaultWaypointCatalog { Empty = 0, LastUsed, Specific };
 
+  /**
+   * Define an enumeration type as point source index.
+   */
+  enum PointSourceIndex { OpenAIP=0, Welt2000=1 };
+
   static QByteArray rot47( const QByteArray& input );
 
   /**
@@ -140,6 +145,11 @@ class KFLogConfig : public QDialog
   void downloadWelt2000( bool askUser );
 
   /**
+   * Emitted to request a Welt2000 update check.
+   */
+  void checkWelt20004Update();
+
+  /**
    * Emitted to request point data reload after a configuration change.
    */
   void reloadPointData();
@@ -158,6 +168,16 @@ class KFLogConfig : public QDialog
    * Emitted to request an openAIP point data file download.
    */
   void downloadOpenAipPointFiles( bool askUser );
+
+  /**
+   * Emitted to initiate an openAIP point data update check.
+   */
+  void checkOpenAipPointData4Update();
+
+  /**
+   * Emitted to initiate an openAIP airspace data update check.
+   */
+  void checkOpenAipAsData4Update();
 
   /**
    * Emitted, if the map elements should be set to their default values.
@@ -260,12 +280,12 @@ class KFLogConfig : public QDialog
  private slots:
 
  /**
-  * Called, if the Ok button is pressed.
+  * Called, if the OK button was pressed.
   */
  void slotOk();
 
  /**
-  * Called to make all text to upper cases.
+  * Called to convert all entered text to upper cases.
   */
  void slotTextEditedCountry( const QString& text );
 
@@ -276,15 +296,15 @@ class KFLogConfig : public QDialog
  void slotToggleAsCheckBox( int, int );
 
  /**
- * Called to toggle the check box of the clicked table cell in the airfield
+ * Called to toggle the check box of the clicked table cell in the point source
  * file table.
  */
- void slotToggleAfCheckBox( int, int );
+ void slotTogglePointSourceCheckBox( int, int );
 
  /**
-  * Called, if the airfield source has been changed.
+  * Called, if the point source has been changed.
   */
- void slotAirfieldSourceChanged(int sourceIndex);
+ void slotPointSourceChanged(int sourceIndex);
 
  /**
   * Called if a Welt2000 file shall be downloaded.
@@ -297,9 +317,9 @@ class KFLogConfig : public QDialog
  void slotDownloadOpenAipAs();
 
  /**
-  * Called if openAIP airfield files shall be downloaded.
+  * Called if openAIP point data files shall be downloaded.
   */
- void slotDownloadOpenAipAf();
+ void slotDownloadOpenAipPointData();
 
  /**
   * Called to set all map elements to their default value.
@@ -316,33 +336,62 @@ class KFLogConfig : public QDialog
   */
  void slotWelt2000UpdatePeriodChanged( int newValue );
 
+ /**
+  * Called, if the openAIP point update checkbox is clicked.
+  */
+ void slotPointsOpenAipUpdateStateChanged( int state );
+
+ /**
+  * Called, if the value in the openAIP point update box is changed.
+  */
+ void slotPointsOpenAipUpdatePeriodChanged( int newValue );
+
+ /**
+  * Called, if the openAIP airspace update checkbox is clicked.
+  */
+ void slotAsOpenAipUpdateStateChanged( int state );
+
+ /**
+  * Called, if the value in the openAIP airspace update box is changed.
+  */
+ void slotAsOpenAipUpdatePeriodChanged( int newValue );
 
  private:
 
- /** */
+ /** Creates a special configuration widget. */
   void __addPersonalTab();
-  /** */
+
+  /** Creates a special configuration widget. */
   void __addMapTab();
-  /** */
+
+  /** Creates a special configuration widget. */
   void __addFlightTab();
-  /** */
+
+  /** Creates a special configuration widget. */
   void __addPathTab();
-  /** */
+
+  /** Creates a special configuration widget. */
   void __addProjectionTab();
-  /** */
+
+  /** Creates a special configuration widget. */
   void __addScaleTab();
-  /** */
+
+  /** Creates a special configuration widget. */
   int __setScaleValue(int value);
-  /** */
+
+  /** Creates a special configuration widget. */
   int __getScaleValue(double value);
-  /** */
+
+  /** Creates a special configuration widget. */
   void __addPointsTab();
-  /** */
+
+  /** Creates a special configuration widget. */
   void __addAirspaceTab();
-  /** */
+
+  /** Creates a special configuration widget. */
   void __addWaypointTab();
 
-  /** Adds a tab for unit configuration. */
+  /** Creates a special configuration widget. */
   void __addUnitTab();
 
   /**
@@ -351,11 +400,11 @@ class KFLogConfig : public QDialog
   void __checkAirspaceFileTable();
 
   /**
-   * Checks the airfield file table for changes.
+   * Checks the point file table for changes.
    *
    * \returns true in case of changes otherwise false.
    */
-  bool __checkAirfieldFileTable();
+  bool __checkPointFileTable();
 
   /**
    * Checks the openAIP country input for correctness. If not correct
@@ -382,42 +431,46 @@ class KFLogConfig : public QDialog
    */
   void __setLanguageEntriesInBox();
 
+  /**
+   * Main layout manager for this class.
+   */
   QGridLayout *configLayout;
 
   QTreeWidget *setupTree;
 
+  /** Points to the activated and visible configuration page. */
   QWidget *activePage;
-  /** */
+
+  /** Configuration page */
   QWidget* personalPage;
-  /** */
+  /** Configuration page */
   QWidget* mapPage;
-  /** */
+  /** Configuration page */
   QWidget* flightPage;
-  /** */
+  /** Configuration page */
   QWidget* pathPage;
-  /** */
+  /** Configuration page */
   QWidget* topoPage;
-  /** */
+  /** Configuration page */
   QWidget* projPage;
-  /** */
+  /** Configuration page */
   QWidget* scalePage;
-  /** */
+  /** Configuration page */
   QWidget* pointsPage;
-  /** */
+  /** Configuration page */
   QWidget* airspacePage;
-  /** */
+  /** Configuration page */
   QWidget* waypointPage;
-  /** */
+  /** Configuration page */
   QWidget* unitPage;
 
-  /** */
   QLineEdit* igcPathE;
   QLineEdit* taskPathE;
   QLineEdit* waypointPathE;
   QLineEdit* mapPathE;
   QLineEdit* catalogPathE;
-  LatEdit* homeLatE;
-  LongEdit* homeLonE;
+  LatEdit*   homeLatE;
+  LongEdit*  homeLonE;
   QLineEdit* homeCountryE;
   QLineEdit* homeNameE;
   QLineEdit* preNameE;
@@ -441,8 +494,12 @@ class KFLogConfig : public QDialog
   QComboBox* pointsSourceBox;
   QLineEdit* pointsOpenAipCountries;
   QSpinBox*  pointsOpenAipHomeRadius;
+  QCheckBox* pointsOpenAipEnableUpdates;
+  QSpinBox*  pointsOpenAipUpdatePeriod;
 
   QLineEdit* asOpenAipCountries;
+  QCheckBox* asOpenAipEnableUpdates;
+  QSpinBox*  asOpenAipUpdatePeriod;
 
   /**
    * Initial value of home radius.
@@ -460,7 +517,12 @@ class KFLogConfig : public QDialog
   bool m_welt2000ReadOlValue;
 
   /**
-   * Initial value of update spinbox.
+   * Initial value of Welt2000 update checkbox.
+   */
+  bool m_welt2000UpdateCheck;
+
+  /**
+   * Initial value of Welt2000 update spinbox.
    */
   int m_welt2000UpdateValue;
 
@@ -473,6 +535,27 @@ class KFLogConfig : public QDialog
    * Initial value of openAIP airfield countries
    */
   QString m_afOpenAipCountryValue;
+
+  /**
+   * Initial value of openAIP point update checkbox.
+   */
+  bool m_afOpenAipUpdateCheck;
+
+  /**
+   * Initial value of openAIP point update spinbox.
+   */
+  int m_afOpenAipUpdateValue;
+
+  /**
+   * Initial value of openAIP airspace update checkbox.
+   */
+  bool m_asOpenAipUpdateCheck;
+
+  /**
+   * Initial value of openAIP airspace update spinbox.
+   */
+  int m_asOpenAipUpdateValue;
+
 
   QSlider* lLimit;
   QSlider* uLimit;

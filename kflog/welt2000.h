@@ -105,12 +105,14 @@ public:
 
     /**
      * Checks if a Welt2000 download shall be done. That is allowed only after
-     * the user defined update period by comparing the last modification date
+     * a defined period of days by comparing the last modification date
      * of the current installed Welt2000 file and the current date.
      *
-     * \return true, if an update shall be made otherwise false
+     * \param days Number of days must be elapsed before true is returned.
+     *
+     * \return True, if an update shall be made otherwise false.
      */
-    bool check4update();
+    bool check4update( const int days );
 
 private:
 

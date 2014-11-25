@@ -76,7 +76,7 @@ Welt2000::~Welt2000()
 {
 }
 
-bool Welt2000::check4update()
+bool Welt2000::check4update( const int days )
 {
   // Check configuration, if updates are allowed.
   if( _settings.value( "/Welt2000/EnableUpdates", true ).toBool() == false )
@@ -100,9 +100,6 @@ bool Welt2000::check4update()
       return false;
     }
 
-  // Get update period as days. Default are 30 days.
-  int days = _settings.value( "/Welt2000/UpdatePeriod", 30 ).toInt();
-
   if( test.lastModified().secsTo(QDateTime::currentDateTime()) < 3600 * 24 * days )
     {
       qDebug() << "Welt2000::check4update(): last update <" << days << "day(s), ignoring call.";
@@ -110,7 +107,6 @@ bool Welt2000::check4update()
       return false;
     }
 
-  // Only one update try per day is allowed.
   return true;
 }
 
