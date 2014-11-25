@@ -27,7 +27,7 @@
  *
  * \date 2000-2014
  *
- * \version $Id$
+ * \version 1.0
  */
 
 #ifndef MAP_CONTENTS_H
@@ -412,6 +412,12 @@ class MapContents : public QObject
    * day period is defined in the configuration data.
    */
   void slotCheckOpenAipPointData4Update();
+
+  /**
+   * Called to check, if an openAIP airspace data update is necessary. The update
+   * day period is defined in the configuration data.
+   */
+  void slotCheckOpenAipAsData4Update();
 
   /**
    * Called to check, if a Welt2000 point data update is necessary. The update

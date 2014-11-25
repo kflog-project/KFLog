@@ -269,14 +269,18 @@ void MapContents::slotNetworkError()
 
 void MapContents::slotCheckWelt20004Update()
 {
-  if( _settings.value( "/Points/Source", 0 ).toInt() != 1 )
+  if( _settings.value( "/Points/Source", KFLogConfig::OpenAIP ).toInt() != KFLogConfig::Welt2000 )
     {
+      // Welt2000 is not selected as point data source.
       return;
     }
 
+  // Get update period as days. Default are 30 days.
+  const int days = _settings.value( "/Welt2000/UpdatePeriod", 30 ).toInt();
+
   Welt2000 w2000;
 
-  if( w2000.check4update() == true )
+  if( w2000.check4update( days ) == true )
     {
       slotDownloadWelt2000( true );
     }
@@ -616,20 +620,17 @@ void MapContents::slotOpenAipPoiNetworkError()
 
 void MapContents::slotCheckOpenAipPointData4Update()
 {
-  if( _settings.value( "/Points/Source", 1 ).toInt() != 0 )
+  if( _settings.value( "/Points/Source", KFLogConfig::OpenAIP ).toInt() != KFLogConfig::OpenAIP )
     {
-      // Not selected as source.
+      // Not selected as point data source.
       return;
     }
 
   if( _settings.value( "/Points/EnableUpdates", true ).toBool() == false )
     {
-      // Updates disabled
+      // Updates disabled by the user.
       return;
     }
-
-  // Get the update period in days
-  int days = _settings.value( "/Points/UpdatePeriod", 30 ).toInt();
 
   QStringList countries = _settings.value( "/Points/Countries", "" ).toString().split(QRegExp("[ ,;]"));
 
@@ -638,6 +639,9 @@ void MapContents::slotCheckOpenAipPointData4Update()
       qDebug() << "MapContents::slotCheckOpenAipPointData4Update(): no countries defined!";
       return;
     }
+
+  // Get the update period in days
+  int days = _settings.value( "/Points/UpdatePeriod", 30 ).toInt();
 
   QStringList files;
 
@@ -652,7 +656,7 @@ void MapContents::slotCheckOpenAipPointData4Update()
 
   for( int j = 0; j < files.size(); j++ )
     {
-      // Search for the Welt2000 source file.
+      // Search for the openAIP point source file.
       QString path2File = mapDir + QDir::separator() +
 	                  "points" + QDir::separator() + files.at(j);
 
@@ -673,6 +677,58 @@ void MapContents::slotCheckOpenAipPointData4Update()
 
       // If one file is out of date we download all files.
       slotDownloadOpenAipPointFiles( true );
+      break;
+    }
+}
+
+void MapContents::slotCheckOpenAipAsData4Update()
+{
+  if( _settings.value( "/Airspace/EnableUpdates", true ).toBool() == false )
+    {
+      // Updates disabled by the user.
+      return;
+    }
+
+  QStringList countries = _settings.value( "/Airspace/Countries", "" ).toString().split(QRegExp("[ ,;]"));
+
+  if( countries.isEmpty() )
+    {
+      qDebug() << "MapContents::slotCheckOpenAipAsData4Update(): no countries defined!";
+      return;
+    }
+
+  // Get the update period in days
+  int days = _settings.value( "/Airspace/UpdatePeriod", 30 ).toInt();
+
+  QString mapDir = getMapRootDirectory();
+
+  for( int i = 0; i < countries.size (); i++ )
+    {
+      // Example airspace file name for CZ: cz_asp.aip
+      // Search for the openAIP airspace source file.
+      QString path2File = mapDir + QDir::separator() +
+	                  "airspaces" + QDir::separator() +
+			  countries.at(i) + "_asp.aip";
+
+      qDebug() << "Check AS File" << path2File;
+
+      QFileInfo test( path2File );
+
+      if( ! test.exists() )
+        {
+          // No file exists we ignore that.
+          continue;
+        }
+
+      // Check if update period has expired. Default are 30 days.
+      if( test.lastModified().secsTo(QDateTime::currentDateTime()) < 3600 * 24 * days )
+        {
+          continue;
+        }
+
+      // If one file is out of date we download all files.
+      slotDownloadOpenAipAirspaceFiles( true );
+      break;
     }
 }
 
@@ -1263,7 +1319,7 @@ int MapContents::__askUserForDownload( QString what )
     {
       int ret = QMessageBox::question(_mainWindow,
                 tr("Automatic data download?"),
-                tr("<html>There are <b>%1</b> data missing!"
+                tr("<html>There are <b>%1</b> data missing or out dated!"
                 "<br><br>Do you want to download these data from the Internet?</html>")
                  .arg( what ),
                  QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel );
@@ -1540,7 +1596,7 @@ void MapContents::proofeSection(bool isPrint)
     {
       loadPoints = false;
 
-      int pointSource = _settings.value( "/Points/Source", 0 ).toInt();
+      int pointSource = _settings.value( "/Points/Source", KFLogConfig::OpenAIP ).toInt();
 
       if( pointSource == 0 )
         {
