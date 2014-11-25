@@ -873,7 +873,7 @@
     <message>
         <location filename="kflogconfig.cpp" line="1011"/>
         <source>Flight Path Line Width</source>
-        <translation>Flugweg Linienbreite</translation>
+        <translation>Linienbreite des Flugwegs</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1012"/>
@@ -915,7 +915,7 @@
         <location filename="kflogconfig.cpp" line="1074"/>
         <location filename="kflogconfig.cpp" line="1152"/>
         <source>Solid</source>
-        <translation>durchgezogen</translation>
+        <translation>Durchgezogen</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1077"/>
@@ -925,7 +925,7 @@
     <message>
         <location filename="kflogconfig.cpp" line="1092"/>
         <source>Flight Path Colors</source>
-        <translation>Flugwegfarben</translation>
+        <translation>Farben des Flugweg</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1108"/>
@@ -940,7 +940,7 @@
     <message>
         <location filename="kflogconfig.cpp" line="1130"/>
         <source>Mixed turn</source>
-        <translation>beidseitig</translation>
+        <translation>Beidseitig</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1141"/>
@@ -1358,7 +1358,7 @@
     <message>
         <location filename="kflogconfig.cpp" line="1218"/>
         <source>Conical orthomorphic (Lambert)</source>
-        <translation>Lambert</translation>
+        <translation>Lambert Projektion</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1246"/>
@@ -1458,9 +1458,9 @@
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1219"/>
-        <source>Cylindrical Equidistant (Plate CarrÃ©)</source>
-        <oldsource>Cylindrical Equidistant (Plate Carré)</oldsource>
-        <translation>Zylinder</translation>
+        <source>Cylindrical Equidistant (Plate Carré)</source>
+        <oldsource>Cylindrical Equidistant (Plate CarrÃ©)</oldsource>
+        <translation>Zylindrische Projektion (Plate-Carreé)</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1864"/>
@@ -2210,12 +2210,12 @@ Alle Downloads verworfen!</translation>
     <message>
         <location filename="mapcontents.cpp" line="1321"/>
         <source>Automatic data download?</source>
-        <translation>Automatischer Daten Download?</translation>
+        <translation>Automatischer Herunterladen von Daten?</translation>
     </message>
     <message>
         <location filename="mapcontents.cpp" line="1322"/>
         <source>&lt;html&gt;There are &lt;b&gt;%1&lt;/b&gt; data missing or out dated!&lt;br&gt;&lt;br&gt;Do you want to download these data from the Internet?&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;b&gt;%1&lt;/b&gt;-Daten fehlen bzw. sind veraltet!&lt;br&gt;&lt;br&gt;Möchtest du diese Daten aus dem Internet laden?&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;Es fehlen &lt;b&gt;%1&lt;/b&gt; oder sie sind veraltet!&lt;br&gt;&lt;br&gt;Möchtest du diese Daten aus dem Internet laden?&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="mapcontents.cpp" line="1477"/>
