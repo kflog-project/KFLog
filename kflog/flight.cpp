@@ -18,8 +18,6 @@
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
 #include <cmath>
@@ -41,6 +39,8 @@
 #include "mapmatrix.h"
 #include "optimizationwizard.h"
 #include "wgspoint.h"
+
+extern QSettings _settings;
 
 /* Number of tasks to be handled during optimization */
 #define NUM_TASKS 25
@@ -499,6 +499,8 @@ bool Flight::drawMapElement( QPainter* targetPainter )
   float vario_max = getPoint(VA_MAX).dH/getPoint(VA_MAX).dT;
   int altitude_max = getPoint(H_MAX).height;
   float speed_max = getPoint(V_MAX).dS/getPoint(V_MAX).dT;
+
+  m_dfpt = (MapConfig::DrawFlightPointType) _settings.value( "/Flight/DrawType", MapConfig::Altitude).toInt();
 
   for(unsigned int n = delta; n < nStop; n = n + delta)
     {

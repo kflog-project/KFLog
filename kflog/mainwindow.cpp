@@ -59,7 +59,6 @@
 
 #include "mainwindow.h"
 
-
 extern QSettings _settings;
 
 /**
@@ -1588,10 +1587,14 @@ void MainWindow::slotSavePixmap(QUrl url, int width, int height)
   map->slotSavePixmap(url, width, height);
 }
 
-void MainWindow::slotFlightDataTypeGroupAction( QAction* )
+void MainWindow::slotFlightDataTypeGroupAction( QAction* action )
 {
   // Get index from action
-  // int index = action->data().toInt();
+  int index = action->data().toInt();
+
+  // save new settings and start a flight redraw.
+  _settings.setValue( "/Flight/DrawType", index );
+  map->slotRedrawFlight();
 }
 
 void MainWindow::selectFlightDataAction( const int index )

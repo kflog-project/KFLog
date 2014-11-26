@@ -17,6 +17,9 @@
     of a read IGC flight.
     
   * Issue #42 fixed. The QNH handling of a flight must be improved.
+  
+  * Issue #40 partly fixed.The show flight data menu switch should work now.
+    There was missing some code for that, which I added.
 
 2014-11-25 Axel Pauli <kflog.cumulus@gmail.com>
 
