@@ -25,7 +25,7 @@ RequestExecutionLevel highest
 
 
 
-LicenseText "Welcome to KFlog 4.7.3 BETA Setup"
+LicenseText "Welcome to KFlog 4.9.0 Setup"
 LicenseData "License.rtf"
 ;--------------------------------
 

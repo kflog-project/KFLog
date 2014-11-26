@@ -1,9 +1,12 @@
 ﻿$makeNsis = 'C:\Program Files\NSIS\makensis.exe'
 $myDir = (get-item $($myinvocation.InvocationName)).DirectoryName
+$kflogProjectDir = "$myDir/../kflog"
 $rootDevDir = (get-item $mydir).Parent.Parent.FullName
 $nsisScript = "$myDir/setup.nsi"
 $zipInstallFile = "$rootDevDir/PortableKFLog.zip"
 $exeInstallFile = "$rootDevDir/KflogSetup.exe"
+"zipInstallFile: $zipInstallFile"
+"exeInstallFile: $exeInstallFile"
 
 "hier: $rootDevDir"
 
@@ -12,13 +15,18 @@ $QtFiles = "QtCore4.dll",
            "QtNetwork4.dll",
            "QtOpenGL4.dll",
            "QtXml4.dll"
+$KFlogLanguageFiles = "kflog"
+$QtLanguageFiles = "qt"
+$Languages = "de"
 
 $MinGwFiles = "libgcc_s_dw2-1.dll",
               "..\mingw32\opt\bin\libwinpthread-1.dll",
               "libstdc++-6.dll"
-$KflogFiles = "kflog\Release\kflog.exe"
+$KflogFiles = "Release\kflog.exe"
 $LicenseFiles = "$myDir\License.rtf",
-                "$myDir\license_beta.rtf"
+                "$myDir\license_beta.rtf",
+                "$myDir\RemoveKFLogDataDirectories.cmd",
+                "$myDir\RemoveKFLogRegistryKey.cmd"
 
 
 if ($env:QT_DIR -eq $NULL) 
@@ -43,8 +51,18 @@ else
     $MakeDirectory = $args
 }
 
-$kflogMakeDirectory = "$MakeDirectory/kflog/release"
+$kflogMakeDirectory = "$MakeDirectory/release"
 # C:\Users\peter\dev\build-kflog-Desktop-Release\kflog\release
+
+"Creating language files"
+Foreach ($KFLogLanguageFile in $KFlogLanguageFiles)
+{
+   Foreach ($Language in $Languages)
+   {
+        & "$QtDirectory/bin/lrelease.exe" "$kflogProjectDir/$($KFLogLanguageFile)_$Language.ts"
+   }
+}
+
 
 # create working directory if not existing
 $workDirectory = "$makeDirectory/tmp"
@@ -53,7 +71,8 @@ if (-not (test-path $workDirectory))
     New-Item -ItemType Directory $workDirectory
 }
 
-Remove-Item -Recurse $workDirectory/*
+Remove-Item -Recurse -Force $workDirectory/*
+New-Item -ItemType Directory $workDirectory/translations
 
 # copy the files to the working directory
 $QtFiles | %{Copy-Item -Verbose $QtDirectory/bin/$_ $workDirectory}
@@ -61,7 +80,24 @@ $MinGwFiles | %{Copy-Item -Verbose $MinGwDirectory/$_ $workDirectory}
 $KflogFiles | %{Copy-Item -Verbose $MakeDirectory/$_ $workDirectory}
 $LicenseFiles | %{Copy-Item -Verbose $_ $workDirectory}
 
-$zipfile = "$MakeDirectory/../../PortableKFLog.zip" 
+
+"Copying language files..."
+Foreach ($QtLanguageFile in $QtLanguageFiles)
+{
+    Foreach ($Language in $Languages)
+    {
+        Copy-Item -v "$QtDirectory/translations/$($QtLanguageFile)_$Language.qm" "$workDirectory/translations/"
+    }
+}
+Foreach ($KFLogLanguageFile in $KFlogLanguageFiles)
+{
+   Foreach ($Language in $Languages)
+   {
+        Copy-Item -v "$kflogProjectDir/$($KFLogLanguageFile)_$Language.qm" "$workDirectory/translations"
+   }
+}
+
+$zipfile = "$MakeDirectory/../PortableKFLog.zip"
 if ((test-path $zipfile))
 {
     Remove-Item $zipfile
@@ -76,8 +112,8 @@ if ((test-path $zipfile))
 [System.Type] $TypeAcceleratorsType=[System.Management.Automation.PSObject].Assembly.GetType('System.Management.Automation.TypeAccelerators',$True,$True) 
 $TypeAcceleratorsType::Add('Zipfile','System.IO.Compression.Zipfile') 
 
-$zipfile
-$workDirectory
+"zipfile: $zipfile"
+"workDirectory: $workDirectory"
      
 # Now create the Zip file 
 Try { 
@@ -91,6 +127,7 @@ if ((Test-Path $zipInstallFile))
 {
     Remove-Item $zipInstallFile
 }
+
 Move-Item -Verbose $zipfile $zipInstallFile
 
   &"$makeNSIS" "/DMingwBinPath=$MinGwDirectory" "/DQtBinPath=$QtDirectory/bin" "/DExeSourcePath=$kflogMakeDirectory" "/NOCONFIG" "$nsisScript" 

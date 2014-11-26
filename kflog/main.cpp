@@ -93,11 +93,16 @@ int main(int argc, char **argv)
   // The <root> path will be stored in QSettings.
   QDir rootDir( QFileInfo(argv[0]).canonicalPath() );
 
+#ifndef __WIN32
+  // on Windows the installation will take place in
+  // ..\Program Files\KFLog
+  // translations an other directories are based below this folder
+  // therefore the rootdir (InstallRoot) is the directory where kflog.exe is stored in
   if( rootDir.cdUp() == false )
     {
       qWarning() << "main: KFlog App has no parent directory! InstallDir is" << rootDir;
     }
-
+#endif
   QString rootPath = rootDir.canonicalPath();
 
  _settings.setValue( "/Path/InstallRoot", rootPath );
