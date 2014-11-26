@@ -34,6 +34,7 @@
 #include "airspace.h"
 #include "airspacewarningdistance.h"
 #include "flight.h"
+#include "mainwindow.h"
 #include "mapcalc.h"
 #include "mapconfig.h"
 #include "mapcontents.h"
@@ -77,6 +78,7 @@
       wpL.last()->angle = -100; \
       wpL.last()->fixTime = route.at( a )->time;
 
+extern MainWindow*  _mainWindow;
 extern MapContents* _globalMapContents;
 
 Flight::Flight( const QString& fName,
@@ -117,6 +119,8 @@ Flight::Flight( const QString& fName,
   header.append(getDistance());
   header.append(getPoints());
   header.append(flightStaticData.frRecorderId);
+
+  loadQNH();
 }
 
 Flight::~Flight()
@@ -1365,7 +1369,7 @@ void Flight::calAirSpaceIntersections()
       altitudesForI.gpsAltitude = Altitude(fp->gpsHeight);
       altitudesForI.gndAltitude = Altitude((fp->height) - (fp->surfaceHeight));
       altitudesForI.gndAltitudeError = Altitude(0);
-      altitudesForI.stdAltitude.setStdAltitude(fp->height, fp->qnh);
+      altitudesForI.stdAltitude.setStdAltitude(fp->height, m_flightStaticData.qnh);
 
       AirspaceWarningDistance awdForI;
 
@@ -1453,4 +1457,115 @@ void Flight::calAirSpaceIntersections()
       // Get conflict from the start list and put it in the finished list.
       m_airspaceIntersections.append( asi );
     }
+}
+
+bool Flight::loadQNH()
+{
+  // Set the result value to the standard pressure value.
+  m_flightStaticData.qnh = 1013;
+
+  QString SettingsFileName = getFileName();
+
+  if (SettingsFileName.isEmpty() )
+    {
+      return false;
+    }
+
+  SettingsFileName += ".kfp";
+
+  QSettings SettingsFile (SettingsFileName, QSettings::IniFormat);
+
+  SettingsFile.beginGroup("Overall");
+  QVariant Version = SettingsFile.value("FileVersion");
+
+  if (Version.isNull() || !Version.canConvert(QVariant::Int) || Version.toInt() > 1)
+    {
+      // file empty or unsupported
+      return false;
+    }
+
+  SettingsFile.endGroup();
+
+  SettingsFile.beginGroup("QNH");
+  QVariant CurrentQNH = SettingsFile.value("StaticValue");
+  SettingsFile.endGroup();
+
+  if (CurrentQNH.isNull() || !Version.canConvert(QVariant::Int) )
+    {
+      return false;
+    }
+
+  m_flightStaticData.qnh = CurrentQNH.toInt();
+
+  if (m_flightStaticData.qnh < 900 || m_flightStaticData.qnh > 1100)
+    {
+      m_flightStaticData.qnh = 1013;
+      return false;
+    }
+
+  return true;
+}
+
+bool Flight::saveQNH()
+{
+  QString SettingsFileName = getFileName();
+
+  if (SettingsFileName.isEmpty() )
+    {
+      return false;
+    }
+
+  SettingsFileName += ".kfp";
+
+  QSettings SettingsFile (SettingsFileName, QSettings::IniFormat);
+
+  SettingsFile.beginGroup("Overall");
+  QVariant Version = SettingsFile.value("FileVersion");
+
+  if ( Version.isValid() && (!Version.canConvert(QVariant::Int) || Version.toInt() > 1))
+  {
+      QMessageBox::warning( _mainWindow,
+                            QObject::tr("File contains no flight"),
+                            "<html>" +
+                            QObject::tr("The selected file<BR><B>%1</B><BR>is empty or unsupported").arg(SettingsFileName) +
+                            "</html>",
+                            QMessageBox::Ok,
+                            0 );
+      return false;
+  }
+
+  Version = (int) 1;
+  SettingsFile.setValue("FileVersion",Version);
+  SettingsFile.endGroup();
+
+  SettingsFile.beginGroup("QNH");
+  SettingsFile.setValue("StaticValue", m_flightStaticData.qnh);
+  SettingsFile.endGroup();
+  SettingsFile.sync();
+
+  return true;
+}
+
+bool Flight::getQNHFromUser()
+{
+  QInputDialog QNHQueryDialog;
+  bool bOK = false;
+
+  int qnh = QNHQueryDialog.getInt( _mainWindow,
+				   "KFlog",
+				   QObject::tr("Please enter the QNH of the flight (900-1100 hPa). <br>If you cancel 1013 hPa will be used."),
+				   m_flightStaticData.qnh,
+				   900,
+				   1100,
+				   1,
+				   &bOK );
+
+  if (!bOK)
+    {
+      return false;
+    }
+
+  m_flightStaticData.qnh = qnh;
+
+  return saveQNH();
 }

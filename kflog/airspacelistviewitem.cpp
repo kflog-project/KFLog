@@ -7,11 +7,10 @@
 ************************************************************************
 **
 **   Copyright (c): 2013 by Matthias Degenkolb
+**                  2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -70,6 +69,18 @@ void AirSpaceListViewItem::createChildren()
     {
       setText( 0, QObject::tr( "Airspace" ) );
       setText( 1, QObject::tr( "Violations / Contacts" ) );
+
+      QStringList sl = QStringList() << QObject::tr("QNH")
+                                     << QString("%1 hPa").arg(m_Flight->getFlightStaticData().qnh);
+
+      QString tt = QObject::tr("QNH value corrects distance to standard pressure related airspaces.");
+
+      QTreeWidgetItem* subItem = new QTreeWidgetItem( sl, AIRSPACE_LIST_VIEW_ITEM_TYPEID );
+      subItem->setToolTip( 0, tt );
+      subItem->setToolTip( 0, tt );
+      subItem->setFlags( Qt::ItemIsEnabled );
+      addChild( subItem );
+
 
       QList<Flight::AirSpaceIntersection>& Violations =
           m_Flight->getFlightAirSpaceIntersections();
@@ -170,6 +181,17 @@ void AirSpaceListViewItem::createChildren()
               sl = (QStringList() << QObject::tr( "End" )
                                   << End.toString( QString( "dd-MM-yyyy hh:mm:ss" ) )
                                   + QObject::tr( " at " ) + altEnd.getText(true, 0) );
+
+              subsubItem = new AirSpaceListViewItem::AirSpaceFlagListViewItem(subItem, sl, Violations[i], m_Flight );
+              subsubItem->setFlags( Qt::ItemIsEnabled );
+              subsubItem->setForeground( 0, col1 );
+              subsubItem->setForeground( 1, col2 );
+
+              QTime duration( 0, 0, 0, 0 );
+              duration = duration.addSecs(Begin.secsTo(End));
+
+              sl = (QStringList() << QObject::tr( "Duration" )
+                                  << duration.toString("hh:mm:ss") );
 
               subsubItem = new AirSpaceListViewItem::AirSpaceFlagListViewItem(subItem, sl, Violations[i], m_Flight );
               subsubItem->setFlags( Qt::ItemIsEnabled );

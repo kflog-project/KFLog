@@ -8,12 +8,10 @@
 **
 **   Copyright (c):  2001 Heiner Lamprecht, Florian Ehinger, Jan Max Walter Krueger
 **                :  2008 Constantijn Neeteson
-**                :  2011-2013 Axel Pauli
+**                :  2011-2014 Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -57,9 +55,9 @@ struct statePoint
  *
  * Contains the logged flight data.
  *
- * \date 2001-2013
+ * \date 2001-2014
  *
- * \version $Id$
+ * \version 1.1
  */
 class Flight : public BaseFlightElement
 {
@@ -116,7 +114,8 @@ class Flight : public BaseFlightElement
     public:
 
     FlightStaticData() :
-      competitionClass(-1)
+      competitionClass(-1),
+      qnh(1013)
       {
       };
 
@@ -136,6 +135,9 @@ class Flight : public BaseFlightElement
     QString hardwareVersion;
     QString altitudePressureSensor;
     QList<Waypoint*> waypoints;
+
+    /** The current set QNH by the FlightLoader */
+    int qnh;
   };
 
   /**
@@ -209,8 +211,10 @@ class Flight : public BaseFlightElement
    * @return the distance between all reached waypoints
    */
   QString getDistance(bool isOrig = false);
+
   /** */
   FlightTask* getTask(bool isOrig = false);
+
   /**
    * @param  isOrig  "true", if the original-task should be used.
    *                 The default is "false". If the flight has not been
@@ -311,7 +315,7 @@ class Flight : public BaseFlightElement
    *
    * \return always true
    */
-  virtual bool  drawMapElement( QPainter* targetP );
+  virtual bool drawMapElement( QPainter* targetP );
   /** */
   virtual void printMapElement(QPainter* printP, bool isText);
   /**
@@ -451,12 +455,49 @@ class Flight : public BaseFlightElement
   void calAirSpaceIntersections();
 
   /**
-   * \return The data of the stored flight.
+   * \return The statistical data of the stored flight.
    */
   FlightStaticData& getFlightStaticData()
   {
     return m_flightStaticData;
   };
+
+  /**
+   * Returns the current used QNH.
+   *
+   * \returns The current used QNH.
+   */
+  int getQNH() const
+  {
+    return m_flightStaticData.qnh;
+  };
+
+  /**
+   * Sets the QNH of this flight to the new value and saves it into a setting
+   * file.
+   */
+  void setQNH( const int value )
+  {
+    m_flightStaticData.qnh = value;
+    saveQNH();
+  };
+
+  /**
+   * Tries to load a stored QNH value from a setting file.
+   *
+   * \returns true in case of success otherwise false. In the false case
+   *          the internal QNH value is set to 1013 hPa.
+   */
+  bool loadQNH();
+
+  /**
+   * Saves the current QNH into a setting file.
+   *
+   * \returns true in case of success otherwise false.
+   */
+  bool saveQNH();
+
+  bool getQNHFromUser();
 
 private:
 

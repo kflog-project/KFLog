@@ -9,7 +9,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2008 by Constantijn Neeteson
-**                   2011-2013 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -46,6 +46,7 @@ class FlightLoader : public QObject
    * @return "true", when the file has successfully been loaded
    */
   bool openFlight(QFile&);
+
    /**
    * Loads a new flight-file.
    *
@@ -53,6 +54,7 @@ class FlightLoader : public QObject
    * @return "true", when the file has successfully been loaded
    */
   bool openIGC(QFile&, QFileInfo&);
+
    /**
    * Imports a file downloaded with Gardown in DOS
    *
@@ -60,23 +62,12 @@ class FlightLoader : public QObject
    * @return "true", when the file has successfully been loaded
    */
   bool openGardownFile(QFile&, QFileInfo&);
-  /**
-  * Imports a file downloaded with Gardown in DOS
-  *
-  * @param  OriginalFileName  The name of the original file
-  * @return "true", when the QNH has sucessfully been reset
-  */
-  bool resetQNH(QString OriginalFileName);
 
   private slots:
 
   void slot_CancelLoad();
 
   private:
-
-  bool loadQNH(QString OriginalFileName, int & result);
-  bool saveQNH(QString OriginalFileName, int QNH);
-  bool getQNHFromUser(QString OriginalFileName, int & result, int startValue = 1013);
 
   // Short structure to handle the optional entries in an igc file
   class bOption

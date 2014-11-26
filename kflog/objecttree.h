@@ -115,6 +115,11 @@ private:
   QMenu *taskMenu;
 
   /**
+   * The popup airspace menu of the object tree.
+   */
+  QMenu *airspaceMenu;
+
+  /**
    * References for task-related items in the popup menu
    */
   QAction* actionTaskNew;
@@ -132,6 +137,7 @@ private:
   QAction* actionFlightSetQNH;
   QAction* actionFlightOptimize;
   QAction* actionFlightOptimizeOLC;
+  QAction* actionFlightCheckAirspaces;
 
   QAction* actionFlightGroupNew;
   QAction* actionFlightGroupEdit;
@@ -215,14 +221,17 @@ signals:
    * indicate that a new task should be created
    */
   void newTask();
+
   /**
    * indicate that a task should be opened. Is used to show the OpenTask dialog
    */
   void openTask();
+
   /**
    * indicate that a base flight element should be closed
    */
   void closeFlightElement();
+
   /**
    * indicate that a new flight group should be created
    */
@@ -231,22 +240,32 @@ signals:
    * indicate that the current flight group must be edited
    */
   void editFlightGroup();
+
   /**
    * indicate that a flight should be opened. Is used to show the OpenFlight dialog
    */
   void openFlight();
+
   /**
    * Indicate that a file should be opened
    */
   void openFile(const QUrl&);
+
   /**
-   * Set the current flight's QNH
+   * Sets the current flight's QNH
    */
   void setFlightQNH();
+
+  /**
+   * Request for updating of all flight windows..
+   */
+  void updateFlightWindows();
+
   /**
    * Indicate that the current flight should be optimized
    */
   void optimizeFlight();
+
   /**
    * Indicate that the current flight should be optimized for OLC declaration
    */

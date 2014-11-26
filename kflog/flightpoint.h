@@ -7,12 +7,10 @@
 ************************************************************************
 **
 **   Copyright (c):  1999-2000 by Heiner Lamprecht, Florian Ehinger
-**                   2011-2013 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -25,9 +23,9 @@
  *
  * This class defines all attributes of one flight point.
  *
- * \date 1999-2013
+ * \date 1999-2014
  *
- * \version $Id$
+ * \version 1.1
  */
 
 #ifndef FLIGHT_POINT
@@ -51,7 +49,6 @@ public:
     gpsHeight(0),
     engineNoise(-1),
     surfaceHeight(-1),
-    qnh(0),
     time(0),
     dH(0),
     dT(0),
@@ -86,10 +83,6 @@ public:
   *   will be filled when drawn on map
   *   set by flightloader.cpp */
   int surfaceHeight;
-
-  /** The current QNH
-  *   set by flightloader.cpp */
-  int qnh;
 
   /** The time, the point was registered by the logger.
   *   set by flightloader.cpp */

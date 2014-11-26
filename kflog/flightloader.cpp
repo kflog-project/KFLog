@@ -9,11 +9,10 @@
 ************************************************************************
 **
 **   Copyright (c):  2008 by Constantijn Neeteson
-**                   2011-2013 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
 **
 ***********************************************************************/
 
@@ -155,15 +154,6 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
 
   QList<bOption> options;
 
-  int QNH = 0;
-
-  bool bRet= loadQNH(igcFile.fileName(), QNH);
-
-  if (!bRet)
-    {
-      bRet = getQNHFromUser(igcFile.fileName(), QNH);
-    }
-
   //
   // This regexp is used to check the syntax of the position-lines in
   // the igc-file.
@@ -282,7 +272,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
               // IO-Error !!!
               QString lineNr = QString::number(lineCount);
 
-              QMessageBox::warning(0, QObject::tr("Syntax-error in IGC-file"),
+              QMessageBox::warning(_mainWindow, QObject::tr("Syntax-error in IGC-file"),
                   "<html>" + QObject::tr("Syntax-error while loading igc-file"
                   "<BR><B>%1</B><BR>Aborting!").arg(igcFile.fileName()) + "</html>",
                   QMessageBox::Ok);
@@ -346,7 +336,6 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
           newPoint.surfaceHeight = ef->elevation(newPoint.origP, newPoint.projP);
           newPoint.height = baroAltTemp;
           newPoint.gpsHeight = gpsAltTemp;
-          newPoint.qnh = QNH;
 
           if( curTime < preTime )
             {
@@ -423,16 +412,31 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
             {
               bool ok = false;
               int year = s.mid(9, 2).toInt(&ok);
+              int mon  = s.mid(7, 2).toInt(&ok);
+              int day  = s.mid(5, 2).toInt(&ok);
 
-              QString century = "20";
+              QString century;
 
               if( ok && year > 80 )
                 {
                   // seems to be an old flight
                   century = "19";
+                  year += 1900;
                 }
+              else
+        	{
+        	  century = "20";
+        	  year += 2000;
+        	}
 
+              // Begin time of flight
               fsd.date = century + s.mid(9, 2) + "-" + s.mid(7, 2) + "-" + s.mid(5, 2);
+
+              // Set current flight date time. This will consider flights over
+              // midnight.
+              QDate date( year, mon, day );
+
+              timeOfFlightDay = timeToDay(date.year(), date.month(), date.day());
             }
           else if( htype == "FCID" )
             {
@@ -540,7 +544,7 @@ bool FlightLoader::openIGC(QFile& igcFile, QFileInfo& fInfo)
 
   if( flightRoute.count() == 0 )
     {
-      QMessageBox::warning( 0,
+      QMessageBox::warning( _mainWindow,
                             QObject::tr("File contains no flight"),
                             "<html>" +
                             QObject::tr("The selected file<BR><B>%1</B><BR>contains no flight!").arg(igcFile.fileName()) +
@@ -597,13 +601,6 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo)
 
   QList<FlightPoint*> flightRoute;
   QList<Waypoint*> wpList;
-
-  int QNH = 0;
-  bool bRet= loadQNH(gardownFile.fileName(),QNH);
-  if (!bRet)
-  {
-      bRet = getQNHFromUser(gardownFile.fileName(),QNH)              ;
-  }
 
   //
   // This regexp is used to check the syntax of the position-lines in
@@ -709,7 +706,6 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo)
           newPoint->surfaceHeight = ef->elevation(newPoint->origP, newPoint->projP);
           newPoint->height = height;
           newPoint->gpsHeight = height;
-          newPoint->qnh = QNH;
 
           flightRoute.append(newPoint);
         }
@@ -725,7 +721,7 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo)
 
   if(!flightRoute.count())
     {
-      QMessageBox::warning( 0,
+      QMessageBox::warning( _mainWindow,
                             QObject::tr("File contains no flight"),
                             "<html>" +
                             QObject::tr("The selected file<BR><B>%1</B><BR>exists but contains no QNH value").arg(gardownFile.fileName()) +
@@ -747,134 +743,8 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo)
   fsd.gliderType         = "gardown";
   fsd.gliderRegistration = "gardown";
 
-
   _globalMapContents->appendFlight( new Flight(gardownFile.fileName(),
                                                flightRoute,
                                                fsd) );
-
   return true;
-}
-
-bool FlightLoader::loadQNH(QString SettingsFileName, int& result)
-{
-  if (0 == SettingsFileName.length())
-    {
-      return false;
-    }
-
-  SettingsFileName += ".kfp";
-
-  QSettings SettingsFile (SettingsFileName, QSettings::IniFormat);
-
-  SettingsFile.beginGroup("Overall");
-  QVariant Version = SettingsFile.value("FileVersion");
-
-  if (Version.isNull() || !Version.canConvert(QVariant::Int) || Version.toInt() > 1)
-    {
-      // file empty or unsupported
-      return false;
-    }
-
-  SettingsFile.endGroup();
-
-  SettingsFile.beginGroup("QNH");
-  QVariant CurrentQNH = SettingsFile.value("StaticValue");
-  SettingsFile.endGroup();
-
-  if (CurrentQNH.isNull() || !Version.canConvert(QVariant::Int) )
-    {
-      QMessageBox::warning( 0,
-                            QObject::tr("File contains no flight"),
-                            "<html>" +
-                            QObject::tr("The selected file<BR><B>%1</B><BR>exists but contains no QNH value").arg(SettingsFileName) +
-                            "</html>",
-                            QMessageBox::Ok,
-                            0 );
-      return false;
-    }
-
-  result = CurrentQNH.toInt();
-
-  if (result < 900 || result > 1100)
-    {
-      return getQNHFromUser(SettingsFileName, result);
-    }
-
-  return true;
-}
-
-bool FlightLoader::saveQNH(QString OriginalFileName, int QNH)
-{
-  QString SettingsFileName = OriginalFileName;
-
-  if (0 == SettingsFileName.length())
-  {
-         return false;
-  }
-
-  SettingsFileName += ".kfp";
-  QSettings SettingsFile (SettingsFileName, QSettings::IniFormat);
-
-  SettingsFile.beginGroup("Overall");
-  QVariant Version = SettingsFile.value("FileVersion");
-
-  if ( Version.isValid() && (!Version.canConvert(QVariant::Int) || Version.toInt() > 1))
-  {
-      QMessageBox::warning( 0,
-                            QObject::tr("File contains no flight"),
-                            "<html>" +
-                            QObject::tr("The selected file<BR><B>%1</B><BR>is empty or unsupported").arg(SettingsFileName) +
-                            "</html>",
-                            QMessageBox::Ok,
-                            0 );
-      return false;
-  }
-
-  Version = (int) 1;
-  SettingsFile.setValue("FileVersion",Version);
-  SettingsFile.endGroup();
-
-  SettingsFile.beginGroup("QNH");
-  SettingsFile.setValue("StaticValue",QNH);
-  SettingsFile.endGroup();
-  SettingsFile.sync();
-
-  return true;
-}
-
-bool FlightLoader::getQNHFromUser(QString OriginalFileName, int& qnh, int startValue)
-{
-  QInputDialog QNHQueryDialog;
-  bool bOK = false;
-
-  qnh = QNHQueryDialog.getInt( 0,
-                               "KFlog",
-                               QObject::tr("Please enter the QNH of the flight (900-1100 hPa). <br>If you cancel 1013 hPa will be used."),
-                               startValue,
-                               900,
-                               1100,
-                               1,
-                               &bOK );
-
-  if (!bOK)
-    {
-      qnh = startValue;
-    }
-
-  bool bOK2 = saveQNH(OriginalFileName, qnh);
-
-  return bOK && bOK2;
-}
-
-bool FlightLoader::resetQNH(QString OriginalFileName)
-{
-  if (OriginalFileName.length() == 0)
-    {
-      return false;
-    }
-
-  int qnh = 1013;
-
-  loadQNH(OriginalFileName, qnh);
-  return getQNHFromUser(OriginalFileName, qnh, qnh);
 }

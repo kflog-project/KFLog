@@ -171,12 +171,21 @@ public slots:
   void slotOpenRecentFile( QAction *action );
   /** */
   void slotOpenRecorderDialog();
-  /** re-set current QNH*/
-  void slotsetFlightQNH();
+
+  /** set current QNH*/
+  void slotSetFlightQNH();
+
+  /**
+   * Updates all flight windows..
+   */
+  void slotUpdateFlightWindows();
+
   /** optimize flight for OLC declaration*/
   void slotOptimizeFlightOLC();
+
   /** */
   void slotOptimizeFlight();
+
   /** Connects the dialogs addWaypoint signal to the waypoint object. */
   void slotRegisterWaypointDialog(QWidget * dialog);
 

@@ -11,6 +11,13 @@
 #
 ################################################################################
 
+2014-11-26 Axel Pauli <kflog.cumulus@gmail.com>
+
+  * Issue #38 fixed. The date of a flight is not set in the flight data points
+    of a read IGC flight.
+    
+  * Issue #42 fixed. The QNH handling of a flight must be improved.
+
 2014-11-25 Axel Pauli <kflog.cumulus@gmail.com>
 
   * Enhancements for issue #6. An openAIP airspace data update is done after a

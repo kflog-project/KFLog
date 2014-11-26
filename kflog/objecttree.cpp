@@ -354,8 +354,6 @@ void ObjectTree::slotSelectedFlightChanged()
 /** Signaled if the current flight was somehow changed.  */
 void ObjectTree::slotFlightChanged()
 {
-  // qDebug() << "ObjectTree::slotFlightChanged()";
-
   QTreeWidgetItem* item = findFlightElement( MapContents::instance()->getFlight() );
 
   if (item)
@@ -527,6 +525,11 @@ void ObjectTree::slotShowObjectTreeMenu(QTreeWidgetItem *item, const QPoint &pos
 	      flightGroupMenu->exec( QCursor::pos() );
 	    }
 	}
+      else if( item->type() == AIRSPACE_LIST_VIEW_ITEM_TYPEID ||
+	       item->type() == AIRSPACE_FLAG_LIST_VIEW_ITEM_TYPEID )
+	{
+	  airspaceMenu->exec( QCursor::pos() );
+	}
     }
 }
 
@@ -559,6 +562,18 @@ void ObjectTree::createMenus()
 					     tr("Close flight"),
 					     this,
 					     SLOT(slotCloseFlightElement()) );
+
+  airspaceMenu = new QMenu(this);
+  airspaceMenu->setTitle( tr("Airspaces") );
+
+  airspaceMenu->addAction( _mainWindow->getPixmap( "kde_wizard_16.png"),
+						   tr("Set QNH"),
+						   this,
+						   SIGNAL(setFlightQNH()) );
+
+  airspaceMenu->addAction( tr("Check Airspace violations"),
+			   this,
+			   SIGNAL(updateFlightWindows()) );
 
   flightGroupMenu = new QMenu(this);
   flightGroupMenu->setTitle( tr("Flight Groups") );

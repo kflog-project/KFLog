@@ -234,7 +234,8 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   connect(objectTree, SIGNAL(editFlightGroup()), _globalMapContents, SLOT(slotEditFlightGroup()));
   connect(objectTree, SIGNAL(openFlight()), this, SLOT(slotOpenFile()));
   connect(objectTree, SIGNAL(openFile(const QUrl&)), this, SLOT(slotOpenFile(const QUrl&)));
-  connect(objectTree, SIGNAL(setFlightQNH()), this, SLOT(slotsetFlightQNH()));
+  connect(objectTree, SIGNAL(setFlightQNH()), this, SLOT(slotSetFlightQNH()));
+  connect(objectTree, SIGNAL(updateFlightWindows()), this, SLOT(slotUpdateFlightWindows()));
   connect(objectTree, SIGNAL(optimizeFlight()), this, SLOT(slotOptimizeFlight()));
   connect(objectTree, SIGNAL(optimizeFlightOLC()), this, SLOT(slotOptimizeFlightOLC()));
   connect(objectTree, SIGNAL(showCurrentFlight()), map, SLOT(slotShowCurrentFlight()));
@@ -679,7 +680,7 @@ void MainWindow::createMenuBar()
                                           tr("Set QNH"), this );
   flightSetQNHAction->setEnabled(true);
   connect( flightSetQNHAction, SIGNAL(triggered()),
-           this, SLOT(slotsetFlightQNH()) );
+           this, SLOT(slotSetFlightQNH()) );
 
   flightOptimizationAction = new QAction( getPixmap("kde_wizard_16.png"),
                                           tr("Optimize"), this );
@@ -1321,7 +1322,7 @@ void MainWindow::slotOpenFile()
 
           flightDir = fd->directory().canonicalPath();
 
-          FlightLoader flightLoader;
+          FlightLoader flightLoader( this );
 
           if( flightLoader.openFlight(file) )
             {
@@ -1365,7 +1366,7 @@ void MainWindow::slotOpenFile( const QUrl& url )
       else
         {
           // try to open as flight
-          FlightLoader flightLoader;
+          FlightLoader flightLoader( this );
 
           if( flightLoader.openFlight( file ) )
             {
@@ -1480,7 +1481,7 @@ void MainWindow::slotOpenRecentFile( QAction *action )
 
   slotSetStatusMsg( tr( "Opening File..." ) );
 
-  FlightLoader flightLoader;
+  FlightLoader flightLoader( this );
 
   QString fileName = action->toolTip();
 
@@ -1992,21 +1993,34 @@ void MainWindow::slotElevation(int height)
     statusTerrainElevation->setText(text);
 }
 
-void MainWindow::slotsetFlightQNH()
+void MainWindow::slotSetFlightQNH()
 {
-  Flight *flight = dynamic_cast<Flight *> (_globalMapContents->getFlight ());
+  Flight *flight = dynamic_cast<Flight *> ( _globalMapContents->getFlight() );
 
-  if (flight != 0 && flight->getTypeID () == BaseMapElement::Flight)
+  if( flight != 0 && flight->getTypeID () == BaseMapElement::Flight )
     {
-      FlightLoader fl;
-
-      if (fl.resetQNH (flight->getFileName ()))
+      // Request user for a new QNH value.
+      if( flight->getQNHFromUser() )
 	{
 	  // Okay, update flight data and redraw the map
-	  dataView->slotSetFlightData ();
-	  evaluationWindow->slotShowFlightData ();
-	  map->slotRedrawFlight ();
-	  objectTree->slotFlightChanged ();
+	  dataView->slotSetFlightData();
+	  evaluationWindow->slotShowFlightData();
+	  map->slotRedrawFlight();
+	  objectTree->slotFlightChanged();
 	}
+    }
+}
+
+void MainWindow::slotUpdateFlightWindows()
+{
+  Flight *flight = dynamic_cast<Flight *> ( _globalMapContents->getFlight() );
+
+  if( flight != 0 && flight->getTypeID () == BaseMapElement::Flight )
+    {
+      // Okay, update flight data and redraw the map
+      dataView->slotSetFlightData();
+      evaluationWindow->slotShowFlightData();
+      map->slotRedrawFlight();
+      objectTree->slotFlightChanged();
     }
 }
