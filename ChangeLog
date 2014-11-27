@@ -11,6 +11,11 @@
 #
 ################################################################################
 
+2014-11-27 Axel Pauli <kflog.cumulus@gmail.com>
+
+  * Issue #43 fixed. The elevation label in the statusbar is not updated during
+    flight animation. Furthermore it considers not the user's set unit.
+
 2014-11-26 Axel Pauli <kflog.cumulus@gmail.com>
 
   * Issue #38 fixed. The date of a flight is not set in the flight data points

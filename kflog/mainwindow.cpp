@@ -1992,8 +1992,9 @@ void MainWindow::slotShowAbout()
 
 void MainWindow::slotElevation(int height)
 {
-    QString text = QString(" %1 m MSL").arg(height);
-    statusTerrainElevation->setText(text);
+  // QString text = QString(" %1 m MSL").arg(height, 4, 10, QChar('0'));
+  QString text = QString(" %1 MSL").arg(Altitude::getText(height, true, 0));
+  statusTerrainElevation->setText(text);
 }
 
 void MainWindow::slotSetFlightQNH()

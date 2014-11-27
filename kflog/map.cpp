@@ -2142,6 +2142,9 @@ void Map::slotAnimateFlightTimeout()
       QPixmap& pix = flight->getLastAnimationPixmap();
       emit showFlightPoint( cP.origP, cP );
 
+      // Show elevation in status bar
+      emit elevation(cP.surfaceHeight);
+
       // Erase previous glider symbol
       QPainter p;
       p.begin( &pixBuffer );

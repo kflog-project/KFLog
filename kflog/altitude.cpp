@@ -3,11 +3,9 @@
                              -------------------
     begin                : Sat Jul 20 2002
     copyright            : (C) 2002 by André Somers
-                               2010 by Axel Pauli
+                               2010-2014 by Axel Pauli
 
     This file is part of KFLog.
-
-    $Id$
 
 ***************************************************************************/
 
@@ -21,6 +19,7 @@
  ***************************************************************************/
 
 #include <QtCore>
+
 #include "altitude.h"
 
 // initialize static value
@@ -73,6 +72,7 @@ QString Altitude::getText(double meter, bool withUnit, int precision)
     default:
       dist=meter;
       defprec=0;
+      break;
   }
 
   if( precision < 0 )
@@ -122,8 +122,10 @@ double Altitude::convertToMeters(double dist)
       break;
     case flightlevel:
       res=dist*(mFromFeet/100.0);
+      break;
     default:
       res=dist;
+      break;
   }
 
   return res;
@@ -146,6 +148,7 @@ QString Altitude::getUnitText()
       break;
     default:
       unit="m";
+      break;
   }
 
   return unit;
