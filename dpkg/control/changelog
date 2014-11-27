@@ -1,6 +1,6 @@
-kflog (___VERSION__) unstable; urgency=low
+kflog (__VERSION__) unstable; urgency=low
 
   * KFLog Linux Desktop Release for X11/Qt. For changelog see here:
-    https://github.com/kflog-project/KFLog/blob/___VERSION__/ChangeLog
+    https://github.com/kflog-project/KFLog/blob/__VERSION__/ChangeLog
 
  -- Axel Pauli <kflog.cumulus@gmail.com>  __DATE__
