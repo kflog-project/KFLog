@@ -1034,6 +1034,10 @@ void MainWindow::createStatusBar()
   statusTerrainElevation->setLineWidth(0);
   statusTerrainElevation->setAlignment( Qt::AlignHCenter | Qt::AlignVCenter );
 
+  // Sets a minimum width for the widget
+  int mw = QFontMetrics(font()).width("999999 ft MSL");
+  statusTerrainElevation->setMinimumWidth( mw );
+
   statusBar()->addWidget( statusLabel, 1 );
   statusBar()->addWidget( statusTimeL, 0 );
   statusBar()->addWidget( statusAltitudeL, 0 );
@@ -1697,11 +1701,14 @@ void MainWindow::slotSetPointInfo(const QPoint& pos, const FlightPoint& point)
 {
   statusBar()->clearMessage();
   statusTimeL->setText(printTime(point.time, true));
+
   QString text;
-  text.sprintf("%4d m MSL ", point.height);
+  text = QString(" %1 MSL").arg(Altitude::getText(point.height, true, 0));
   statusAltitudeL->setText(text);
+
   text.sprintf("%3.1f km/h  ", getSpeed(point));
   statusSpeedL->setText(text);
+
   text.sprintf("%2.1f m/s  ", getVario(point));
   statusVarioL->setText(text);
 
@@ -1992,7 +1999,6 @@ void MainWindow::slotShowAbout()
 
 void MainWindow::slotElevation(int height)
 {
-  // QString text = QString(" %1 m MSL").arg(height, 4, 10, QChar('0'));
   QString text = QString(" %1 MSL").arg(Altitude::getText(height, true, 0));
   statusTerrainElevation->setText(text);
 }
