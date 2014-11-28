@@ -11,6 +11,17 @@
 #
 ################################################################################
 
+2014-11-28 Peter Simon <psimon.kflog@gmail.com>
+
+  * Changes to KFLogSetup.exe to support installation of german UI translations.
+
+  * Changes to PortableKFLog.zip to include german UI translations
+
+2014-10-17 Peter Simon <psimon.kflog@gmail.com>
+           Axel Pauli <kflog.cumulus@gmail.com>
+
+  * German translations of KFLog's user interface
+
 2014-11-27 Axel Pauli <kflog.cumulus@gmail.com>
 
   * Issue #43 fixed. The elevation label in the statusbar is not updated during
