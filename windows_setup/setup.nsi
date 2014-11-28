@@ -23,7 +23,7 @@ InstallDirRegKey HKLM "Software\KFlog" "Install_Dir"
 ; Request application privileges for Windows Vista
 RequestExecutionLevel highest
 
-
+!verbose 4
 
 LicenseText "Welcome to KFlog 4.9.0 Setup"
 LicenseData "License.rtf"
@@ -65,6 +65,10 @@ Section "KFlog program (required)"
   File ${QtBinPath}\QtNetwork4.dll
   File ${QtBinPath}\QtOpenGL4.dll
   File ${QtBinPath}\QtXml4.dll
+
+  SetOutPath $INSTDIR\translations
+  File ${KflogProjDir}\kflog_de.qm
+  File ${QtBinPath}\..\translations\qt_de.qm
   
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\KFlog "Install_Dir" "$INSTDIR"
@@ -82,6 +86,7 @@ SectionEnd
 Section "Start Menu Shortcuts"
 
   CreateDirectory "$SMPROGRAMS\KFlog"
+  CreateDirectory "$SMPROGRAMS\KFlog\translations"
   CreateShortCut "$SMPROGRAMS\KFlog\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
   CreateShortCut "$SMPROGRAMS\KFlog\KFlog.lnk" "$INSTDIR\Kflog.exe" "" "$INSTDIR\Kflog.exe" 0
   
@@ -96,6 +101,7 @@ Section "Uninstall"
     MessageBox MB_YESNO|MB_ICONQUESTION "Would you like to remove the user settings directory $PROFILE\KFlog and all of its contents?$\r$\nThis will also delete all manually downloaded files like tiles or airspace files." IDNO NoDelete
     Delete "$PROFILE\KFlog\*.*"
     RMDir /r "$PROFILE\KFlog" ; skipped if no
+    DeleteRegKey HKCU SOFTWARE\KFlog
 NoDelete:
   ; Remove registry keys
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\KFlog"
@@ -105,13 +111,20 @@ NoDelete:
     ;files
   Delete "$INSTDIR\Uninstall.exe"
   Delete "$INSTDIR\kflog.exe"
+  Delete "$INSTDIR\translations\kflog_de.qm"
+  Delete "$INSTDIR\translations\qt_de.qm"
   Delete "$INSTDIR\mingwm10.dll"
   Delete "$INSTDIR\libgcc_s_dw2-1.dll"
+  Delete "$INSTDIR\libstdc++-6.dll"
+  Delete "$INSTDIR\libwinpthread-1.dll"
   Delete "$INSTDIR\QtCore4.dll"
   Delete "$INSTDIR\QtGui4.dll"
   Delete "$INSTDIR\QtNetwork4.dll"
   Delete "$INSTDIR\QtOpenGL4.dll"
   Delete "$INSTDIR\QtXml4.dll"
+
+  RMDir "$INSTDIR\translations"
+  RMDir "$INSTDIR"
 
   ; Remove shortcuts, if any
   Delete "$SMPROGRAMS\KFlog\*.*"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="de_DE" sourcelanguage="en_US">
+<TS version="2.1" language="de_DE" sourcelanguage="en_US">
 <context>
     <name>AboutWidget</name>
     <message>
@@ -915,7 +915,7 @@
         <location filename="kflogconfig.cpp" line="1074"/>
         <location filename="kflogconfig.cpp" line="1152"/>
         <source>Solid</source>
-        <translation>Durchgezogen</translation>
+        <translation>Nur Flugweg</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1077"/>
@@ -1629,7 +1629,7 @@
     <message>
         <location filename="mainwindow.cpp" line="718"/>
         <source>Solid</source>
-        <translation>Durchgezogen</translation>
+        <translation>Nur Flugweg</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="840"/>

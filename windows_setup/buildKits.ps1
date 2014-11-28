@@ -1,6 +1,6 @@
 ﻿$makeNsis = 'C:\Program Files\NSIS\makensis.exe'
 $myDir = (get-item $($myinvocation.InvocationName)).DirectoryName
-$kflogProjectDir = "$myDir/../kflog"
+$kflogProjectDir = "$myDir\..\kflog"
 $rootDevDir = (get-item $mydir).Parent.Parent.FullName
 $nsisScript = "$myDir/setup.nsi"
 $zipInstallFile = "$rootDevDir/PortableKFLog.zip"
@@ -130,7 +130,7 @@ if ((Test-Path $zipInstallFile))
 
 Move-Item -Verbose $zipfile $zipInstallFile
 
-  &"$makeNSIS" "/DMingwBinPath=$MinGwDirectory" "/DQtBinPath=$QtDirectory/bin" "/DExeSourcePath=$kflogMakeDirectory" "/NOCONFIG" "$nsisScript" 
+  &"$makeNSIS" "/DMingwBinPath=$MinGwDirectory" "/DQtBinPath=$QtDirectory/bin" "/DExeSourcePath=$kflogMakeDirectory" "/DKflogProjDir=$kflogProjectDir" "/NOCONFIG" "$nsisScript"
 
 if ((Test-Path $exeInstallFile))
 {
