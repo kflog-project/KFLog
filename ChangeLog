@@ -11,6 +11,10 @@
 #
 ################################################################################
 
+2014-11-29 Axel Pauli <kflog.cumulus@gmail.com>
+
+  * KFLog 4.9.0 released for Ubuntu, Debian and MS Windows.
+
 2014-11-28 Peter Simon <psimon.kflog@gmail.com>
 
   * Changes to KFLogSetup.exe to support installation of german UI translations.
