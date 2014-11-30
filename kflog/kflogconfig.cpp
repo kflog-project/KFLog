@@ -2126,7 +2126,7 @@ void KFLogConfig::__addAirspaceTab()
   asOpenAipUpdatePeriod->setSuffix( tr(" day") );
   asOpenAipUpdatePeriod->setEnabled( false );
 
-  connect( pointsOpenAipUpdatePeriod, SIGNAL(valueChanged( int)),
+  connect( asOpenAipUpdatePeriod, SIGNAL(valueChanged( int)),
 	   this, SLOT(slotAsOpenAipUpdatePeriodChanged(int)) );
 
   QPushButton* downloadAs = new QPushButton( tr("Download") );
