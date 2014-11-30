@@ -124,6 +124,7 @@ SOURCES = \
     rowdelegate.cpp \
     runway.cpp \
     singlepoint.cpp \
+    speed.cpp \
     taskdataprint.cpp \
     TaskEditor.cpp \
     tasklistviewitem.cpp \
@@ -207,6 +208,7 @@ HEADERS = \
     recorderdialog.h \
     rowdelegate.h \
     singlepoint.h \
+    speed.h \
     resource.h \
     runway.h \
     taskdataprint.h \
