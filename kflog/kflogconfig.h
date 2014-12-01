@@ -636,6 +636,12 @@ class KFLogConfig : public QDialog
   /** Combo box for altitude unit configuration. */
   QComboBox* m_unitAltitude;
 
+  /** Combo box for horizontal speed unit configuration. */
+  QComboBox* m_unitHSpeed;
+
+  /** Combo box for vertical speed unit configuration. */
+  QComboBox* m_unitVSpeed;
+
   /** Table for airspace files to be loaded. */
   QTableWidget* m_asFileTable;
 

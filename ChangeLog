@@ -11,6 +11,11 @@
 #
 ################################################################################
 
+2014-12-01 Axel Pauli <kflog.cumulus@gmail.com>
+
+  * Class Speed taken over from Cumulus and integrated into the configuration
+    unit window. A user can define now horizontal and vertical speed units.
+
 2014-11-29 Axel Pauli <kflog.cumulus@gmail.com>
 
   * KFLog 4.9.0 released for Ubuntu, Debian and MS Windows.

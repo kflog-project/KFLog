@@ -18,6 +18,8 @@
     #include <QtGui>
 #endif
 
+#include "altitude.h"
+#include "distance.h"
 #include "AirfieldSelectionList.h"
 #include "configmapelement.h"
 #include "kflogconfig.h"
@@ -28,6 +30,7 @@
 #include "wgspoint.h"
 #include "mainwindow.h"
 #include "rowdelegate.h"
+#include "speed.h"
 #include "welt2000.h"
 
 extern Map         *_globalMap;
@@ -363,17 +366,23 @@ void KFLogConfig::slotOk()
   _settings.setValue( "/Airspace/UpdatePeriod", asOpenAipUpdatePeriod->value() );
 
   // Save units
-  int altUnit  = m_unitAltitude->itemData( m_unitAltitude->currentIndex() ).toInt();
-  int distUnit = m_unitDistance->itemData( m_unitDistance->currentIndex() ).toInt();
-  int posUnit  = m_unitPosition->itemData( m_unitPosition->currentIndex() ).toInt();
+  int altUnit    = m_unitAltitude->itemData( m_unitAltitude->currentIndex() ).toInt();
+  int distUnit   = m_unitDistance->itemData( m_unitDistance->currentIndex() ).toInt();
+  int distHSUnit = m_unitHSpeed->itemData( m_unitHSpeed->currentIndex() ).toInt();
+  int distVSUnit = m_unitVSpeed->itemData( m_unitVSpeed->currentIndex() ).toInt();
+  int posUnit    = m_unitPosition->itemData( m_unitPosition->currentIndex() ).toInt();
 
   _settings.setValue( "/Units/Altitude", altUnit );
   _settings.setValue( "/Units/Distance", distUnit );
+  _settings.setValue( "/Units/HSpeed", distHSUnit );
+  _settings.setValue( "/Units/VSpeed", distVSUnit );
   _settings.setValue( "/Units/Position", posUnit );
 
   // Set units to be used in the related classes.
   Altitude::setUnit( static_cast<enum Altitude::altitudeUnit>(altUnit) );
   Distance::setUnit( static_cast<enum Distance::distanceUnit>(distUnit) );
+  Speed::setHorizontalUnit( static_cast<enum Speed::speedUnit>(distHSUnit) );
+  Speed::setVerticalUnit( static_cast<enum Speed::speedUnit>(distVSUnit) );
   WGSPoint::setFormat( static_cast<enum WGSPoint::Format>(posUnit) );
 
   // If Home latitude was changed and map projection is cylinder we take over
@@ -2291,6 +2300,21 @@ void KFLogConfig::__addUnitTab()
   m_unitDistance->addItem(tr("statute miles"),  Distance::miles);
   m_unitDistance->addItem(tr("nautical miles"), Distance::nautmiles);
 
+  m_unitHSpeed = new QComboBox;
+  m_unitHSpeed->setObjectName("UnitHSpeed");
+  m_unitHSpeed->setEditable(false);
+  m_unitHSpeed->addItem(tr("meters per second"), Speed::metersPerSecond);
+  m_unitHSpeed->addItem(tr("kilometers per hour"),  Speed::kilometersPerHour);
+  m_unitHSpeed->addItem(tr("knots"), Speed::knots);
+  m_unitHSpeed->addItem(tr("miles per hour"), Speed::milesPerHour);
+
+  m_unitVSpeed = new QComboBox;
+  m_unitVSpeed->setObjectName("UnitVSpeed");
+  m_unitVSpeed->setEditable(false);
+  m_unitVSpeed->addItem(tr("meters per second"), Speed::metersPerSecond);
+  m_unitVSpeed->addItem(tr("feet per minute"),  Speed::feetPerMinute);
+  m_unitVSpeed->addItem(tr("knots"), Speed::knots);
+
   m_unitPosition = new QComboBox;
   m_unitPosition->setObjectName("UnitPosition");
   m_unitPosition->setEditable(false);
@@ -2302,6 +2326,8 @@ void KFLogConfig::__addUnitTab()
   unitLayout->setSpacing( 10 );
   unitLayout->addRow( tr( "Altitude" ) + ":", m_unitAltitude );
   unitLayout->addRow( tr( "Distance" ) + ":", m_unitDistance );
+  unitLayout->addRow( tr( "Horizontal Speed" ) + ":", m_unitHSpeed );
+  unitLayout->addRow( tr( "Vertical Speed" ) + ":", m_unitVSpeed );
   unitLayout->addRow( tr( "Position" ) + ":", m_unitPosition );
 
   unitGroup->setLayout( unitLayout );
@@ -2316,10 +2342,14 @@ void KFLogConfig::__addUnitTab()
 
   int altUnit  = _settings.value( "/Units/Altitude", Altitude::meters ).toInt();
   int distUnit = _settings.value( "/Units/Distance", Distance::kilometers ).toInt();
+  int hSpeed   = _settings.value( "/Units/HSpeed", Speed::kilometersPerHour ).toInt();
+  int vSpeed   = _settings.value( "/Units/VSpeed", Speed::metersPerSecond ).toInt();
   int posUnit  = _settings.value( "/Units/Position", WGSPoint::DMS ).toInt();
 
   m_unitAltitude->setCurrentIndex( m_unitAltitude->findData( altUnit ) );
   m_unitDistance->setCurrentIndex( m_unitDistance->findData( distUnit ) );
+  m_unitHSpeed->setCurrentIndex( m_unitHSpeed->findData( hSpeed ) );
+  m_unitHSpeed->setCurrentIndex( m_unitVSpeed->findData( vSpeed ) );
   m_unitPosition->setCurrentIndex( m_unitPosition->findData( posUnit ) );
 }
 
