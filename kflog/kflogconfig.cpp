@@ -30,7 +30,7 @@
 #include "wgspoint.h"
 #include "mainwindow.h"
 #include "rowdelegate.h"
-#include "speed.h"
+#include "Speed.h"
 #include "welt2000.h"
 
 extern Map         *_globalMap;
@@ -368,21 +368,21 @@ void KFLogConfig::slotOk()
   // Save units
   int altUnit    = m_unitAltitude->itemData( m_unitAltitude->currentIndex() ).toInt();
   int distUnit   = m_unitDistance->itemData( m_unitDistance->currentIndex() ).toInt();
-  int distHSUnit = m_unitHSpeed->itemData( m_unitHSpeed->currentIndex() ).toInt();
-  int distVSUnit = m_unitVSpeed->itemData( m_unitVSpeed->currentIndex() ).toInt();
+  int hSpeedUnit = m_unitHSpeed->itemData( m_unitHSpeed->currentIndex() ).toInt();
+  int vSpeedUnit = m_unitVSpeed->itemData( m_unitVSpeed->currentIndex() ).toInt();
   int posUnit    = m_unitPosition->itemData( m_unitPosition->currentIndex() ).toInt();
 
   _settings.setValue( "/Units/Altitude", altUnit );
   _settings.setValue( "/Units/Distance", distUnit );
-  _settings.setValue( "/Units/HSpeed", distHSUnit );
-  _settings.setValue( "/Units/VSpeed", distVSUnit );
+  _settings.setValue( "/Units/HSpeed", hSpeedUnit );
+  _settings.setValue( "/Units/VSpeed", vSpeedUnit );
   _settings.setValue( "/Units/Position", posUnit );
 
   // Set units to be used in the related classes.
   Altitude::setUnit( static_cast<enum Altitude::altitudeUnit>(altUnit) );
   Distance::setUnit( static_cast<enum Distance::distanceUnit>(distUnit) );
-  Speed::setHorizontalUnit( static_cast<enum Speed::speedUnit>(distHSUnit) );
-  Speed::setVerticalUnit( static_cast<enum Speed::speedUnit>(distVSUnit) );
+  Speed::setHorizontalUnit( static_cast<enum Speed::speedUnit>(hSpeedUnit) );
+  Speed::setVerticalUnit( static_cast<enum Speed::speedUnit>(vSpeedUnit) );
   WGSPoint::setFormat( static_cast<enum WGSPoint::Format>(posUnit) );
 
   // If Home latitude was changed and map projection is cylinder we take over
@@ -2340,16 +2340,16 @@ void KFLogConfig::__addUnitTab()
 
   unitPage->setLayout( unitPageLayout );
 
-  int altUnit  = _settings.value( "/Units/Altitude", Altitude::meters ).toInt();
-  int distUnit = _settings.value( "/Units/Distance", Distance::kilometers ).toInt();
-  int hSpeed   = _settings.value( "/Units/HSpeed", Speed::kilometersPerHour ).toInt();
-  int vSpeed   = _settings.value( "/Units/VSpeed", Speed::metersPerSecond ).toInt();
-  int posUnit  = _settings.value( "/Units/Position", WGSPoint::DMS ).toInt();
+  int altUnit    = _settings.value( "/Units/Altitude", Altitude::meters ).toInt();
+  int distUnit   = _settings.value( "/Units/Distance", Distance::kilometers ).toInt();
+  int hSpeedUnit = _settings.value( "/Units/HSpeed", Speed::kilometersPerHour ).toInt();
+  int vSpeedUnit = _settings.value( "/Units/VSpeed", Speed::metersPerSecond ).toInt();
+  int posUnit    = _settings.value( "/Units/Position", WGSPoint::DMS ).toInt();
 
   m_unitAltitude->setCurrentIndex( m_unitAltitude->findData( altUnit ) );
   m_unitDistance->setCurrentIndex( m_unitDistance->findData( distUnit ) );
-  m_unitHSpeed->setCurrentIndex( m_unitHSpeed->findData( hSpeed ) );
-  m_unitHSpeed->setCurrentIndex( m_unitVSpeed->findData( vSpeed ) );
+  m_unitHSpeed->setCurrentIndex( m_unitHSpeed->findData( hSpeedUnit ) );
+  m_unitVSpeed->setCurrentIndex( m_unitVSpeed->findData( vSpeedUnit ) );
   m_unitPosition->setCurrentIndex( m_unitPosition->findData( posUnit ) );
 }
 

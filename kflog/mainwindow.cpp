@@ -51,6 +51,7 @@
 #include "MessageHelpBox.h"
 #include "objecttree.h"
 #include "recorderdialog.h"
+#include "Speed.h"
 #include "taskdataprint.h"
 #include "target.h"
 #include "topolegend.h"
@@ -96,12 +97,16 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
   QApplication::setStyle( "plastique" );
 
   // Initialize units to be used. Use the stored values from the configuration.
-  int altUnit  = _settings.value( "/Units/Altitude", Altitude::meters ).toInt();
-  int distUnit = _settings.value( "/Units/Distance", Distance::kilometers ).toInt();
-  int posUnit  = _settings.value( "/Units/Position", WGSPoint::DMS ).toInt();
+  int altUnit    = _settings.value( "/Units/Altitude", Altitude::meters ).toInt();
+  int distUnit   = _settings.value( "/Units/Distance", Distance::kilometers ).toInt();
+  int hSpeedUnit = _settings.value( "/Units/HSpeed", Speed::kilometersPerHour ).toInt();
+  int vSpeedUnit = _settings.value( "/Units/VSpeed", Speed::metersPerSecond ).toInt();
+  int posUnit    = _settings.value( "/Units/Position", WGSPoint::DMS ).toInt();
 
   Altitude::setUnit( static_cast<enum Altitude::altitudeUnit>(altUnit) );
   Distance::setUnit( static_cast<enum Distance::distanceUnit>(distUnit) );
+  Speed::setHorizontalUnit( static_cast<enum Speed::speedUnit>(hSpeedUnit) );
+  Speed::setVerticalUnit( static_cast<enum Speed::speedUnit>(vSpeedUnit) );
   WGSPoint::setFormat( static_cast<enum WGSPoint::Format>(posUnit) );
 
   // Migrate to the new directory structure for point geo positions.
@@ -981,32 +986,40 @@ void MainWindow::createStatusBar()
   statusLabel->setLineWidth(0);
   statusLabel->setAlignment( Qt::AlignHCenter | Qt::AlignVCenter );
 
+  int mw = QFontMetrics(font()).width(" 99:99:99 ");
+
   statusTimeL = new QLabel(statusBar());
-  statusTimeL->setFixedWidth( 80 );
+  statusTimeL->setMinimumWidth( mw );
   statusTimeL->setFixedHeight( statusLabel->sizeHint().height() );
   statusTimeL->setFrameStyle(QFrame::NoFrame |QFrame::Plain );
   statusTimeL->setMargin(0);
   statusTimeL->setLineWidth(0);
   statusTimeL->setAlignment( Qt::AlignHCenter | Qt::AlignVCenter );
 
+  mw = QFontMetrics(font()).width("999999 ft MSL");
+
   statusAltitudeL = new QLabel(statusBar());
-  statusAltitudeL->setFixedWidth( 80 );
+  statusAltitudeL->setMinimumWidth( mw );
   statusAltitudeL->setFixedHeight( statusLabel->sizeHint().height() );
   statusAltitudeL->setFrameStyle(QFrame::NoFrame |QFrame::Plain );
   statusAltitudeL->setMargin(0);
   statusAltitudeL->setLineWidth(0);
   statusAltitudeL->setAlignment( Qt::AlignRight | Qt::AlignVCenter );
 
+  mw = QFontMetrics(font()).width("99999 fpm");
+
   statusVarioL = new QLabel(statusBar());
-  statusVarioL->setFixedWidth( 80 );
+  statusVarioL->setMinimumWidth( mw );
   statusVarioL->setFixedHeight( statusLabel->sizeHint().height() );
   statusVarioL->setFrameStyle(QFrame::NoFrame |QFrame::Plain );
   statusVarioL->setMargin(0);
   statusVarioL->setLineWidth(0);
   statusVarioL->setAlignment( Qt::AlignRight | Qt::AlignVCenter );
 
+  mw = QFontMetrics(font()).width("9999 km/h");
+
   statusSpeedL = new QLabel(statusBar());
-  statusSpeedL->setFixedWidth( 100 );
+  statusSpeedL->setMinimumWidth( mw );
   statusSpeedL->setFixedHeight( statusLabel->sizeHint().height() );
   statusSpeedL->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
   statusSpeedL->setMargin(0);
@@ -1027,15 +1040,14 @@ void MainWindow::createStatusBar()
   statusLonL->setLineWidth(0);
   statusLonL->setAlignment( Qt::AlignHCenter | Qt::AlignVCenter );
 
+  mw = QFontMetrics(font()).width("999999 ft MSL");
+
   statusTerrainElevation = new QLabel(statusBar());
   statusTerrainElevation->setFixedHeight( statusLabel->sizeHint().height() );
   statusTerrainElevation->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
   statusTerrainElevation->setMargin(0);
   statusTerrainElevation->setLineWidth(0);
   statusTerrainElevation->setAlignment( Qt::AlignHCenter | Qt::AlignVCenter );
-
-  // Sets a minimum width for the widget
-  int mw = QFontMetrics(font()).width("999999 ft MSL");
   statusTerrainElevation->setMinimumWidth( mw );
 
   statusBar()->addWidget( statusLabel, 1 );
@@ -1703,13 +1715,16 @@ void MainWindow::slotSetPointInfo(const QPoint& pos, const FlightPoint& point)
   statusTimeL->setText(printTime(point.time, true));
 
   QString text;
-  text = QString(" %1 MSL").arg(Altitude::getText(point.height, true, 0));
+  text = QString("%1 MSL").arg(Altitude::getText(point.height, true, 0));
   statusAltitudeL->setText(text);
 
-  text.sprintf("%3.1f km/h  ", getSpeed(point));
+  Speed speed(0.0);
+  speed.setKph(getSpeed(point));
+  text = QString("%1").arg(speed.getHorizontalText(true, 0));
   statusSpeedL->setText(text);
 
-  text.sprintf("%2.1f m/s  ", getVario(point));
+  speed.setMps(getVario(point));
+  text = QString("%1").arg(speed.getVerticalText(true, 1));
   statusVarioL->setText(text);
 
   statusLatL->setText(WGSPoint::printPos(pos.x()));

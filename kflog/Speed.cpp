@@ -1,28 +1,22 @@
-/***************************************************************************
-                          speed.cpp  -  description
-                             -------------------
-    begin                : Sat Jul 20 2002
-    copyright            : 2002      by Andre Somers
-                         : 2007-2014 by Axel Pauli
-
-    email                : kflog.cumulus@gmail.com
-
-    This file is part of KFLog
-
- ***************************************************************************/
-
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+/***********************************************************************
+**
+**   Speed.cpp
+**
+**   This file is part of KFLog.
+**
+************************************************************************
+**
+**   Copyright (c):  2002 by by Andre Somers
+**                   2007-2014 by Axel Pauli
+**
+**   This file is distributed under the terms of the General Public
+**   License. See the file COPYING for more information.
+**
+***********************************************************************/
 
 #include <cmath>
 
-#include "speed.h"
+#include "Speed.h"
 
 // initialize static values
 Speed::speedUnit Speed::_horizontalUnit = kilometersPerHour;
