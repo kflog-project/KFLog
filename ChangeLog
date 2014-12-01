@@ -14,9 +14,10 @@
 2014-12-01 Axel Pauli <kflog.cumulus@gmail.com>
 
   * Class Speed taken over from Cumulus and integrated into the configuration
-    unit window. A user can define now horizontal and vertical speed units.
+    unit window. A user can define now different horizontal and vertical speed
+    units.
     
-  * Statusbar shows now the values in the user's selected units.
+  * Statusbar of main window shows now the values in the user's selected units.
 
 2014-11-29 Axel Pauli <kflog.cumulus@gmail.com>
 
