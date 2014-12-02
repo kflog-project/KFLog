@@ -1,23 +1,18 @@
-/***************************************************************************
-                           distance.h
-
-    begin                : Sat Jul 20 2002
-
-    copyright            : (C) 2002      by André Somers,
-                               2007-2011 by Axel Pauli
-
-    email                : andre@kflog.org
-
-    $Id$
-
-***************************************************************************
-*                                                                         *
-*   This program is free software; you can redistribute it and/or modify  *
-*   it under the terms of the GNU General Public License as published by  *
-*   the Free Software Foundation; either version 2 of the License, or     *
-*   (at your option) any later version.                                   *
-*                                                                         *
-***************************************************************************/
+/***********************************************************************
+**
+**   distance.h
+**
+**   This file is part of KFLog.
+**
+************************************************************************
+**
+**   Copyright (c):  2002 by by Andre Somers
+**                   2007-2014 by Axel Pauli
+**
+**   This file is distributed under the terms of the General Public
+**   License. See the file COPYING for more information.
+**
+***********************************************************************/
 
 /**
  * \class Distance
@@ -31,9 +26,9 @@
  * It also features a couple of static methods to convert from the set
  * unit to meters or to display a distance in the currently selected unit.
  *
- * \date 2002-2011
+ * \date 2002-2014
  *
- * \version $Id$
+ * \version 1.0
  */
 
 #ifndef DISTANCE_H
@@ -46,10 +41,10 @@ class Distance
  public:
 
   // define conversion constants
-  static const double mFromKm;
-  static const double mFromMile;
-  static const double mFromNMile;
-  static const double mFromFeet;
+  static const double mFromKm    =1000.0; // 1000.0 meters in 1 km.
+  static const double mFromMile  =1609.3; // 1609.3 meters in a mile
+  static const double mFromNMile =1852.0; // 1852 meters in a nautical mile
+  static const double mFromFeet  =0.3048; // a foot is a bit more than 30 cm
 
   enum distanceUnit{ meters=0, feet=1, kilometers=2, miles=3, nautmiles=4 };
 
@@ -222,6 +217,16 @@ class Distance
    * returns the distance in kilometers
    */
   double getKilometers() const;
+
+  /**
+   * Sets the distance value in the current used distance unit.
+   */
+  void setValueInCurrentUnit( const double value );
+
+  /**
+   * Returns distance value of the current set distance unit.
+   */
+  double getValueOfCurrentUnit() const;
 
   /**
    * Sets the distance to be invalid
