@@ -7,12 +7,10 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by Heiner Lamprecht
-**                   2011-2013 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -35,9 +33,9 @@
   *
   * @author Heiner Lamprecht, Axel Pauli
   *
-  * @date 2003-2013
+  * @date 2003-2014
   *
-  * @version $Id$
+  * @version 1.0
   */
 
 class Waypoint
@@ -126,7 +124,7 @@ class Waypoint
    */
   int tpType;
   /**
-   * The distance to the previous waypoint
+   * The distance to the previous waypoint in kilometers
    */
   double distance;
 

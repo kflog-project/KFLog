@@ -1785,6 +1785,8 @@ void MainWindow::slotConfigureKFLog()
 
   connect(confDlg, SIGNAL(configOk()), _globalMapContents, SLOT(reProject()));
 
+  connect(confDlg, SIGNAL(configOk()), dataView, SLOT(slotSetFlightData()));
+
   connect(confDlg, SIGNAL(checkWelt20004Update()),
 	  _globalMapContents, SLOT(slotCheckWelt20004Update()));
 

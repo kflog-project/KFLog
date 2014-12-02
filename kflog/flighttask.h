@@ -127,8 +127,16 @@ class FlightTask : public BaseFlightElement
   QString getPointsString() ;
   /** */
   QRect getRect() const;
-  /** */
+
+  /**
+   * The FAI distances are calculated in kilometers.
+   *
+   * \param leg Leg length in kilometers
+   *
+   * \return The FAI distances calculated in kilometers.
+   */
   struct faiRange getFAIDistance(double leg);
+
   void setOptimizedTask(double points, double distance);
   void setWaypointList(const QList<Waypoint*>& wpL);
   /** No descriptions */
@@ -239,6 +247,7 @@ class FlightTask : public BaseFlightElement
   double distance_wert;
   /** Aufgaben Länge*/
   double distance_task;
+
   int __planningType;
   QList<faiAreaSector*> FAISectList;
   /* direction of area planning */

@@ -21,11 +21,13 @@
 #endif
 
 #include "dataview.h"
+#include "distance.h"
 #include "flight.h"
 #include "flightgroup.h"
 #include "flighttask.h"
 #include "mapcalc.h"
 #include "mapcontents.h"
+#include "Speed.h"
 #include "wgspoint.h"
 
 extern MapContents *_globalMapContents;
@@ -56,7 +58,7 @@ QString DataView::__writeTaskInfo(FlightTask* task)
       return "";
     }
 
-  QString txt, tmp,speed;
+  QString txt, tmp, speed;
   QString idString, timeString;
   Waypoint *wp1, *wp2 = 0;
   int t1, t2, loop = 0;
@@ -118,60 +120,83 @@ QString DataView::__writeTaskInfo(FlightTask* task)
               t2 = 0;
             }
 
-          tmp.sprintf("t1 : %d, t2 : %d", t1, t2);
+          Distance dist(0);
+          dist.setKilometers( wp1->distance );
 
-          tmp.sprintf("%.2f km / %03.0f° / %.1f km/h", wp1->distance,
-                      getTrueCourse(wp1->origP, wp2->origP),
-                      (t1 != 0 && t2 != 0) ? wp1->distance / (t1 - t2) * 3600.0 : 0.0);
-          htmlText += "<TR><TD ALIGN=center COLSPAN=3 BGCOLOR=#EEEEEE>" + tmp
-              + "</TD></TR>";
+          Speed speed1(0);
+
+          if( (t1 - t2) != 0 )
+            {
+              speed1.setKph( wp1->distance / (t1 - t2) * 3600.0 );
+            }
+
+          tmp = QString("%1 / %2%3 / %4")
+                .arg( dist.getText( true, 2 ) )
+		.arg( getTrueCourse(wp1->origP, wp2->origP), 0, 'f', 0 )
+		.arg( QChar(Qt::Key_degree) )
+		.arg( speed1.getHorizontalText( true, 0 ) );
+
+          tmp = tmp.replace(QRegExp(" "), "&nbsp;");
+
+          htmlText += "<TR><TD NOWRAP ALIGN=center COLSPAN=3 BGCOLOR=#EEEEEE>" + tmp
+                   + "</TD></TR>";
         }
 
-    idString.sprintf("%d", loop);
+    idString = QString("%1").arg(loop);
 
     QString wpLat = WGSPoint::printPos(wp1->origP.lat()).replace(QRegExp(" "), "&nbsp;");
     QString wpLon = WGSPoint::printPos(wp1->origP.lon()).replace(QRegExp(" "), "&nbsp;");
 
-    htmlText += "<TR><TD COLSPAN=2><A HREF=" + idString + ">" + wp1->name +
-          "</A></TD><TD ALIGN=right>" + timeString + "</TD></TR>" +
-          "<TR><TD NOWRAP COLSPAN=2>&nbsp;" + wpLat + "&nbsp;</TD>" +
-          "<TD ALIGN=right>&nbsp;" + wpLon + "&nbsp;</TD></TR>";
+    htmlText +=
+	"<TR><TD COLSPAN=2><A HREF=" + idString + ">" + wp1->name +
+	"</A></TD><TD ALIGN=right>" + timeString + "</TD></TR>" +
+	"<TR><TD NOWRAP COLSPAN=2>&nbsp;" + wpLat + "&nbsp;</TD>" +
+	"<TD ALIGN=right>&nbsp;" + wpLon + "&nbsp;</TD></TR>";
+
     wp2 = wp1;
     loop++;
   }
 
   if (task->getTaskType() == FlightTask::OLC2003)
     {
-      txt.sprintf("%.2f", task->getOlcPoints());
-      speed.sprintf("%.2f",task->getAverageSpeed());
-      htmlText += "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Total Distance") +
-        ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
-        task->getTotalDistanceString() + "</TD></TR>\
-        <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Task Distance") +
-        ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
-        task->getTaskDistanceString() + "</TD></TR>\
-        <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Average Speed") +
-        ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
-        speed + "</TD>" +
-        "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Points") +
-        ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
-        txt + "</TD>" +
-        "</TR></TABLE>";
+      txt = QString("%1").arg(task->getOlcPoints(), 0, 'f', 2);
+
+      Speed speed2(0);
+      speed2.setKph( task->getAverageSpeed() );
+
+      speed = QString("%1").arg(speed2.getHorizontalText( true, 2 ) );
+
+      htmlText +=
+	  "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Total Distance") +
+	  ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
+	  task->getTotalDistanceString() + "</TD></TR>\
+	  <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Task Distance") +
+	  ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
+	  task->getTaskDistanceString() + "</TD></TR>\
+	  <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Average Speed") +
+	  ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
+	  speed + "</TD>" +
+	  "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Points") +
+	  ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
+	  txt + "</TD>" +
+	  "</TR></TABLE>";
     }
   else
     {
       if (task->getPlanningType() == FlightTask::Route)
         {
-          txt.sprintf("%d", task->getPlannedPoints());
-          htmlText += "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("total Distance") +
-            ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
-            task->getTotalDistanceString() + "</TD></TR>\
-            <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Task Distance") +
-            ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
-            task->getTaskDistanceString() + "</TD></TR>\
-            <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Points") +
-            ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
-            txt + "</TD></TR></TABLE>";
+          txt = QString("%1").arg(task->getPlannedPoints());
+
+          htmlText +=
+              "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("total Distance") +
+	      ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
+	      task->getTotalDistanceString() + "</TD></TR>\
+	      <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Task Distance") +
+	      ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
+	      task->getTaskDistanceString() + "</TD></TR>\
+	      <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Points") +
+	      ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
+	      txt + "</TD></TR></TABLE>";
         }
       else
         {  // area based
@@ -181,10 +206,17 @@ QString DataView::__writeTaskInfo(FlightTask* task)
             }
           else
             {
-              tmp.sprintf("%.2f km", wpList.at(2)->distance);
+              Distance dist(0);
+              dist.setKilometers( wpList.at(2)->distance );
+              tmp = QString("%1 %2")
+        	           .arg( dist.getText(true, 2) )
+			   .arg( Distance::getUnitText() );
+
+              tmp = tmp.replace(QRegExp(" "), "&nbsp;");
             }
 
-          htmlText += "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Leg Distance") +
+          htmlText +=
+              "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Leg Distance") +
               ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
               tmp + "</TD></TR>\
               <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("FAI Distance") +
@@ -266,7 +298,7 @@ void DataView::slotSetFlightData()
           // have removed the rule
           //                                                     Heiner, 2003-01-02
           //
-          htmlText = QString("<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>") +
+          htmlText = QString("<TABLE BORDER=0 CELLPADDING=2 CELLSPACING=0>") +
               "<TR><TD>" + tr("File") + ":</TD><TD>" + QFileInfo(flight->getFileName()).fileName() + "</TD></TR>" +
               "<TR><TD>" + tr("Date") + ":</TD><TD>" + h.at(3) + "</TD></TR>" +
               "<TR><TD>" + tr("Pilot") + ":</TD><TD> " + h.at(0) + "</TD></TR>" +

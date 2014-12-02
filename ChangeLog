@@ -14,6 +14,8 @@
 2014-12-02 Axel Pauli <kflog.cumulus@gmail.com>
 
   * Missing translation macro added in class EvaluationDialog.
+  
+  * DataView window considers now the user's set units.
 
 2014-12-01 Axel Pauli <kflog.cumulus@gmail.com>
 

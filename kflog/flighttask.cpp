@@ -7,12 +7,10 @@
  ************************************************************************
  **
  **   Copyright (c):  2001 by Heiner Lamprecht
- **                   2011 by Axel Pauli
+ **                   2011-2014 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
- **
- **   $Id$
  **
  ***********************************************************************/
 
@@ -24,6 +22,7 @@
     #include <QtGui>
 #endif
 
+#include "distance.h"
 #include "flighttask.h"
 #include "mapcalc.h"
 
@@ -47,6 +46,9 @@ FlightTask::FlightTask(const QString& fName) :
   olcPoints(0),
   taskPoints(0),
   flightType(FlightTask::NotSet),
+  distance_total(0),
+  distance_wert(0),
+  distance_task(0),
   __planningType(Route),
   __planningDirection(leftOfRoute)
 {
@@ -203,9 +205,11 @@ void FlightTask::__checkType()
               (wpList.at(4) == wpList.at(10)) &&
               isFAI(distance_task, dist(wpList.at(2), wpList.at(4)),
                     wpList.at(3)->distance, wpList.at(4)->distance))
-            flightType = FlightTask::FAI_S3;
+            flightType = FlightTask::Unknown;
+            break;
         default:
           flightType = FlightTask::Unknown;
+          break;
         }
     }
   else
@@ -789,11 +793,11 @@ void FlightTask::checkWaypoints(QList<FlightPoint*> route, const QString& glider
 
       __sectorangle(loop, false);
       /*
-       * Pr�fung, ob Flugpunkte in den Sektoren liegen.
+       * Prüfung, ob Flugpunkte in den Sektoren liegen.
        *
        *      Ein Index 0 bei den Sektoren zeigt an, dass der Sektor
-       *      _nicht_ erreicht wurde. Dies f�hrt an Mitternacht zu
-       *      einem m�glichen Fehler ...
+       *      _nicht_ erreicht wurde. Dies führt an Mitternacht zu
+       *      einem möglichen Fehler ...
        */
       for(int pLoop = startIndex + 1; pLoop < route.count(); pLoop++)
         {
@@ -925,14 +929,15 @@ void FlightTask::checkWaypoints(QList<FlightPoint*> route, const QString& glider
       home = false;
       if(showWarnings)
         QMessageBox::warning(0, QObject::tr("Not reached last waypoint"),
-                           QObject::tr("You have not reached the last point of your task."), QMessageBox::Ok, 0);
+                             QObject::tr("You have not reached the last point of your task."),
+			     QMessageBox::Ok, 0);
 
       if(dist(wpList.at(1 + dmstCount), route.last()) < 1.0)
         {
           // Landung auf letztem Wegpunkt
         }
       else
-        // Au�enlandung -- Wertung: + 1Punkt bis zur Au�enlandung
+        // Aussenlandung -- Wertung: + 1Punkt bis zur Aussenlandung
         aussenlande = dist(wpList.at(1 + dmstCount), route.last());
     }
   else
@@ -966,7 +971,7 @@ void FlightTask::checkWaypoints(QList<FlightPoint*> route, const QString& glider
   else
     {
       /*
-       * Aufgabe vollst�ndig erf�llt
+       * Aufgabe vollständig erfüllt
        *        F: Punkte/km
        *        I: Index des Flugzeuges
        *        f & I noch abfragen !!!!
@@ -1005,23 +1010,35 @@ void FlightTask::checkWaypoints(QList<FlightPoint*> route, const QString& glider
   if (time_error && showWarnings)
     {
       QMessageBox::warning(0, QObject::tr("Incorrect time interval"),
-                         "<qt>" + QObject::tr("The time interval between two points "
+                              "<html>" + QObject::tr("The time interval between two points "
                               "of the flight is more than 70 sec.!<BR>"
                               "Due to Code Sportif 3, Nr. 1.9.2.1, "
-                              "the flight can not be valued!") + "</qt>", QMessageBox::Ok, 0);
+                              "the flight can not be valued!") + "</html>",
+			      QMessageBox::Ok, 0);
     }
 
 }
 
 QString FlightTask::getTotalDistanceString()
 {
-  if(flightType == FlightTask::NotSet)  return "--";
+  if(flightType == FlightTask::NotSet)
+    {
+      return "--";
+    }
 
   QString distString;
+  Distance dist(0);
+
   if (flightType == OLC2003)
-    distString.sprintf("%.2f km",distance_wert);
+    {
+      dist.setKilometers(distance_wert);
+      distString = QString("%1").arg( dist.getText(true, 2) );
+    }
   else
-    distString.sprintf("%.2f km", distance_total);
+    {
+      dist.setKilometers(distance_total);
+      distString = QString("%1").arg( dist.getText(true, 2) );
+    }
 
   return distString;
 }
@@ -1029,19 +1046,29 @@ QString FlightTask::getTotalDistanceString()
 
 QString FlightTask::getTaskDistanceString()
 {
-  if(flightType == FlightTask::NotSet)  return "--";
+  if(flightType == FlightTask::NotSet)
+    {
+      return "--";
+    }
 
   QString distString;
+  Distance dist(0);
 
   if (flightType == OLC2003)
-    distString.sprintf("%.2f km",distance_wert);
-  else
-    if (getPlanningType() == Route) {
-      distString.sprintf("%.2f km", distance_task);
+    {
+      dist.setKilometers(distance_wert);
+      distString = QString("%1").arg( dist.getText(true, 2) );
     }
-    else {
+  else if (getPlanningType () == Route)
+    {
+      dist.setKilometers(distance_task);
+      distString = QString("%1").arg( dist.getText(true, 2) );
+    }
+  else
+    {
       distString = getFAIDistanceString();
     }
+
   return distString;
 }
 
@@ -1322,19 +1349,30 @@ void FlightTask::setPlanningDirection(int dir)
 QString FlightTask::getFAIDistanceString()
 {
   QString txt;
-  double dist;
   struct faiRange range;
 
-  if (wpList.count() < 4) {
-    txt = "0.0 km - 0.0 km";
-  }
-  else {
-    dist = wpList.at(2)->distance;
-    range = getFAIDistance(dist);
-    txt.sprintf("%.2f km - %.2f km",
-                range.minLength28 < 500.0 ? range.minLength28 : range.minLength25,
-                range.maxLength25 > 500.0 ? range.maxLength25 : range.maxLength28);
-  }
+  if( wpList.count() < 4 )
+    {
+      txt = "0.0 km - 0.0 km";
+      txt = QString("0.0 %1 - 0.0 %2").arg( Distance::getUnitText())
+                                      .arg( Distance::getUnitText());
+    }
+  else
+    {
+      range = getFAIDistance(wpList.at(2)->distance);
+
+      // Calculate values in current set distance unit.
+      double minLength25 = Distance( range.minLength25 * 1000.0 ).getValueOfCurrentUnit();
+      double minLength28 = Distance( range.minLength28 * 1000.0 ).getValueOfCurrentUnit();
+      double maxLength25 = Distance( range.maxLength25 * 1000.0 ).getValueOfCurrentUnit();
+      double maxLength28 = Distance( range.maxLength28 * 1000.0 ).getValueOfCurrentUnit();
+
+      txt = QString("%1 %2 - %3 %4")
+	           .arg(range.minLength28 < 500.0 ? minLength28 : minLength25, 0, 'f', 2)
+		   .arg(Distance::getUnitText())
+		   .arg(range.maxLength25 > 500.0 ? maxLength25 : maxLength28, 0, 'f', 2)
+		   .arg(Distance::getUnitText());
+    }
 
   return txt;
 }
