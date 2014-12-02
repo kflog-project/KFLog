@@ -132,9 +132,9 @@ QString DataView::__writeTaskInfo(FlightTask* task)
 
           tmp = QString("%1 / %2%3 / %4")
                 .arg( dist.getText( true, 2 ) )
-		.arg( getTrueCourse(wp1->origP, wp2->origP), 0, 'f', 0 )
-		.arg( QChar(Qt::Key_degree) )
-		.arg( speed1.getHorizontalText( true, 0 ) );
+                .arg( getTrueCourse(wp1->origP, wp2->origP), 0, 'f', 0 )
+                .arg( QChar(Qt::Key_degree) )
+                .arg( speed1.getHorizontalText( true, 0 ) );
 
           tmp = tmp.replace(QRegExp(" "), "&nbsp;");
 
@@ -148,10 +148,10 @@ QString DataView::__writeTaskInfo(FlightTask* task)
     QString wpLon = WGSPoint::printPos(wp1->origP.lon()).replace(QRegExp(" "), "&nbsp;");
 
     htmlText +=
-	"<TR><TD COLSPAN=2><A HREF=" + idString + ">" + wp1->name +
-	"</A></TD><TD ALIGN=right>" + timeString + "</TD></TR>" +
-	"<TR><TD NOWRAP COLSPAN=2>&nbsp;" + wpLat + "&nbsp;</TD>" +
-	"<TD ALIGN=right>&nbsp;" + wpLon + "&nbsp;</TD></TR>";
+        "<TR><TD COLSPAN=2><A HREF=" + idString + ">" + wp1->name +
+        "</A></TD><TD ALIGN=right>" + timeString + "</TD></TR>" +
+        "<TR><TD NOWRAP COLSPAN=2>&nbsp;" + wpLat + "&nbsp;</TD>" +
+        "<TD ALIGN=right>&nbsp;" + wpLon + "&nbsp;</TD></TR>";
 
     wp2 = wp1;
     loop++;
@@ -167,19 +167,19 @@ QString DataView::__writeTaskInfo(FlightTask* task)
       speed = QString("%1").arg(speed2.getHorizontalText( true, 2 ) );
 
       htmlText +=
-	  "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Total Distance") +
-	  ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
-	  task->getTotalDistanceString() + "</TD></TR>\
-	  <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Task Distance") +
-	  ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
-	  task->getTaskDistanceString() + "</TD></TR>\
-	  <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Average Speed") +
-	  ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
-	  speed + "</TD>" +
-	  "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Points") +
-	  ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
-	  txt + "</TD>" +
-	  "</TR></TABLE>";
+          "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Total Distance") +
+          ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
+          task->getTotalDistanceString() + "</TD></TR>\
+          <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Task Distance") +
+          ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
+          task->getTaskDistanceString() + "</TD></TR>\
+          <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Average Speed") +
+          ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
+          speed + "</TD>" +
+          "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Points") +
+          ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
+          txt + "</TD>" +
+          "</TR></TABLE>";
     }
   else
     {
@@ -189,14 +189,14 @@ QString DataView::__writeTaskInfo(FlightTask* task)
 
           htmlText +=
               "<TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("total Distance") +
-	      ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
-	      task->getTotalDistanceString() + "</TD></TR>\
-	      <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Task Distance") +
-	      ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
-	      task->getTaskDistanceString() + "</TD></TR>\
-	      <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Points") +
-	      ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
-	      txt + "</TD></TR></TABLE>";
+              ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
+              task->getTotalDistanceString() + "</TD></TR>\
+              <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Task Distance") +
+              ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
+              task->getTaskDistanceString() + "</TD></TR>\
+              <TR><TD COLSPAN=2 BGCOLOR=#BBBBBB><B>" + tr("Points") +
+              ":</B></TD><TD ALIGN=right BGCOLOR=#BBBBBB>" +
+              txt + "</TD></TR></TABLE>";
         }
       else
         {  // area based
@@ -210,7 +210,7 @@ QString DataView::__writeTaskInfo(FlightTask* task)
               dist.setKilometers( wpList.at(2)->distance );
               tmp = QString("%1 %2")
         	           .arg( dist.getText(true, 2) )
-			   .arg( Distance::getUnitText() );
+        	           .arg( Distance::getUnitText() );
 
               tmp = tmp.replace(QRegExp(" "), "&nbsp;");
             }
@@ -237,8 +237,8 @@ void DataView::slotShowTaskText(FlightTask* task)
 
   QList<Waypoint*> taskPointList = task->getWPList();
 
-   QString htmlText = "<HTML><B>" + tr("Task-Type: ") + "</B>" +
-                       task->getTaskTypeString() + "<BR>";
+  QString htmlText = "<HTML><B>" + tr("Task-Type: ") + "</B>" +
+                     task->getTaskTypeString() + "<BR>";
 
   if(task->getWPList().count() > 0)
     {
@@ -319,55 +319,66 @@ void DataView::slotSetFlightData()
         }
 
       case BaseMapElement::Task:
+        {
+          FlightTask* ft = dynamic_cast<FlightTask *>(e);
 
-        htmlText = __writeTaskInfo((FlightTask *)e);
-        break;
+          if( ft == static_cast<FlightTask *>(0) )
+            {
+              return;
+            }
+
+          htmlText = __writeTaskInfo( ft );
+          break;
+        }
 
       case BaseMapElement::FlightGroup:
-	{
-	  htmlText = "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
-	      <TR><TD>" + tr("Flight group") + ":</TD><TD><A HREF=EDITGROUP>" +
-	      e->getFileName() +  + "</A></TD></TR>\
-	      </TABLE><HR NOSHADE>";
+        {
+          FlightGroup* fg = dynamic_cast<FlightGroup *>(e);
 
-	  FlightGroup* fg = dynamic_cast<FlightGroup *>(e);
+          if( fg == static_cast<FlightGroup *>(0) )
+            {
+              return;
+            }
 
-	  if( fg == static_cast<FlightGroup *>(0) )
-	    {
-	      return;
-	    }
+          htmlText =
+              "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
+              <TR><TD>" + tr("Flight group") + ":</TD><TD><A HREF=EDITGROUP>" +
+              e->getFileName() +  + "</A></TD></TR>\
+              </TABLE><HR NOSHADE>";
 
-	  fl = fg->getFlightList();
+          fl = fg->getFlightList();
 
-	  if(fl.count())
-	    {
-	      htmlText += "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
-			   <TR><TD COLSPAN=3 BGCOLOR=#BBBBBB><B>" +
-			   tr("Flights") + ":</B></TD></TR>";
+          if(fl.count())
+            {
+              htmlText +=
+                  "<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0>\
+                  <TR><TD COLSPAN=3 BGCOLOR=#BBBBBB><B>" +
+                  tr("Flights") + ":</B></TD></TR>";
 
-	      for (int loop = 0; loop < fl.count(); loop++)
-		{
-		  Flight *flight = fl.at(loop);
-		  // store pointer of flight instead of index
-		  // flight list of mapcontents will change
-		  idString.sprintf("%lu", (unsigned long)flight);
-		  fi.setFile(flight->getFileName());
+              for (int loop = 0; loop < fl.count(); loop++)
+                {
+                  Flight *flight = fl.at(loop);
+                  // store pointer of flight instead of index
+                  // flight list of mapcontents will change
+                  idString.sprintf("%lu", (unsigned long)flight);
+                  fi.setFile(flight->getFileName());
 
-		  htmlText += "<TR><TD><A HREF=" + idString + ">" +
-			      fi.fileName() + "</A></TD><TD ALIGN=right>" +
-			      flight->getDate() + "</TD></TR>\
-			      <TR><TD>" + flight->getDistance() + "</TD><TD ALIGN=right>" +
-			      printTime(flight->getLandTime() - flight->getStartTime()) +
-			      "</TD></TR>";
-		}
-	    }
-	  else
-	    {
-	      htmlText += tr("Click on the group name to start editing");
-	    }
+                  htmlText +=
+                      "<TR><TD><A HREF=" + idString + ">" +
+                      fi.fileName() + "</A></TD><TD ALIGN=right>" +
+                      flight->getDate() + "</TD></TR>\
+                      <TR><TD>" + flight->getDistance() + "</TD><TD ALIGN=right>" +
+                      printTime(flight->getLandTime() - flight->getStartTime()) +
+                      "</TD></TR>";
+              }
+            }
+          else
+            {
+              htmlText += tr("Click on the group name to start editing");
+            }
 
-	  break;
-	}
+          break;
+        }
 
       default:
         break;
@@ -425,7 +436,6 @@ void DataView::slotWPSelected(const QUrl &link)
         break;
 
       default:
-
         break;
     }
 
