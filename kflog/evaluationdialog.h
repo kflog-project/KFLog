@@ -7,12 +7,10 @@
 ************************************************************************
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
-**                   2011-2013 by Axel Pauli
+**                   2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -37,9 +35,9 @@ class Flight;
  *
  * \author Heiner Lamprecht, Florian Ehinger, Axel Pauli
  *
- * \date 2000-2013
+ * \date 2000-2014
  *
- * \version $Id$
+ * \version 1.0
  */
 class EvaluationDialog : public QWidget
 {
@@ -125,9 +123,9 @@ private:
 
  private:
 
-  QTextBrowser* m_textDisplay;
-  Flight* m_flight;
-  EvaluationFrame* m_evalFrame;
+  QTextBrowser*     m_textDisplay;
+  Flight*           m_flight;
+  EvaluationFrame*  m_evalFrame;
 };
 
 #endif

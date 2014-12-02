@@ -11,6 +11,10 @@
 #
 ################################################################################
 
+2014-12-02 Axel Pauli <kflog.cumulus@gmail.com>
+
+  * Missing translation macro added in class EvaluationDialog.
+
 2014-12-01 Axel Pauli <kflog.cumulus@gmail.com>
 
   * Class Speed taken over from Cumulus and integrated into the configuration

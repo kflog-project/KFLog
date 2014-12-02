@@ -8,14 +8,13 @@
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
 **                :  2008 by Constantijn Neeteson
-**                :  2011-2013 by Axel Pauli
+**                :  2011-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
+
 #ifdef QT_5
     #include <QtWidgets>
 #else
@@ -78,13 +77,16 @@ EvaluationDialog::~EvaluationDialog()
 
 void EvaluationDialog::hideEvent( QHideEvent* event )
 {
-  Q_UNUSED(event)
+  // Call base class
+  QWidget::hideEvent(event);
 
   emit windowHidden();
 }
 
 void EvaluationDialog::showEvent( QShowEvent* event )
 {
+  QWidget::showEvent(event);
+
   QString help = QString("<HTML>") +
 
       tr( "You can move the begin and end flags in the flight diagram by using "
@@ -315,7 +317,7 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
                 break;
 
               case Flight::Straight:
-                text = "Straight";
+                text = QString( tr("Straight") );
                 break;
             }
 
