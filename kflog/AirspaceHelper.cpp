@@ -13,8 +13,6 @@
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
 #include <QtCore>
@@ -149,6 +147,7 @@ void AirspaceHelper::loadAirspaceTypeMapping()
   m_airspaceTypeMap.insert("Restricted", BaseMapElement::Restricted);
   m_airspaceTypeMap.insert("Prohibited", BaseMapElement::Prohibited);
   m_airspaceTypeMap.insert("LowFlight", BaseMapElement::LowFlight);
+  m_airspaceTypeMap.insert("Rmz", BaseMapElement::Rmz);
   m_airspaceTypeMap.insert("Tmz", BaseMapElement::Tmz);
   m_airspaceTypeMap.insert("GliderSector", BaseMapElement::GliderSector);
   m_airspaceTypeMap.insert("AirUkn", BaseMapElement::AirUkn);
@@ -177,6 +176,7 @@ AirspaceHelper::initializeAirspaceTypeMapping(const QString& mapFilePath)
       typeMap.insert("TRA", BaseMapElement::Restricted);
       typeMap.insert("Q", BaseMapElement::Danger);
       typeMap.insert("CTR", BaseMapElement::ControlD);
+      typeMap.insert("RMZ", BaseMapElement::Rmz);
       typeMap.insert("TMZ", BaseMapElement::Tmz);
       typeMap.insert("W", BaseMapElement::WaveWindow);
       typeMap.insert("GSEC", BaseMapElement::GliderSector);
@@ -195,6 +195,7 @@ AirspaceHelper::initializeAirspaceTypeMapping(const QString& mapFilePath)
       typeMap.insert("DANGER", BaseMapElement::Danger);
       typeMap.insert("RESTRICTED", BaseMapElement::Restricted);
       typeMap.insert("PROHIBITED", BaseMapElement::Prohibited);
+      typeMap.insert("RMZ", BaseMapElement::Rmz);
       typeMap.insert("TMA", BaseMapElement::ControlD);
       typeMap.insert("TMZ", BaseMapElement::Tmz);
       typeMap.insert("GLIDING", BaseMapElement::GliderSector);

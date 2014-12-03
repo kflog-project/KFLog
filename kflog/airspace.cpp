@@ -13,8 +13,6 @@
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
  **
- **   $Id$
- **
  ***********************************************************************/
 
 #include "airspace.h"
@@ -219,6 +217,8 @@ QString Airspace::getTypeName (objectType type)
       return QObject::tr("CTR-D");
     case BaseMapElement::LowFlight:
       return QObject::tr("Low Flight");
+    case BaseMapElement::Rmz:
+      return QObject::tr("RMZ");
     case BaseMapElement::Tmz:
       return QObject::tr("TMZ");
     case BaseMapElement::GliderSector:

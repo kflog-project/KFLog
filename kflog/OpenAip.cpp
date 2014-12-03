@@ -1820,6 +1820,7 @@ bool OpenAip::readAirspaceRecord( QXmlStreamReader& xml, Airspace& as )
       "GLIDING"
       "OTH"
       "RESTRICTED"
+      "RMZ"  // maybe a category for the future
       "TMA"
       "TMZ"
       "WAVE"

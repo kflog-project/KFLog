@@ -2,7 +2,7 @@
  **
  **   openairparser.cpp
  **
- **   This file is part of Cumulus.
+ **   This file is part of KFLog.
  **
  ************************************************************************
  **
@@ -11,8 +11,6 @@
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
- **
- **   $Id$
  **
  ***********************************************************************/
 
@@ -71,33 +69,22 @@ bool OpenAirParser::parse(const QString& path, QList<Airspace>& list)
   QTextStream in(&source);
   in.setCodec( "ISO 8859-15" );
 
-  //start parsing
-  QString line=in.readLine();
-  _lineNumber++;
-
-  while (!line.isNull())
+  while( ! in.atEnd() )
     {
       // qDebug("reading line %d: '%s'", _lineNumber, line.toLatin1().data());
-      line = line.simplified();
-
-      if (line.startsWith("*") || line.startsWith("#"))
-        {
-          //comment, ignore
-        }
-      else if (line.isEmpty())
-        {
-          //empty line, ignore
-        }
-      else
-        {
-          // delete comments at the end of the line before parsing it
-          line = line.split('*')[0];
-          line = line.split('#')[0];
-          parseLine(line);
-        }
-
-      line=in.readLine();
+      QString line = in.readLine().simplified();
       _lineNumber++;
+
+      if (line.startsWith("*") || line.startsWith("#") || line.isEmpty() )
+        {
+          continue;
+        }
+
+      // delete comments at the end of the line before parsing it
+      line = line.split('*')[0];
+      line = line.split('#')[0];
+
+      parseLine(line);
     }
 
   if (_isCurrentAirspace)
@@ -135,7 +122,10 @@ void OpenAirParser::parseLine(QString& line)
     {
       //type of record. This also indicates we're starting a new object
       if (_isCurrentAirspace)
-        finishAirspace();
+	{
+	  finishAirspace();
+	}
+
       newAirspace();
       parseType(line);
       return;
@@ -147,12 +137,33 @@ void OpenAirParser::parseLine(QString& line)
   bool ok;
 
   if (!_isCurrentAirspace)
-    return;
+    {
+      return;
+    }
 
   if (line.startsWith("AN "))
     {
-      //name
+      // airspace name
       asName = line.mid(3);
+
+#ifdef _MSC_VER
+#pragma message ("warning: Remove airspace mapping workaround for RMZ if it is not more necessary!")
+#else
+#warning "Remove airspace mapping workaround for RMZ if it is not more necessary!"
+#endif
+
+      if( asName.startsWith("RMZ ") )
+	{
+	  // The OpenAir file of the DAeC uses a workaroud for RMZ airspaces.
+	  // Such airspaces are declared as airspace D and they have an remark
+	  // in its name.
+	  // Example: AN RMZ Barth
+	  // We do remap this airspace from D to RMZ
+	  asName = asName.mid(4); // remove prefix RMZ
+	  asType = BaseMapElement::Rmz;
+	  return;
+	}
+
       return;
     }
 
