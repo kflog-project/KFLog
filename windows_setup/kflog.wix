@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Product Id="*" UpgradeCode="35EEC166-A057-4555-AD94-869B785AE42F" Version="4.9.0" Language="1033" Name="KFLog" Manufacturer="KFLog.org">
+        <Package InstallerVersion="300" Compressed="yes"/>
+        <Media Id="1" Cabinet="kflog.cab" EmbedCab="yes" />
+
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+                            <Directory Id="APPLICATIONROOTDIRECTORY" Name="KFLog">
+                                <Directory Id="TRANSLATIONDIRECTORY" Name="translations" />
+                            </Directory>
+                        </Directory>
+                </Directory>
+
+		<DirectoryRef Id="APPLICATIONROOTDIRECTORY">
+			<Component Id="kflog.exe" Guid="21CC25E9-3C9F-4A61-82D9-836C7BB42075">
+                                <File Id="kflog.exe" Source="$(env.kflogExe)\kflog.exe" KeyPath="yes" Checksum="yes"/>
+			</Component>
+
+                    <!-- QT5 DLLs do start here -->
+			<Component Id="Qt5Core.dll" Guid="49E1AF35-991D-4686-B831-FE03D1E7CE54">
+				<File Source="$(env.qt5)\bin\qt5core.dll" Id="Qt5Core.dll" KeyPath="yes" Checksum="yes"/>
+			</Component>
+                        <Component Id="Qt5Gui.dll" Guid="96CC76A6-9D79-4271-85BF-69FCFE2B2654">
+                                <File Source="$(env.Qt5)\bin\Qt5Gui.dll" Id="Qt5Gui.dll" KeyPath="yes" Checksum="yes"/>
+                        </Component>
+                        <Component Id="Qt5Network.dll" Guid="080F4863-CD1A-40F1-B9B8-5893C3B0EA68">
+                                <File Source="$(env.Qt5)\bin\Qt5Network.dll" Id="Qt5Network.dll" KeyPath="yes" Checksum="yes"/>
+                        </Component>
+                        <Component Id="Qt5PrintSupport.dll" Guid="7E7B2979-897B-4008-B085-70FB1CBB07B3">
+                                <File Source="$(env.Qt5)\bin\Qt5PrintSupport.dll" Id="Qt5PrintSupport.dll" KeyPath="yes" Checksum="yes"/>
+                        </Component>
+                        <Component Id="Qt5Widgets.dll" Guid="438C03EB-AB1B-4675-B818-7E9F67607E19">
+                                <File Source="$(env.Qt5)\bin\Qt5Widgets.dll" Id="Qt5Widgets.dll" KeyPath="yes" Checksum="yes"/>
+                        </Component>
+                        <Component Id="Qt5Xml.dll" Guid="994FECFC-3F6F-48CC-86C3-CB9EAABBF3E8">
+                                <File Source="$(env.Qt5)\bin\Qt5Xml.dll" Id="Qt5Xml.dll" KeyPath="yes" Checksum="yes"/>
+                        </Component>
+
+                    <!-- Mingw stuff starts here -->
+                        <Component Id="libgcc_s_dw2_1.dll" Guid="75156449-B33B-4367-BF5E-F339E1B6C0A4">
+                                <File Source="$(env.Qt5)\bin\libgcc_s_dw2-1.dll" Id="libgcc_s_dw2_1.dll" KeyPath="yes" Checksum="yes"/>
+                        </Component>
+                        <Component Id="libwinpthread_1.dll" Guid="4A83A24C-FD1E-42AB-9BEE-C3CF4CC48BCF">
+                                <File Source="$(env.Qt5)\bin\libwinpthread-1.dll" Id="libwinpthread_1.dll" KeyPath="yes" Checksum="yes"/>
+                        </Component>
+                        <Component Id="libstdc___6.dll" Guid="A58BAB3C-30AC-47A0-8CD1-446D12F02475">
+                                <File Source="$(env.Qt5)\bin\libstdc++-6.dll" Id="libstdc___6.dll" KeyPath="yes" Checksum="yes"/>
+                        </Component>
+                        <Component Id="icuin52.dll" Guid="DE7304D4-C177-46E9-8D33-9B4734B2301F">
+                                <File Source="$(env.Qt5)\bin\icuin52.dll" Id="icuin52.dll" KeyPath="yes" Checksum="yes"/>
+                        </Component>
+                        <Component Id="icuuc52.dll" Guid="823845EF-D589-4EF2-9A31-4B5333602787">
+                                <File Source="$(env.Qt5)\bin\icuuc52.dll" Id="icuuc52.dll" KeyPath="yes" Checksum="yes"/>
+                        </Component>
+                        <Component Id="icudt52.dll" Guid="BBFC3D58-53C8-45A5-9B42-49C82A7DCE94">
+                                <File Source="$(env.Qt5)\bin\icudt52.dll" Id="icudt52.dll" KeyPath="yes" Checksum="yes"/>
+                        </Component>
+		</DirectoryRef>
+
+                <DirectoryRef Id="TRANSLATIONDIRECTORY">
+                    <!-- translation files starting here -->
+                    <Component Id="kflog_de.qm" Guid="4B450997-3259-44F6-8DAF-958D04A1F76B">
+                            <File Source="c:\users\peter\dev\KFLog\kflog\kflog_de.qm" Id="kflog_de.qm" KeyPath="yes" Checksum="yes"/>
+                    </Component>
+                    <Component Id="qt_de.qm" Guid="0694CF37-80C5-49CF-BD69-8D7D5867D79F">
+                            <File Source="$(env.Qt5)\translations\qt_de.qm" Id="qt_de.qm" KeyPath="yes" Checksum="yes"/>
+                    </Component>
+                    <Component Id="qtbase_de.qm" Guid="640B1CD9-941C-40A1-9C3A-5A4AC91EA6D0">
+                            <File Source="$(env.Qt5)\translations\qtbase_de.qm" Id="qtbase_de.qm" KeyPath="yes" Checksum="yes"/>
+                    </Component>
+                    <Component Id="qtmultimedia_de.qm" Guid="04C9287F-F6AA-4B0A-8ED0-B89168678F9A">
+                            <File Source="$(env.Qt5)\translations\qtmultimedia_de.qm" Id="qtmultimedia_de.qm" KeyPath="yes" Checksum="yes"/>
+                    </Component>
+                    <Component Id="qtscript_de.qm" Guid="AA8F1A9B-1361-4EBB-8DFF-8DBE83181085">
+                            <File Source="$(env.Qt5)\translations\qtscript_de.qm" Id="qtscript_de.qm" KeyPath="yes" Checksum="yes"/>
+                    </Component>
+                    <Component Id="qtquick1_de.qm" Guid="218B110A-2442-4385-BD77-A18734959BEF">
+                    <File Source="$(env.Qt5)\translations\qtquick1_de.qm" Id="qtquick1_de.qm" KeyPath="yes" Checksum="yes"/>
+                    </Component>
+                    <Component Id="qtxmlpatterns_de.qm" Guid="829DCA3B-B3A6-4224-B94E-285BA7128DC6">
+                            <File Source="$(env.Qt5)\translations\qtxmlpatterns_de.qm" Id="qtxmlpatterns_de.qm" KeyPath="yes" Checksum="yes"/>
+                    </Component>
+
+
+                </DirectoryRef>
+
+        <!-- Step 3: Tell WiX to install the files -->
+        <Feature Id="KFLog" Title="KFLog" Level="1">
+            <ComponentRef Id="kflog.exe" />
+            <ComponentRef Id="Qt5Core.dll" />
+            <ComponentRef Id="Qt5Gui.dll" />
+            <ComponentRef Id="Qt5Network.dll" />
+            <ComponentRef Id="Qt5PrintSupport.dll" />
+            <ComponentRef Id="Qt5Widgets.dll" />
+            <ComponentRef Id="Qt5Xml.dll" />
+            <ComponentRef Id="libgcc_s_dw2_1.dll" />
+            <ComponentRef Id="libwinpthread_1.dll" />
+            <ComponentRef Id="libstdc___6.dll" />
+            <ComponentRef Id="icuin52.dll" />
+            <ComponentRef Id="icuuc52.dll" />
+            <ComponentRef Id="icudt52.dll" />
+
+            <ComponentRef Id="kflog_de.qm" />
+            <ComponentRef Id="qt_de.qm" />
+            <ComponentRef Id="qtbase_de.qm" />
+            <ComponentRef Id="qtmultimedia_de.qm" />
+            <ComponentRef Id="qtscript_de.qm" />
+            <ComponentRef Id="qtquick1_de.qm" />
+            <ComponentRef Id="qtxmlpatterns_de.qm" />
+        </Feature>
+    </Product>
+</Wix>
