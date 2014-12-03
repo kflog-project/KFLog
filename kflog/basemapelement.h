@@ -45,7 +45,8 @@
 
 class BaseMapElement
 {
-public:
+
+ public:
   /**
    * List of all accessible element-types:
    * @see #typeID
@@ -88,6 +89,7 @@ public:
     LowFlight = LOW_FLIGHT,
     Restricted = RESTRICTED,
     Prohibited = PROHIBITED,
+    Rmz = RMZ,
     Tmz = TMZ,
     WaveWindow = WAVE_WINDOW,
     GliderSector = GLIDER_SECTOR,
