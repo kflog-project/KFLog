@@ -27,7 +27,7 @@
  *
  * \date 2000-2014
  *
- * \version 1.0
+ * \version 1.1
  */
 
 #ifndef MAP_CONTENTS_H
