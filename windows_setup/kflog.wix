@@ -2,6 +2,8 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
     <Product Id="*" UpgradeCode="35EEC166-A057-4555-AD94-869B785AE42F" Version="4.9.0" Language="1033" Name="KFLog" Manufacturer="KFLog.org">
         <Package InstallerVersion="300" Compressed="yes"/>
+        <UIRef Id="WixUI_Minimal" />
+        <WixVariable Id="WixUILicenseRtf" Value="$(env.windows_setup)/License.rtf" />
         <Media Id="1" Cabinet="kflog.cab" EmbedCab="yes" />
 
 		<Directory Id="TARGETDIR" Name="SourceDir">
