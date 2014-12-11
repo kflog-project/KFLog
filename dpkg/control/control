@@ -1,7 +1,7 @@
 Source: kflog
 Section: other
 Priority: optional
-Maintainer: Axel Pauli <kflog.cumulus@gmail.com>>
+Maintainer: Axel Pauli <kflog.cumulus@gmail.com>
 Build-Depends: debhelper (>= 7.0.50~)
 Standards-Version: 3.9.1
 Homepage: http://www.kflog.org/
