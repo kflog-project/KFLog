@@ -211,10 +211,8 @@ QString Airspace::getTypeName (objectType type)
       return QObject::tr("Danger");
     case BaseMapElement::Prohibited:
       return QObject::tr("Prohibited");
-    case BaseMapElement::ControlC:
-      return QObject::tr("CTR-C");
-    case BaseMapElement::ControlD:
-      return QObject::tr("CTR-D");
+    case BaseMapElement::Ctr:
+      return QObject::tr("CTR");
     case BaseMapElement::LowFlight:
       return QObject::tr("Low Flight");
     case BaseMapElement::Rmz:

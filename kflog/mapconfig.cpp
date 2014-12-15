@@ -354,35 +354,20 @@ void MapConfig::slotReadConfig()
         PRINT_AIRFIR_BRUSH_STYLE_1, PRINT_AIRFIR_BRUSH_STYLE_2);
   __readAsOpacity(AS_FIR, airFirOpacityList);
 
-  __readPenBrush(AS_CTR_C, ctrCPenList, ctrCBorder, ctrCBrushList,
-        CTRC_COLOR_1, CTRC_COLOR_2, CTRC_COLOR_3, CTRC_COLOR_4,
-        PRINT_CTRC_COLOR_1, PRINT_CTRC_COLOR_2,
-        CTRC_PEN_1, CTRC_PEN_2, CTRC_PEN_3, CTRC_PEN_4,
-        PRINT_CTRC_PEN_1, PRINT_CTRC_PEN_2,
-        CTRC_PEN_STYLE_1, CTRC_PEN_STYLE_2, CTRC_PEN_STYLE_3, CTRC_PEN_STYLE_4,
-        PRINT_CTRC_PEN_STYLE_1, PRINT_CTRC_PEN_STYLE_2,
-        CTRC_BRUSH_COLOR_1, CTRC_BRUSH_COLOR_2,
-        CTRC_BRUSH_COLOR_3, CTRC_BRUSH_COLOR_4,
-        PRINT_CTRC_BRUSH_COLOR_1, PRINT_CTRC_BRUSH_COLOR_2,
-        CTRC_BRUSH_STYLE_1, CTRC_BRUSH_STYLE_2,
-        CTRC_BRUSH_STYLE_3, CTRC_BRUSH_STYLE_4,
-        PRINT_CTRC_BRUSH_STYLE_1, PRINT_CTRC_BRUSH_STYLE_2);
-  __readAsOpacity(AS_CTR_C, ctrCOpacityList);
-
-  __readPenBrush(AS_CTR_D, ctrDPenList, ctrDBorder, ctrDBrushList,
-        CTRD_COLOR_1, CTRD_COLOR_2, CTRD_COLOR_3, CTRD_COLOR_4,
-        PRINT_CTRD_COLOR_1, PRINT_CTRD_COLOR_2,
-        CTRD_PEN_1, CTRD_PEN_2, CTRD_PEN_3, CTRD_PEN_4,
-        PRINT_CTRD_PEN_1, PRINT_CTRD_PEN_2,
-        CTRD_PEN_STYLE_1, CTRD_PEN_STYLE_2, CTRD_PEN_STYLE_3, CTRD_PEN_STYLE_4,
-        PRINT_CTRD_PEN_STYLE_1, PRINT_CTRD_PEN_STYLE_2,
-        CTRD_BRUSH_COLOR_1, CTRD_BRUSH_COLOR_2,
-        CTRD_BRUSH_COLOR_3, CTRD_BRUSH_COLOR_4,
-        PRINT_CTRD_BRUSH_COLOR_1, PRINT_CTRD_BRUSH_COLOR_2,
-        CTRD_BRUSH_STYLE_1, CTRD_BRUSH_STYLE_2,
-        CTRD_BRUSH_STYLE_3, CTRD_BRUSH_STYLE_4,
-        PRINT_CTRD_BRUSH_STYLE_1, PRINT_CTRD_BRUSH_STYLE_2);
-  __readAsOpacity(AS_CTR_D, ctrDOpacityList, CTRD_OPACITY_1, CTRD_OPACITY_2, CTRD_OPACITY_3, CTRD_OPACITY_4);
+  __readPenBrush(AS_CTR, ctrPenList, ctrBorder, ctrBrushList,
+        CTR_COLOR_1, CTR_COLOR_2, CTR_COLOR_3, CTR_COLOR_4,
+        PRINT_CTR_COLOR_1, PRINT_CTR_COLOR_2,
+        CTR_PEN_1, CTR_PEN_2, CTR_PEN_3, CTR_PEN_4,
+        PRINT_CTR_PEN_1, PRINT_CTR_PEN_2,
+        CTR_PEN_STYLE_1, CTR_PEN_STYLE_2, CTR_PEN_STYLE_3, CTR_PEN_STYLE_4,
+        PRINT_CTR_PEN_STYLE_1, PRINT_CTR_PEN_STYLE_2,
+        CTR_BRUSH_COLOR_1, CTR_BRUSH_COLOR_2,
+        CTR_BRUSH_COLOR_3, CTR_BRUSH_COLOR_4,
+        PRINT_CTR_BRUSH_COLOR_1, PRINT_CTR_BRUSH_COLOR_2,
+        CTR_BRUSH_STYLE_1, CTR_BRUSH_STYLE_2,
+        CTR_BRUSH_STYLE_3, CTR_BRUSH_STYLE_4,
+        PRINT_CTR_BRUSH_STYLE_1, PRINT_CTR_BRUSH_STYLE_2);
+  __readAsOpacity(AS_CTR, ctrOpacityList);
 
   __readPenBrush(AS_DANGER, dangerPenList, dangerBorder, dangerBrushList,
         DNG_COLOR_1, DNG_COLOR_2, DNG_COLOR_3, DNG_COLOR_4,
@@ -428,6 +413,21 @@ void MapConfig::slotReadConfig()
         RES_BRUSH_STYLE_3, RES_BRUSH_STYLE_4,
         PRINT_RES_BRUSH_STYLE_1, PRINT_RES_BRUSH_STYLE_2);
   __readAsOpacity(AS_RESTRICTED, restrOpacityList);
+
+  __readPenBrush(AS_RMZ, rmzPenList, rmzBorder, rmzBrushList,
+        RMZ_COLOR_1, RMZ_COLOR_2, RMZ_COLOR_3, RMZ_COLOR_4,
+        PRINT_RMZ_COLOR_1, PRINT_RMZ_COLOR_2,
+        RMZ_PEN_1, RMZ_PEN_2, RMZ_PEN_3, RMZ_PEN_4,
+        PRINT_RMZ_PEN_1, PRINT_RMZ_PEN_2,
+        RMZ_PEN_STYLE_1, RMZ_PEN_STYLE_2, RMZ_PEN_STYLE_3, RMZ_PEN_STYLE_4,
+        PRINT_RMZ_PEN_STYLE_1, PRINT_RMZ_PEN_STYLE_2,
+        RMZ_BRUSH_COLOR_1, RMZ_BRUSH_COLOR_2,
+        RMZ_BRUSH_COLOR_3, RMZ_BRUSH_COLOR_4,
+        PRINT_RMZ_BRUSH_COLOR_1, PRINT_RMZ_BRUSH_COLOR_2,
+        RMZ_BRUSH_STYLE_1, RMZ_BRUSH_STYLE_2,
+        RMZ_BRUSH_STYLE_3, RMZ_BRUSH_STYLE_4,
+        PRINT_RMZ_BRUSH_STYLE_1, PRINT_RMZ_BRUSH_STYLE_2);
+  __readAsOpacity(AS_RMZ, rmzOpacityList);
 
   __readPenBrush(AS_TMZ, tmzPenList, tmzBorder, tmzBrushList,
         TMZ_COLOR_1, TMZ_COLOR_2, TMZ_COLOR_3, TMZ_COLOR_4,
@@ -742,10 +742,8 @@ QPen& MapConfig::__getPen( unsigned int typeID, int sIndex )
           return airFPenList[sIndex];
       case BaseMapElement::AirFir:
           return airFirPenList[sIndex];
-      case BaseMapElement::ControlC:
-          return ctrCPenList[sIndex];
-      case BaseMapElement::ControlD:
-          return ctrDPenList[sIndex];
+      case BaseMapElement::Ctr:
+          return ctrPenList[sIndex];
       case BaseMapElement::Danger:
       case BaseMapElement::Prohibited:
           return dangerPenList[sIndex];
@@ -753,6 +751,8 @@ QPen& MapConfig::__getPen( unsigned int typeID, int sIndex )
           return lowFPenList[sIndex];
       case BaseMapElement::Restricted:
           return restrPenList[sIndex];
+      case BaseMapElement::Rmz:
+          return rmzPenList[sIndex];
       case BaseMapElement::Tmz:
           return tmzPenList[sIndex];
       case BaseMapElement::GliderSector:
@@ -799,10 +799,8 @@ int MapConfig::getAsOpacity( uint asType )
           return airFOpacityList[scaleIndex];
       case BaseMapElement::AirFir:
           return airFirOpacityList[scaleIndex];
-      case BaseMapElement::ControlC:
-          return ctrCOpacityList[scaleIndex];
-      case BaseMapElement::ControlD:
-          return ctrDOpacityList[scaleIndex];
+      case BaseMapElement::Ctr:
+          return ctrOpacityList[scaleIndex];
       case BaseMapElement::Danger:
       case BaseMapElement::Prohibited:
           return dangerOpacityList[scaleIndex];
@@ -810,6 +808,8 @@ int MapConfig::getAsOpacity( uint asType )
           return lowFOpacityList[scaleIndex];
       case BaseMapElement::Restricted:
           return restrOpacityList[scaleIndex];
+      case BaseMapElement::Rmz:
+          return rmzOpacityList[scaleIndex];
       case BaseMapElement::Tmz:
           return tmzOpacityList[scaleIndex];
       case BaseMapElement::GliderSector:
@@ -818,7 +818,7 @@ int MapConfig::getAsOpacity( uint asType )
           return wwOpacityList[scaleIndex];
 
       default:
-        qWarning() << "MapConfig::getAsOpacity(): unknow  Airspace Type"
+        qWarning() << "MapConfig::getAsOpacity(): unknown  Airspace Type"
                    << asType;
         break;
     }
@@ -870,10 +870,8 @@ bool MapConfig::isBorder( unsigned int typeID )
           return airFBorder[scaleIndex];
       case BaseMapElement::AirFir:
           return airFirBorder[scaleIndex];
-      case BaseMapElement::ControlC:
-          return ctrCBorder[scaleIndex];
-      case BaseMapElement::ControlD:
-          return ctrDBorder[scaleIndex];
+      case BaseMapElement::Ctr:
+          return ctrBorder[scaleIndex];
       case BaseMapElement::Danger:
       case BaseMapElement::Prohibited:
           return dangerBorder[scaleIndex];
@@ -881,6 +879,8 @@ bool MapConfig::isBorder( unsigned int typeID )
           return lowFBorder[scaleIndex];
       case BaseMapElement::Restricted:
           return restrBorder[scaleIndex];
+      case BaseMapElement::Rmz:
+          return rmzBorder[scaleIndex];
       case BaseMapElement::Tmz:
           return tmzBorder[scaleIndex];
       case BaseMapElement::GliderSector:
@@ -1000,10 +1000,8 @@ QBrush& MapConfig::__getBrush(unsigned int typeID, int index)
           return airFBrushList[index];
       case BaseMapElement::AirFir:
           return airFirBrushList[index];
-      case BaseMapElement::ControlC:
-          return ctrCBrushList[index];
-      case BaseMapElement::ControlD:
-          return ctrDBrushList[index];
+      case BaseMapElement::Ctr:
+          return ctrBrushList[index];
       case BaseMapElement::Danger:
       case BaseMapElement::Prohibited:
           return dangerBrushList[index];
@@ -1011,6 +1009,8 @@ QBrush& MapConfig::__getBrush(unsigned int typeID, int index)
           return lowFBrushList[index];
       case BaseMapElement::Restricted:
           return restrBrushList[index];
+      case BaseMapElement::Rmz:
+          return rmzBrushList[index];
       case BaseMapElement::Tmz:
           return tmzBrushList[index];
       case BaseMapElement::GliderSector:

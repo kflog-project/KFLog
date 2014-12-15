@@ -25,7 +25,7 @@
  *
  * \date 2001-2014
  *
- * \version $Id$
+ * \version 1.0
  */
 
 #ifndef CONFIG_MAP_ELEMENT_H
@@ -363,13 +363,9 @@ class ConfigMapElement : public QWidget
   QList<QBrush> airFirBrushList;
   QList<int> airFirOpacityList;
 
-  QList<QPen> ctrCPenList;
-  QList<QBrush> ctrCBrushList;
-  QList<int> ctrCOpacityList;
-
-  QList<QPen> ctrDPenList;
-  QList<QBrush> ctrDBrushList;
-  QList<int> ctrDOpacityList;
+  QList<QPen> ctrPenList;
+  QList<QBrush> ctrBrushList;
+  QList<int> ctrOpacityList;
 
   QList<QPen> lowFPenList;
   QList<QBrush> lowFBrushList;
@@ -382,6 +378,10 @@ class ConfigMapElement : public QWidget
   QList<QPen> restrPenList;
   QList<QBrush> restrBrushList;
   QList<int> restrOpacityList;
+
+  QList<QPen> rmzPenList;
+  QList<QBrush> rmzBrushList;
+  QList<int> rmzOpacityList;
 
   QList<QPen> tmzPenList;
   QList<QBrush> tmzBrushList;
@@ -439,11 +439,11 @@ class ConfigMapElement : public QWidget
   bool airEhBorder[4];
   bool airFBorder[4];
   bool airFirBorder[4];
-  bool ctrCBorder[4];
-  bool ctrDBorder[4];
+  bool ctrBorder[4];
   bool dangerBorder[4];
   bool lowFBorder[4];
   bool restrBorder[4];
+  bool rmzBorder[4];
   bool tmzBorder[4];
   bool gsBorder[4];
   bool wwBorder[4];

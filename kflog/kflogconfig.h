@@ -26,7 +26,7 @@
  *
  * \date 2000-2014
  *
- * \version 1.1
+ * \version 1.2
  */
 
 #ifndef KFLOG_CONFIG_H
@@ -73,8 +73,8 @@ class KFLogConfig : public QDialog
 
   /** */
   enum ElementType { Road = 0, Motorway, Railway, River, Canal, City,
-      AirA, AirB, AirC, AirD, AirElow, AirE, AirF, AirFir, ControlC, ControlD, Danger,
-      LowFlight, Restricted, Prohibited, Tmz, GliderSector, WaveWindow,
+      AirA, AirB, AirC, AirD, AirElow, AirE, AirF, AirFir, Ctr, Danger,
+      LowFlight, Restricted, Prohibited, Rmz, Tmz, GliderSector, WaveWindow,
       Forest, Trail, Railway_D, Aerial_Cable, River_T,
       Glacier, PackIce, FAIAreaLow500, FAIAreaHigh500, Separator };
 

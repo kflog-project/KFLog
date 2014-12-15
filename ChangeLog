@@ -11,6 +11,15 @@
 #
 ################################################################################
 
+2014-12-15 Axel Pauli <kflog.cumulus@gmail.com>
+
+  * Issue #43 fixed. Ubuntu package installer complains about package quality.
+  
+  * Issue #47 fixed. Airspace RMZ replaces Airspace Foxtrott in Germany at
+    11.12.2014
+    
+  * issue #50 fixed. Replace the 2 control zone items by a new one.
+
 2014-12-02 Axel Pauli <kflog.cumulus@gmail.com>
 
   * Missing translation macro added in class EvaluationDialog.

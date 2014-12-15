@@ -92,8 +92,8 @@
 #define AIR_E_LOW        25
 #define AIR_E            26
 #define AIR_F            27
-#define CONTROL_C        28
-#define CONTROL_D        29
+#define CONTROL_ZONE     28
+#define _NOT_USED_       29
 #define DANGER           30
 #define LOW_FLIGHT       31
 #define RESTRICTED       32

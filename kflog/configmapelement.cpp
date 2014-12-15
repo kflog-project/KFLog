@@ -500,23 +500,14 @@ void ConfigMapElement::__readMapItems()
   __readBorder(AS_FIR, airFirBorder);
   __readAsOpacity(AS_FIR, airFirOpacityList);
 
-  __readPen(AS_CTR_C, ctrCPenList, CTRC_COLOR_1, CTRC_COLOR_2, CTRC_COLOR_3, CTRC_COLOR_4,
-        CTRC_PEN_1, CTRC_PEN_2, CTRC_PEN_3, CTRC_PEN_4,
-        CTRC_PEN_STYLE_1, CTRC_PEN_STYLE_2, CTRC_PEN_STYLE_3, CTRC_PEN_STYLE_4);
-  __readBrush(AS_CTR_C, ctrCBrushList, CTRC_BRUSH_COLOR_1, CTRC_BRUSH_COLOR_2,
-        CTRC_BRUSH_COLOR_3, CTRC_BRUSH_COLOR_4, CTRC_BRUSH_STYLE_1,
-        CTRC_BRUSH_STYLE_2, CTRC_BRUSH_STYLE_3, CTRC_BRUSH_STYLE_4);
-  __readBorder(AS_CTR_C, ctrCBorder);
-  __readAsOpacity(AS_CTR_C, ctrCOpacityList);
-
-  __readPen(AS_CTR_D, ctrDPenList, CTRD_COLOR_1, CTRD_COLOR_2, CTRD_COLOR_3, CTRD_COLOR_4,
-        CTRD_PEN_1, CTRD_PEN_2, CTRD_PEN_3, CTRD_PEN_4,
-        CTRD_PEN_STYLE_1, CTRD_PEN_STYLE_2, CTRD_PEN_STYLE_3, CTRD_PEN_STYLE_4);
-  __readBrush(AS_CTR_D, ctrDBrushList, CTRD_BRUSH_COLOR_1, CTRD_BRUSH_COLOR_2,
-        CTRD_BRUSH_COLOR_3, CTRD_BRUSH_COLOR_4, CTRD_BRUSH_STYLE_1,
-        CTRD_BRUSH_STYLE_2, CTRD_BRUSH_STYLE_3, CTRD_BRUSH_STYLE_4);
-  __readBorder(AS_CTR_D, ctrDBorder);
-  __readAsOpacity(AS_CTR_D, ctrDOpacityList);
+  __readPen(AS_CTR, ctrPenList, CTR_COLOR_1, CTR_COLOR_2, CTR_COLOR_3, CTR_COLOR_4,
+        CTR_PEN_1, CTR_PEN_2, CTR_PEN_3, CTR_PEN_4,
+        CTR_PEN_STYLE_1, CTR_PEN_STYLE_2, CTR_PEN_STYLE_3, CTR_PEN_STYLE_4);
+  __readBrush(AS_CTR, ctrBrushList, CTR_BRUSH_COLOR_1, CTR_BRUSH_COLOR_2,
+        CTR_BRUSH_COLOR_3, CTR_BRUSH_COLOR_4, CTR_BRUSH_STYLE_1,
+        CTR_BRUSH_STYLE_2, CTR_BRUSH_STYLE_3, CTR_BRUSH_STYLE_4);
+  __readBorder(AS_CTR, ctrBorder);
+  __readAsOpacity(AS_CTR, ctrOpacityList);
 
   __readPen(AS_DANGER, dangerPenList, DNG_COLOR_1, DNG_COLOR_2, DNG_COLOR_3, DNG_COLOR_4,
         DNG_PEN_1, DNG_PEN_2, DNG_PEN_3, DNG_PEN_4,
@@ -544,6 +535,15 @@ void ConfigMapElement::__readMapItems()
         RES_BRUSH_STYLE_2, RES_BRUSH_STYLE_3, RES_BRUSH_STYLE_4);
   __readBorder(AS_RESTRICTED, restrBorder);
   __readAsOpacity(AS_RESTRICTED, restrOpacityList);
+
+  __readPen(AS_RMZ, rmzPenList, RMZ_COLOR_1, RMZ_COLOR_2, RMZ_COLOR_3, RMZ_COLOR_4,
+        RMZ_PEN_1, RMZ_PEN_2, RMZ_PEN_3, RMZ_PEN_4,
+        RMZ_PEN_STYLE_1, RMZ_PEN_STYLE_2, RMZ_PEN_STYLE_3, RMZ_PEN_STYLE_4);
+  __readBrush(AS_RMZ, rmzBrushList, RMZ_BRUSH_COLOR_1, RMZ_BRUSH_COLOR_2,
+        RMZ_BRUSH_COLOR_3, RMZ_BRUSH_COLOR_4, RMZ_BRUSH_STYLE_1,
+        RMZ_BRUSH_STYLE_2, RMZ_BRUSH_STYLE_3, RMZ_BRUSH_STYLE_4);
+  __readBorder(AS_RMZ, rmzBorder);
+  __readAsOpacity(AS_RMZ, rmzOpacityList);
 
   __readPen(AS_TMZ, tmzPenList, TMZ_COLOR_1, TMZ_COLOR_2, TMZ_COLOR_3, TMZ_COLOR_4,
         TMZ_PEN_1, TMZ_PEN_2, TMZ_PEN_3, TMZ_PEN_4,
@@ -754,23 +754,14 @@ void ConfigMapElement::__readPrintItems()
   __readBorder(AS_FIR, airFirBorder);
   __readAsOpacity(AS_FIR, airFirOpacityList);
 
-  __readPen(AS_CTR_C, ctrCPenList, PRINT_CTRC_COLOR_1, PRINT_CTRC_COLOR_2, PRINT_CTRC_COLOR_2, PRINT_CTRC_COLOR_2,
-        PRINT_CTRC_PEN_1, PRINT_CTRC_PEN_2, PRINT_CTRC_PEN_2, PRINT_CTRC_PEN_2,
-        PRINT_CTRC_PEN_STYLE_1, PRINT_CTRC_PEN_STYLE_2, PRINT_CTRC_PEN_STYLE_2, PRINT_CTRC_PEN_STYLE_2);
-  __readBrush(AS_CTR_C, ctrCBrushList, PRINT_CTRC_BRUSH_COLOR_1, PRINT_CTRC_BRUSH_COLOR_2,
-        PRINT_CTRC_BRUSH_COLOR_2, PRINT_CTRC_BRUSH_COLOR_2, PRINT_CTRC_BRUSH_STYLE_1,
-        PRINT_CTRC_BRUSH_STYLE_2, PRINT_CTRC_BRUSH_STYLE_2, PRINT_CTRC_BRUSH_STYLE_2);
-  __readBorder(AS_CTR_C, ctrCBorder);
-  __readAsOpacity(AS_CTR_C, ctrCOpacityList);
-
-  __readPen(AS_CTR_D, ctrDPenList, PRINT_CTRD_COLOR_1, PRINT_CTRD_COLOR_2, PRINT_CTRD_COLOR_2, PRINT_CTRD_COLOR_2,
-        PRINT_CTRD_PEN_1, PRINT_CTRD_PEN_2, PRINT_CTRD_PEN_2, PRINT_CTRD_PEN_2,
-        PRINT_CTRD_PEN_STYLE_1, PRINT_CTRD_PEN_STYLE_2, PRINT_CTRD_PEN_STYLE_2, PRINT_CTRD_PEN_STYLE_2);
-  __readBrush(AS_CTR_D, ctrDBrushList, PRINT_CTRD_BRUSH_COLOR_1, PRINT_CTRD_BRUSH_COLOR_2,
-        PRINT_CTRD_BRUSH_COLOR_2, PRINT_CTRD_BRUSH_COLOR_2, PRINT_CTRD_BRUSH_STYLE_1,
-        PRINT_CTRD_BRUSH_STYLE_2, PRINT_CTRD_BRUSH_STYLE_2, PRINT_CTRD_BRUSH_STYLE_2);
-  __readBorder(AS_CTR_D, ctrDBorder);
-  __readAsOpacity(AS_CTR_D, ctrDOpacityList);
+  __readPen(AS_CTR, ctrPenList, PRINT_CTR_COLOR_1, PRINT_CTR_COLOR_2, PRINT_CTR_COLOR_2, PRINT_CTR_COLOR_2,
+        PRINT_CTR_PEN_1, PRINT_CTR_PEN_2, PRINT_CTR_PEN_2, PRINT_CTR_PEN_2,
+        PRINT_CTR_PEN_STYLE_1, PRINT_CTR_PEN_STYLE_2, PRINT_CTR_PEN_STYLE_2, PRINT_CTR_PEN_STYLE_2);
+  __readBrush(AS_CTR, ctrBrushList, PRINT_CTR_BRUSH_COLOR_1, PRINT_CTR_BRUSH_COLOR_2,
+        PRINT_CTR_BRUSH_COLOR_2, PRINT_CTR_BRUSH_COLOR_2, PRINT_CTR_BRUSH_STYLE_1,
+        PRINT_CTR_BRUSH_STYLE_2, PRINT_CTR_BRUSH_STYLE_2, PRINT_CTR_BRUSH_STYLE_2);
+  __readBorder(AS_CTR, ctrBorder);
+  __readAsOpacity(AS_CTR, ctrOpacityList);
 
   __readPen(AS_DANGER, dangerPenList, PRINT_DNG_COLOR_1, PRINT_DNG_COLOR_2, PRINT_DNG_COLOR_2, PRINT_DNG_COLOR_2,
         PRINT_DNG_PEN_1, PRINT_DNG_PEN_2, PRINT_DNG_PEN_2, PRINT_DNG_PEN_2,
@@ -798,6 +789,15 @@ void ConfigMapElement::__readPrintItems()
         PRINT_RES_BRUSH_STYLE_2, PRINT_RES_BRUSH_STYLE_2, PRINT_RES_BRUSH_STYLE_2);
   __readBorder(AS_RESTRICTED, restrBorder);
   __readAsOpacity(AS_RESTRICTED, restrOpacityList);
+
+  __readPen(AS_RMZ, rmzPenList, PRINT_RMZ_COLOR_1, PRINT_RMZ_COLOR_2, PRINT_RMZ_COLOR_2, PRINT_RMZ_COLOR_2,
+        PRINT_RMZ_PEN_1, PRINT_RMZ_PEN_2, PRINT_RMZ_PEN_2, PRINT_RMZ_PEN_2,
+        PRINT_RMZ_PEN_STYLE_1, PRINT_RMZ_PEN_STYLE_2, PRINT_RMZ_PEN_STYLE_2, PRINT_RMZ_PEN_STYLE_2);
+  __readBrush(AS_RMZ, rmzBrushList, PRINT_RMZ_BRUSH_COLOR_1, PRINT_RMZ_BRUSH_COLOR_2,
+        PRINT_RMZ_BRUSH_COLOR_2, PRINT_RMZ_BRUSH_COLOR_2, PRINT_RMZ_BRUSH_STYLE_1,
+        PRINT_RMZ_BRUSH_STYLE_2, PRINT_RMZ_BRUSH_STYLE_2, PRINT_RMZ_BRUSH_STYLE_2);
+  __readBorder(AS_RMZ, rmzBorder);
+  __readAsOpacity(AS_RMZ, rmzOpacityList);
 
   __readPen(AS_TMZ, tmzPenList, PRINT_TMZ_COLOR_1, PRINT_TMZ_COLOR_2, PRINT_TMZ_COLOR_2, PRINT_TMZ_COLOR_2,
         PRINT_TMZ_PEN_1, PRINT_TMZ_PEN_2, PRINT_TMZ_PEN_2, PRINT_TMZ_PEN_2,
@@ -880,15 +880,15 @@ void ConfigMapElement::slotOk()
 
   __writeBrush(AS_FIR, airFirBrushList, airFirPenList, airFirBorder);
 
-  __writeBrush(AS_CTR_C, ctrCBrushList, ctrCPenList, ctrCBorder);
-
-  __writeBrush(AS_CTR_D, ctrDBrushList, ctrDPenList, ctrDBorder);
+  __writeBrush(AS_CTR, ctrBrushList, ctrPenList, ctrBorder);
 
   __writeBrush(AS_DANGER, dangerBrushList, dangerPenList, dangerBorder);
 
   __writeBrush(AS_LF, lowFBrushList, lowFPenList, lowFBorder);
 
   __writeBrush(AS_RESTRICTED, restrBrushList, restrPenList, restrBorder);
+
+  __writeBrush(AS_RMZ, rmzBrushList, rmzPenList, rmzBorder);
 
   __writeBrush(AS_TMZ, tmzBrushList, tmzPenList, tmzBorder);
 
@@ -918,11 +918,11 @@ void ConfigMapElement::slotOk()
   __writeAsOpacity( AS_E, airEhOpacityList );
   __writeAsOpacity( AS_F, airFOpacityList );
   __writeAsOpacity( AS_FIR, airFirOpacityList );
-  __writeAsOpacity( AS_CTR_C, ctrCOpacityList );
-  __writeAsOpacity( AS_CTR_D, ctrDOpacityList );
+  __writeAsOpacity( AS_CTR, ctrOpacityList );
   __writeAsOpacity( AS_LF, lowFOpacityList );
   __writeAsOpacity( AS_DANGER, dangerOpacityList );
   __writeAsOpacity( AS_RESTRICTED, restrOpacityList );
+  __writeAsOpacity( AS_RMZ, rmzOpacityList );
   __writeAsOpacity( AS_TMZ, tmzOpacityList );
   __writeAsOpacity( AS_GS, gsOpacityList );
   __writeAsOpacity( AS_WW, wwOpacityList );
@@ -947,11 +947,11 @@ void ConfigMapElement::slotDefaultElements()
   __defaultAsOpacity( airEhOpacityList );
   __defaultAsOpacity( airFOpacityList );
   __defaultAsOpacity( airFirOpacityList );
-  __defaultAsOpacity( ctrCOpacityList );
-  __defaultAsOpacity( ctrDOpacityList, CTRD_OPACITY_1, CTRD_OPACITY_2, CTRD_OPACITY_3, CTRD_OPACITY_4 );
+  __defaultAsOpacity( ctrOpacityList );
   __defaultAsOpacity( lowFOpacityList );
   __defaultAsOpacity( dangerOpacityList );
   __defaultAsOpacity( restrOpacityList );
+  __defaultAsOpacity( rmzOpacityList );
   __defaultAsOpacity( tmzOpacityList );
   __defaultAsOpacity( gsOpacityList );
   __defaultAsOpacity( wwOpacityList );
@@ -1102,22 +1102,13 @@ void ConfigMapElement::__readDefaultMapItems()
       AIRFIR_BRUSH_STYLE_1, AIRFIR_BRUSH_STYLE_2,
       AIRFIR_BRUSH_STYLE_2, AIRFIR_BRUSH_STYLE_2);
 
-  __defaultPenBrush(ctrCPenList, ctrCBorder, ctrCBrushList,
-      CTRC_COLOR_1, CTRC_COLOR_2, CTRC_COLOR_3, CTRC_COLOR_4,
-      CTRC_PEN_1, CTRC_PEN_2, CTRC_PEN_3, CTRC_PEN_4,
-      CTRC_BRUSH_COLOR_1, CTRC_BRUSH_COLOR_2,
-      CTRC_BRUSH_COLOR_3, CTRC_BRUSH_COLOR_4,
-      CTRC_BRUSH_STYLE_1, CTRC_BRUSH_STYLE_2,
-      CTRC_BRUSH_STYLE_3, CTRC_BRUSH_STYLE_4);
-
-  __defaultPenBrush(ctrDPenList, ctrDBorder, ctrDBrushList,
-      CTRD_COLOR_1, CTRD_COLOR_2, CTRD_COLOR_3, CTRD_COLOR_4,
-      CTRD_PEN_1, CTRD_PEN_2, CTRD_PEN_3, CTRD_PEN_4,
-      CTRD_PEN_STYLE_1, CTRD_PEN_STYLE_2, CTRD_PEN_STYLE_3, CTRD_PEN_STYLE_4,
-      CTRD_BRUSH_COLOR_1, CTRD_BRUSH_COLOR_2,
-      CTRD_BRUSH_COLOR_3, CTRD_BRUSH_COLOR_4,
-      CTRD_BRUSH_STYLE_1, CTRD_BRUSH_STYLE_2,
-      CTRD_BRUSH_STYLE_3, CTRD_BRUSH_STYLE_4);
+  __defaultPenBrush(ctrPenList, ctrBorder, ctrBrushList,
+      CTR_COLOR_1, CTR_COLOR_2, CTR_COLOR_3, CTR_COLOR_4,
+      CTR_PEN_1, CTR_PEN_2, CTR_PEN_3, CTR_PEN_4,
+      CTR_BRUSH_COLOR_1, CTR_BRUSH_COLOR_2,
+      CTR_BRUSH_COLOR_3, CTR_BRUSH_COLOR_4,
+      CTR_BRUSH_STYLE_1, CTR_BRUSH_STYLE_2,
+      CTR_BRUSH_STYLE_3, CTR_BRUSH_STYLE_4);
 
   __defaultPenBrush(dangerPenList, dangerBorder, dangerBrushList,
       DNG_COLOR_1, DNG_COLOR_2, DNG_COLOR_3, DNG_COLOR_4,
@@ -1322,21 +1313,13 @@ void ConfigMapElement::__readDefaultPrintItems()
       PRINT_AIRFIR_BRUSH_STYLE_1, PRINT_AIRFIR_BRUSH_STYLE_2,
       PRINT_AIRFIR_BRUSH_STYLE_2, PRINT_AIRFIR_BRUSH_STYLE_2);
 
-  __defaultPenBrush(ctrCPenList, ctrCBorder, ctrCBrushList,
-      PRINT_CTRC_COLOR_1, PRINT_CTRC_COLOR_2, PRINT_CTRC_COLOR_2, PRINT_CTRC_COLOR_2,
-      PRINT_CTRC_PEN_1, PRINT_CTRC_PEN_2, PRINT_CTRC_PEN_2, PRINT_CTRC_PEN_2,
-      PRINT_CTRC_BRUSH_COLOR_1, PRINT_CTRC_BRUSH_COLOR_2,
-      PRINT_CTRC_BRUSH_COLOR_2, PRINT_CTRC_BRUSH_COLOR_2,
-      PRINT_CTRC_BRUSH_STYLE_1, PRINT_CTRC_BRUSH_STYLE_2,
-      PRINT_CTRC_BRUSH_STYLE_2, PRINT_CTRC_BRUSH_STYLE_2);
-
-  __defaultPenBrush(ctrDPenList, ctrDBorder, ctrDBrushList,
-      PRINT_CTRD_COLOR_1, PRINT_CTRD_COLOR_2, PRINT_CTRD_COLOR_2, PRINT_CTRD_COLOR_2,
-      PRINT_CTRD_PEN_1, PRINT_CTRD_PEN_2, PRINT_CTRD_PEN_2, PRINT_CTRD_PEN_2,
-      PRINT_CTRD_BRUSH_COLOR_1, PRINT_CTRD_BRUSH_COLOR_2,
-      PRINT_CTRD_BRUSH_COLOR_2, PRINT_CTRD_BRUSH_COLOR_2,
-      PRINT_CTRD_BRUSH_STYLE_1, PRINT_CTRD_BRUSH_STYLE_2,
-      PRINT_CTRD_BRUSH_STYLE_2, PRINT_CTRD_BRUSH_STYLE_2);
+  __defaultPenBrush(ctrPenList, ctrBorder, ctrBrushList,
+      PRINT_CTR_COLOR_1, PRINT_CTR_COLOR_2, PRINT_CTR_COLOR_2, PRINT_CTR_COLOR_2,
+      PRINT_CTR_PEN_1, PRINT_CTR_PEN_2, PRINT_CTR_PEN_2, PRINT_CTR_PEN_2,
+      PRINT_CTR_BRUSH_COLOR_1, PRINT_CTR_BRUSH_COLOR_2,
+      PRINT_CTR_BRUSH_COLOR_2, PRINT_CTR_BRUSH_COLOR_2,
+      PRINT_CTR_BRUSH_STYLE_1, PRINT_CTR_BRUSH_STYLE_2,
+      PRINT_CTR_BRUSH_STYLE_2, PRINT_CTR_BRUSH_STYLE_2);
 
   __defaultPenBrush(dangerPenList, dangerBorder, dangerBrushList,
       PRINT_DNG_COLOR_1, PRINT_DNG_COLOR_2, PRINT_DNG_COLOR_2, PRINT_DNG_COLOR_2,
@@ -1361,6 +1344,14 @@ void ConfigMapElement::__readDefaultPrintItems()
       PRINT_LOWF_BRUSH_COLOR_2, PRINT_LOWF_BRUSH_COLOR_2,
       PRINT_LOWF_BRUSH_STYLE_1, PRINT_LOWF_BRUSH_STYLE_2,
       PRINT_LOWF_BRUSH_STYLE_2, PRINT_LOWF_BRUSH_STYLE_2);
+
+  __defaultPenBrush(rmzPenList, rmzBorder, rmzBrushList,
+      PRINT_RMZ_COLOR_1, PRINT_RMZ_COLOR_2, PRINT_RMZ_COLOR_2, PRINT_RMZ_COLOR_2,
+      PRINT_RMZ_PEN_1, PRINT_RMZ_PEN_2, PRINT_RMZ_PEN_2, PRINT_RMZ_PEN_2,
+      PRINT_RMZ_BRUSH_COLOR_1, PRINT_RMZ_BRUSH_COLOR_2,
+      PRINT_RMZ_BRUSH_COLOR_2, PRINT_RMZ_BRUSH_COLOR_2,
+      PRINT_RMZ_BRUSH_STYLE_1, PRINT_RMZ_BRUSH_STYLE_2,
+      PRINT_RMZ_BRUSH_STYLE_2, PRINT_RMZ_BRUSH_STYLE_2);
 
   __defaultPenBrush(tmzPenList, tmzBorder, tmzBrushList,
       PRINT_TMZ_COLOR_1, PRINT_TMZ_COLOR_2, PRINT_TMZ_COLOR_2, PRINT_TMZ_COLOR_2,
@@ -1676,15 +1667,10 @@ void ConfigMapElement::slotSelectElement(int elementID)
         __saveBrush(airFirBrushList);
         __saveAsOpacity( airFirOpacityList );
         break;
-      case KFLogConfig::ControlC:
-        __savePen(ctrCPenList, ctrCBorder);
-        __saveBrush(ctrCBrushList);
-        __saveAsOpacity( ctrCOpacityList );
-        break;
-      case KFLogConfig::ControlD:
-        __savePen(ctrDPenList, ctrDBorder);
-        __saveBrush(ctrDBrushList);
-        __saveAsOpacity( ctrDOpacityList );
+      case KFLogConfig::Ctr:
+        __savePen(ctrPenList, ctrBorder);
+        __saveBrush(ctrBrushList);
+        __saveAsOpacity( ctrOpacityList );
         break;
       case KFLogConfig::Danger:
         __savePen(dangerPenList, dangerBorder);
@@ -1700,6 +1686,11 @@ void ConfigMapElement::slotSelectElement(int elementID)
         __savePen(restrPenList, restrBorder);
         __saveBrush(restrBrushList);
         __saveAsOpacity( restrOpacityList );
+        break;
+      case KFLogConfig::Rmz:
+        __savePen(rmzPenList, rmzBorder);
+        __saveBrush(rmzBrushList);
+        __saveAsOpacity( rmzOpacityList );
         break;
       case KFLogConfig::Tmz:
         __savePen(tmzPenList, tmzBorder);
@@ -1817,15 +1808,10 @@ void ConfigMapElement::slotSelectElement(int elementID)
         __showBrush(airFirBrushList);
         __showAsOpacity(airFirOpacityList);
         break;
-      case KFLogConfig::ControlC:
-         __showPen(ctrCPenList, ctrCBorder);
-         __showBrush(ctrCBrushList);
-         __showAsOpacity(ctrCOpacityList);
-        break;
-      case KFLogConfig::ControlD:
-        __showPen(ctrDPenList, ctrDBorder);
-        __showBrush(ctrDBrushList);
-        __showAsOpacity(ctrDOpacityList);
+      case KFLogConfig::Ctr:
+         __showPen(ctrPenList, ctrBorder);
+         __showBrush(ctrBrushList);
+         __showAsOpacity(ctrOpacityList);
         break;
       case KFLogConfig::Danger:
         __showPen(dangerPenList, dangerBorder);
@@ -1840,6 +1826,11 @@ void ConfigMapElement::slotSelectElement(int elementID)
         __showPen(restrPenList, restrBorder);
         __showBrush(restrBrushList);
         __showAsOpacity(restrOpacityList);
+        break;
+      case KFLogConfig::Rmz:
+        __showPen(rmzPenList, rmzBorder);
+        __showBrush(rmzBrushList);
+        __showAsOpacity(rmzOpacityList);
         break;
       case KFLogConfig::Tmz:
         __showPen(tmzPenList, tmzBorder);
@@ -1908,11 +1899,11 @@ void ConfigMapElement::slotToggleFirst(bool toggle)
       case KFLogConfig::AirE:
       case KFLogConfig::AirF:
       case KFLogConfig::AirFir:
-      case KFLogConfig::ControlC:
-      case KFLogConfig::ControlD:
+      case KFLogConfig::Ctr:
       case KFLogConfig::LowFlight:
       case KFLogConfig::Danger:
       case KFLogConfig::Restricted:
+      case KFLogConfig::Rmz:
       case KFLogConfig::Tmz:
       case KFLogConfig::GliderSector:
       case KFLogConfig::WaveWindow:
@@ -1976,11 +1967,11 @@ void ConfigMapElement::slotToggleSecond( bool toggle )
       case KFLogConfig::AirE:
       case KFLogConfig::AirF:
       case KFLogConfig::AirFir:
-      case KFLogConfig::ControlC:
-      case KFLogConfig::ControlD:
+      case KFLogConfig::Ctr:
       case KFLogConfig::LowFlight:
       case KFLogConfig::Danger:
       case KFLogConfig::Restricted:
+      case KFLogConfig::Rmz:
       case KFLogConfig::Tmz:
       case KFLogConfig::GliderSector:
       case KFLogConfig::WaveWindow:
@@ -2044,11 +2035,11 @@ void ConfigMapElement::slotToggleThird(bool toggle)
       case KFLogConfig::AirE:
       case KFLogConfig::AirF:
       case KFLogConfig::AirFir:
-      case KFLogConfig::ControlC:
-      case KFLogConfig::ControlD:
+      case KFLogConfig::Ctr:
       case KFLogConfig::LowFlight:
       case KFLogConfig::Danger:
       case KFLogConfig::Restricted:
+      case KFLogConfig::Rmz:
       case KFLogConfig::Tmz:
       case KFLogConfig::GliderSector:
       case KFLogConfig::WaveWindow:
@@ -2110,11 +2101,11 @@ void ConfigMapElement::slotToggleForth(bool toggle)
       case KFLogConfig::AirE:
       case KFLogConfig::AirF:
       case KFLogConfig::AirFir:
-      case KFLogConfig::ControlC:
-      case KFLogConfig::ControlD:
+      case KFLogConfig::Ctr:
       case KFLogConfig::LowFlight:
       case KFLogConfig::Danger:
       case KFLogConfig::Restricted:
+      case KFLogConfig::Rmz:
       case KFLogConfig::Tmz:
       case KFLogConfig::GliderSector:
       case KFLogConfig::WaveWindow:

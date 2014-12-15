@@ -882,12 +882,12 @@ void KFLogConfig::__addMapTab()
   elementSelect->addItem( tr( "Airspace E" ), KFLogConfig::AirE );
   elementSelect->addItem( tr( "Airspace F" ), KFLogConfig::AirF );
   elementSelect->addItem( tr( "Airspace FIR" ), KFLogConfig::AirFir );
-  elementSelect->addItem( tr( "Control C" ), KFLogConfig::ControlC );
-  elementSelect->addItem( tr( "Control D" ), KFLogConfig::ControlD );
+  elementSelect->addItem( tr( "Control Zone" ), KFLogConfig::Ctr );
   elementSelect->addItem( tr( "Danger/Prohibited" ), KFLogConfig::Danger );
   elementSelect->addItem( tr( "Glider Sector" ), KFLogConfig::GliderSector );
   elementSelect->addItem( tr( "Low Flight Area" ), KFLogConfig::LowFlight );
   elementSelect->addItem( tr( "Restricted" ), KFLogConfig::Restricted );
+  elementSelect->addItem( tr( "RMZ" ), KFLogConfig::Rmz );
   elementSelect->addItem( tr( "TMZ" ), KFLogConfig::Tmz );
   elementSelect->addItem( tr( "WaveWindow" ), KFLogConfig::WaveWindow );
   elementSelect->addItem( "-------------", KFLogConfig::Separator );

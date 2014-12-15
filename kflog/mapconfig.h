@@ -12,8 +12,6 @@
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
 /**
@@ -29,7 +27,7 @@
  *
  * \date 2001-2014
  *
- * \version $Id$
+ * \version 1.0
  */
 
 #ifndef MAP_CONFIG_H
@@ -380,11 +378,8 @@ private:
   QList<QPen> airFirPenList;
   QList<QBrush> airFirBrushList;
 
-  QList<QPen> ctrCPenList;
-  QList<QBrush> ctrCBrushList;
-
-  QList<QPen> ctrDPenList;
-  QList<QBrush> ctrDBrushList;
+  QList<QPen> ctrPenList;
+  QList<QBrush> ctrBrushList;
 
   QList<QPen> lowFPenList;
   QList<QBrush> lowFBrushList;
@@ -394,6 +389,9 @@ private:
 
   QList<QPen> restrPenList;
   QList<QBrush> restrBrushList;
+
+  QList<QPen> rmzPenList;
+  QList<QBrush> rmzBrushList;
 
   QList<QPen> tmzPenList;
   QList<QBrush> tmzBrushList;
@@ -436,11 +434,11 @@ private:
   QList<int> airEOpacityList;
   QList<int> airFOpacityList;
   QList<int> airFirOpacityList;
-  QList<int> ctrCOpacityList;
-  QList<int> ctrDOpacityList;
+  QList<int> ctrOpacityList;
   QList<int> lowFOpacityList;
   QList<int> dangerOpacityList;
   QList<int> restrOpacityList;
+  QList<int> rmzOpacityList;
   QList<int> tmzOpacityList;
   QList<int> gsOpacityList;
   QList<int> wwOpacityList;
@@ -459,11 +457,11 @@ private:
   bool airEBorder[6];
   bool airFBorder[6];
   bool airFirBorder[6];
-  bool ctrCBorder[6];
-  bool ctrDBorder[6];
+  bool ctrBorder[6];
   bool dangerBorder[6];
   bool lowFBorder[6];
   bool restrBorder[6];
+  bool rmzBorder[6];
   bool tmzBorder[6];
   bool gsBorder[6];
   bool wwBorder[6];

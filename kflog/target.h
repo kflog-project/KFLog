@@ -4,7 +4,7 @@
                      as release information.
 
                              -------------------
-    begin                : 2010-12-10
+    created              : 2010-12-10
 
     copyright            : (C) 2010-2014 by Axel Pauli
 
@@ -24,6 +24,6 @@
 #ifndef target_h
 #define target_h
 
-#define KFLOG_VERSION "4.9.1"
+#define KFLOG_VERSION "4.10.0"
 
 #endif

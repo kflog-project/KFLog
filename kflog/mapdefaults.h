@@ -12,8 +12,6 @@
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
 #include <cmath>
@@ -563,8 +561,7 @@
 #define AS_A "Airspace-A"
 #define AS_B "Airspace-B"
 #define AS_C "Airspace-C"
-#define AS_CTR_C "Airspace-CTR-C"
-#define AS_CTR_D "Airspace-CTR-D"
+#define AS_CTR "Airspace-CTR"
 #define AS_D "Airspace-D"
 #define AS_EL "Airspace-E-Low"
 #define AS_E "Airspace-E"
@@ -573,6 +570,7 @@
 #define AS_LF "Airspace-Low-Flight"
 #define AS_DANGER "Airspace-Danger"
 #define AS_RESTRICTED "Airspace-Restricted"
+#define AS_RMZ "Airspace-RMZ"
 #define AS_TMZ "Airspace-TMZ"
 #define AS_GS "Airspace-Glider-Sector"
 #define AS_WW "Airspace-Wave-Window"
@@ -906,92 +904,46 @@
 #define PRINT_AIRFIR_BRUSH_STYLE_1 Qt::NoBrush
 #define PRINT_AIRFIR_BRUSH_STYLE_2 Qt::NoBrush
 
-// [Control C]
-#define CTRC_PEN_1 4
-#define CTRC_PEN_2 3
-#define CTRC_PEN_3 3
-#define CTRC_PEN_4 2
+// [Control Zone]
+#define CTR_PEN_1 4
+#define CTR_PEN_2 3
+#define CTR_PEN_3 3
+#define CTR_PEN_4 2
 
-#define CTRC_PEN_STYLE_1 Qt::DotLine
-#define CTRC_PEN_STYLE_2 Qt::DotLine
-#define CTRC_PEN_STYLE_3 Qt::DotLine
-#define CTRC_PEN_STYLE_4 Qt::DotLine
+#define CTR_PEN_STYLE_1 Qt::DotLine
+#define CTR_PEN_STYLE_2 Qt::DotLine
+#define CTR_PEN_STYLE_3 Qt::DotLine
+#define CTR_PEN_STYLE_4 Qt::DotLine
 
-#define CTRC_COLOR_1 QColor(0,0,128)
-#define CTRC_COLOR_2 QColor(0,0,128)
-#define CTRC_COLOR_3 QColor(0,0,128)
-#define CTRC_COLOR_4 QColor(0,0,128)
+#define CTR_COLOR_1 QColor(0,0,128)
+#define CTR_COLOR_2 QColor(0,0,128)
+#define CTR_COLOR_3 QColor(0,0,128)
+#define CTR_COLOR_4 QColor(0,0,128)
 
-#define CTRC_BRUSH_COLOR_1 QColor(255,160,162)
-#define CTRC_BRUSH_COLOR_2 QColor(255,160,162)
-#define CTRC_BRUSH_COLOR_3 QColor(255,160,162)
-#define CTRC_BRUSH_COLOR_4 QColor(255,160,162)
+#define CTR_BRUSH_COLOR_1 QColor(255,160,162)
+#define CTR_BRUSH_COLOR_2 QColor(255,160,162)
+#define CTR_BRUSH_COLOR_3 QColor(255,160,162)
+#define CTR_BRUSH_COLOR_4 QColor(255,160,162)
 
-#define CTRC_BRUSH_STYLE_1 Qt::SolidPattern
-#define CTRC_BRUSH_STYLE_2 Qt::SolidPattern
-#define CTRC_BRUSH_STYLE_3 Qt::SolidPattern
-#define CTRC_BRUSH_STYLE_4 Qt::SolidPattern
+#define CTR_BRUSH_STYLE_1 Qt::SolidPattern
+#define CTR_BRUSH_STYLE_2 Qt::SolidPattern
+#define CTR_BRUSH_STYLE_3 Qt::SolidPattern
+#define CTR_BRUSH_STYLE_4 Qt::SolidPattern
 
-#define PRINT_CTRC_PEN_1 4
-#define PRINT_CTRC_PEN_2 3
+#define PRINT_CTR_PEN_1 4
+#define PRINT_CTR_PEN_2 3
 
-#define PRINT_CTRC_PEN_STYLE_1 Qt::SolidLine
-#define PRINT_CTRC_PEN_STYLE_2 Qt::SolidLine
+#define PRINT_CTR_PEN_STYLE_1 Qt::SolidLine
+#define PRINT_CTR_PEN_STYLE_2 Qt::SolidLine
 
-#define PRINT_CTRC_COLOR_1 QColor(0,0,128)
-#define PRINT_CTRC_COLOR_2 QColor(0,0,128)
+#define PRINT_CTR_COLOR_1 QColor(0,0,128)
+#define PRINT_CTR_COLOR_2 QColor(0,0,128)
 
-#define PRINT_CTRC_BRUSH_COLOR_1 QColor(255,160,162)
-#define PRINT_CTRC_BRUSH_COLOR_2 QColor(255,160,162)
+#define PRINT_CTR_BRUSH_COLOR_1 QColor(255,160,162)
+#define PRINT_CTR_BRUSH_COLOR_2 QColor(255,160,162)
 
-#define PRINT_CTRC_BRUSH_STYLE_1 Qt::SolidPattern
-#define PRINT_CTRC_BRUSH_STYLE_2 Qt::SolidPattern
-
-// [Control D]
-#define CTRD_PEN_1 3
-#define CTRD_PEN_2 2
-#define CTRD_PEN_3 1
-#define CTRD_PEN_4 1
-
-#define CTRD_PEN_STYLE_1 Qt::DashLine
-#define CTRD_PEN_STYLE_2 Qt::DashLine
-#define CTRD_PEN_STYLE_3 Qt::DashLine
-#define CTRD_PEN_STYLE_4 Qt::DashLine
-
-#define CTRD_COLOR_1 QColor(0,0,128)
-#define CTRD_COLOR_2 QColor(0,0,128)
-#define CTRD_COLOR_3 QColor(0,0,128)
-#define CTRD_COLOR_4 QColor(0,0,128)
-
-#define CTRD_BRUSH_COLOR_1 QColor(255,160,162)
-#define CTRD_BRUSH_COLOR_2 QColor(255,160,162)
-#define CTRD_BRUSH_COLOR_3 QColor(255,160,162)
-#define CTRD_BRUSH_COLOR_4 QColor(255,160,162)
-
-#define CTRD_BRUSH_STYLE_1 Qt::SolidPattern
-#define CTRD_BRUSH_STYLE_2 Qt::SolidPattern
-#define CTRD_BRUSH_STYLE_3 Qt::SolidPattern
-#define CTRD_BRUSH_STYLE_4 Qt::SolidPattern
-
-#define CTRD_OPACITY_1 50
-#define CTRD_OPACITY_2 50
-#define CTRD_OPACITY_3 50
-#define CTRD_OPACITY_4 50
-
-#define PRINT_CTRD_PEN_1 4
-#define PRINT_CTRD_PEN_2 3
-
-#define PRINT_CTRD_PEN_STYLE_1 Qt::DashLine
-#define PRINT_CTRD_PEN_STYLE_2 Qt::DashLine
-
-#define PRINT_CTRD_COLOR_1 QColor(0,0,128)
-#define PRINT_CTRD_COLOR_2 QColor(0,0,128)
-
-#define PRINT_CTRD_BRUSH_COLOR_1 QColor(255,160,162)
-#define PRINT_CTRD_BRUSH_COLOR_2 QColor(255,160,162)
-
-#define PRINT_CTRD_BRUSH_STYLE_1 Qt::SolidPattern
-#define PRINT_CTRD_BRUSH_STYLE_2 Qt::SolidPattern
+#define PRINT_CTR_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_CTR_BRUSH_STYLE_2 Qt::SolidPattern
 
 // [Low flight area]
 #define LOWF_PEN_1 4
@@ -1115,6 +1067,47 @@
 
 #define PRINT_RES_BRUSH_STYLE_1 Qt::SolidPattern
 #define PRINT_RES_BRUSH_STYLE_2 Qt::SolidPattern
+
+// [Radio Mandatory Zone]
+#define RMZ_PEN_1 4
+#define RMZ_PEN_2 3
+#define RMZ_PEN_3 3
+#define RMZ_PEN_4 2
+
+#define RMZ_PEN_STYLE_1 Qt::SolidLine
+#define RMZ_PEN_STYLE_2 Qt::SolidLine
+#define RMZ_PEN_STYLE_3 Qt::SolidLine
+#define RMZ_PEN_STYLE_4 Qt::SolidLine
+
+#define RMZ_COLOR_1 QColor(0,0,128)
+#define RMZ_COLOR_2 QColor(0,0,128)
+#define RMZ_COLOR_3 QColor(0,0,128)
+#define RMZ_COLOR_4 QColor(0,0,128)
+
+#define RMZ_BRUSH_COLOR_1 QColor(203,217,246)
+#define RMZ_BRUSH_COLOR_2 QColor(203,217,246)
+#define RMZ_BRUSH_COLOR_3 QColor(203,217,246)
+#define RMZ_BRUSH_COLOR_4 QColor(203,217,246)
+
+#define RMZ_BRUSH_STYLE_1 Qt::SolidPattern
+#define RMZ_BRUSH_STYLE_2 Qt::SolidPattern
+#define RMZ_BRUSH_STYLE_3 Qt::SolidPattern
+#define RMZ_BRUSH_STYLE_4 Qt::SolidPattern
+
+#define PRINT_RMZ_PEN_1 4
+#define PRINT_RMZ_PEN_2 3
+
+#define PRINT_RMZ_PEN_STYLE_1 Qt::SolidLine
+#define PRINT_RMZ_PEN_STYLE_2 Qt::SolidLine
+
+#define PRINT_RMZ_COLOR_1 QColor(0,0,128)
+#define PRINT_RMZ_COLOR_2 QColor(0,0,128)
+
+#define PRINT_RMZ_BRUSH_COLOR_1 QColor(203,217,246)
+#define PRINT_RMZ_BRUSH_COLOR_2 QColor(203,217,246)
+
+#define PRINT_RMZ_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_RMZ_BRUSH_STYLE_2 Qt::SolidPattern
 
 // [Transponder Mandatory Zone]
 #define TMZ_PEN_1 4
