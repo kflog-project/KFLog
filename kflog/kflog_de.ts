@@ -2346,28 +2346,28 @@ Alle Downloads verworfen!</translation>
 <context>
     <name>MapControlView</name>
     <message>
-        <location filename="mapcontrolview.cpp" line="63"/>
+        <location filename="mapcontrolview.cpp" line="64"/>
         <source>Center to Home position</source>
         <oldsource>Goto Home position</oldsource>
         <translation>Zentriere auf Heimat Position</translation>
     </message>
     <message>
-        <location filename="mapcontrolview.cpp" line="113"/>
-        <source>Height/Width [km]:</source>
-        <translation>Höhe/Breite [km]:</translation>
+        <location filename="mapcontrolview.cpp" line="114"/>
+        <source>Height / Width:</source>
+        <translation>Höhe / Breite:</translation>
     </message>
     <message>
-        <location filename="mapcontrolview.cpp" line="123"/>
+        <location filename="mapcontrolview.cpp" line="124"/>
         <source>Scale:</source>
         <translation>Skala:</translation>
     </message>
     <message>
-        <location filename="mapcontrolview.cpp" line="129"/>
+        <location filename="mapcontrolview.cpp" line="130"/>
         <source>Change Scale:</source>
         <translation>Ändere Skale:</translation>
     </message>
     <message>
-        <location filename="mapcontrolview.cpp" line="177"/>
+        <location filename="mapcontrolview.cpp" line="178"/>
         <source>&lt;html&gt;&lt;b&gt;The map control help&lt;/b&gt;&lt;br&gt;&lt;br&gt;The map control provides the following actions:&lt;ul&gt;&lt;li&gt;&lt;i&gt;Moving&lt;/i&gt; the map by pressing an arrow button.&lt;li&gt;&lt;i&gt;Center&lt;/i&gt; the map to the &lt;i&gt;Home&lt;/i&gt; position by pressing the house button.&lt;li&gt;&lt;i&gt;Zooming&lt;/i&gt; the map by moving the slider.&lt;/ul&gt;&lt;br&gt;&lt;br&gt;&lt;/html&gt;</source>
         <oldsource>&lt;html&gt;&lt;b&gt;The map control help&lt;/b&gt;&lt;br&gt;&lt;br&gt;The map control provides the following actions:&lt;ul&gt;&lt;li&gt;&lt;i&gt;Moving the map&lt;/i&gt; by pressing an arrow button.&lt;li&gt;&lt;i&gt;Center the map&lt;/i&gt; to the &lt;i&gt;Home&lt;/i&gt; position by pressing the house button.&lt;li&gt;&lt;i&gt;Zooming the map&lt;/i&gt; by moving the slider.&lt;/ul&gt;&lt;br&gt;&lt;br&gt;&lt;/html&gt;</oldsource>
         <translation>&lt;html&gt;&lt;b&gt;Die Karten-Kontroll Hilfe&lt;/b&gt;&lt;br&gt;&lt;br&gt;Die Karten-Kontrolle bietet die folgenden Aktionen an:&lt;ul&gt;&lt;li&gt;&lt;i&gt;Verschieben&lt;/i&gt; der Karte durch drücken einer Pfeiltaste.&lt;li&gt;&lt;i&gt;Zentrieren&lt;/i&gt; der Karte auf die &lt;i&gt;Heimat&lt;/i&gt; Position durch drücken auf die Haustaste.&lt;li&gt;&lt;i&gt;Zoomen&lt;/i&gt; der Karte durch bewegen des Schiebers.&lt;/ul&gt;&lt;br&gt;&lt;br&gt;&lt;/html&gt;</translation>
