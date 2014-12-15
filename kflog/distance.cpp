@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2002 by by Andre Somers
+**   Copyright (c):  2002      by Andre Somers
 **                   2007-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
@@ -18,8 +18,14 @@
 
 #include "distance.h"
 
-//initializer for static member variable
-Distance::distanceUnit Distance::_distanceUnit=kilometers;
+// Initialize static constants.
+const double Distance::mFromKm    = 1000.0; // 1000.0 meters in 1 km.
+const double Distance::mFromMile  = 1609.3; // 1609.3 meters in a mile
+const double Distance::mFromNMile = 1852.0; // 1852 meters in a nautical mile
+const double Distance::mFromFeet  = 0.3048; // a foot is a bit more than 30 cm
+
+// The distance default unit is kilometers.
+Distance::distanceUnit Distance::_distanceUnit = kilometers;
 
 Distance::Distance()
 {

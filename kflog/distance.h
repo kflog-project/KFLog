@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2002 by by Andre Somers
+**   Copyright (c):  2002      by Andre Somers
 **                   2007-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
@@ -28,7 +28,7 @@
  *
  * \date 2002-2014
  *
- * \version 1.0
+ * \version 1.1
  */
 
 #ifndef DISTANCE_H
@@ -40,11 +40,11 @@ class Distance
 {
  public:
 
-  // define conversion constants
-  static const double mFromKm    =1000.0; // 1000.0 meters in 1 km.
-  static const double mFromMile  =1609.3; // 1609.3 meters in a mile
-  static const double mFromNMile =1852.0; // 1852 meters in a nautical mile
-  static const double mFromFeet  =0.3048; // a foot is a bit more than 30 cm
+  // Conversion constants
+  static const double mFromKm;
+  static const double mFromMile;
+  static const double mFromNMile;
+  static const double mFromFeet;
 
   enum distanceUnit{ meters=0, feet=1, kilometers=2, miles=3, nautmiles=4 };
 

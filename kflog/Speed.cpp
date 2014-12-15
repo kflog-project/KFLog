@@ -18,7 +18,13 @@
 
 #include "Speed.h"
 
-// initialize static values
+// Initialize static constants.
+const double Speed::toKph  = 3.6;
+const double Speed::toMph  = 2.2369;
+const double Speed::toKnot = 1.9438;
+const double Speed::toFpm  = 196.8504;
+
+// Initialize static speed units.
 Speed::speedUnit Speed::_horizontalUnit = kilometersPerHour;
 Speed::speedUnit Speed::_verticalUnit   = metersPerSecond;
 Speed::speedUnit Speed::_windUnit       = kilometersPerHour;

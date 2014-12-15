@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2002 by by Andre Somers
+**   Copyright (c):  2002      by Andre Somers
 **                   2007-2014 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
@@ -39,376 +39,377 @@ class Speed
 {
 
 public:
-    /**
-     * The speed unit enumeration lists the units that apply to speed.
-     */
-    enum speedUnit
-    {
-      metersPerSecond=0,   /** meters per second */
-      kilometersPerHour=1, /** kilometers per hour */
-      knots=2,             /** knots (nautical miles per hour) */
-      milesPerHour=3,      /** statute miles per hour */
-      feetPerMinute=4      /** feet per minute */
-    };
 
-    /**
-     * The following constants define the factor by which to multiply meters per
-     * second to get the indicated unit.
-     */
-    static const double toKph  = 3.6;
-    static const double toMph  = 2.2369;
-    static const double toKnot = 1.9438;
-    static const double toFpm  = 196.8504;
+  /**
+   * The speed unit enumeration lists the units that apply to speed.
+   */
+  enum speedUnit
+  {
+    metersPerSecond=0,   /** meters per second */
+    kilometersPerHour=1, /** kilometers per hour */
+    knots=2,             /** knots (nautical miles per hour) */
+    milesPerHour=3,      /** statute miles per hour */
+    feetPerMinute=4      /** feet per minute */
+  };
 
-    /**
-     * Constructor
-     */
-    Speed();
+  /**
+   * The following constants define the factor by which to multiply meters per
+   * second to get the indicated unit.
+   */
+  static const double toKph;
+  static const double toMph;
+  static const double toKnot;
+  static const double toFpm;
 
-    /**
-     * Constructor
-     *
-     * Sets the speed to meters per second.
-     */
-    Speed(double Mps);
+  /**
+   * Constructor
+   */
+  Speed();
 
-    /**
-     * Destructor
-     */
-    virtual ~Speed();
+  /**
+   * Constructor
+   *
+   * Sets the speed to meters per second.
+   */
+  Speed(double Mps);
 
-    /**
-     * Get speed in Knots.
-     */
-    double getKnots() const
-    {
-      return (_speed * toKnot);
-    };
+  /**
+   * Destructor
+   */
+  virtual ~Speed();
 
-    /**
-     * Get speed in Kilometers per hour
-     */
-    double getKph() const
-    {
-      return (_speed * toKph);
-    };
+  /**
+   * Get speed in Knots.
+   */
+  double getKnots() const
+  {
+    return (_speed * toKnot);
+  };
 
-    /**
-     * Get speed in Meters per Second
-     */
-    double getMps() const
-    {
-      return (_speed);
-    };
+  /**
+   * Get speed in Kilometers per hour
+   */
+  double getKph() const
+  {
+    return (_speed * toKph);
+  };
 
-    /**
-     * Get speed in statute miles per hour
-     */
-    double getMph() const
-    {
-      return (_speed * toMph);
-    };
+  /**
+   * Get speed in Meters per Second
+   */
+  double getMps() const
+  {
+    return (_speed);
+  };
 
-    /**
-     * Get speed in Feed per minute
-     */
-    double getFpm() const
-    {
-      return (_speed * toFpm);
-    };
+  /**
+   * Get speed in statute miles per hour
+   */
+  double getMph() const
+  {
+    return (_speed * toMph);
+  };
 
-    /**
-     * Set speed in statute miles per hour
-     */
-    void setMph(double speed)
-    {
-      _speed = speed / toMph;
-      _isValid = true;
-    };
+  /**
+   * Get speed in Feed per minute
+   */
+  double getFpm() const
+  {
+    return (_speed * toFpm);
+  };
 
-    /**
-     * Set speed in knots
-     */
-    void setKnot(double speed)
-    {
-      _speed = speed / toKnot;
-      _isValid = true;
-    };
+  /**
+   * Set speed in statute miles per hour
+   */
+  void setMph(double speed)
+  {
+    _speed = speed / toMph;
+    _isValid = true;
+  };
 
-    /**
-     * Set speed in Kilometers per hour
-     */
-    void setKph(double speed)
-    {
-      _speed = speed / toKph;
-      _isValid = true;
-    };
+  /**
+   * Set speed in knots
+   */
+  void setKnot(double speed)
+  {
+    _speed = speed / toKnot;
+    _isValid = true;
+  };
 
-    /**
-     * Set speed in meters per second.
-     */
-    void setMps(double speed)
-    {
-      _speed = speed;
-      _isValid = true;
-    };
+  /**
+   * Set speed in Kilometers per hour
+   */
+  void setKph(double speed)
+  {
+    _speed = speed / toKph;
+    _isValid = true;
+  };
 
-    /**
-     * Set speed in feet per minute.
-     */
-    void setFpm(double speed)
-    {
-      _speed = speed / toFpm;
-      _isValid = true;
-    };
+  /**
+   * Set speed in meters per second.
+   */
+  void setMps(double speed)
+  {
+    _speed = speed;
+    _isValid = true;
+  };
 
-    /**
-     * Set speed in selected horizontal unit.
-     */
-    void setHorizontalValue(double speed)
-    {
-      setValueInUnit(speed, _horizontalUnit);
-    };
+  /**
+   * Set speed in feet per minute.
+   */
+  void setFpm(double speed)
+  {
+    _speed = speed / toFpm;
+    _isValid = true;
+  };
 
-    /**
-     * Set speed in selected vertical unit.
-     */
-    void setVerticalValue(double speed)
-    {
-      setValueInUnit(speed, _verticalUnit);
-    };
+  /**
+   * Set speed in selected horizontal unit.
+   */
+  void setHorizontalValue(double speed)
+  {
+    setValueInUnit(speed, _horizontalUnit);
+  };
 
-    /**
-     * Set speed in selected wind unit.
-     */
-    void setWindValue(double speed)
-    {
-      setValueInUnit(speed, _windUnit);
-    };
+  /**
+   * Set speed in selected vertical unit.
+   */
+  void setVerticalValue(double speed)
+  {
+    setValueInUnit(speed, _verticalUnit);
+  };
 
-    /**
-     * set the horizontal unit
-     */
-    static void setHorizontalUnit(speedUnit unit)
-    {
-      _horizontalUnit=unit;
-    };
+  /**
+   * Set speed in selected wind unit.
+   */
+  void setWindValue(double speed)
+  {
+    setValueInUnit(speed, _windUnit);
+  };
 
-    /**
-     * set the vertical unit
-     */
-    static void setVerticalUnit(speedUnit unit)
-    {
-      _verticalUnit=unit;
-    };
+  /**
+   * set the horizontal unit
+   */
+  static void setHorizontalUnit(speedUnit unit)
+  {
+    _horizontalUnit=unit;
+  };
 
-    /**
-     * set the wind unit
-     */
-    static void setWindUnit(speedUnit unit)
-    {
-      _windUnit=unit;
-    };
+  /**
+   * set the vertical unit
+   */
+  static void setVerticalUnit(speedUnit unit)
+  {
+    _verticalUnit=unit;
+  };
 
-    /**
-     * get the horizontal unit
-     */
-    static speedUnit getHorizontalUnit()
-    {
-      return _horizontalUnit;
-    };
+  /**
+   * set the wind unit
+   */
+  static void setWindUnit(speedUnit unit)
+  {
+    _windUnit=unit;
+  };
 
-    /**
-     * get the vertical unit
-     */
-    static speedUnit getVerticalUnit()
-    {
-      return _verticalUnit;
-    };
+  /**
+   * get the horizontal unit
+   */
+  static speedUnit getHorizontalUnit()
+  {
+    return _horizontalUnit;
+  };
 
-    /**
-     * get the wind unit
-     */
-    static speedUnit getWindUnit()
-    {
-      return _windUnit;
-    }
+  /**
+   * get the vertical unit
+   */
+  static speedUnit getVerticalUnit()
+  {
+    return _verticalUnit;
+  };
 
-    /**
-     * Returns a formatted string for the default vertical speed units.
-     * The string includes the value and optionally the unit.
-     * @param withUnit set to true (default) to have the returned string
-     *    include the unit, false otherwise
-     * @param prec set to the number of digits after the decimal point you
-     *    want in the string
-     */
-    QString getVerticalText(bool withUnit=true, uint prec=1) const;
+  /**
+   * get the wind unit
+   */
+  static speedUnit getWindUnit()
+  {
+    return _windUnit;
+  }
 
-    /**
-     * Returns a formatted string for the default horizontal speed unit.
-     * The string includes the value and optionally the unit.
-     * @param withUnit set to true (default) to have the returned string
-     *    include the unit, false otherwise
-     * @param prec set to the number of digits after the decimal point you
-     *    want in the string
-     */
-    QString getHorizontalText(bool withUnit=true, uint prec=1) const;
+  /**
+   * Returns a formatted string for the default vertical speed units.
+   * The string includes the value and optionally the unit.
+   * @param withUnit set to true (default) to have the returned string
+   *    include the unit, false otherwise
+   * @param prec set to the number of digits after the decimal point you
+   *    want in the string
+   */
+  QString getVerticalText(bool withUnit=true, uint prec=1) const;
 
-    /**
-     * Returns a formatted string for the default wind speed unit.
-     * The string includes the value and optionally the unit.
-     * @param withUnit set to true (default) to have the returned string
-     *    include the unit, false otherwise
-     * @param prec set to the number of digits after the decimal point you
-     *    want in the string
-     */
-    QString getWindText(bool withUnit=true, uint prec=1) const;
+  /**
+   * Returns a formatted string for the default horizontal speed unit.
+   * The string includes the value and optionally the unit.
+   * @param withUnit set to true (default) to have the returned string
+   *    include the unit, false otherwise
+   * @param prec set to the number of digits after the decimal point you
+   *    want in the string
+   */
+  QString getHorizontalText(bool withUnit=true, uint prec=1) const;
 
-    /**
-     * @returns a string for the unit requested. This string only represents
-     *    the unit, not the value.
-     * @param unit the type of unit you want the string for.
-     */
-    static QString getUnitText(speedUnit unit);
+  /**
+   * Returns a formatted string for the default wind speed unit.
+   * The string includes the value and optionally the unit.
+   * @param withUnit set to true (default) to have the returned string
+   *    include the unit, false otherwise
+   * @param prec set to the number of digits after the decimal point you
+   *    want in the string
+   */
+  QString getWindText(bool withUnit=true, uint prec=1) const;
 
-    /**
-     * @returns a string for the horizontal unit requested. This string only
-     * represents the unit, not the value.
-     */
-    static QString getHorizontalUnitText()
-    {
-      return getUnitText( _horizontalUnit );
-    };
+  /**
+   * @returns a string for the unit requested. This string only represents
+   *    the unit, not the value.
+   * @param unit the type of unit you want the string for.
+   */
+  static QString getUnitText(speedUnit unit);
 
-    static QString getVerticalUnitText()
-    {
-      return getUnitText( _verticalUnit );
-    };
+  /**
+   * @returns a string for the horizontal unit requested. This string only
+   * represents the unit, not the value.
+   */
+  static QString getHorizontalUnitText()
+  {
+    return getUnitText( _horizontalUnit );
+  };
 
-    static QString getWindUnitText()
-    {
-      return getUnitText( _windUnit );
-    };
+  static QString getVerticalUnitText()
+  {
+    return getUnitText( _verticalUnit );
+  };
 
-    /**
-     * Get the value for the vertical speed in the currently active unit.
-     * @returns the current speed value
-     */
-    double getVerticalValue() const
-    {
-       return getValueInUnit(_verticalUnit);
-    };
+  static QString getWindUnitText()
+  {
+    return getUnitText( _windUnit );
+  };
 
-    /**
-     * Get the value for the horizontal speed in the currently active unit.
-     * @returns the current speed value
-     */
-    double getHorizontalValue() const
-    {
-      return getValueInUnit(_horizontalUnit);
-    };
+  /**
+   * Get the value for the vertical speed in the currently active unit.
+   * @returns the current speed value
+   */
+  double getVerticalValue() const
+  {
+     return getValueInUnit(_verticalUnit);
+  };
 
-    /**
-     * Get the value for the wind speed in the currently active unit.
-     * @returns the current speed value
-     */
-    double getWindValue() const
-    {
-      return getValueInUnit(_windUnit);
-    };
+  /**
+   * Get the value for the horizontal speed in the currently active unit.
+   * @returns the current speed value
+   */
+  double getHorizontalValue() const
+  {
+    return getValueInUnit(_horizontalUnit);
+  };
 
-    /**
-     * Get the value in the requested unit.
-     * @returns the value converted to the requested unit
-     * @param unit the unit in which to return the value
-     */
-    double getValueInUnit(speedUnit unit) const;
+  /**
+   * Get the value for the wind speed in the currently active unit.
+   * @returns the current speed value
+   */
+  double getWindValue() const
+  {
+    return getValueInUnit(_windUnit);
+  };
 
-    /**
-     * Set the value in the indicated unit.
-     * @param speed the new speed to set
-     * @param unit the unit in which to set the value
-     */
-    void setValueInUnit(double speed, speedUnit unit);
+  /**
+   * Get the value in the requested unit.
+   * @returns the value converted to the requested unit
+   * @param unit the unit in which to return the value
+   */
+  double getValueInUnit(speedUnit unit) const;
 
-    /**
-     * Sets the distance to be invalid
-     */
-    void setInvalid()
-    {
-        _isValid=false;
-        _speed=0;
-    };
+  /**
+   * Set the value in the indicated unit.
+   * @param speed the new speed to set
+   * @param unit the unit in which to set the value
+   */
+  void setValueInUnit(double speed, speedUnit unit);
 
-    /**
-     * Gets if the distance is valid
-     */
-    bool isValid() const
-    {
-        return _isValid;
-    };
+  /**
+   * Sets the distance to be invalid
+   */
+  void setInvalid()
+  {
+      _isValid=false;
+      _speed=0;
+  };
 
-    /*Operators */
-    /**
-     * + operator for speed.
-     */
-    Speed operator + (const Speed& x) const;
+  /**
+   * Gets if the distance is valid
+   */
+  bool isValid() const
+  {
+      return _isValid;
+  };
 
-    /**
-     * - operator for speed.
-     */
-    Speed operator - (const Speed& x) const;
+  /*Operators */
+  /**
+   * + operator for speed.
+   */
+  Speed operator + (const Speed& x) const;
 
-    /**
-     * / operator for speed.
-     */
-    double operator / (const Speed& x) const;
+  /**
+   * - operator for speed.
+   */
+  Speed operator - (const Speed& x) const;
 
-    /**
-     * * operator for speed.
-     */
-    double operator * (const Speed& x) const;
+  /**
+   * / operator for speed.
+   */
+  double operator / (const Speed& x) const;
 
-    /**
-     * != operator for Speed
-     */
-    bool operator != (const Speed& x) const;
+  /**
+   * * operator for speed.
+   */
+  double operator * (const Speed& x) const;
 
-    /**
-     * == operator for Speed
-     */
-    bool operator == (const Speed& x) const;
+  /**
+   * != operator for Speed
+   */
+  bool operator != (const Speed& x) const;
 
-    /**
-     * minus prefix operator for speed
-     */
-    Speed operator - () const;
+  /**
+   * == operator for Speed
+   */
+  bool operator == (const Speed& x) const;
+
+  /**
+   * minus prefix operator for speed
+   */
+  Speed operator - () const;
 
 protected:
-    /**
-     * This attribute contains the stored speed in meters per second.
-     */
-    double _speed;
+  /**
+   * This attribute contains the stored speed in meters per second.
+   */
+  double _speed;
 
-    /**
-     * value valid?
-     */
-    bool _isValid;
+  /**
+   * value valid?
+   */
+  bool _isValid;
 
-    /**
-     * Contains the unit used for horizontal speeds
-     */
-    static speedUnit _horizontalUnit;
+  /**
+   * Contains the unit used for horizontal speeds
+   */
+  static speedUnit _horizontalUnit;
 
-    /**
-     * Contains the unit used for vertical speeds
-     */
-    static speedUnit _verticalUnit;
+  /**
+   * Contains the unit used for vertical speeds
+   */
+  static speedUnit _verticalUnit;
 
-    /**
-     * Contains the unit used for wind speeds
-     */
-    static speedUnit _windUnit;
+  /**
+   * Contains the unit used for wind speeds
+   */
+  static speedUnit _windUnit;
 };
 
 /**
