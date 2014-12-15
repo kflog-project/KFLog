@@ -1,16 +1,15 @@
-# $Id$
 Format: http://dep.debian.net/deps/dep5
 Upstream-Name: kflog-__VERSION__
 Source: <https://svn.kflog.org/svn/repos/kflog2/qt4>
 
 Files: *
 Copyright: 2011 Hendrik Hoeth <hoeth@linta.de>
-           2011 Axel Pauli <kflog.cumulus@gmail.com>
+           2011-2014 Axel Pauli <kflog.cumulus@gmail.com>
 License: GPL-3.0+
 
 Files: debian/*
 Copyright: 2011 Hendrik Hoeth <hoeth@linta.de>
-           2011-2013 Axel Pauli <kflog.cumulus@gmail.com>
+           2011-2014 Axel Pauli <kflog.cumulus@gmail.com>
 License: GPL-3.0+
 
 License: GPL-3.0+
