@@ -21,6 +21,8 @@
   * Issue #49 fixed. Airfield Walldorf is not shown on the map.
     
   * Issue #50 fixed. Replace the 2 control zone items by a new one.
+  
+  * MapControl height and hidth are displayed in the user's selected units.
 
 2014-12-02 Axel Pauli <kflog.cumulus@gmail.com>
 
