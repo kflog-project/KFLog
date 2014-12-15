@@ -28,7 +28,7 @@
  *
  * \date 2000-2014
  *
- * \version 1.0
+ * \version 1.1
  */
 
 #ifndef MAP_CONTROL_VIEW_H
@@ -38,6 +38,7 @@
 #include <QLabel>
 #include <QLCDNumber>
 #include <QSlider>
+#include <QSize>
 
 class MapControlView : public QWidget
 {
@@ -92,9 +93,11 @@ private:
     /** */
     int __getScaleValue(double value);
 
-    QSlider* currentScaleSlider;
-    QLCDNumber* currentScaleValue;
-    QLabel* dimText;
+    QSize       m_mapSize;
+    QSlider*    m_currentScaleSlider;
+    QLCDNumber* m_currentScaleValue;
+    QLabel*     m_dimLabel;
+    QLabel*     m_dimText;
 };
 
 #endif

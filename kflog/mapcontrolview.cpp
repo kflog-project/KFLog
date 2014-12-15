@@ -20,6 +20,7 @@
     #include <QtGui>
 #endif
 
+#include "distance.h"
 #include "mapcontrolview.h"
 #include "mapcalc.h"
 #include "mapmatrix.h"
@@ -110,51 +111,51 @@ MapControlView::MapControlView(QWidget* parent) : QWidget(parent)
   navLayout->setRowStretch( 3, 0 );
   navLayout->setRowStretch( 4, 1 );
 
-  QLabel* dimLabel = new QLabel( tr("Height/Width [km]:"), this );
+  m_dimLabel = new QLabel( tr("Height / Width:"), this );
+  m_dimLabel->setMinimumHeight(m_dimLabel->sizeHint().height() + 5);
 
-  dimLabel->setMinimumHeight(dimLabel->sizeHint().height() + 5);
-  dimText = new QLabel("125/130", this);
-  dimText->setMargin( 5 );
-  dimText->setAlignment( Qt::AlignCenter );
-  dimText->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-  dimText->setBackgroundRole( QPalette::Light );
-  dimText->setAutoFillBackground( true );
+  m_dimText = new QLabel("", this);
+  m_dimText->setMargin( 5 );
+  m_dimText->setAlignment( Qt::AlignCenter );
+  m_dimText->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+  m_dimText->setBackgroundRole( QPalette::Light );
+  m_dimText->setAutoFillBackground( true );
 
   QLabel* currentScaleLabel = new QLabel(tr("Scale:"), this);
   currentScaleLabel->setMinimumHeight(currentScaleLabel->sizeHint().height() + 10);
-  currentScaleValue = new QLCDNumber(5,this);
-  currentScaleValue->setBackgroundRole( QPalette::Light );
-  currentScaleValue->setAutoFillBackground( true );
+  m_currentScaleValue = new QLCDNumber(5,this);
+  m_currentScaleValue->setBackgroundRole( QPalette::Light );
+  m_currentScaleValue->setAutoFillBackground( true );
 
   QLabel* setScaleLabel = new QLabel(tr("Change Scale:"), this);
   setScaleLabel->setMinimumWidth( setScaleLabel->sizeHint().width());
 
   setScaleLabel->setMinimumHeight(setScaleLabel->sizeHint().height());
-  currentScaleSlider = new QSlider( Qt::Horizontal,this );
-  currentScaleSlider->setMinimum(1);
-  currentScaleSlider->setMaximum(2);
-  currentScaleSlider->setPageStep(1);
-  currentScaleSlider->setValue(0);
-  currentScaleSlider->setMinimumHeight(currentScaleSlider->sizeHint().height());
+  m_currentScaleSlider = new QSlider( Qt::Horizontal,this );
+  m_currentScaleSlider->setMinimum(1);
+  m_currentScaleSlider->setMaximum(2);
+  m_currentScaleSlider->setPageStep(1);
+  m_currentScaleSlider->setValue(0);
+  m_currentScaleSlider->setMinimumHeight(m_currentScaleSlider->sizeHint().height());
 
   QGridLayout* controlLayout = new QGridLayout( this );
   controlLayout->setMargin( 5 );
   controlLayout->setSpacing( 10 );
 
   controlLayout->addWidget( navFrame, 0, 0, 3, 1 );
-  controlLayout->addWidget( dimLabel, 0, 1, 1, 2, Qt::AlignCenter );
-  controlLayout->addWidget( dimText,  1, 1, 1, 2 );
+  controlLayout->addWidget( m_dimLabel, 0, 1, 1, 2, Qt::AlignCenter );
+  controlLayout->addWidget( m_dimText,  1, 1, 1, 2 );
   controlLayout->addWidget( currentScaleLabel, 2, 1 );
-  controlLayout->addWidget( currentScaleValue, 2, 2 );
+  controlLayout->addWidget( m_currentScaleValue, 2, 2 );
   controlLayout->addWidget( setScaleLabel, 3, 0 );
-  controlLayout->addWidget( currentScaleSlider, 3, 1, 1, 3 );
+  controlLayout->addWidget( m_currentScaleSlider, 3, 1, 1, 3 );
 
   controlLayout->setColumnStretch( 4, 10 );
   controlLayout->setRowStretch( 4, 10 );
 
-  connect( currentScaleSlider, SIGNAL(valueChanged(int)),
+  connect( m_currentScaleSlider, SIGNAL(valueChanged(int)),
            SLOT(slotShowScaleChange(int)) );
-  connect( currentScaleSlider, SIGNAL(sliderReleased()),
+  connect( m_currentScaleSlider, SIGNAL(sliderReleased()),
            SLOT(slotSetScale()) );
 
   connect(nwB, SIGNAL(clicked()), _globalMapMatrix, SLOT(slotMoveMapNW()));
@@ -186,30 +187,35 @@ void MapControlView::setHelpText()
   ) );
 }
 
-void MapControlView::slotShowMapData(QSize mapSize)
+void MapControlView::slotShowMapData( QSize mapSize )
 {
+  m_mapSize = mapSize;
+
   const double cScale = _globalMapMatrix->getScale();
 
-  QString temp;
+  // Distances in meters
+  Distance height = Distance(mapSize.height() * cScale);
+  Distance width  = Distance(mapSize.width() * cScale);
 
-  temp.sprintf( "<html><TT>%.1f/%.1f</TT></html>",
-                mapSize.height() * cScale / 1000.0,
-                mapSize.width() * cScale / 1000.0);
-  dimText->setText( temp );
+  QString text = QString("<html><TT>%1/%2 [%3]</TT></html>")
+                 .arg( height.getText( false, 1 ) )
+		 .arg( width.getText( false, 1) )
+		 .arg( Distance::getUnitText() );
 
-  currentScaleValue->display( cScale );
-  currentScaleSlider->setValue( __getScaleValue( cScale ) );
+  m_dimText->setText( text );
+  m_currentScaleValue->display( cScale );
+  m_currentScaleSlider->setValue( __getScaleValue( cScale ) );
 }
 
 void MapControlView::slotSetMinMaxValue(int min, int max)
 {
-  currentScaleSlider->setMinimum( __getScaleValue( min ) );
-  currentScaleSlider->setMaximum( __getScaleValue( max ) );
+  m_currentScaleSlider->setMinimum( __getScaleValue( min ) );
+  m_currentScaleSlider->setMaximum( __getScaleValue( max ) );
 }
 
 void MapControlView::slotSetScale()
 {
-  emit( scaleChanged(currentScaleValue->value()) );
+  emit( scaleChanged(m_currentScaleValue->value()) );
 }
 
 int MapControlView::__setScaleValue(int value)
@@ -232,15 +238,15 @@ int MapControlView::__getScaleValue(double scale)
 
 void MapControlView::slotShowScaleChange(int value)
 {
-  currentScaleValue->display(__setScaleValue(value));
+  m_currentScaleValue->display(__setScaleValue(value));
 
-  if(currentScaleValue->value() > _globalMapMatrix->getScale(MapMatrix::UpperLimit))
+  if(m_currentScaleValue->value() > _globalMapMatrix->getScale(MapMatrix::UpperLimit))
     {
-      currentScaleSlider->setValue((int)rint(_globalMapMatrix->getScale(MapMatrix::UpperLimit)));
+      m_currentScaleSlider->setValue((int)rint(_globalMapMatrix->getScale(MapMatrix::UpperLimit)));
     }
 
-  if(currentScaleValue->value() < _globalMapMatrix->getScale(MapMatrix::LowerLimit))
+  if(m_currentScaleValue->value() < _globalMapMatrix->getScale(MapMatrix::LowerLimit))
     {
-      currentScaleSlider->setValue((int)rint(_globalMapMatrix->getScale(MapMatrix::LowerLimit)));
+      m_currentScaleSlider->setValue((int)rint(_globalMapMatrix->getScale(MapMatrix::LowerLimit)));
     }
 }
