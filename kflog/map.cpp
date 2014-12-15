@@ -61,7 +61,7 @@ Map::Map( QWidget* parent ) :
   drawFlightCursors(false),
   lastCur1Pos(-100,-100),
   lastCur2Pos(-100,-100),
-  prePos(-5000, -5000),
+  prePos(-50000, -50000),
   preStepIndex(-1),
   drawFlightStepCursor(false),
   animationPaused(false),

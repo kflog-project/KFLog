@@ -170,7 +170,7 @@ bool Airfield::drawMapElement( QPainter* targetP )
 {
   if ( ! isVisible() )
     {
-      curPos = QPoint(-5000, -5000);
+      curPos = QPoint(-50000, -50000);
       return false;
     }
 
@@ -181,15 +181,20 @@ bool Airfield::drawMapElement( QPainter* targetP )
       QPixmap image( glConfig->getPixmapRotatable(typeID, m_winch) );
 
       const Runway* runway = getRunway();
-      int rwShift = 0;
+
+      // Calculate the default runway shift in 1/10 degrees.
+      // Default is E-W direction, if no runway was defined.
+      int rwShift = 90/10;
 
       if( runway )
         {
-          rwShift = runway->m_heading.first;
-        }
-      else
-        {
-          rwShift = 9; // Default is E-W direction, if no runway was defined
+	  ushort heading = runway->m_heading.first;
+
+          // calculate the real runway shift in 1/10 degrees.
+          if( heading <= 36 )
+            {
+              rwShift = (heading >= 18 ? (heading - 18) : heading);
+            }
         }
 
       // All icons are squares. Therefore we take the height also as width.

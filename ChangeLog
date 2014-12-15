@@ -18,7 +18,9 @@
   * Issue #47 fixed. Airspace RMZ replaces Airspace Foxtrott in Germany at
     11.12.2014
     
-  * issue #50 fixed. Replace the 2 control zone items by a new one.
+  * Issue #49 fixed. Airfield Walldorf is not shown on the map.
+    
+  * Issue #50 fixed. Replace the 2 control zone items by a new one.
 
 2014-12-02 Axel Pauli <kflog.cumulus@gmail.com>
 

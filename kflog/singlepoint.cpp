@@ -91,7 +91,7 @@ bool SinglePoint::drawMapElement(QPainter* targetP)
 {
   if(! isVisible() )
     {
-      curPos = QPoint(-5000, -5000);
+      curPos = QPoint(-50000, -50000);
       return false;
     }
 
