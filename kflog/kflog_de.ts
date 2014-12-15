@@ -180,114 +180,114 @@
 <context>
     <name>DataView</name>
     <message>
-        <location filename="dataview.cpp" line="66"/>
+        <location filename="dataview.cpp" line="68"/>
         <source>Task</source>
         <translation>Aufgabe</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="147"/>
+        <location filename="dataview.cpp" line="170"/>
         <source>Total Distance</source>
         <translation>Gesamtdistanz</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="150"/>
-        <location filename="dataview.cpp" line="169"/>
+        <location filename="dataview.cpp" line="173"/>
+        <location filename="dataview.cpp" line="194"/>
         <source>Task Distance</source>
         <translation>Aufgabelänge</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="153"/>
+        <location filename="dataview.cpp" line="176"/>
         <source>Average Speed</source>
         <translation>Durchschnittsgeschwindigkeit</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="156"/>
-        <location filename="dataview.cpp" line="172"/>
+        <location filename="dataview.cpp" line="179"/>
+        <location filename="dataview.cpp" line="197"/>
         <source>Points</source>
         <translation>Punkte</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="166"/>
+        <location filename="dataview.cpp" line="191"/>
         <source>total Distance</source>
         <translation>Gesamtdistanz</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="187"/>
+        <location filename="dataview.cpp" line="219"/>
         <source>Leg Distance</source>
         <translation>Schenkellänge</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="190"/>
+        <location filename="dataview.cpp" line="222"/>
         <source>FAI Distance</source>
         <translation>FAI Distanz</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="208"/>
+        <location filename="dataview.cpp" line="240"/>
         <source>Task-Type: </source>
         <translation>Aufgabentyp: </translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="218"/>
+        <location filename="dataview.cpp" line="250"/>
         <source>Please select the &lt;b&gt;start point&lt;/b&gt; of the task at the map!</source>
         <translation>Bitte den &lt;b&gt;Startpunkt&lt;/b&gt; der Aufgabe auf der Karte wählen!</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="222"/>
+        <location filename="dataview.cpp" line="254"/>
         <source>Begin of task</source>
         <translation>Beginn der Aufgabe</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="226"/>
+        <location filename="dataview.cpp" line="258"/>
         <source>Next waypoint</source>
         <translation>Nächster Wegpunkt</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="270"/>
+        <location filename="dataview.cpp" line="302"/>
         <source>File</source>
         <translation>Datei</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="271"/>
+        <location filename="dataview.cpp" line="303"/>
         <source>Date</source>
         <translation>Datum</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="272"/>
+        <location filename="dataview.cpp" line="304"/>
         <source>Pilot</source>
         <translation>Pilot</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="273"/>
+        <location filename="dataview.cpp" line="305"/>
         <source>Glider</source>
         <translation>Segelflugzeug</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="283"/>
+        <location filename="dataview.cpp" line="315"/>
         <source>Flight contains no waypoints</source>
         <translation>Flug beinhaltet keine Wegpunkte</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="297"/>
+        <location filename="dataview.cpp" line="345"/>
         <source>Flight group</source>
         <translation>Fluggruppe</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="314"/>
+        <location filename="dataview.cpp" line="356"/>
         <source>Flights</source>
         <translation>Flüge</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="334"/>
+        <location filename="dataview.cpp" line="377"/>
         <source>Click on the group name to start editing</source>
         <translation>Auf den Gruppennamen klicken um die Bearbeitung zu beginnen</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="371"/>
+        <location filename="dataview.cpp" line="414"/>
         <source>Edit task</source>
         <translation>Aufgabe bearbeiten</translation>
     </message>
     <message>
-        <location filename="dataview.cpp" line="372"/>
+        <location filename="dataview.cpp" line="415"/>
         <source>This will bring up the task editing dialog</source>
         <translation>Startet den Aufgabe-Bearbeiten-Dialog</translation>
     </message>
@@ -309,180 +309,181 @@
 <context>
     <name>EvaluationDialog</name>
     <message>
-        <location filename="evaluationdialog.cpp" line="41"/>
-        <location filename="evaluationdialog.cpp" line="408"/>
-        <location filename="evaluationdialog.cpp" line="415"/>
-        <location filename="evaluationdialog.cpp" line="423"/>
+        <location filename="evaluationdialog.cpp" line="40"/>
+        <location filename="evaluationdialog.cpp" line="410"/>
+        <location filename="evaluationdialog.cpp" line="417"/>
+        <location filename="evaluationdialog.cpp" line="425"/>
         <source>Flight Evaluation</source>
         <translation>Flugauswertung</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="90"/>
+        <location filename="evaluationdialog.cpp" line="92"/>
         <source>You can move the begin and end flags in the flight diagram by using the left mouse button. Position the mouse pointer over the vertical bar under the flag, press the left mouse button and move the bar to a new position. Release the mouse button at the new position. The flag in the diagram is moved to this new position. In parallel the flag at the map is moved too. &lt;p&gt;Another move possibility is to use the middle or right mouse button. If you click in the diagram by using the middle mouse button, the begin flag is moved to this new position. Using the right mouse button will do the same with the end flag.&lt;/p&gt;&lt;p&gt;If you move the mouse pointer at the map along the drawn flight, an orange triangle shows you the position in the flight diagram.&lt;/p&gt;</source>
         <translation>&lt;p&gt;So verschieben sie die Anfangs- und Ende-Marken im Diagramm-Fenster: Positionieren Sie den Mauszeiger über dem senkrechten grünen oder roten Balken unter dem Fahnensymbol, klicken die linke Maustaste und ziehen den Balken an die gewünschte Position. Die Anfangs- und Ende Marken auf der Karte werden ebenso aktualisiert.&lt;/p&gt; &lt;p&gt;Alternativ kann der grüne Marker durch das Drücken des mittleren Maus Buttons, der rote Marker mit dem rechten Maus Button direkt an der Maus-Position gesetzt werden.&lt;/p&gt;&lt;p&gt;Wenn sie auf der Karte die Maus in Nähe des Flugwegs bewegen, markiert das gelbe Dreieck im Auswertungsfenster die Flugdaten an der aktuellen Position des Flugwegs.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="137"/>
-        <location filename="evaluationdialog.cpp" line="164"/>
+        <location filename="evaluationdialog.cpp" line="139"/>
+        <location filename="evaluationdialog.cpp" line="166"/>
         <source>Time=</source>
         <translation>Zeit=</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="138"/>
-        <location filename="evaluationdialog.cpp" line="165"/>
+        <location filename="evaluationdialog.cpp" line="140"/>
+        <location filename="evaluationdialog.cpp" line="167"/>
         <source> MSL=</source>
         <translation> MSL=</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="139"/>
-        <location filename="evaluationdialog.cpp" line="166"/>
+        <location filename="evaluationdialog.cpp" line="141"/>
+        <location filename="evaluationdialog.cpp" line="168"/>
         <source> Vario=</source>
         <translation> Vario=</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="150"/>
-        <location filename="evaluationdialog.cpp" line="177"/>
+        <location filename="evaluationdialog.cpp" line="152"/>
+        <location filename="evaluationdialog.cpp" line="179"/>
         <source> Speed=</source>
         <translation> Geschwindigkeit=</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="199"/>
+        <location filename="evaluationdialog.cpp" line="201"/>
         <source>Circling</source>
         <translation>Kreisflug</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="200"/>
-        <location filename="evaluationdialog.cpp" line="244"/>
-        <location filename="evaluationdialog.cpp" line="293"/>
+        <location filename="evaluationdialog.cpp" line="202"/>
+        <location filename="evaluationdialog.cpp" line="246"/>
+        <location filename="evaluationdialog.cpp" line="295"/>
         <source>Time</source>
         <translation>Zeit</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="201"/>
-        <location filename="evaluationdialog.cpp" line="300"/>
+        <location filename="evaluationdialog.cpp" line="203"/>
+        <location filename="evaluationdialog.cpp" line="302"/>
         <source>Vario</source>
         <translation>Vario</translation>
-    </message>
-    <message>
-        <location filename="evaluationdialog.cpp" line="202"/>
-        <location filename="evaluationdialog.cpp" line="246"/>
-        <location filename="evaluationdialog.cpp" line="294"/>
-        <source>Alt. Gain</source>
-        <translation>Höhengewinn</translation>
-    </message>
-    <message>
-        <location filename="evaluationdialog.cpp" line="203"/>
-        <location filename="evaluationdialog.cpp" line="247"/>
-        <location filename="evaluationdialog.cpp" line="295"/>
-        <source>Alt. Loss</source>
-        <translation>Höhenverlust</translation>
     </message>
     <message>
         <location filename="evaluationdialog.cpp" line="204"/>
         <location filename="evaluationdialog.cpp" line="248"/>
         <location filename="evaluationdialog.cpp" line="296"/>
+        <source>Alt. Gain</source>
+        <translation>Höhengewinn</translation>
+    </message>
+    <message>
+        <location filename="evaluationdialog.cpp" line="205"/>
+        <location filename="evaluationdialog.cpp" line="249"/>
+        <location filename="evaluationdialog.cpp" line="297"/>
+        <source>Alt. Loss</source>
+        <translation>Höhenverlust</translation>
+    </message>
+    <message>
+        <location filename="evaluationdialog.cpp" line="206"/>
+        <location filename="evaluationdialog.cpp" line="250"/>
+        <location filename="evaluationdialog.cpp" line="298"/>
         <source>Alt. Netto</source>
         <translation>Höhe netto</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="208"/>
+        <location filename="evaluationdialog.cpp" line="210"/>
         <source>total:</source>
         <translation>gesamt:</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="217"/>
+        <location filename="evaluationdialog.cpp" line="219"/>
         <source>right:</source>
         <translation>rechts:</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="225"/>
+        <location filename="evaluationdialog.cpp" line="227"/>
         <source>left:</source>
         <translation>links:</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="233"/>
+        <location filename="evaluationdialog.cpp" line="235"/>
         <source>mixed:</source>
         <translation>gemischt:</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="243"/>
+        <location filename="evaluationdialog.cpp" line="245"/>
+        <location filename="evaluationdialog.cpp" line="320"/>
         <source>Straight</source>
         <translation>Geradeaus</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="245"/>
-        <location filename="evaluationdialog.cpp" line="297"/>
+        <location filename="evaluationdialog.cpp" line="247"/>
+        <location filename="evaluationdialog.cpp" line="299"/>
         <source>Distance</source>
         <translation>Distanz</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="249"/>
-        <location filename="evaluationdialog.cpp" line="298"/>
+        <location filename="evaluationdialog.cpp" line="251"/>
+        <location filename="evaluationdialog.cpp" line="300"/>
         <source>Speed</source>
         <translation>Geschwindigkeit</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="250"/>
+        <location filename="evaluationdialog.cpp" line="252"/>
         <source>L/D ratio</source>
         <translation>Gleitverhältnis</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="263"/>
+        <location filename="evaluationdialog.cpp" line="265"/>
         <source>Total</source>
         <translation>Gesamt</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="277"/>
+        <location filename="evaluationdialog.cpp" line="279"/>
         <source>Flight sections</source>
         <translation>Flugauswahl</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="290"/>
+        <location filename="evaluationdialog.cpp" line="292"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="291"/>
+        <location filename="evaluationdialog.cpp" line="293"/>
         <source>Start</source>
         <translation>Start</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="292"/>
+        <location filename="evaluationdialog.cpp" line="294"/>
         <source>End</source>
         <translation>Ende</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="299"/>
+        <location filename="evaluationdialog.cpp" line="301"/>
         <source>L/D</source>
         <translation>Gleitzahl</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="306"/>
+        <location filename="evaluationdialog.cpp" line="308"/>
         <source>Circling (%1 right)</source>
         <translation>Kreisend (%1 rechts)</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="310"/>
+        <location filename="evaluationdialog.cpp" line="312"/>
         <source>Circling (%1 left)</source>
         <translation>Kreisend (%1 links)</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="314"/>
+        <location filename="evaluationdialog.cpp" line="316"/>
         <source>Circling (%1 mixed)</source>
         <translation>Kreisend (%1 gemischt)</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="353"/>
+        <location filename="evaluationdialog.cpp" line="355"/>
         <source>inf</source>
         <translation>∞</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="376"/>
+        <location filename="evaluationdialog.cpp" line="378"/>
         <source>Cannot evaluate task</source>
         <translation>Kann Aufgabe nicht prüfen</translation>
     </message>
     <message>
-        <location filename="evaluationdialog.cpp" line="381"/>
+        <location filename="evaluationdialog.cpp" line="383"/>
         <source>Cannot (yet) evaluate a flight group</source>
         <translation>Kann Aufgabe (noch) nicht prüfen</translation>
     </message>
@@ -746,24 +747,29 @@
         <translation>Luftraum FIR</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="887"/>
+        <location filename="kflogconfig.cpp" line="886"/>
         <source>Danger/Prohibited</source>
         <translation>Gefahr/Verbot</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="888"/>
+        <location filename="kflogconfig.cpp" line="887"/>
         <source>Glider Sector</source>
         <translation>Segelflugsektor</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="889"/>
+        <location filename="kflogconfig.cpp" line="888"/>
         <source>Low Flight Area</source>
         <translation>Tieffluggebiet</translation>
     </message>
     <message>
-        <location filename="kflogconfig.cpp" line="890"/>
+        <location filename="kflogconfig.cpp" line="889"/>
         <source>Restricted</source>
         <translation>Beschränkt</translation>
+    </message>
+    <message>
+        <location filename="kflogconfig.cpp" line="890"/>
+        <source>RMZ</source>
+        <translation>RMZ</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="892"/>
@@ -1379,18 +1385,14 @@
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="885"/>
-        <source>Control C</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="kflogconfig.cpp" line="886"/>
-        <source>Control D</source>
-        <translation></translation>
+        <source>Control Zone</source>
+        <oldsource>Control C</oldsource>
+        <translation>Kontrollzone</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="891"/>
         <source>TMZ</source>
-        <translation></translation>
+        <translation>TMZ</translation>
     </message>
     <message>
         <location filename="kflogconfig.cpp" line="1227"/>
@@ -1588,7 +1590,7 @@
     </message>
     <message>
         <location filename="mainwindow.cpp" line="503"/>
-        <location filename="mainwindow.cpp" line="1837"/>
+        <location filename="mainwindow.cpp" line="1839"/>
         <source>Print Map</source>
         <translation>Drucke Karte</translation>
     </message>
@@ -1704,7 +1706,7 @@
         <translation>Über &amp;KFLog</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1943"/>
+        <location filename="mainwindow.cpp" line="1945"/>
         <source>About KFLog</source>
         <translation>Über KFLog</translation>
     </message>
@@ -1745,8 +1747,8 @@
         <location filename="mainwindow.cpp" line="1393"/>
         <location filename="mainwindow.cpp" line="1441"/>
         <location filename="mainwindow.cpp" line="1522"/>
-        <location filename="mainwindow.cpp" line="1868"/>
-        <location filename="mainwindow.cpp" line="1893"/>
+        <location filename="mainwindow.cpp" line="1870"/>
+        <location filename="mainwindow.cpp" line="1895"/>
         <source>Ready.</source>
         <translation>Fertig.</translation>
     </message>
@@ -1756,17 +1758,17 @@
         <translation>Öffne Aufgabe</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1946"/>
+        <location filename="mainwindow.cpp" line="1948"/>
         <source>&lt;html&gt;KFLog %1, &amp;copy; 2000-2014, The KFLog-Team&lt;/html&gt;</source>
         <translation>&lt;html&gt;KFLog %1, &amp;copy; 2000-2014, Das KFLog-Team&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1950"/>
+        <location filename="mainwindow.cpp" line="1952"/>
         <source>&lt;html&gt;KFLog %1, compiled at %2 with QT %3&lt;br&gt;&lt;br&gt;Homepage: &lt;a href=&quot;http://www.kflog.org/kflog/&quot;&gt;www.kflog.org/kflog/&lt;/a&gt;&lt;br&gt;&lt;br&gt;GitHub Software Repository: &lt;a href=&quot;https://github.com/kflog-project/KFLog&quot;&gt;https://github.com/kflog-project/KFLog&lt;/a&gt;&lt;br&gt;&lt;br&gt;ChangeLog &lt;a href=&quot;https://github.com/kflog-project/KFLog/blob/%1/ChangeLog&quot;&gt;%1&lt;/a&gt;&lt;br&gt;&lt;br&gt;Report bugs to: &lt;a href=&quot;https://github.com/kflog-project/KFLog/issues&quot;&gt;kflog-project/KFLog/issues&lt;/a&gt;&lt;br&gt;&lt;br&gt;Published under the &lt;a href=&quot;http://www.gnu.org/licenses/licenses.html#GPL&quot;&gt;GPL&lt;/a&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;KFLog %1, gebaut am %2 mit QT %3&lt;br&gt;&lt;br&gt;Internet Adresse: &lt;a href=&quot;http://www.kflog.org/kflog/&quot;&gt;www.kflog.org/kflog/&lt;/a&gt;&lt;br&gt;&lt;br&gt;GitHub Software Archiv: &lt;a href=&quot;https://github.com/kflog-project/KFLog&quot;&gt;https://github.com/kflog-project/KFLog&lt;/a&gt;&lt;br&gt;&lt;br&gt;ChangeLog &lt;a href=&quot;https://github.com/kflog-project/KFLog/blob/%1/ChangeLog&quot;&gt;%1&lt;/a&gt;&lt;br&gt;&lt;br&gt;Melde Fehler an: &lt;a href=&quot;https://github.com/kflog-project/KFLog/issues&quot;&gt;kflog-project/KFLog/issues&lt;/a&gt;&lt;br&gt;&lt;br&gt;Veröffentlicht unter der &lt;a href=&quot;http://www.gnu.org/licenses/licenses.html#GPL&quot;&gt;GPL&lt;/a&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1964"/>
+        <location filename="mainwindow.cpp" line="1966"/>
         <source>&lt;html&gt;&lt;b&gt;Temporarily Maintainer&lt;/b&gt;&lt;blockquote&gt;Axel Pauli &amp;lt;&lt;a href=&quot;mailto:kflog.cumulus&amp;#64;gmail.com&quot;&gt;kflog.cumulus&amp;#64;gmail.com&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;&lt;b&gt;Developers, Maintainers&lt;/b&gt;&lt;blockquote&gt;Axel Pauli (Developer, Portage to Qt4)&lt;br&gt;Constantijn Neeteson (Maintenance, Core-developer)&lt;br&gt;Florian Ehinger (Maintenance, Core-developer, Mapdata)&lt;br&gt;Heiner Lamprecht (Maintenance, Core-developer)&lt;br&gt;Andr&amp;eacute; Somers (Developer, Waypoint-handling, Plugin architecture, ...)&lt;br&gt;Christof Bodner (Developer, OLC Optimization)&lt;br&gt;Eggert Ehmke (Developer)&lt;br&gt;Harald Maier (Developer, Waypoint-Dialog, Task-handling)&lt;br&gt;Thomas Nielsen (Developer, 3D-Dialog)&lt;br&gt;Jan Kr&amp;uuml;ger (Developer, 3D-Dialog)&lt;br&gt;Matthias Degenkolb (Developer, MS-Windows portage)&lt;br&gt;Peter Simon (Developer, MS-Windows portage)&lt;/blockquote&gt;&lt;b&gt;Server Sponsor&lt;/b&gt;&lt;blockquote&gt;Heiner Lamprecht &amp;lt;&lt;a href=&quot;mailto:heiner&amp;#64;kflog.org&quot;&gt;heiner&amp;#64;kflog.org&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;Thanks to all, who have made available this software!&lt;br&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;b&gt;Augenblickliche Wartung durch&lt;/b&gt;&lt;blockquote&gt;Axel Pauli &amp;lt;&lt;a href=&quot;mailto:kflog.cumulus&amp;#64;gmail.com&quot;&gt;kflog.cumulus&amp;#64;gmail.com&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;&lt;b&gt;Entwickler und Instandhalter&lt;/b&gt;&lt;blockquote&gt;Axel Pauli (Entwickler, Portierung zu Qt4)&lt;br&gt;Constantijn Neeteson (Instandhalter, Kernentwickler)&lt;br&gt;Florian Ehinger (Instandhalter, Kernentwickler, Kartendaten)&lt;br&gt;Heiner Lamprecht (Instandhalter, Kernentwickler)&lt;br&gt;Andr&amp;eacute; Somers (Entwickler, Wegpunkte, Plugin Architektur, ...)&lt;br&gt;Christof Bodner (Entwickler, OLC Optimierung)&lt;br&gt;Eggert Ehmke (Entwickler)&lt;br&gt;Harald Maier (Entwickler, Wegpunkt-Dialog, Aufgaben)&lt;br&gt;Thomas Nielsen (Entwickler, 3D-Dialog)&lt;br&gt;Jan Kr&amp;uuml;ger (Entwickler, 3D-Dialog)&lt;br&gt;Matthias Degenkolb (Entwickler, MS-Windows Portierung)&lt;br&gt;Peter Simon (Entwickler, MS-Windows Portierung)&lt;/blockquote&gt;&lt;b&gt;Server Sponsor&lt;/b&gt;&lt;blockquote&gt;Heiner Lamprecht &amp;lt;&lt;a href=&quot;mailto:heiner&amp;#64;kflog.org&quot;&gt;heiner&amp;#64;kflog.org&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;Danke an alle, die beim Erstellen dieser Software mitgewirkt haben und sie weiter pflegen!&lt;br&gt;&lt;/html&gt;</translation>
     </message>
@@ -2029,27 +2031,27 @@ Flugaufgaben können ebenso mit dem Flugaufgaben-Editor bearbeite werden: &lt;i&
         <translation>Bild (*.png)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1827"/>
+        <location filename="mainwindow.cpp" line="1829"/>
         <source>Printing map ...</source>
         <translation>Drucke Karte ...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1880"/>
+        <location filename="mainwindow.cpp" line="1882"/>
         <source>Printing flight ...</source>
         <translation>Drucke Flug ...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1884"/>
+        <location filename="mainwindow.cpp" line="1886"/>
         <source>Printing task ...</source>
         <translation>Drucke Aufgabe ...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1888"/>
+        <location filename="mainwindow.cpp" line="1890"/>
         <source>Not yet available for type: %1</source>
         <translation>Nicht verfügbar für Typ: %1</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1889"/>
+        <location filename="mainwindow.cpp" line="1891"/>
         <source>Type not available</source>
         <translation>Typ nicht verfügbar</translation>
     </message>
@@ -2754,12 +2756,17 @@ Alle Downloads verworfen!</translation>
         <translation>unbekannt</translation>
     </message>
     <message>
-        <location filename="airspace.cpp" line="211"/>
+        <location filename="airspace.cpp" line="209"/>
         <source>Restricted</source>
         <translation>Beschränkt</translation>
     </message>
     <message>
-        <location filename="airspace.cpp" line="225"/>
+        <location filename="airspace.cpp" line="215"/>
+        <source>CTR</source>
+        <translation>CTR</translation>
+    </message>
+    <message>
+        <location filename="airspace.cpp" line="223"/>
         <source>Glider Sector</source>
         <translation>Segelflugsektor</translation>
     </message>
@@ -2933,89 +2940,84 @@ Alle Downloads verworfen!</translation>
         <translation>Kommentar:</translation>
     </message>
     <message>
-        <location filename="airspace.cpp" line="193"/>
+        <location filename="airspace.cpp" line="191"/>
         <source>AS-A</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="airspace.cpp" line="195"/>
+        <location filename="airspace.cpp" line="193"/>
         <source>AS-B</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="airspace.cpp" line="197"/>
+        <location filename="airspace.cpp" line="195"/>
         <source>AS-C</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="airspace.cpp" line="199"/>
+        <location filename="airspace.cpp" line="197"/>
         <source>AS-D</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="airspace.cpp" line="201"/>
+        <location filename="airspace.cpp" line="199"/>
         <source>AS-E (low)</source>
         <translation>AS-E (tief)</translation>
     </message>
     <message>
-        <location filename="airspace.cpp" line="203"/>
+        <location filename="airspace.cpp" line="201"/>
         <source>AS-E</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="airspace.cpp" line="205"/>
+        <location filename="airspace.cpp" line="203"/>
         <source>Wave Window</source>
         <translation>Wellenfenster</translation>
     </message>
     <message>
-        <location filename="airspace.cpp" line="207"/>
+        <location filename="airspace.cpp" line="205"/>
         <source>AS-F</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="airspace.cpp" line="209"/>
+        <location filename="airspace.cpp" line="207"/>
         <source>AS-FIR</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="airspace.cpp" line="213"/>
+        <location filename="airspace.cpp" line="211"/>
         <source>Danger</source>
         <translation>Gefahr</translation>
     </message>
     <message>
-        <location filename="airspace.cpp" line="215"/>
+        <location filename="airspace.cpp" line="213"/>
         <source>Prohibited</source>
         <translation>Verboten</translation>
     </message>
     <message>
         <location filename="airspace.cpp" line="217"/>
-        <source>CTR-C</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="airspace.cpp" line="219"/>
-        <source>CTR-D</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="airspace.cpp" line="221"/>
         <source>Low Flight</source>
         <translation>Tiefflug</translation>
     </message>
     <message>
-        <location filename="airspace.cpp" line="223"/>
+        <location filename="airspace.cpp" line="219"/>
+        <source>RMZ</source>
+        <translation>RMZ</translation>
+    </message>
+    <message>
+        <location filename="airspace.cpp" line="221"/>
         <source>TMZ</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="airspace.cpp" line="227"/>
+        <location filename="airspace.cpp" line="225"/>
         <source>unknown AS</source>
         <translation>unbekannter LR</translation>
     </message>
     <message>
-        <location filename="airspace.cpp" line="255"/>
-        <location filename="airspace.cpp" line="265"/>
-        <location filename="airspace.cpp" line="279"/>
+        <location filename="airspace.cpp" line="253"/>
+        <location filename="airspace.cpp" line="263"/>
+        <location filename="airspace.cpp" line="277"/>
         <source>Unlimited</source>
         <translation>Unbegrenzt</translation>
     </message>
@@ -3637,95 +3639,95 @@ Alle Downloads verworfen!</translation>
         <translation>Bitte das QNH (900-1100 hPA) für den Flug angeben. &lt;br&gt;Bei Abbruch werden 1013 hPa benutzt.</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="320"/>
+        <location filename="flighttask.cpp" line="324"/>
         <source>not set</source>
         <translation>nicht definiert</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="321"/>
+        <location filename="flighttask.cpp" line="325"/>
         <source>Free Distance</source>
         <translation>Freie Strecke</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="322"/>
+        <location filename="flighttask.cpp" line="326"/>
         <source>Free Out and Return Distance</source>
         <translation>Freie Strecke Ziel- Rückkehr </translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="323"/>
+        <location filename="flighttask.cpp" line="327"/>
         <source>FAI Triangle</source>
         <translation>FAI Dreieck</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="324"/>
+        <location filename="flighttask.cpp" line="328"/>
         <source>Triangle</source>
         <translation>Dreieck</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="325"/>
+        <location filename="flighttask.cpp" line="329"/>
         <source>FAI Triangle Start on leg</source>
         <translation>FAI Dreieck - Start auf dem Schenkel</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="326"/>
+        <location filename="flighttask.cpp" line="330"/>
         <source>Triangle Start on leg</source>
         <translation>Dreick mit Start auf dem Schenkel</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="327"/>
+        <location filename="flighttask.cpp" line="331"/>
         <source>OLC optimized (2003 rules)</source>
         <translation>OLC optimiert (2003er Regeln)</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="328"/>
+        <location filename="flighttask.cpp" line="332"/>
         <source>???</source>
         <translation>???</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="331"/>
+        <location filename="flighttask.cpp" line="335"/>
         <location filename="runway.cpp" line="81"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="886"/>
-        <location filename="flighttask.cpp" line="908"/>
+        <location filename="flighttask.cpp" line="890"/>
+        <location filename="flighttask.cpp" line="912"/>
         <source>Not reached first waypoint</source>
         <translation>Den ersten Wegpunkt nicht erreicht</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="887"/>
-        <location filename="flighttask.cpp" line="909"/>
+        <location filename="flighttask.cpp" line="891"/>
+        <location filename="flighttask.cpp" line="913"/>
         <source>You have not reached the first waypoint of your task.</source>
         <translation>Du hast  nicht den ersten Wendepunkt deiner Aufgabe erreicht.</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="927"/>
+        <location filename="flighttask.cpp" line="931"/>
         <source>Not reached last waypoint</source>
         <translation>Den letzten Wegpunkt nicht erreicht</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="928"/>
+        <location filename="flighttask.cpp" line="932"/>
         <source>You have not reached the last point of your task.</source>
         <translation>Du hast nicht den letzten Wendepunkt der Aufgabe erreicht.</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="1007"/>
+        <location filename="flighttask.cpp" line="1012"/>
         <source>Incorrect time interval</source>
         <translation>Fehlerhaftes Zeitinterval</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="1008"/>
+        <location filename="flighttask.cpp" line="1013"/>
         <source>The time interval between two points of the flight is more than 70 sec.!&lt;BR&gt;Due to Code Sportif 3, Nr. 1.9.2.1, the flight can not be valued!</source>
         <translation>Der Zeitunterschied zwischen zwei GPS-Punkten des Fluges ist größer als 70 Sekunden!&lt;BR&gt;Nach Code Sportif 3, Nr. 1.9.2.1 ist der Flug ungültig!</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="1637"/>
+        <location filename="flighttask.cpp" line="1675"/>
         <source>Traditional Route</source>
         <translation>Traditionelle Strecke</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="1638"/>
+        <location filename="flighttask.cpp" line="1676"/>
         <source>FAI Area</source>
         <translation>FAI Region</translation>
     </message>
