@@ -1,7 +1,5 @@
 #!/bin/sh
 #
-# $Id$
-#
 # prerm script for kflog
 #
 # see: dh_installdeb(1)

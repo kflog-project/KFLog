@@ -1993,7 +1993,7 @@ void MainWindow::slotShowAbout()
 
   aw->setTeamText( team );
 
-  QResource eula(":Eula/GNU_GPL_V2");
+  QResource eula(":Eula/GNU_GPL_V3");
 
   QFile eulaFile(eula.absoluteFilePath());
 
