@@ -1956,7 +1956,7 @@ void MainWindow::slotShowAbout()
           "GitHub Software Repository: <a href=\"https://github.com/kflog-project/KFLog\">https://github.com/kflog-project/KFLog</a><br><br>"
           "ChangeLog <a href=\"https://github.com/kflog-project/KFLog/blob/%1/ChangeLog\">%1</a><br><br>"
           "Report bugs to: <a href=\"https://github.com/kflog-project/KFLog/issues\">kflog-project/KFLog/issues</a><br><br>"
-          "Published under the <a href=\"http://www.gnu.org/licenses/licenses.html#GPL\">GPL</a>"
+          "Published under the <a href=\"http://www.gnu.org/licenses/licenses.html#GPL\">GPLv3</a>"
           "</html>" ).arg( QCoreApplication::applicationVersion() )
                      .arg( _settings.value( "/Main/CompileDate", "" ).toString() )
                      .arg( QT_VERSION_STR ) );
