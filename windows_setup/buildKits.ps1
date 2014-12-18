@@ -1,6 +1,6 @@
 ﻿$makeNsis = 'C:\Program Files\NSIS\makensis.exe'
 $myDir = (get-item $($myinvocation.InvocationName)).DirectoryName
-$kflogProjectDir = "$myDir\..\kflog"
+$kflogProjectDir = "$myDir\.." | Convert-Path
 $rootDevDir = (get-item $mydir).Parent.Parent.FullName
 $nsisScript = "$myDir/setup.nsi"
 $zipInstallFile = "$rootDevDir/PortableKFLog.zip"
@@ -22,11 +22,13 @@ $Languages = "de"
 $MinGwFiles = "libgcc_s_dw2-1.dll",
               "..\mingw32\opt\bin\libwinpthread-1.dll",
               "libstdc++-6.dll"
-$KflogFiles = "Release\kflog.exe"
+$KflogFiles = "kflog\Release\kflog.exe"
 $LicenseFiles = "$myDir\License.rtf",
-                "$myDir\license_beta.rtf",
+                "$kflogProjectDir\Changelog",
+                "$myDir\WindowsReleaseNotes.rtf",
                 "$myDir\RemoveKFLogDataDirectories.cmd",
-                "$myDir\RemoveKFLogRegistryKey.cmd"
+                "$myDir\RemoveKFLogRegistryKey.cmd",
+                "$kflogProjectDir\LICENSE"
 
 
 if ($env:QT_DIR -eq $NULL) 
@@ -51,7 +53,7 @@ else
     $MakeDirectory = $args
 }
 
-$kflogMakeDirectory = "$MakeDirectory/release"
+$kflogMakeDirectory = "$MakeDirectory/kflog/release"
 # C:\Users\peter\dev\build-kflog-Desktop-Release\kflog\release
 
 "Creating language files"
@@ -59,7 +61,7 @@ Foreach ($KFLogLanguageFile in $KFlogLanguageFiles)
 {
    Foreach ($Language in $Languages)
    {
-        & "$QtDirectory/bin/lrelease.exe" "$kflogProjectDir/$($KFLogLanguageFile)_$Language.ts"
+        & "$QtDirectory/bin/lrelease.exe" "$kflogProjectDir/kflog/$($KFLogLanguageFile)_$Language.ts"
    }
 }
 
@@ -93,7 +95,7 @@ Foreach ($KFLogLanguageFile in $KFlogLanguageFiles)
 {
    Foreach ($Language in $Languages)
    {
-        Copy-Item -v "$kflogProjectDir/$($KFLogLanguageFile)_$Language.qm" "$workDirectory/translations"
+        Copy-Item -v "$kflogProjectDir/kflog/$($KFLogLanguageFile)_$Language.qm" "$workDirectory/translations"
    }
 }
 
@@ -125,12 +127,12 @@ Catch {
 
 if ((Test-Path $zipInstallFile))
 {
-    Remove-Item $zipInstallFile
+    #Remove-Item $zipInstallFile
 }
 
 Move-Item -Verbose $zipfile $zipInstallFile
 
-  &"$makeNSIS" "/DMingwBinPath=$MinGwDirectory" "/DQtBinPath=$QtDirectory/bin" "/DExeSourcePath=$kflogMakeDirectory" "/DKflogProjDir=$kflogProjectDir" "/NOCONFIG" "$nsisScript"
+  &"$makeNSIS" "/DMingwBinPath=$MinGwDirectory" "/DQtBinPath=$QtDirectory/bin" "/DExeSourcePath=$kflogMakeDirectory/" "/DKflogProjDir=$kflogProjectDir" "/NOCONFIG" "$nsisScript"
 
 if ((Test-Path $exeInstallFile))
 {

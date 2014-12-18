@@ -11,6 +11,16 @@
 #
 ################################################################################
 
+2014-12-18 Peter Simon <psimon7v.kflog@gmail.com>
+
+  * KFLog 4.10.0 released for Ubuntu, Debian and MS Windows.
+
+2014-12-08 Peter Simon <psimon7v.kflog@gmail.com>
+
+  * Reorganization of license files for the Windows installation
+
+  * Remove Changelog from license information
+
 2014-12-15 Axel Pauli <kflog.cumulus@gmail.com>
 
   * Issue #43 fixed. Ubuntu package installer complains about package quality.
