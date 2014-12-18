@@ -25,13 +25,13 @@ RequestExecutionLevel highest
 
 !verbose 4
 
-LicenseText "Welcome to KFlog 4.9.0 Setup"
-LicenseData "License.rtf"
+LicenseText "Welcome to KFlog 4.10.0 Setup"
+LicenseData WindowsReleaseNotes.rtf
 ;--------------------------------
 
 ; Pages
 PageEx license
-   LicenseData License_beta.rtf
+   LicenseData "License.rtf"
    LicenseForceSelection checkbox
 PageExEnd
 Page license 
@@ -57,6 +57,10 @@ Section "KFlog program (required)"
   
   ; Put file there
   File ${ExeSourcePath}\kflog.exe
+  File ${KflogProjDir}\LICENSE
+  File ${KflogProjDir}\windows_setup\License.rtf
+  File ${KflogProjDir}\windows_setup\WindowsReleaseNotes.rtf
+  File ${KflogProjDir}\Changelog
   File ${MingwBinPath}\libgcc_s_dw2-1.dll
   File ${MingwBinPath}\..\mingw32\opt\bin\libwinpthread-1.dll
   File ${MingwBinPath}\libstdc++-6.dll
@@ -67,7 +71,7 @@ Section "KFlog program (required)"
   File ${QtBinPath}\QtXml4.dll
 
   SetOutPath $INSTDIR\translations
-  File ${KflogProjDir}\kflog_de.qm
+  File ${KflogProjDir}\kflog\kflog_de.qm
   File ${QtBinPath}\..\translations\qt_de.qm
   
   ; Write the installation path into the registry
@@ -86,10 +90,13 @@ SectionEnd
 Section "Start Menu Shortcuts"
 
   CreateDirectory "$SMPROGRAMS\KFlog"
-  CreateDirectory "$SMPROGRAMS\KFlog\translations"
+  ; CreateDirectory "$SMPROGRAMS\KFlog\translations"
   CreateShortCut "$SMPROGRAMS\KFlog\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
   CreateShortCut "$SMPROGRAMS\KFlog\KFlog.lnk" "$INSTDIR\Kflog.exe" "" "$INSTDIR\Kflog.exe" 0
-  
+  CreateShortCut "$SMPROGRAMS\KFlog\KFlog License.lnk" "$INSTDIR\License.rtf" "" "$INSTDIR\License.rtf" 0
+  CreateShortCut "$SMPROGRAMS\KFlog\KFlog Releasenotes.lnk" "$INSTDIR\WindowsReleaseNotes.rtf" "" "$INSTDIR\WindowsReleaseNotes.rtf" 0
+  CreateShortCut "$SMPROGRAMS\KFlog\GPL 3.0.lnk" "notepad.exe" "$INSTDIR\LICENSE" "Gnu Public License 3.0 agreement" 0
+  CreateShortCut "$SMPROGRAMS\KFlog\KFlog 4.10.0 Changelog.lnk" "notepad.exe" "$INSTDIR\Changelog" "KFLog 4.10.0 Changelog" 0
 SectionEnd
 
 ;--------------------------------
@@ -111,6 +118,10 @@ NoDelete:
     ;files
   Delete "$INSTDIR\Uninstall.exe"
   Delete "$INSTDIR\kflog.exe"
+  Delete "$INSTDIR\LICENSE"
+  Delete "$INSTDIR\License.rtf"
+  Delete "$INSTDIR\WindowsReleaseNotes.rtf"
+  Delete "$INSTDIR\Changelog"
   Delete "$INSTDIR\translations\kflog_de.qm"
   Delete "$INSTDIR\translations\qt_de.qm"
   Delete "$INSTDIR\mingwm10.dll"
