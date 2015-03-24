@@ -216,6 +216,8 @@ int Volkslogger::closeRecorder()
 
 int Volkslogger::exportDeclaration(FRTaskDeclaration* taskDecl, QList<Waypoint*> *taskPoints, const QString&)
 {
+  Q_UNUSED(taskDecl);
+  Q_UNUSED(taskPoints);
   return FR_NOTSUPPORTED;
 }
 

@@ -862,6 +862,9 @@ bool Filser::convFil2Igc(FILE *figc,  unsigned char *fil_p, unsigned char *fil_p
   char *flt_pilot = 0, *flt_glider = 0, *flt_reg = 0, *flt_comp = 0, *flt_observer = 0, *flt_gps = 0;
   unsigned char flt_class_id = 0, flt_gps_datum = 0, flt_fix_accuracy = 0;
 
+  Q_UNUSED(flt_id);
+  Q_UNUSED(flt_observer);
+  
   struct task {
     int usage;
     int lat;
