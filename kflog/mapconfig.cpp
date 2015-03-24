@@ -1175,8 +1175,7 @@ QString MapConfig::getPixmapName( unsigned int typeID,
         iconName = "vortac";
         break;
       case BaseMapElement::Tacan:
-	// TODO provide an icon for TACAN
-        iconName = "vortac";
+        iconName = "tacan";
         break;
       case BaseMapElement::Ndb:
         iconName = "ndb";
