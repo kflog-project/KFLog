@@ -134,6 +134,7 @@
     <file>mapicons/outlanding.xpm</file>
     <file>mapicons/paraglider.xpm</file>
     <file>mapicons/routepoint.xpm</file>
+    <file>mapicons/tacan.xpm</file>
     <file>mapicons/thermal.xpm</file>
     <file>mapicons/ul.xpm</file>
     <file>mapicons/village.xpm</file>
@@ -168,6 +169,7 @@
     <file>mapicons/small/outlanding.xpm</file>
     <file>mapicons/small/paraglider.xpm</file>
     <file>mapicons/small/routepoint.xpm</file>
+    <file>mapicons/small/tacan.xpm</file>
     <file>mapicons/small/thermal.xpm</file>
     <file>mapicons/small/ul.xpm</file>
     <file>mapicons/small/village.xpm</file>
