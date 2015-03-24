@@ -83,7 +83,7 @@ public:
             strcpy(pUserName,"<Unknown user>");
         }
         m_UserName.fromLatin1(pUserName, BuffSize);
-        delete pUserName;
+        delete[] pUserName;
     }
     char* getUserName()
     {
