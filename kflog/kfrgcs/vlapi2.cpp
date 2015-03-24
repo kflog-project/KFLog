@@ -115,7 +115,7 @@ void VLA_XFR::set_databaud(int32 db) {
 int16 VLA_XFR::sendcommand(byte cmd, byte param1, byte param2) {
   int16       	i;
   byte	        c;
-  const int16    d = 2;  //Verzögerungszeit 2ms
+  const int16    d = 2;  //Verzï¿½gerungszeit 2ms
   byte 		cmdarray[8];
   word   crc16 = 0;
   int32	 	t1;
@@ -124,7 +124,7 @@ int16 VLA_XFR::sendcommand(byte cmd, byte param1, byte param2) {
   wait_ms(100);
   serial_empty_io_buffers();
 
-  // Kommandointerpreter im VL zurücksetzen
+  // Kommandointerpreter im VL zurï¿½cksetzen
   for(i=0; i<6; i++) {
     serial_out(CAN);
     wait_ms(d);
@@ -145,7 +145,7 @@ int16 VLA_XFR::sendcommand(byte cmd, byte param1, byte param2) {
   wait_ms(d);
   serial_out(crc16%256);
   wait_ms(d);
-  // Kommandobestätigung abwarten, aber höchstens timeout Sekunden
+  // Kommandobestï¿½tigung abwarten, aber hï¿½chstens timeout Sekunden
   t1 = get_timer_s();
   while( serial_in(&c) && get_timer_s()<t1+timeout )
     progress_set(VLS_TXT_SENDCMD);
@@ -167,10 +167,10 @@ int16 VLA_XFR::sendcommand(byte cmd, byte param1, byte param2) {
     showwait(VLS_TXT_NOFR);
     break;
   }
-  // Fehlercode als Rückgabewert der Funktion benutzen
+  // Fehlercode als Rï¿½ckgabewert der Funktion benutzen
   return c;
-  // Rückgabewert:     -1 : timeout
-  //		 0..255 : Bestätigungscode vom Logger
+  // Rï¿½ckgabewert:     -1 : timeout
+  //		 0..255 : Bestï¿½tigungscode vom Logger
 }
 
 
@@ -221,7 +221,7 @@ int32 VLA_XFR::readlog(lpb puffer, int32 maxlen) {
     while(serial_in(&c)) {
       pp++;
     }
-    // dabei ist Benutzerabbruch jederzeit möglich
+    // dabei ist Benutzerabbruch jederzeit mï¿½glich
     if (test_user_break()) {
       if (clear_user_break() == 1) {
         ende = -1;
@@ -335,8 +335,8 @@ VLA_ERROR VLA_XFR::dbbput(lpb dbbbuffer, int32 dbbsize) {
 
   // Schreibkommando geben
   serial_empty_io_buffers();
-  sendcommand(cmd_PDB,0,0); // muß noch mit Timeout versehen werden
-  // auf Löschende warten
+  sendcommand(cmd_PDB,0,0); // muï¿½ noch mit Timeout versehen werden
+  // auf Lï¿½schende warten
   while ( serial_in(&c) && !test_user_break() ) ;
   // Fehlerbehandlung
   if (test_user_break())
@@ -363,7 +363,7 @@ VLA_ERROR VLA_XFR::dbbput(lpb dbbbuffer, int32 dbbsize) {
   wait_ms(td);
   serial_out(crc16%256);
   wait_ms(td);
-  // auf Bestätigung warten
+  // auf Bestï¿½tigung warten
   while ( serial_in(&c) && !test_user_break()) ;
   // Fehlerbehandlung
   if (test_user_break()) {
@@ -390,7 +390,7 @@ VLA_ERROR VLA_XFR::dbbget(lpb dbbbuffer, int32 dbbsize) {
   wait_ms(300);
   if (groesse <= 0)
     return VLA_ERR_NODATA;
-  // und Tschüß
+  // und Tschï¿½ï¿½
   return VLA_ERR_NOERR;
 }
 
@@ -419,7 +419,7 @@ VLA_ERROR VLA_XFR::all_logsget(lpb dbbbuffer, int32 dbbsize) {
   wait_ms(300);
   if (groesse <= 0)
     return VLA_ERR_NODATA;
-  // und Tschüß
+  // und Tschï¿½ï¿½
   return VLA_ERR_NOERR;
 }
 
@@ -491,7 +491,7 @@ VLA_ERROR VLA_XFR::connect(int32 waittime, int quietmode ) {
 
   stoptime = get_timer_s() + waittime;
 
-  do { // Solange R's aussenden, bis ein L zurückkommt
+  do { // Solange R's aussenden, bis ein L zurï¿½ckkommt
     serial_out('R');
     wait_ms(30);
     if (get_timer_s() >= stoptime)
@@ -783,8 +783,10 @@ VLA_ERROR VLAPI::read_igcfile(char *filename, int index, int secmode) {
     return VLA_ERR_FILE;
 	
   VLA_ERROR err = stillconnect();
-  if(err != VLA_ERR_NOERR)
+  if(err != VLA_ERR_NOERR) {
+    fclose(outfile);
     return err;
+  }
 
   byte logbuffer[VLAPI_LOG_MEMSIZE];
   if (flightget(logbuffer, sizeof(logbuffer), index, secmode)>0)
@@ -835,13 +837,13 @@ void VLAPI_DATA::WPT::get(lpb p) {
 void VLAPI_DATA::WPT::put(lpb p) {
   int32 llat,llon;
   int16 i,l;
-  // String, evtl. mit Blanks aufgefüllt, zurückschreiben
+  // String, evtl. mit Blanks aufgefï¿½llt, zurï¿½ckschreiben
   strupr(name);
   memcpy(p,name,6);
   l = strlen((char *)p);
   for(i=l; i<6; i++)
     p[i] = ' ';
-  // Koordinaten zurückschreiben
+  // Koordinaten zurï¿½ckschreiben
   llat = labs((long)(lat * 60000.0));
   llon = labs((long)(lon * 60000.0));
   p[6] = (typ&0x7f) | ((lon<0)?0x80:0);
