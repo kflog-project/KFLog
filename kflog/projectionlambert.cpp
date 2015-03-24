@@ -43,6 +43,8 @@ ProjectionLambert::ProjectionLambert(QDataStream & s)
   i_v1 = 0;
   i_v2 = 0;
   i_origin = 0;
+  project_XY_arg_lat = 0.0;
+  project_XY_arg_lon = 0.0;
 
   loadParameters(s);
 }

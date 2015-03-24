@@ -553,10 +553,7 @@ VLA_ERROR VLA_XFR::readinfo(lpb buffer, int32 buffersize) {
 // ------------------------------------------------------------ 
 
 // constructor
-VLAPI::VLAPI() {
-
-
-  vlpresent = 0;
+VLAPI::VLAPI() : vlpresent(0) {
 }
 
 VLAPI::~VLAPI() {
