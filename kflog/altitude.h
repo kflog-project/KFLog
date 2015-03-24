@@ -55,14 +55,14 @@ public:
      *
      * Initializes the object to meters.
      */
-    Altitude(int meters);
+    Altitude(int meter);
 
     /**
      * Constructor
      *
      * Initializes the object to meters.
      */
-    Altitude(double meters);
+    Altitude(double meter);
 
     /**
      * copy constructor
