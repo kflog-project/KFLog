@@ -9,23 +9,17 @@
 **   Copyright (c):  2002 by Garrecht Ingenieurgesellschaft
 **
 **   This file is distributed under the terms of the General Public
-**   Licence. See the file COPYING for more information.
-**
-**   $Id$
+**   License. See the file COPYING for more information.
 **
 ***********************************************************************/
 
 /*
-
   Konvertierroutinen
 
-  vom bin�ren Volkslogger-Format  GCS
+  vom binaeren Volkslogger-Format  GCS
   ins IGC-Format
 
-  vom bin�ren Directory-Format ins Directory-Array
-
-
-
+  vom binaeren Directory-Format ins Directory-Array
 */
 
 #include <iostream>
@@ -44,8 +38,6 @@
 #include <utils.h>
 
 // Conversion-Constants
-
-
 #define MFR_ID "GCS"   // manufacturer three-letter-code
 #define MFR_ID2  "A"   // manufacturer letter
 
@@ -58,23 +50,23 @@
 #define rectyp_end   0x60 //Security
 #define	rectyp_pos   0x80 //Pos-DS (Fix)
 #define	rectyp_tnd   0xA0 //Time&Date
-#define rectyp_fil   0xC0 //F�llzeichen
+#define rectyp_fil   0xC0 //Fuellzeichen
 #define rectyp_poc   0xE0 //komprimierter Pos-DS
 
 
 
-// h�chste, von diesem Programm verdaute Bin�rdateiversion
+// hoechste, von diesem Programm verdaute Binaerdateiversion
 // bfw = "binary file version"
 const int max_bfv=1;
 
-// Gr��e der Fix-Datens�tze in den verschiedenen Bin�rdateiversionen
+// Groee der Fix-Datensaetze in den verschiedenen Binaerdateiversionen
 const int  pos_ds_size[max_bfv+1][2] = {
   {11,0},
   {12,9}
 };
 
 // Struktur einer Koordinate
-// bestehend aus L�ngen- und Breitengrad in 1/1000'
+// bestehend aus Laengen- und Breitengrad in 1/1000'
 class KOORD {
 // Strukturvariablen
 public:
@@ -107,7 +99,7 @@ public:
 	}
 };
 
-// Struktur eines WPTs f�r C-Records
+// Struktur eines WPTs fuer C-Records
 class C2 {
 public:
 	char        name[7];
@@ -144,7 +136,7 @@ public:
 };
 
 
-// Struktur f�r Flugaufgabe
+// Struktur fuer Flugaufgabe
 //
 class C_RECORD {
   public:
@@ -169,12 +161,12 @@ class C_RECORD {
 
     if (hasdeclaration) {
       strcpy(sTDECL,"            ");
-      if (TID>9999) TID=9999;  // Gr��enbegrenzungen wg. Ausdruck
+      if (TID>9999) TID=9999;  // Groeenbegrenzungen wg. Ausdruck
       if (NTP>12) NTP = 12;
       strftime(sTDECL,sizeof sTDECL,"%d%m%y%H%M%S",&TDECL);
 
       // Wenn kein FDT-Feld vom Logger kam  (Logger ab FW 161)
-      // dann mu� eben eines erzeugt werden
+      // dann muss eben eines erzeugt werden
       if (!(FDT[0]|FDT[1]|FDT[2])) {
 	// TDECL als Basis nehmen
 	memcpy(&T_FDT, &TDECL, sizeof T_FDT);
@@ -237,7 +229,7 @@ class C_RECORD {
 };
 
 
-// Struktur f�r IGC-Header
+// Struktur fuer IGC-Header
 struct IGCHEADER {
   char A[10],
        DTE[10],
@@ -288,7 +280,7 @@ struct IGCHEADER {
     //init();
     ausgabe = stderr;
   }
-// Einstellung des Ausgabestreams f�r die IGC-Dateien
+// Einstellung des Ausgabestreams fuer die IGC-Dateien
   void redirect(FILE *opf) {
     ausgabe = opf;
   }
@@ -343,7 +335,7 @@ struct IGCHEADER {
     if (TZN[0])
       fprintf(ausgabe,"HFTZNTIMEZONE:%s\n",TZN);
 
-    if ( // F�r alte Dateien
+    if ( // Fuer alte Dateien
 	    ( (version < 413) || (version >= 416 ))
 	 && (strcmp(RHW,"3.3")<0)
     )
@@ -969,24 +961,28 @@ char *gen_filename(DIRENTRY *de, int flightnum) {
 
 // Members of class DIR
 
-int conv_dir(DIRENTRY* flights, lpb p, int countonly) {
+int conv_dir(DIRENTRY* flights, lpb p, int countonly)
+{
   int number_of_flights;
-	DIRENTRY de; // Verzeichniseintrag
-	byte Haupttyp,Untertyp;
-	byte l; // L�nge des DS
-	lpb p2; // Zeiger auf Beginn des Inhalts eines vrb oder vrt
-	tm olddate = de.firsttime;
-	int	olddate_flg = 0;
-	int	flight_of_day = 0;
-	long temptime;
-	tm timetm1;
-	int bfv = 0;
+  byte Haupttyp, Untertyp;
+  byte l; // Laenge des DS
+  lpb p2; // Zeiger auf Beginn des Inhalts eines vrb oder vrt
+  int	olddate_flg = 0;
+  int	flight_of_day = 0;
+  long temptime;
+  tm timetm1;
+  int bfv = 0;
   number_of_flights = 0;
   char pilot1[17];
   char pilot2[17];
   char pilot3[17];
   char pilot4[17];
-	memset(&de,0,sizeof(de));
+
+  DIRENTRY de; // Verzeichniseintrag
+
+  memset(&de,0,sizeof(de));
+  tm olddate = de.firsttime;
+
   while(1) {//number_of_flights < MAXDIRENTRY) {
     Haupttyp = (p[0] & rectyp_msk);
     switch (Haupttyp) {
@@ -1028,7 +1024,7 @@ int conv_dir(DIRENTRY* flights, lpb p, int countonly) {
 				memcpy(de.gliderid, &p2[1], sizeof(de.gliderid));
 				de.gliderid[sizeof(de.gliderid)-1] = 0;
 				break;
-			case FLDPLT1 :  // Pilotenname einlesen
+			case FLDPLT1 :  // vlconvPilotenname einlesen
 				memcpy(pilot1, &p2[1], sizeof(pilot1));
 				pilot1[sizeof(pilot1)-1] = 0;
 				break;
@@ -1132,5 +1128,3 @@ int conv_dir(DIRENTRY* flights, lpb p, int countonly) {
   }
   return -1;
 }
-
-
