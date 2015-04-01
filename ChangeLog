@@ -11,6 +11,14 @@
 #
 ################################################################################
 
+2014-12-15 Axel Pauli <kflog.cumulus@gmail.com>
+
+  * Merged on GitHub two external pull requests.
+
+2014-12-15 Axel Pauli <kflog.cumulus@gmail.com>
+
+  * Issue #54 fixed. Error in openAIP runway rounding.
+
 2014-12-18 Peter Simon <psimon7v.kflog@gmail.com>
 
   * KFLog 4.10.0 released for Ubuntu, Debian and MS Windows.

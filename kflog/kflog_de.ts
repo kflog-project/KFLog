@@ -1759,8 +1759,9 @@
     </message>
     <message>
         <location filename="mainwindow.cpp" line="1948"/>
-        <source>&lt;html&gt;KFLog %1, &amp;copy; 2000-2014, The KFLog-Team&lt;/html&gt;</source>
-        <translation>&lt;html&gt;KFLog %1, &amp;copy; 2000-2014, Das KFLog-Team&lt;/html&gt;</translation>
+        <source>&lt;html&gt;KFLog %1, &amp;copy; 2000-2015, The KFLog-Team&lt;/html&gt;</source>
+        <oldsource>&lt;html&gt;KFLog %1, &amp;copy; 2000-2014, The KFLog-Team&lt;/html&gt;</oldsource>
+        <translation>&lt;html&gt;KFLog %1, &amp;copy; 2000-2015, Das KFLog-Team&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="1952"/>
@@ -2868,7 +2869,7 @@ Alle Downloads verworfen!</translation>
         <location filename="OpenAip.cpp" line="181"/>
         <location filename="OpenAip.cpp" line="610"/>
         <location filename="OpenAip.cpp" line="800"/>
-        <location filename="OpenAip.cpp" line="1671"/>
+        <location filename="OpenAip.cpp" line="1670"/>
         <source>Cannot open file</source>
         <translation>Fehler beim Dateiöffnen von</translation>
     </message>
@@ -2876,23 +2877,23 @@ Alle Downloads verworfen!</translation>
         <location filename="OpenAip.cpp" line="232"/>
         <location filename="OpenAip.cpp" line="661"/>
         <location filename="OpenAip.cpp" line="853"/>
-        <location filename="OpenAip.cpp" line="1731"/>
+        <location filename="OpenAip.cpp" line="1730"/>
         <source>Wrong XML data format</source>
         <translation>Falsches XML Datenformat</translation>
     </message>
     <message>
         <location filename="OpenAip.cpp" line="793"/>
-        <location filename="OpenAip.cpp" line="1664"/>
+        <location filename="OpenAip.cpp" line="1663"/>
         <source>is empty</source>
         <translation>ist leer</translation>
     </message>
     <message>
-        <location filename="OpenAip.cpp" line="1655"/>
+        <location filename="OpenAip.cpp" line="1654"/>
         <source>has not suffix .aip!</source>
         <translation>hat keine Endung .aip!</translation>
     </message>
     <message>
-        <location filename="OpenAip.cpp" line="1681"/>
+        <location filename="OpenAip.cpp" line="1680"/>
         <source>Cannot load airspace type mapper for</source>
         <translation></translation>
     </message>
@@ -3640,95 +3641,95 @@ Alle Downloads verworfen!</translation>
         <translation>Bitte das QNH (900-1100 hPA) für den Flug angeben. &lt;br&gt;Bei Abbruch werden 1013 hPa benutzt.</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="324"/>
+        <location filename="flighttask.cpp" line="325"/>
         <source>not set</source>
         <translation>nicht definiert</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="325"/>
+        <location filename="flighttask.cpp" line="326"/>
         <source>Free Distance</source>
         <translation>Freie Strecke</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="326"/>
+        <location filename="flighttask.cpp" line="327"/>
         <source>Free Out and Return Distance</source>
         <translation>Freie Strecke Ziel- Rückkehr </translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="327"/>
+        <location filename="flighttask.cpp" line="328"/>
         <source>FAI Triangle</source>
         <translation>FAI Dreieck</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="328"/>
+        <location filename="flighttask.cpp" line="329"/>
         <source>Triangle</source>
         <translation>Dreieck</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="329"/>
+        <location filename="flighttask.cpp" line="330"/>
         <source>FAI Triangle Start on leg</source>
         <translation>FAI Dreieck - Start auf dem Schenkel</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="330"/>
+        <location filename="flighttask.cpp" line="331"/>
         <source>Triangle Start on leg</source>
         <translation>Dreick mit Start auf dem Schenkel</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="331"/>
+        <location filename="flighttask.cpp" line="332"/>
         <source>OLC optimized (2003 rules)</source>
         <translation>OLC optimiert (2003er Regeln)</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="332"/>
+        <location filename="flighttask.cpp" line="333"/>
         <source>???</source>
         <translation>???</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="335"/>
+        <location filename="flighttask.cpp" line="336"/>
         <location filename="runway.cpp" line="81"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="890"/>
-        <location filename="flighttask.cpp" line="912"/>
+        <location filename="flighttask.cpp" line="891"/>
+        <location filename="flighttask.cpp" line="913"/>
         <source>Not reached first waypoint</source>
         <translation>Den ersten Wegpunkt nicht erreicht</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="891"/>
-        <location filename="flighttask.cpp" line="913"/>
+        <location filename="flighttask.cpp" line="892"/>
+        <location filename="flighttask.cpp" line="914"/>
         <source>You have not reached the first waypoint of your task.</source>
         <translation>Du hast  nicht den ersten Wendepunkt deiner Aufgabe erreicht.</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="931"/>
+        <location filename="flighttask.cpp" line="932"/>
         <source>Not reached last waypoint</source>
         <translation>Den letzten Wegpunkt nicht erreicht</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="932"/>
+        <location filename="flighttask.cpp" line="933"/>
         <source>You have not reached the last point of your task.</source>
         <translation>Du hast nicht den letzten Wendepunkt der Aufgabe erreicht.</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="1012"/>
+        <location filename="flighttask.cpp" line="1013"/>
         <source>Incorrect time interval</source>
         <translation>Fehlerhaftes Zeitinterval</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="1013"/>
+        <location filename="flighttask.cpp" line="1014"/>
         <source>The time interval between two points of the flight is more than 70 sec.!&lt;BR&gt;Due to Code Sportif 3, Nr. 1.9.2.1, the flight can not be valued!</source>
         <translation>Der Zeitunterschied zwischen zwei GPS-Punkten des Fluges ist größer als 70 Sekunden!&lt;BR&gt;Nach Code Sportif 3, Nr. 1.9.2.1 ist der Flug ungültig!</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="1675"/>
+        <location filename="flighttask.cpp" line="1676"/>
         <source>Traditional Route</source>
         <translation>Traditionelle Strecke</translation>
     </message>
     <message>
-        <location filename="flighttask.cpp" line="1676"/>
+        <location filename="flighttask.cpp" line="1677"/>
         <source>FAI Area</source>
         <translation>FAI Region</translation>
     </message>

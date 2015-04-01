@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Heiner Lamprecht, Florian Ehinger
-**                   2010-2014 by Axel Pauli
+**                   2010-2015 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -1945,7 +1945,7 @@ void MainWindow::slotShowAbout()
   aw->setWindowTitle( tr( "About KFLog") );
   aw->setHeaderIcon( getPixmap("kflog_16.png") );
 
-  QString header( tr("<html>KFLog %1, &copy; 2000-2014, The KFLog-Team</html>").arg( QCoreApplication::applicationVersion() ) );
+  QString header( tr("<html>KFLog %1, &copy; 2000-2015, The KFLog-Team</html>").arg( QCoreApplication::applicationVersion() ) );
 
   aw->setHeaderText( header );
 

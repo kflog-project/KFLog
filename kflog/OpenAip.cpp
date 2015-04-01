@@ -1383,8 +1383,7 @@ bool OpenAip::readAirfieldRunway11( QXmlStreamReader& xml, Airfield& af )
                   if( ok && rwyNumber <= 2 )
                     {
                       // round up direction
-                      ushort rest = (dir % 10) ? 1 : 0;
-                      dir = (dir / 10) + rest;
+                      dir = (dir + 5) / 10;
 
                       if( rwyNumber == 1 )
                         {
