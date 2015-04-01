@@ -83,7 +83,7 @@ public:
             strcpy(pUserName,"<Unknown user>");
         }
         m_UserName.fromLatin1(pUserName, BuffSize);
-        delete pUserName;
+        delete[] pUserName;
     }
     char* getUserName()
     {
@@ -571,7 +571,7 @@ bool WaypointCatalog::readVolkslogger(const QString& filename)
 
   int lat, lon, latTemp, lonTemp, latmin, lonmin;
   char latChar, lonChar;
-  int lineCount;
+  int lineCount = 0;
   QChar flag;
 
   while (!stream.atEnd())

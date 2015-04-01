@@ -23,32 +23,35 @@
  * Based on 3dIgc by Jan Max Kreuger
  */
 
-Igc3DViewState::Igc3DViewState()
+Igc3DViewState::Igc3DViewState() : height(0.0f), 
+                                    width(0.0f),
+                                    alpha(300),
+                                    beta(90),
+                                    gamma(290),
+                                    deltax(0),
+                                    deltay(-300),
+                                    deltaz(0),
+                                    deltayoffset(0),
+                                    mag(25),
+                                    dist(50),
+                                    flag(0),
+                                    polyhedron_back(1),
+                                    polyhedron_front(1),
+                                    flight_trace(1),
+                                    flight_shadow(1),
+                                    maxx(50.0f),
+                                    maxy(50.0f),
+                                    maxz(50.0f),
+                                    minx(-50.0f),
+                                    miny(-50.0f),
+                                    minz(-50.0f),
+                                    zfactor(33),
+                                    timerflag(1),
+                                    ms_timer(40),
+                                    rotate_fract(10.0f),
+                                    flight_marker_position(0),
+                                    centering(0)
 {
-  alpha = 300;
-  beta = 90;
-  gamma = 290;
-  deltax = 0;
-  deltay = -300;
-  deltayoffset = 0;
-  deltaz = 0;
-
-  mag = 25;
-  dist = 50;
-  flag = 0;
-
-  maxx = maxy = maxz = 50;
-  minx = miny = minz = -50;
-  polyhedron_back = 1;
-  polyhedron_front = 1;
-  flight_trace = 1;
-  flight_shadow = 1;
-  zfactor = 33;
-  rotate_fract = 10.0;
-  timerflag = 1;
-  ms_timer = 40;
-  flight_marker_position = 0;
-  centering = 0;
 }
 
 Igc3DViewState::~Igc3DViewState()

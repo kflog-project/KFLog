@@ -217,7 +217,11 @@ void GarminGPS::dumpPacket(unsigned char * packet, int length)
     printf("<0x%X>", *((unsigned char*)packet+i));
   }
   printf("\n");
-#endif
+#else
+  // Parameter are unused; cast to void will workaround the unused warning
+  (void)(packet);
+  (void)(length);
+#endif /* _GARMIN_DBG */
 }
 
 //////////////////////////////////////////////////////////////////////////////////

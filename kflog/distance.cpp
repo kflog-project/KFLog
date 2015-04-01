@@ -34,16 +34,16 @@ Distance::Distance()
 }
 
 
-Distance::Distance(int meters)
+Distance::Distance(int meter)
 {
-  _dist=double(meters);
+  _dist=double(meter);
   _isValid=true;
 }
 
 
-Distance::Distance(double meters)
+Distance::Distance(double meter)
 {
-  _dist=meters;
+  _dist=meter;
   _isValid=true;
 }
 
@@ -74,17 +74,17 @@ double Distance::getFeet() const
 
 
 /** Set the distance in meters */
-void Distance::setMeters(int meters)
+void Distance::setMeters(int meter)
 {
-  _dist=double(meters);
+  _dist=double(meter);
   _isValid=true;
 }
 
 
 /** Set the distance in meters */
-void Distance::setMeters(double meters)
+void Distance::setMeters(double meter)
 {
-  _dist=meters;
+  _dist=meter;
   _isValid=true;
 }
 
@@ -215,7 +215,7 @@ QString Distance::getText(bool withUnit, uint precision, uint chopOrder) const
   return result;
 }
 
-QString Distance::getText(double meters, bool withUnit, int precision)
+QString Distance::getText(double meter, bool withUnit, int precision)
 {
   QString result, unit;
   double dist;
@@ -225,32 +225,32 @@ QString Distance::getText(double meters, bool withUnit, int precision)
     {
       case 0: //meters:
 	unit="m";
-	dist=meters;
+	dist=meter;
 	defprec=0;
 	break;
       case 1: //feet:
 	unit="ft";
-	dist=meters/mFromFeet;
+	dist=meter/mFromFeet;
 	defprec=0;
 	break;
       case 2: //kilometers:
 	unit="Km";
-	dist=meters/mFromKm;
+	dist=meter/mFromKm;
 	defprec=2;
 	break;
       case 3: //miles:
 	unit="SM";
-	dist=meters/mFromMile;
+	dist=meter/mFromMile;
 	defprec=3;
 	break;
       case 4: //nautmiles:
 	unit="NM";
-	dist=meters/mFromNMile;
+	dist=meter/mFromNMile;
 	defprec=3;
 	break;
       default:
 	unit="m";
-	dist=meters;
+	dist=meter;
 	defprec=0;
 	break;
     }

@@ -55,14 +55,14 @@ class Distance
    *
    * Initializes the object to meters.
    */
-  Distance(int meters);
+  Distance(int meter);
 
   /**
    * Constructor
    *
    * Initializes the object to meters.
    */
-  Distance(double meters);
+  Distance(double meter);
 
   /**
    * Copy constructor
@@ -77,7 +77,7 @@ class Distance
   /**
    * Set the distance in meters
    */
-  void setMeters(int meters);
+  void setMeters(int meter);
 
   /**
    * Set distance in feet
@@ -87,7 +87,7 @@ class Distance
   /**
    * Set the distance in meters
    */
-  void setMeters(double meters);
+  void setMeters(double meter);
 
   /**
    * Set distance in feet
@@ -161,7 +161,7 @@ class Distance
    * @param withUnit determines if the unit-string is included in the output
    * @param precision number of digits after the decimal separator
    */
-  static QString getText(double meters, bool withUnit, int precision=1);
+  static QString getText(double meter, bool withUnit, int precision=1);
 
   /**
    * Basicly the same as @ref getText, but returns the internally stored distance.
