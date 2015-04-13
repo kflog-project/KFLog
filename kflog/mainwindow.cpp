@@ -1308,9 +1308,9 @@ void MainWindow::slotOpenFile()
   fd->setFileMode( QFileDialog::ExistingFiles );
 
   QStringList filter;
-  filter.append(tr("All types") + " (*.igc *.flightgear *.trk *.gdn)");
-  filter.append(tr("IGC") + " (*.igc)");
-  filter.append(tr("Garmin") + " (*.trk *.gdn)");
+  filter.append(tr("All types") + " (*.igc *.IGC *.flightgear *.trk *.TRK *.gdn *.GDN)");
+  filter.append(tr("IGC") + " (*.igc *.IGC)");
+  filter.append(tr("Garmin") + " (*.trk *.TRK *.gdn *.GDN)");
 #ifdef QT_5
   fd->setNameFilters( filter );
 #else
