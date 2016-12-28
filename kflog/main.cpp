@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2001      by Heiner Lamprecht
-**                   2010-2014 by Axel Pauli
+**                   2010-2016 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -27,9 +27,7 @@
  *
  * KFLog is built with the Qt release 4.8.x and 5.x
  *
- * \date 2001-2014
- *
- * \version $Id$
+ * \date 2001-2016
  */
 
 #ifndef _MSC_VER
@@ -80,6 +78,9 @@ int main(int argc, char **argv)
 
   // Reset the locale that is used for number formatting to "C" locale.
   QLocale::setDefault(QLocale::C);
+
+  // @AP: Set the locale that is used for number formatting to "C" locale.
+  setlocale(LC_NUMERIC, "C");
 
 // QT5: strings in c++ sources have to be UTF-8
 #ifndef QT_5

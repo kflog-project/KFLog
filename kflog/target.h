@@ -6,7 +6,7 @@
                              -------------------
     created              : 2010-12-10
 
-    copyright            : (C) 2010-2015 by Axel Pauli
+    copyright            : (C) 2010-2016 by Axel Pauli
 
     Email of maintainer  : kflog.cumulus@gmail.com
 
@@ -24,6 +24,6 @@
 #ifndef target_h
 #define target_h
 
-#define KFLOG_VERSION "4.10.1"
+#define KFLOG_VERSION "4.10.2"
 
 #endif

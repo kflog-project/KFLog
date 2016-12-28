@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by Christian Fughe, Harald Maier, Eggert Ehmke
-**                   2011-2014 by Axel Pauli
+**                   2011-2016 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -168,6 +168,8 @@ void releaseTTY(int /* signal*/)
 Filser::Filser( QObject *parent ) : FlightRecorderPluginBase( parent ),
   _speed(B0)
 {
+  setlocale(LC_NUMERIC, "C");
+
   //Set flight recorders capabilities. Defaults are 0 and false.
   _capabilities.maxNrTasks = TASK_MAX;             //maximum number of tasks
   _capabilities.maxNrWaypoints = WAYPOINT_MAX;     //maximum number of waypoints

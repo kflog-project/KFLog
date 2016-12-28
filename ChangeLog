@@ -11,6 +11,10 @@
 #
 ################################################################################
 
+2016-12-28 Axel Pauli <kflog.cumulus@gmail.com>
+
+  * Issue #56 fixed. Wrong IGC output by Filser.
+
 2014-12-15 Axel Pauli <kflog.cumulus@gmail.com>
 
   * Merged on GitHub two external pull requests.
