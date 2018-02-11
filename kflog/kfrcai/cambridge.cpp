@@ -62,7 +62,7 @@ const char* c36 = "0123456789abcdefghijklmnopqrstuvwxyz";
 /*
  * name and ID of the port
  */
-const char* portName = '\0';
+const char* portName = "\0";
 int portID;
 
 /*

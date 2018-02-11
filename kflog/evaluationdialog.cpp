@@ -30,6 +30,8 @@
 
 #if defined(_WIN32) && !defined(isnan)
 #define isnan(x) ((x) != (x))
+#elif !defined(isnan)
+#define isnan(x) std::isnan(x)
 #endif
 
 extern MapContents* _globalMapContents;

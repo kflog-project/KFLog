@@ -30,7 +30,7 @@
 /**
  * The device-name of the port.
  */
-char* portName = '\0';
+char* portName = "\0";
 int portID = -1;
 
 /**
