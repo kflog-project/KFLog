@@ -74,7 +74,7 @@
 /**
  * The device-name of the port.
  */
-const char* portName = '\0';
+const char* portName = "\0";
 int portID = -1;
 const char* c36 = "0123456789abcdefghijklmnopqrstuvwxyz";
 

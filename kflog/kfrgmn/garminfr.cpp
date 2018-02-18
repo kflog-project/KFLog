@@ -53,7 +53,7 @@ GarminFR::GarminFR( QObject *parent ) : FlightRecorderPluginBase( parent )
   //_capabilities.supDspCompetitionID = true;
   //End set capabilities.
 
-  portName = '\0';
+  portName = "\0";
   portID = -1;
 }
 
