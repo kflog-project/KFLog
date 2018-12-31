@@ -374,14 +374,15 @@ void CoordEdit::setKFLogDegree( const int coord, const bool isLat )
     {
       // degrees, minutes, seconds is used as format
       WGSPoint::calcPos (coord, degree, min, sec);
+      degree = (degree < 0)  ? -degree : degree;
 
       if (isLat)
         {
-          posDeg.sprintf("%02d", (degree < 0)  ? -degree : degree);
+          posDeg.sprintf("%02d", degree);
         }
       else
         {
-          posDeg.sprintf("%03d", (degree < 0)  ? -degree : degree);
+          posDeg.sprintf("%03d", degree);
         }
 
       min = abs(min);
@@ -403,14 +404,15 @@ void CoordEdit::setKFLogDegree( const int coord, const bool isLat )
     {
       // degrees and decimal minutes is used as format
       WGSPoint::calcPos (coord, degree, decMin);
+      degree = (degree < 0)  ? -degree : degree;
 
       if (isLat)
         {
-          posDeg.sprintf("%02d", (degree < 0)  ? -degree : degree);
+          posDeg.sprintf("%02d", degree);
         }
       else
         {
-          posDeg.sprintf("%03d", (degree < 0)  ? -degree : degree);
+          posDeg.sprintf("%03d", degree);
         }
 
       decMin = fabs(decMin);
@@ -435,8 +437,9 @@ void CoordEdit::setKFLogDegree( const int coord, const bool isLat )
     {
       // decimal degrees is used as format
       WGSPoint::calcPos (coord, decDegree);
+      decDegree = (decDegree < 0)  ? -decDegree : decDegree;
 
-      posDeg.sprintf("%.5f", (decDegree < 0)  ? -decDegree : decDegree);
+      posDeg.sprintf("%.5f", decDegree);
 
       // Unfortunately sprintf does not support leading zero in float
       // formating. So we must do it alone.
