@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Heiner Lamprecht, Florian Ehinger
-**                   2010-2015 by Axel Pauli
+**                   2010-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -19,15 +19,11 @@
 #include <dlfcn.h>
 #endif
 
-#ifdef QT_5
-    #include <QtWidgets>
-    #include <QApplication>
-    #include <QPrinter>
-    #include <QFileDialog>
-    #include <QPrintDialog>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
+#include <QApplication>
+#include <QPrinter>
+#include <QFileDialog>
+#include <QPrintDialog>
 
 #include <QSortFilterProxyModel>
 
@@ -250,7 +246,6 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
            helpWindow, SLOT(slotShowHelpText(QString&)) );
 
   // Trigger data update checks after 30s
-  QTimer::singleShot(30000, _globalMapContents, SLOT(slotCheckWelt20004Update()));
   QTimer::singleShot(30000, _globalMapContents, SLOT(slotCheckOpenAipPointData4Update()));
   QTimer::singleShot(40000, _globalMapContents, SLOT(slotCheckOpenAipAsData4Update()));
 
@@ -1250,8 +1245,8 @@ void MainWindow::slotModifyMenu()
 
       if (f->getTypeID() == BaseMapElement::Flight)
         {
-	  fileNewFlightGroupAction->setEnabled(true);
-	  break;
+          fileNewFlightGroupAction->setEnabled(true);
+          break;
         }
     }
 
@@ -1787,9 +1782,6 @@ void MainWindow::slotConfigureKFLog()
 
   connect(confDlg, SIGNAL(configOk()), dataView, SLOT(slotSetFlightData()));
 
-  connect(confDlg, SIGNAL(checkWelt20004Update()),
-	  _globalMapContents, SLOT(slotCheckWelt20004Update()));
-
   connect(confDlg, SIGNAL(checkOpenAipPointData4Update()),
 	  _globalMapContents, SLOT(slotCheckOpenAipPointData4Update()));
 
@@ -1799,9 +1791,6 @@ void MainWindow::slotConfigureKFLog()
   connect(confDlg, SIGNAL(configOk()), map, SLOT(slotRedrawMap()));
 
   connect(confDlg, SIGNAL(configOk()), waypointTreeView, SLOT(slotFillWaypoints()));
-
-  connect( confDlg, SIGNAL(downloadWelt2000(bool)),
-           _globalMapContents, SLOT(slotDownloadWelt2000(bool)) );
 
   connect( confDlg, SIGNAL(reloadPointData()),
            _globalMapContents, SLOT(slotReloadPointData()) );

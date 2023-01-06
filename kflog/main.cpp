@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2001      by Heiner Lamprecht
-**                   2010-2016 by Axel Pauli
+**                   2010-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -25,9 +25,9 @@
  *
  * http://qt-project.org/
  *
- * KFLog is built with the Qt release 4.8.x and 5.x
+ * KFLog is built with the Qt release 5.x
  *
- * \date 2001-2016
+ * \date 2001-2023
  */
 
 #ifndef _MSC_VER
@@ -82,13 +82,6 @@ int main(int argc, char **argv)
   // @AP: Set the locale that is used for number formatting to "C" locale.
   setlocale(LC_NUMERIC, "C");
 
-// QT5: strings in c++ sources have to be UTF-8
-#ifndef QT_5
-  // Make sure the application uses utf8 encoding for translated widgets
-  // and program constant strings
-  QTextCodec::setCodecForTr( QTextCodec::codecForName ("UTF-8") );
-  QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
-#endif
   // Make install root of KFLog available for other modules via QSettings.
   // The assumption is, that KFLog is installed at <root>/bin/kflog.
   // The <root> path will be stored in QSettings.
@@ -116,8 +109,9 @@ int main(int argc, char **argv)
     {
       QSplashScreen splash( QPixmap( ":/pics/splash.png" ) );
       splash.setMask( QBitmap( ":/pics/splash_mask.png" ) );
+      splash.showMessage( QObject::tr("Loaded modules") );
       splash.show();
-      QCoreApplication::processEvents();
+      splash.repaint();
 
       _mainWindow = new MainWindow;
       _mainWindow->setVisible( true );

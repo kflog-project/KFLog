@@ -8,7 +8,7 @@
  **
  **   Copyright (c):  2000      by Heiner Lamprecht, Florian Ehinger
  **   Modified:       2008      by Josua Dietze
- **                   2008-2014 by Axel Pauli
+ **                   2008-2023 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -213,8 +213,8 @@ QString Airspace::getTypeName (objectType type)
       return QObject::tr("Prohibited");
     case BaseMapElement::Ctr:
       return QObject::tr("CTR");
-    case BaseMapElement::LowFlight:
-      return QObject::tr("Low Flight");
+    case BaseMapElement::Sua:
+      return QObject::tr("SUA");
     case BaseMapElement::Rmz:
       return QObject::tr("RMZ");
     case BaseMapElement::Tmz:

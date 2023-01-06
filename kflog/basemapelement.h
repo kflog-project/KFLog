@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2000      by Heiner Lamprecht, Florian Ehinger
-**                   2008-2014 by Axel Pauli
+**                   2008-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -27,7 +27,7 @@
  * the class provides two enumerations for the element-type and the type of
  * elevation-values.
  *
- * \date 2000-2014
+ * \date 2000-2023
  */
 
 #ifndef BASE_MAP_ELEMENT_H
@@ -85,7 +85,7 @@ class BaseMapElement
     AirUkn = AIR_UKN,
     Ctr = CONTROL_ZONE,
     Danger = DANGER,
-    LowFlight = LOW_FLIGHT,
+    Sua = SUA,
     Restricted = RESTRICTED,
     Prohibited = PROHIBITED,
     Rmz = RMZ,
@@ -157,7 +157,7 @@ class BaseMapElement
   /**
    * @return the name of the element.
    */
-  virtual const QString getName() const
+  const virtual QString getName() const
   {
     return name;
   };

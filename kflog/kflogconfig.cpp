@@ -5,18 +5,14 @@
 **   This file is part of KFLog.
 **
 **   Copyright (c):  2001 by Heiner Lamprecht
-**                   2011-2014 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
 ***********************************************************************/
 
-#ifdef QT_5
-    #include <QtWidgets>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
 
 #include "altitude.h"
 #include "distance.h"
@@ -31,7 +27,6 @@
 #include "mainwindow.h"
 #include "rowdelegate.h"
 #include "Speed.h"
-#include "welt2000.h"
 
 extern Map         *_globalMap;
 extern MapContents *_globalMapContents;
@@ -44,7 +39,6 @@ QTranslator* KFLogConfig::s_qtTranslator  = static_cast<QTranslator *>(0);
 KFLogConfig::KFLogConfig(QWidget* parent) :
   QDialog( parent ),
   m_wel2000HomeRadiusValue(0),
-  m_welt2000ReadOlValue(true),
   m_afOpenAipHomeRadiusValue(0),
   m_cylinPar(-1),
   m_lambertV1(-1),
@@ -222,7 +216,7 @@ void KFLogConfig::slotOk()
 {
   qDebug() << "KFLogConfig::slotOk()";
 
-  // First check, if the Welt2000 and openAIP countries are valid
+  // First check, if openAIP countries are valid
   QString input = asOpenAipCountries->text().trimmed();
 
   if( input.isEmpty() == false && __checkOpenAipCountryInput( input ) == false )
@@ -233,13 +227,6 @@ void KFLogConfig::slotOk()
   input = pointsOpenAipCountries->text().trimmed();
 
   if( input.isEmpty() == false && __checkOpenAipCountryInput( input ) == false )
-    {
-      return;
-    }
-
-  input = welt2000CountryFilter->text().trimmed();
-
-  if( input.isEmpty() == false && __checkWelt2000Input( input ) == false )
     {
       return;
     }
@@ -288,12 +275,6 @@ void KFLogConfig::slotOk()
   _settings.setValue( "/Points/HomeRadius", pointsOpenAipHomeRadius->value() );
   _settings.setValue( "/Points/EnableUpdates", pointsOpenAipEnableUpdates->isChecked() );
   _settings.setValue( "/Points/UpdatePeriod", pointsOpenAipUpdatePeriod->value() );
-
-  _settings.setValue( "/Welt2000/CountryFilter", welt2000CountryFilter->text().trimmed().toUpper() );
-  _settings.setValue( "/Welt2000/HomeRadius", welt2000HomeRadius->value() );
-  _settings.setValue( "/Welt2000/LoadOutlandings", welt2000ReadOl->isChecked() );
-  _settings.setValue( "/Welt2000/EnableUpdates", welt2000EnableUpdates->isChecked() );
-  _settings.setValue( "/Welt2000/UpdatePeriod", welt2000UpdatePeriod->value() );
 
   _settings.setValue( "/FlightColor/LeftTurn", flightTypeLeftTurnColor.name() );
   _settings.setValue( "/FlightColor/RightTurn", flightTypeRightTurnColor.name() );
@@ -417,35 +398,17 @@ void KFLogConfig::slotOk()
       // Check, if openAIP point data must be updated
       if( m_afOpenAipHomeRadiusValue !=  pointsOpenAipHomeRadius->value() ||
           m_afOpenAipCountryValue != pointsOpenAipCountries->text() )
-	{
-	  emit reloadPointData();
-	}
+          {
+            emit reloadPointData();
+          }
       // Check update period of openAIP point data and initiate an update, if the
       // update time period has expired.
       else if( pointsOpenAipEnableUpdates->isChecked() &&
 	      ( m_afOpenAipUpdateCheck != pointsOpenAipEnableUpdates->isChecked() ||
 	        m_afOpenAipUpdateValue != pointsOpenAipUpdatePeriod->value() ) )
-	{
-	  emit checkOpenAipPointData4Update();
-	}
-    }
-  else if( pointsSourceBox->currentIndex() == Welt2000 )
-    {
-      // Check, if Welt2000 data must be updated
-      if( m_wel2000HomeRadiusValue !=  welt2000HomeRadius->value() ||
-          m_welt2000CountryFilterValue != welt2000CountryFilter->text() ||
-          m_welt2000ReadOlValue != welt2000ReadOl->isChecked() )
-	{
-	  emit reloadPointData();
-	}
-      // Check update period of Welt2000 data and initiate an update, if the
-      // update time period has expired.
-      else if( welt2000EnableUpdates->isChecked() &&
-	       ( m_welt2000UpdateCheck != welt2000EnableUpdates->isChecked() ||
-	         m_welt2000UpdateValue != welt2000UpdatePeriod->value() ) )
-	{
-	  checkWelt20004Update();
-	}
+        {
+          emit checkOpenAipPointData4Update();
+        }
     }
 
   // If countries are defined for airspace downloading, we check, if automatic
@@ -1890,68 +1853,6 @@ void KFLogConfig::__addPointsTab()
 
   //----------------------------------------------------------------------------
 
-  m_welt2000Group = new QGroupBox( "Welt2000: www.segelflug.de/vereine/welt2000" );
-  welt2000CountryFilter = new QLineEdit;
-  welt2000CountryFilter->setMinimumWidth( 150 );
-  welt2000CountryFilter->setValidator( new QRegExpValidator(rx, this) );
-  welt2000CountryFilter->setToolTip( toolTip );
-
-  welt2000HomeRadius = new QSpinBox();
-  welt2000HomeRadius->setRange( 0, 10000 );
-  welt2000HomeRadius->setSingleStep( 10 );
-  welt2000HomeRadius->setButtonSymbols( QSpinBox::PlusMinus );
-  welt2000HomeRadius->setSuffix( " Km" );
-  welt2000HomeRadius->setSpecialValueText(tr("Off"));
-  welt2000HomeRadius->setToolTip( toolTip1 );
-
-  welt2000ReadOl = new QCheckBox( tr("Read Outlandings") );
-  welt2000ReadOl->setToolTip( tr("Activate checkbox, if outlandings should be read in.") );
-
-  QPushButton* downloadWelt2000 = new QPushButton( tr("Download") );
-  downloadWelt2000->setToolTip( tr("Press button to download the Welt2000 file.") );
-  downloadWelt2000->setMaximumWidth(downloadWelt2000->sizeHint().width() + 10);
-  downloadWelt2000->setMinimumHeight(downloadWelt2000->sizeHint().height() + 2);
-  connect( downloadWelt2000, SIGNAL(clicked()), this, SLOT(slotDownloadWelt2000()) );
-
-  welt2000EnableUpdates = new QCheckBox( tr("Enable Welt2000 update after:") );
-  welt2000EnableUpdates->setChecked( false );
-
-  connect( welt2000EnableUpdates, SIGNAL(stateChanged(int)),
-	   this, SLOT(slotWelt2000UpdateStateChanged(int)) );
-
-  welt2000UpdatePeriod = new QSpinBox;
-  welt2000UpdatePeriod->setRange( 1, 365 );
-  welt2000UpdatePeriod->setSingleStep( 1 );
-  welt2000UpdatePeriod->setButtonSymbols( QSpinBox::PlusMinus );
-  welt2000UpdatePeriod->setSuffix( tr(" day") );
-  welt2000UpdatePeriod->setEnabled( false );
-
-  connect( welt2000UpdatePeriod, SIGNAL(valueChanged( int)),
-	   this, SLOT(slotWelt2000UpdatePeriodChanged(int)) );
-
-  QFormLayout* weltLayout = new QFormLayout;
-  weltLayout->setSpacing( 10 );
-  weltLayout->addRow( tr( "Country Filter" ) + ":", welt2000CountryFilter );
-  weltLayout->addRow( tr( "Home Radius" )  + ":", welt2000HomeRadius );
-
-  QHBoxLayout* updateLayout = new QHBoxLayout;
-  updateLayout->setMargin( 0 );
-  updateLayout->addWidget( welt2000EnableUpdates );
-  //updateLayout->addSpacing( 10 );
-  updateLayout->addWidget( welt2000UpdatePeriod );
-  updateLayout->addStretch( 10 );
-
-  QVBoxLayout* weltGroupLayout = new QVBoxLayout;
-  weltGroupLayout->addLayout( weltLayout );
-  weltGroupLayout->addWidget( welt2000ReadOl );
-  weltGroupLayout->addLayout( updateLayout );
-  weltGroupLayout->addSpacing( 10 );
-  weltGroupLayout->addWidget( downloadWelt2000, Qt::AlignLeft );
-
-  m_welt2000Group->setLayout( weltGroupLayout );
-
-  //----------------------------------------------------------------------------
-
   m_openAipGroup = new QGroupBox( "openAIP: www.openaip.net", this );
 
   int grow = 0;
@@ -2042,7 +1943,6 @@ void KFLogConfig::__addPointsTab()
   sourceLayout->addWidget( new QLabel( tr("Point data source:") ), 0, 0 );
   pointsSourceBox = new QComboBox;
   pointsSourceBox->addItem("OpenAIP");
-  pointsSourceBox->addItem("Welt2000");
   sourceLayout->addWidget( pointsSourceBox, 0, 1 );
   sourceLayout->setColumnStretch( 2, 10 );
 
@@ -2051,7 +1951,6 @@ void KFLogConfig::__addPointsTab()
 
   afLayout->addLayout( sourceLayout );
   afLayout->addSpacing(10);
-  afLayout->addWidget( m_welt2000Group );
   afLayout->addWidget( m_openAipGroup, 100 );
   afLayout->addStretch( 1 );
 
@@ -2060,18 +1959,6 @@ void KFLogConfig::__addPointsTab()
   int sourceIndex = _settings.value( "/Points/Source", OpenAIP ).toInt();
   pointsSourceBox->setCurrentIndex( sourceIndex );
   slotPointSourceChanged( sourceIndex );
-
-  m_wel2000HomeRadiusValue     = _settings.value( "/Welt2000/HomeRadius", 0 ).toInt();
-  m_welt2000CountryFilterValue = _settings.value( "/Welt2000/CountryFilter", "" ).toString();
-  m_welt2000ReadOlValue        = _settings.value( "/Welt2000/LoadOutlandings", true ).toBool();
-  m_welt2000UpdateCheck        = _settings.value( "/Welt2000/EnableUpdates", true ).toBool();
-  m_welt2000UpdateValue        = _settings.value( "/Welt2000/UpdatePeriod", 30 ).toInt();
-
-  welt2000HomeRadius->setValue( m_wel2000HomeRadiusValue );
-  welt2000CountryFilter->setText( m_welt2000CountryFilterValue );
-  welt2000ReadOl->setChecked( m_welt2000ReadOlValue );
-  welt2000EnableUpdates->setChecked( m_welt2000UpdateCheck );
-  welt2000UpdatePeriod->setValue( m_welt2000UpdateValue );
 
   // Save initial values for later check of change.
   m_afOpenAipHomeRadiusValue = _settings.value( "/Points/HomeRadius", 0 ).toInt();
@@ -2384,7 +2271,7 @@ void KFLogConfig::slotSelectDefaultCatalog( int item )
 void KFLogConfig::slotSearchDefaultWaypoint()
 {
   QString filter;
-  filter.append(tr("All formats") + " (WELT2000.TXT *.da4 *.DA4 *.dat *.DAT *.dbt *.DBT *.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
+  filter.append(tr("All formats") + " (*.da4 *.DA4 *.dat *.DAT *.dbt *.DBT *.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
   filter.append(tr("KFLog") + " (*.kflogwp *.KFLOGWP);;");
   filter.append(tr("Cumulus") + " (*.kwp *.KWP);;");
   filter.append(tr("Cambridge") + " (*.dat *.DAT);;");
@@ -2392,7 +2279,6 @@ void KFLogConfig::slotSearchDefaultWaypoint()
   filter.append(tr("Filser da4") + " (*.da4 *.DA4);;");
   filter.append(tr("SeeYou") + " (*.cup *.CUP);;");
   filter.append(tr("Volkslogger") + " (*.dbt *.DBT);;" );
-  filter.append(tr("Welt2000") + " (WELT2000.TXT)");
 
   QString fileName = QFileDialog::getOpenFileName( this,
 						   tr("Select a default catalog"),
@@ -2422,22 +2308,6 @@ void KFLogConfig::slotSelectFlightTypeColor( int buttonIdentifier )
       pressedButton->setIcon( buttonPixmap );
       pressedButton->setIconSize( buttonPixmap.size() );
     }
-}
-
-void KFLogConfig::slotDownloadWelt2000()
-{
-  QString input = welt2000CountryFilter->text().trimmed();
-
-  if( __checkWelt2000Input( input ) == false )
-    {
-      return;
-    }
-
-  _settings.setValue( "/Welt2000/CountryFilter", welt2000CountryFilter->text().trimmed().toUpper() );
-  _settings.setValue( "/Welt2000/HomeRadius", welt2000HomeRadius->value() );
-  _settings.setValue( "/Welt2000/LoadOutlandings", welt2000ReadOl->isChecked() );
-
-  emit downloadWelt2000( false );
 }
 
 void KFLogConfig::slotDownloadOpenAipAs()
@@ -2704,32 +2574,6 @@ bool KFLogConfig::__checkOpenAipCountryInput( QString& input )
   return true;
 }
 
-bool KFLogConfig::__checkWelt2000Input( QString& input )
-{
-  QRegExp rx("[A-Za-z]{2}([ ,;][A-Za-z]{2})*");
-  QRegExpValidator v(rx, 0);
-
-  int pos = 0;
-
-  QValidator::State state = v.validate( input, pos );
-
-  if( state != QValidator::Acceptable )
-    {
-      // Popup a warning message box
-      QMessageBox::warning( this,
-                            tr("Wrong country entries"),
-                            "<html>" +
-                            tr("Please check the Welt2000 country entries!") +
-                            "<br><br>" +
-                            tr("The expected format is a two letter country code separated by spaces") +
-                            "</html>",
-                            QMessageBox::Ok );
-      return false;
-    }
-
-  return true;
-}
-
 QByteArray KFLogConfig::rot47( const QByteArray& input )
 {
   // const char* a0 = "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
@@ -2767,12 +2611,10 @@ void KFLogConfig::slotPointSourceChanged( int index )
   if( index == 0 )
     {
       m_openAipGroup->setVisible( true );
-      m_welt2000Group->setVisible( false );
     }
   else
     {
       m_openAipGroup->setVisible( false );
-      m_welt2000Group->setVisible( true );
     }
 }
 
@@ -2913,23 +2755,6 @@ bool KFLogConfig::setGuiLanguage( QString newLanguage )
     }
 
   return ok;
-}
-
-void KFLogConfig::slotWelt2000UpdatePeriodChanged( int newValue )
-{
-  if( newValue == 1 )
-    {
-      welt2000UpdatePeriod->setSuffix( tr(" day") );
-    }
-  else
-    {
-      welt2000UpdatePeriod->setSuffix( tr(" days") );
-    }
-}
-
-void KFLogConfig::slotWelt2000UpdateStateChanged( int state )
-{
-  welt2000UpdatePeriod->setEnabled( state == Qt::Checked ? true : false );
 }
 
 void KFLogConfig::slotPointsOpenAipUpdatePeriodChanged( int newValue )

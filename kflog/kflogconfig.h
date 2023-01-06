@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2010 by Constantijn Neeteson, Heiner Lamprecht, Florian Ehinger
-**                   2011-2014 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -24,9 +24,9 @@
  *
  * \author Heiner Lamprecht, Florian Ehinger, Constantijn Neeteson, Axel Pauli
  *
- * \date 2000-2014
+ * \date 2000-2023
  *
- * \version 1.2
+ * \version 1.3
  */
 
 #ifndef KFLOG_CONFIG_H
@@ -83,7 +83,7 @@ class KFLogConfig : public QDialog
   /**
    * Define an enumeration type as point source index.
    */
-  enum PointSourceIndex { OpenAIP=0, Welt2000=1 };
+  enum PointSourceIndex { OpenAIP=0 };
 
   static QByteArray rot47( const QByteArray& input );
 
@@ -138,16 +138,6 @@ class KFLogConfig : public QDialog
 
   /** */
   void newDrawType(int type);
-
-  /**
-   * Emitted to request a Welt2000 file download.
-   */
-  void downloadWelt2000( bool askUser );
-
-  /**
-   * Emitted to request a Welt2000 update check.
-   */
-  void checkWelt20004Update();
 
   /**
    * Emitted to request point data reload after a configuration change.
@@ -307,11 +297,6 @@ class KFLogConfig : public QDialog
  void slotPointSourceChanged(int sourceIndex);
 
  /**
-  * Called if a Welt2000 file shall be downloaded.
-  */
- void slotDownloadWelt2000();
-
- /**
   * Called if openAIP airspace files shall be downloaded.
   */
  void slotDownloadOpenAipAs();
@@ -325,16 +310,6 @@ class KFLogConfig : public QDialog
   * Called to set all map elements to their default value.
   */
  void slotSetMapElements2Default();
-
- /**
-  * Called, if the Welt2000 update checkbox is clicked.
-  */
- void slotWelt2000UpdateStateChanged( int state );
-
- /**
-  * Called, if the value in the Welt2000 update box is changed.
-  */
- void slotWelt2000UpdatePeriodChanged( int newValue );
 
  /**
   * Called, if the openAIP point update checkbox is clicked.
@@ -417,16 +392,6 @@ class KFLogConfig : public QDialog
   bool __checkOpenAipCountryInput( QString& input );
 
   /**
-   * Checks the Welt2000 country input for correctness. If not correct a message
-   * box is popup to inform the user about that fact.
-   *
-   * \param input String to be checked
-   *
-   * \return true if checked string is ok otherwise false
-   */
-  bool __checkWelt2000Input( QString& input );
-
-  /**
    * Sets the entries in the language combo box.
    */
   void __setLanguageEntriesInBox();
@@ -485,12 +450,6 @@ class KFLogConfig : public QDialog
   QSpinBox* solidPenWidth;
   QSpinBox* enginePenWidth;
 
-  QLineEdit* welt2000CountryFilter;
-  QSpinBox*  welt2000HomeRadius;
-  QCheckBox* welt2000ReadOl;
-  QCheckBox* welt2000EnableUpdates;
-  QSpinBox*  welt2000UpdatePeriod;
-
   QComboBox* pointsSourceBox;
   QLineEdit* pointsOpenAipCountries;
   QSpinBox*  pointsOpenAipHomeRadius;
@@ -505,26 +464,6 @@ class KFLogConfig : public QDialog
    * Initial value of home radius.
    */
   int m_wel2000HomeRadiusValue;
-
-  /**
-   * Initial value of country filter
-   */
-  QString m_welt2000CountryFilterValue;
-
-  /**
-   * Initial value of outlanding checkbox.
-   */
-  bool m_welt2000ReadOlValue;
-
-  /**
-   * Initial value of Welt2000 update checkbox.
-   */
-  bool m_welt2000UpdateCheck;
-
-  /**
-   * Initial value of Welt2000 update spinbox.
-   */
-  int m_welt2000UpdateValue;
 
   /**
    * Initial value of openAIP airfield home radius.
@@ -647,9 +586,6 @@ class KFLogConfig : public QDialog
 
   /** Table for openAIP point files to be loaded. */
   QTableWidget* m_pointFileTable;
-
-  /** Group box for Welt2000 airfield configuration widget. */
-  QGroupBox* m_welt2000Group;
 
   /** Group box for openAIP airfield configuration widget. */
   QGroupBox* m_openAipGroup;

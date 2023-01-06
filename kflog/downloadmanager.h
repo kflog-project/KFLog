@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c): 2010-2012 Axel Pauli
+**   Copyright (c): 2010-2023 Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -25,7 +25,7 @@
  * This class handles the HTTP download requests in Cumulus. Downloads
  * of different map files can be requested.
  *
- * \date 2010-2012
+ * \date 2010-2023
  */
 
 #ifndef DOWNLOAD_MANAGER_H
@@ -66,11 +66,6 @@ class DownloadManager : public QObject
 
    /** Sends a network error signal, if such problem occurred. */
    void networkError();
-
-   /**
-    *  Sends a finish signal if the Welt2000 file has been downloaded successfully.
-    */
-   void welt2000Downloaded();
 
    /**
     *  Sends a signal if an airspace file has been downloaded successfully.

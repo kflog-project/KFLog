@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Heiner Lamprecht
-**                   2011-2014 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -384,7 +384,7 @@ void MapConfig::slotReadConfig()
         PRINT_DNG_BRUSH_STYLE_1, PRINT_DNG_BRUSH_STYLE_2);
   __readAsOpacity(AS_DANGER, dangerOpacityList);
 
-  __readPenBrush(AS_LF, lowFPenList, lowFBorder, lowFBrushList,
+  __readPenBrush(AS_LF, suaPenList, suaBorder, suaBrushList,
         LOWF_COLOR_1, LOWF_COLOR_2, LOWF_COLOR_3, LOWF_COLOR_4,
         PRINT_LOWF_COLOR_1, PRINT_LOWF_COLOR_2,
         LOWF_PEN_1, LOWF_PEN_2, LOWF_PEN_3, LOWF_PEN_4,
@@ -397,7 +397,7 @@ void MapConfig::slotReadConfig()
         LOWF_BRUSH_STYLE_1, LOWF_BRUSH_STYLE_2,
         LOWF_BRUSH_STYLE_3, LOWF_BRUSH_STYLE_4,
         PRINT_LOWF_BRUSH_STYLE_1, PRINT_LOWF_BRUSH_STYLE_2);
-  __readAsOpacity(AS_LF, lowFOpacityList);
+  __readAsOpacity(AS_LF, suaOpacityList);
 
   __readPenBrush(AS_RESTRICTED, restrPenList, restrBorder, restrBrushList,
         RES_COLOR_1, RES_COLOR_2, RES_COLOR_3, RES_COLOR_4,
@@ -747,8 +747,8 @@ QPen& MapConfig::__getPen( unsigned int typeID, int sIndex )
       case BaseMapElement::Danger:
       case BaseMapElement::Prohibited:
           return dangerPenList[sIndex];
-      case BaseMapElement::LowFlight:
-          return lowFPenList[sIndex];
+      case BaseMapElement::Sua:
+          return suaPenList[sIndex];
       case BaseMapElement::Restricted:
           return restrPenList[sIndex];
       case BaseMapElement::Rmz:
@@ -804,8 +804,8 @@ int MapConfig::getAsOpacity( uint asType )
       case BaseMapElement::Danger:
       case BaseMapElement::Prohibited:
           return dangerOpacityList[scaleIndex];
-      case BaseMapElement::LowFlight:
-          return lowFOpacityList[scaleIndex];
+      case BaseMapElement::Sua:
+          return suaOpacityList[scaleIndex];
       case BaseMapElement::Restricted:
           return restrOpacityList[scaleIndex];
       case BaseMapElement::Rmz:
@@ -875,8 +875,8 @@ bool MapConfig::isBorder( unsigned int typeID )
       case BaseMapElement::Danger:
       case BaseMapElement::Prohibited:
           return dangerBorder[scaleIndex];
-      case BaseMapElement::LowFlight:
-          return lowFBorder[scaleIndex];
+      case BaseMapElement::Sua:
+          return suaBorder[scaleIndex];
       case BaseMapElement::Restricted:
           return restrBorder[scaleIndex];
       case BaseMapElement::Rmz:
@@ -1005,8 +1005,8 @@ QBrush& MapConfig::__getBrush(unsigned int typeID, int index)
       case BaseMapElement::Danger:
       case BaseMapElement::Prohibited:
           return dangerBrushList[index];
-      case BaseMapElement::LowFlight:
-          return lowFBrushList[index];
+      case BaseMapElement::Sua:
+          return suaBrushList[index];
       case BaseMapElement::Restricted:
           return restrBrushList[index];
       case BaseMapElement::Rmz:

@@ -7,18 +7,14 @@
                              -------------------
     begin                : Fri Nov 30 2001
     copyright            : (C) 2001 by Harald Maier
-                               2011-2014 by Axel Pauli
+                               2011-2023 by Axel Pauli
 
     This file is distributed under the terms of the General Public
     License. See the file COPYING for more information.
 
 ***************************************************************************/
 
-#ifdef QT_5
-    #include <QtWidgets>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
 
 #include "airfield.h"
 #include "kflogconfig.h"
@@ -345,7 +341,7 @@ void WaypointTreeView::slotOpenWaypointCatalog()
                                          _mainWindow->getApplicationDataDirectory() ).toString();
 
   QString filter;
-  filter.append(tr("All formats") + " (WELT2000.TXT *.da4 *.DA4 *.dat *.DAT *.dbt *.DBT *.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
+  filter.append(tr("All formats") + " (*.da4 *.DA4 *.dat *.DAT *.dbt *.DBT *.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
   filter.append(tr("KFLog") + " (*.kflogwp *.KFLOGWP);;");
   filter.append(tr("Cumulus") + " (*.kwp *.KWP);;");
   filter.append(tr("Cambridge") + " (*.dat *.DAT);;");
@@ -353,7 +349,6 @@ void WaypointTreeView::slotOpenWaypointCatalog()
   filter.append(tr("Filser da4") + " (*.da4 *.DA4);;");
   filter.append(tr("SeeYou") + " (*.cup *.CUP);;");
   filter.append(tr("Volkslogger") + " (*.dbt *.DBT);;" );
-  filter.append(tr("Welt2000") + " (WELT2000.TXT)");
 
   QString fName = QFileDialog::getOpenFileName( this,
                                                 tr("Open waypoint catalog"),
@@ -913,7 +908,7 @@ void WaypointTreeView::slotImportWaypointCatalog()
                                          _mainWindow->getApplicationDataDirectory() ).toString();
 
   QString filter;
-  filter.append(tr("All formats") + " (WELT2000.TXT *.dat *.DAT *.dbt *.DBT *.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
+  filter.append(tr("All formats") + " (*.dat *.DAT *.dbt *.DBT *.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
   filter.append(tr("KFLog") + " (*.kflogwp *.KFLOGWP);;");
   filter.append(tr("Cumulus") + " (*.kwp *.KWP);;");
   filter.append(tr("Cambridge") + " (*.dat *.DAT);;");
@@ -921,7 +916,6 @@ void WaypointTreeView::slotImportWaypointCatalog()
   filter.append(tr("Filser da4") + " (*.da4 *.DA4);;");
   filter.append(tr("SeeYou") + " (*.cup *.CUP);;");
   filter.append(tr("Volkslogger") + " (*.dbt *.DBT);;" );
-  filter.append(tr("Welt2000") + " (WELT2000.TXT)");
 
   QString fName = QFileDialog::getOpenFileName( this,
                                                 tr("Import waypoints from catalog"),

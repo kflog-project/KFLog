@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Harald Maier
-**                   2011-2014 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -24,9 +24,9 @@
  * Class for waypoint catalog management. Different file formats can be read
  * and written by this class.
  *
- * \date 2001-2014
+ * \date 2001-2023
  *
- * \version $Id$
+ * \version 1.1
  */
 
 #ifndef WAYPOINT_CATALOG_H
@@ -74,8 +74,6 @@ public:
   bool readFilserDA4 (const QString& catalog);
   /** Reads a SeeYou cup file, only waypoint part */
   bool readCup (const QString& catalog);
-  /** creates a waypoint catalog from a Welt2000 file. */
-  bool readWelt2000(const QString& catalog);
   /** Reads a Cambridge Aero Instruments turnpoint file. */
   bool readDat(const QString &catalog);
   /** Reads a Volkslogger waypoint file. */

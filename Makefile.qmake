@@ -1,7 +1,7 @@
 ################################################################################
-# Makefile to build a KFLog release based on Linux and Qt4.8.x or Qt5.x
+# Makefile to build a KFLog release based on Linux and Qt5.x
 #
-# Copyright (c): 2010-2014 by Axel Pauli (kflog.cumulus@gmail.com)
+# Copyright (c): 2010-2023 by Axel Pauli (kflog.cumulus@gmail.com)
 # 
 # This file is distributed under the terms of the General Public License.
 #

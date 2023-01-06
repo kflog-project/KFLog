@@ -7,7 +7,7 @@
  ************************************************************************
  **
  **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
- **                   2010-2014 by Axel Pauli
+ **                   2010-2023 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -19,11 +19,7 @@
 #endif
 #include <cmath>
 
-#ifdef QT_5
-    #include <QtWidgets>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
 #include <QtXml>
 
 #include "airfield.h"
@@ -46,7 +42,6 @@
 #include "openairparser.h"
 #include "radiopoint.h"
 #include "singlepoint.h"
-#include "welt2000.h"
 #include "wgspoint.h"
 
 // number of last map tile, possible range goes 0...16200
@@ -104,7 +99,6 @@ MapContents::MapContents( QObject* object ) :
   loadPoints(true),
   loadAirspaces(true),
   m_downloadManger(0),
-  m_downloadMangerW2000(0),
   m_downloadOpenAipAsManger(0),
   m_downloadOpenAipPoiManger(0),
   m_currentFlightListIndex(-1)
@@ -265,150 +259,6 @@ void MapContents::slotNetworkError()
   QMessageBox::warning( _mainWindow,
                         tr("Network Error"),
                         msg );
-}
-
-void MapContents::slotCheckWelt20004Update()
-{
-  if( _settings.value( "/Points/Source", KFLogConfig::OpenAIP ).toInt() != KFLogConfig::Welt2000 )
-    {
-      // Welt2000 is not selected as point data source.
-      return;
-    }
-
-  // Get update period as days. Default are 30 days.
-  const int days = _settings.value( "/Welt2000/UpdatePeriod", 30 ).toInt();
-
-  Welt2000 w2000;
-
-  if( w2000.check4update( days ) == true )
-    {
-      slotDownloadWelt2000( true );
-    }
-}
-
-/**
- * This slot is called to download the Welt2000 file from the Internet.
- */
-void MapContents::slotDownloadWelt2000(bool askUser)
-{
-  if( askUser == true && __askUserForDownload( tr("Welt2000 airfield")) != Automatic )
-    {
-      qDebug() << "Welt2000: Auto Download Inhibited";
-      return;
-    }
-
-  if( m_downloadMangerW2000 == static_cast<DownloadManager *> (0) )
-    {
-      m_downloadMangerW2000 = new DownloadManager(this);
-
-      connect( m_downloadMangerW2000, SIGNAL(finished( int, int )),
-               this, SLOT(slotWelt2000DownloadFinished( int, int )) );
-
-      connect( m_downloadMangerW2000, SIGNAL(networkError()),
-               this, SLOT(slotNetworkError()) );
-
-      connect( m_downloadMangerW2000, SIGNAL(status(const QString&)),
-               _mainWindow, SLOT(slotSetStatusMsg(const QString &)) );
-    }
-
-  QString welt2000FileName = _settings.value( "/Welt2000/FileName", "WELT2000.TXT").toString();
-  QString welt2000Link     = _settings.value( "/Welt2000/Link", "http://www.segelflug.de/vereine/welt2000/download").toString();
-
-  _settings.setValue( "/Welt2000/FileName", welt2000FileName );
-  _settings.setValue( "/Welt2000/Link", welt2000Link );
-
-  QString url  = welt2000Link + "/" + welt2000FileName;
-  QString dest = getMapRootDirectory() + "/points/WELT2000.TXT.new";
-
-  m_downloadMangerW2000->downloadRequest( url, dest );
-}
-
-/**
- * Called, if the Welt2000 file download is finished successfully.
- */
-void MapContents::slotWelt2000DownloadFinished( int requests, int errors )
-{
-  qDebug() << "MapContents::slotWelt2000DownloadFinished():" << requests << errors;
-
-  // All has finished, free not more needed resources
-  m_downloadMangerW2000->deleteLater();
-  m_downloadMangerW2000 = static_cast<DownloadManager *> (0);
-
-  // Check, if the file content of the new Welt2000 file has been changed.
-  QString curW2000 = getMapRootDirectory() + "/points/WELT2000.TXT";
-  QString newW2000 = getMapRootDirectory() + "/points/WELT2000.TXT.new";
-
-  QFileInfo curFi(curW2000);
-  QFileInfo newFi(newW2000);
-
-  if( newFi.exists() == false )
-    {
-      // No new file available, abort further processing.
-      return;
-    }
-
-  if( curFi.exists() == false || curFi.size() != newFi.size() )
-    {
-      // Current file is not available or file sizes are different.
-      // Rename new file and initiate a load of it.
-      rename( newW2000.toLatin1().data(), curW2000.toLatin1().data() );
-      slotReloadPointData();
-      return;
-    }
-
-  // Compare both files, line by line
-  QFile curFile(curW2000);
-  QFile newFile(newW2000);
-
-  bool differ = false;
-
-  bool curOk = curFile.open( QIODevice::ReadOnly );
-
-  if( curOk == false )
-    {
-      return;
-    }
-
-  bool newOk = newFile.open( QIODevice::ReadOnly );
-
-  if( newOk == false )
-    {
-      curFile.close();
-      return;
-    }
-
-  while( true )
-    {
-      QByteArray curBA = curFile.readLine();
-      QByteArray newBA = newFile.readLine();
-
-      if( curBA.size() == 0 || newBA.size() == 0 )
-        {
-          // EOF or error, do break only
-          break;
-        }
-
-      if( curBA.contains(newBA) == false )
-        {
-          // both do differ, do break
-          differ = true;
-          break;
-        }
-    }
-
-  curFile.close();
-  newFile.close();
-
-  QFile::remove( curW2000 );
-  QFile::rename( newW2000, curW2000 );
-
-  if( differ == true )
-    {
-      slotReloadPointData();
-    }
-
-  qDebug() << "MapContents::slotWelt2000DownloadFinished(): no difference between old and new";
-  return;
 }
 
 void MapContents::slotReloadPointData()
@@ -1609,19 +1459,6 @@ void MapContents::proofeSection(bool isPrint)
             {
               // No openAIP point data loaded, try to download any.
               QTimer::singleShot(500, this, SLOT(slotGetOpenAipPoints()));
-            }
-        }
-      else if( pointSource == 1 )
-        {
-          // At first try a load of welt2000, that airfield data are available
-          Welt2000 welt2000;
-          bool loadOk = welt2000.load( airfieldList, gliderfieldList, outLandingList );
-
-          if( loadOk == false )
-            {
-              // Welt2000 update available or load failed, try to download a new
-              // Welt2000 File from the Internet web page.
-              slotDownloadWelt2000( true );
             }
         }
     }

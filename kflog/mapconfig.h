@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Heiner Lamprecht
-**                   2011-2014 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -25,9 +25,9 @@
  * and printing map-elements. To avoid problems, there should be only
  * one element per application.
  *
- * \date 2001-2014
+ * \date 2001-2023
  *
- * \version 1.0
+ * \version 1.1
  */
 
 #ifndef MAP_CONFIG_H
@@ -381,8 +381,8 @@ private:
   QList<QPen> ctrPenList;
   QList<QBrush> ctrBrushList;
 
-  QList<QPen> lowFPenList;
-  QList<QBrush> lowFBrushList;
+  QList<QPen> suaPenList;
+  QList<QBrush> suaBrushList;
 
   QList<QPen> dangerPenList;
   QList<QBrush> dangerBrushList;
@@ -435,7 +435,7 @@ private:
   QList<int> airFOpacityList;
   QList<int> airFirOpacityList;
   QList<int> ctrOpacityList;
-  QList<int> lowFOpacityList;
+  QList<int> suaOpacityList;
   QList<int> dangerOpacityList;
   QList<int> restrOpacityList;
   QList<int> rmzOpacityList;
@@ -459,7 +459,7 @@ private:
   bool airFirBorder[6];
   bool ctrBorder[6];
   bool dangerBorder[6];
-  bool lowFBorder[6];
+  bool suaBorder[6];
   bool restrBorder[6];
   bool rmzBorder[6];
   bool tmzBorder[6];

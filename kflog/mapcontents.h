@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
-**                   2010-2014 by Axel Pauli
+**                   2010-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -25,9 +25,9 @@
  * It takes control over loading all needed map-files.
  * The class contains several QPtrLists holding the map elements.
  *
- * \date 2000-2014
+ * \date 2000-2023
  *
- * \version 1.1
+ * \version 1.2
  */
 
 #ifndef MAP_CONTENTS_H
@@ -382,11 +382,6 @@ class MapContents : public QObject
   void updateFlightAirspaceIntersections();
 
   /**
-   * This slot is called to download the Welt2000 file from the Internet.
-   */
-  void slotDownloadWelt2000(bool askUser);
-
-  /**
    * Reload point data. Can be called after a configuration change or
    * after a download update.
    */
@@ -419,12 +414,6 @@ class MapContents : public QObject
    */
   void slotCheckOpenAipAsData4Update();
 
-  /**
-   * Called to check, if a Welt2000 point data update is necessary. The update
-   * day period is defined in the configuration data.
-   */
-  void slotCheckWelt20004Update();
-
  private slots:
 
   /** Called, if all downloads are finished. */
@@ -432,9 +421,6 @@ class MapContents : public QObject
 
   /** Called, if a network error occurred during the downloads. */
   void slotNetworkError();
-
-  /** Called, if a WELT2000.TXT download is finished. */
-  void slotWelt2000DownloadFinished( int requests, int errors );
 
   /** Called, if all openAIP airspace file downloads are finished. */
   void slotOpenAipAsDownloadsFinished( int requests, int errors );
@@ -739,7 +725,7 @@ class MapContents : public QObject
    * Array containing the used elevation levels in meters. Is used as help
    * for reverse mapping elevation to array index.
    */
-  static const short isoLevels[ISO_LINE_LEVELS];
+  static const short isoLevels[ ISO_LINE_LEVELS ];
 
   /**
    * Hash table with elevation in meters as key and related elevation
@@ -766,9 +752,6 @@ class MapContents : public QObject
 
   /** Manager to handle downloads of missing map file. */
   DownloadManager *m_downloadManger;
-
-  /** Manager to handle download of WELT2000.TXT file. */
-  DownloadManager *m_downloadMangerW2000;
 
   /** Manager to handle downloads of requested openAIP airspace files. */
   DownloadManager *m_downloadOpenAipAsManger;

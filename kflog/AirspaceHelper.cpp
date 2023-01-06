@@ -8,7 +8,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2014 by Axel Pauli <kflog.cumulus@gmail.com>
+**   Copyright (c):  2014-2023 by Axel Pauli <kflog.cumulus@gmail.com>
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -145,7 +145,7 @@ void AirspaceHelper::loadAirspaceTypeMapping()
   m_airspaceTypeMap.insert("Danger", BaseMapElement::Danger);
   m_airspaceTypeMap.insert("Restricted", BaseMapElement::Restricted);
   m_airspaceTypeMap.insert("Prohibited", BaseMapElement::Prohibited);
-  m_airspaceTypeMap.insert("LowFlight", BaseMapElement::LowFlight);
+  m_airspaceTypeMap.insert("SUA", BaseMapElement::Sua);
   m_airspaceTypeMap.insert("Rmz", BaseMapElement::Rmz);
   m_airspaceTypeMap.insert("Tmz", BaseMapElement::Tmz);
   m_airspaceTypeMap.insert("GliderSector", BaseMapElement::GliderSector);

@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  1999-2000 by Heiner Lamprecht, Florian Ehinger
-**                   2010-2014 by Axel Pauli
+**                   2010-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -95,7 +95,7 @@
 #define CONTROL_ZONE     28
 #define _NOT_USED_       29
 #define DANGER           30
-#define LOW_FLIGHT       31
+#define SUA              31 // Special Use Airspace (SUA)
 #define RESTRICTED       32
 #define TMZ              33
 #define OBSTACLE         34

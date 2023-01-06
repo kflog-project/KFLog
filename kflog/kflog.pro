@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# KFLog qmake project file for Qt4 and Qt5
+# KFLog qmake project file for Qt5
 #
 ###############################################################################
 
@@ -134,7 +134,6 @@ SOURCES = \
     waypointdialog.cpp \
     waypointimpfilterdialog.cpp \
     waypointtreeview.cpp \
-    welt2000.cpp \
     wgspoint.cpp \
     whatsthat.cpp
     
@@ -220,7 +219,6 @@ HEADERS = \
     waypointdialog.h \
     waypointimpfilterdialog.h \
     waypointtreeview.h \
-    welt2000.h \
     wgspoint.h \
     whatsthat.h
     
