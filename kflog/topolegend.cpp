@@ -7,19 +7,14 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by André Somers
+**                   2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
-#ifdef QT_5
-    #include <QtWidgets>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
 
 #include "topolegend.h"
 #include "mapconfig.h"
@@ -93,7 +88,7 @@ TopoLegend::TopoLegend( QWidget* parent ) :
           label->setText( QString("%1 - %2 m").arg(levels[i]).arg(levels[i + 1]) );
         }
 
-      label->setMinimumWidth( fm.width(label->text()) + 10 );
+      label->setMinimumWidth( fm.horizontalAdvance(label->text()) + 10 );
 
       label->setAutoFillBackground( true );
       label->setBackgroundRole( QPalette::Window );
