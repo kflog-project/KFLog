@@ -7,7 +7,7 @@
  ************************************************************************
  **
  **   Copyright (c):  2005      by André Somers
- **                   2009-2014 by Axel Pauli
+ **                   2009-2023 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -50,7 +50,7 @@ OpenAirParser::~OpenAirParser()
 
 bool OpenAirParser::parse(const QString& path, QList<Airspace>& list)
 {
-  QTime t;
+  QElapsedTimer t;
   t.start();
   QFile source(path);
 
@@ -98,7 +98,7 @@ bool OpenAirParser::parse(const QString& path, QList<Airspace>& list)
     }
 
   QFileInfo fi( path );
-  qDebug( "OpenAirParser: %d airspace objects read from file %s in %dms",
+  qDebug( "OpenAirParser: %d airspace objects read from file %s in %lldms",
           _objCounter, fi.fileName().toLatin1().data(), t.elapsed() );
 
   source.close();
@@ -153,16 +153,16 @@ void OpenAirParser::parseLine(QString& line)
 #endif
 
       if( asName.startsWith("RMZ ") )
-	{
-	  // The OpenAir file of the DAeC uses a workaroud for RMZ airspaces.
-	  // Such airspaces are declared as airspace D and they have an remark
-	  // in its name.
-	  // Example: AN RMZ Barth
-	  // We do remap this airspace from D to RMZ
-	  asName = asName.mid(4); // remove prefix RMZ
-	  asType = BaseMapElement::Rmz;
-	  return;
-	}
+        {
+          // The OpenAir file of the DAeC uses a workaroud for RMZ airspaces.
+          // Such airspaces are declared as airspace D and they have an remark
+          // in its name.
+          // Example: AN RMZ Barth
+          // We do remap this airspace from D to RMZ
+          asName = asName.mid(4); // remove prefix RMZ
+          asType = BaseMapElement::Rmz;
+          return;
+        }
 
       return;
     }
