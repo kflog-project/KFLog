@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by André Somers
-**                   2011-2014 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -26,13 +26,12 @@
   * possibly more in the future. The loaded objects are represented in a
   * tree view, giving easy access to each object to the user.
   *
-  * \date 2003-2014
+  * \date 2003-2023
   *
-  * \version 1.1
+  * \version 1.2
   */
 
-#ifndef OBJECT_TREE_H
-#define OBJECT_TREE_H
+#pragma once
 
 #include "flight.h"
 #include "flightgroup.h"
@@ -289,5 +288,3 @@ protected:
   /** No descriptions */
   void addTaskWindow(QWidget *parent);
 };
-
-#endif

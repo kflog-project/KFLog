@@ -739,7 +739,7 @@ void ObjectTree::slotSaveTask()
     quint16 head2 = ( head1 <= 18 ) ? (head1 + 18) : (head1 - 18);
 
     child.setAttribute( "Landable", (head1 > 0) ? true : false );
-    child.setAttribute( "Runway", head1 * 256 + head2 & 0xff );
+    child.setAttribute( "Runway", head1 * 256 + (head2 & 0xff) );
     child.setAttribute( "Length", (int) rwy.getLength() );
     child.setAttribute( "Surface", rwy.getSurface() );
     t.appendChild(child);
@@ -864,7 +864,7 @@ void ObjectTree::slotSaveAllTask()
         quint16 head2 = ( head1 <= 18 ) ? (head1 + 18) : (head1 - 18);
 
         child.setAttribute( "Landable", (head1 > 0) ? true : false );
-        child.setAttribute( "Runway", head1 * 256 + head2 & 0xff );
+        child.setAttribute( "Runway", head1 * 256 + (head2 & 0xff) );
         child.setAttribute( "Length", (int) rwy.getLength() );
         child.setAttribute( "Surface", rwy.getSurface() );
         t.appendChild(child);
