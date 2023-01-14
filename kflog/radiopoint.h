@@ -7,21 +7,22 @@
  ************************************************************************
  **
  **   Copyright (c):  2000      by Heiner Lamprecht, Florian Ehinger
- **                   2008-2014 by Axel Pauli
+ **                   2008-2023 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
  **
  ***********************************************************************/
 
-#ifndef RADIO_POINT_H
-#define RADIO_POINT_H
+#pragma once
 
 #include <climits>
 
+#include <QList>
 #include <QPoint>
 #include <QString>
 
+#include "Frequency.h"
 #include "singlepoint.h"
 
 /**
@@ -29,27 +30,39 @@
  *
  * \author Heiner Lamprecht, Florian Ehinger, Axel Pauli
  *
- * \brief This class provides a map element for radio navigation aids.
+ * \brief This class provides a map element for radio-navigation-facilities.
  *
- * This class provides a map element for radio navigation aids. It is
+ * This class provides a map element for radio navigation facilities. It is
  * derived from \ref SinglePoint. This class is used for: VOR, VORDME, VORTAC,
  * NDB and CompPoint.
  *
  * @see BaseMapElement#objectType
  *
- * \date 2000-2014
+ * \date 2000-2023
  */
 
 class RadioPoint : public SinglePoint
 {
   public:
 
+  enum RadioType {
+    // The navaid types. Possible values:
+    dme=0,
+    tacan=1,
+    ndb=2,
+    vor=3,
+    vor_dme=4,
+    vortac=5,
+    dvor=6,
+    dvor_dme=7,
+    dvortac=8
+  };
+
   /**
    * Default constructor
    */
   RadioPoint() :
     SinglePoint(),
-    m_frequency(0.0),
     m_range(0.0),
     m_declination(SHRT_MIN),
     m_aligned2TrueNorth(false)
@@ -65,7 +78,7 @@ class RadioPoint : public SinglePoint
    * @param  typeID The type identifier.
    * @param  wgsPos The original WGS84 position.
    * @param  pos    The projected position.
-   * @param  frequency  The frequency.
+   * @param  frequencyList A list with the frequency objects
    * @param  channel The channel.
    * @param  elevation The elevation.
    * @param  country The country location.
@@ -79,7 +92,7 @@ class RadioPoint : public SinglePoint
               BaseMapElement::objectType typeID,
               const WGSPoint& wgsPos,
               const QPoint& pos,
-              const float frequency,
+              const QList<Frequency> frequencyList,
               const QString channel = "",
               const float elevation = 0.0,
               const QString country = "",
@@ -113,21 +126,27 @@ class RadioPoint : public SinglePoint
   QString getInfoString();
 
   /**
-   * @return The frequency
+   * @return The frequency as string.
    */
-  QString frequencyAsString() const
+  QString frequencyAsString( const float frequency ) const
     {
-      return (m_frequency > 0) ? QString("%1").arg(m_frequency, 0, 'f', 3) : QString("");
+      return (frequency > 0) ? QString("%1").arg(frequency, 0, 'f', 3) : QString("");
     };
 
-  float getFrequency() const
+  /**
+   * @return The frequency list of the airfield.
+   */
+  QList<Frequency>& getFrequencyList()
     {
-      return m_frequency;
+      return m_frequencyList;
     };
 
-  void setFrequency( const float value)
+  /**
+   * @param freq The frequency and its type.
+   */
+  void addFrequency( Frequency freqencyAndType )
     {
-      m_frequency = value;
+      m_frequencyList.append( freqencyAndType );
     };
 
   QString getChannel() const
@@ -194,10 +213,11 @@ class RadioPoint : public SinglePoint
   QString getAdditionalText() const;
 
  protected:
+
   /**
-   * The frequency
-   */
-  float m_frequency;
+  * All frequencies of the radio point.
+  */
+  QList<Frequency> m_frequencyList;
 
   /**
    * The channel.
@@ -224,5 +244,3 @@ class RadioPoint : public SinglePoint
    */
   bool m_aligned2TrueNorth;
 };
-
-#endif

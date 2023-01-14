@@ -7,18 +7,16 @@
  ************************************************************************
  **
  **   Copyright (c):  2000      by Heiner Lamprecht, Florian Ehinger
- **                   2008-2014 by Axel Pauli
+ **                   2008-2023 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
  **
  ***********************************************************************/
 
-#include <QtCore>
+#include <QtGui>
 
 #include "altitude.h"
-#include "distance.h"
-#include "mapconfig.h"
 #include "radiopoint.h"
 
 RadioPoint::RadioPoint(const QString& name,
@@ -27,7 +25,7 @@ RadioPoint::RadioPoint(const QString& name,
                        BaseMapElement::objectType type,
                        const WGSPoint& wgsP,
                        const QPoint& pos,
-                       const float frequency,
+                       const QList<Frequency> frequencyList,
                        const QString channel,
                        const float elevation,
                        const QString country,
@@ -35,7 +33,7 @@ RadioPoint::RadioPoint(const QString& name,
                        const float declination,
                        const bool aligned2TrueNorth ) :
   SinglePoint( name, shortName, type, wgsP, pos, elevation, country ),
-  m_frequency(frequency),
+  m_frequencyList(frequencyList),
   m_channel(channel),
   m_icao(icao),
   m_range(range),
@@ -97,9 +95,10 @@ QString RadioPoint::getInfoString()
 
   text += "<tr><td>" + QObject::tr("Frequency:") + "</td><td>";
 
-  if( m_frequency > 0.0 )
+  if( m_frequencyList.size() > 0.0 )
     {
-      text += "<b>" + frequencyAsString() + " " + QObject::tr("MHz") + "</b></td>";
+      text += "<b>" + frequencyAsString( m_frequencyList.at(0).getValue() ) +
+              "&nbsp;" + QObject::tr("MHz") + "</b></td>";
     }
   else
     {
