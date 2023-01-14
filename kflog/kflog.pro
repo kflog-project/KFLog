@@ -2,6 +2,8 @@
 #
 # KFLog qmake project file for Qt5
 #
+# Copyright (c): 2008-2023 Axel Pauli
+#
 ###############################################################################
 
 # version check for Qt 4.8
@@ -80,6 +82,7 @@ SOURCES = \
     evaluationdialog.cpp \
     evaluationframe.cpp \
     evaluationview.cpp \
+    filetools.cpp \
     flight.cpp \
     flightdataprint.cpp \
     flightgroup.cpp \
@@ -89,6 +92,7 @@ SOURCES = \
     flightrecorderpluginbase.cpp \
     flightselectiondialog.cpp \
     flighttask.cpp \
+    Frequency.cpp \
     helpwindow.cpp \
     httpclient.cpp \
     igc3ddialog.cpp \
@@ -129,6 +133,7 @@ SOURCES = \
     TaskEditor.cpp \
     tasklistviewitem.cpp \
     topolegend.cpp \
+    ThermalPoint.cpp \
     waypoint.cpp \
     waypointcatalog.cpp \
     waypointdialog.cpp \
@@ -160,6 +165,7 @@ HEADERS = \
     evaluationdialog.h \
     evaluationframe.h \
     evaluationview.h \
+    filetools.h \
     flight.h \
     flightdataprint.h \
     flightgroup.h \
@@ -170,6 +176,7 @@ HEADERS = \
     flightrecorderpluginbase.h \
     flightselectiondialog.h \
     flighttask.h \
+    Frequency.h \
     frstructs.h \
     gliders.h \
     helpwindow.h \
@@ -205,11 +212,12 @@ HEADERS = \
     projectionlambert.h \
     radiopoint.h \
     recorderdialog.h \
+    resource.h \
     rowdelegate.h \
+    runway.h \
     singlepoint.h \
     Speed.h \
-    resource.h \
-    runway.h \
+    ThermalPoint.h \
     taskdataprint.h \
     TaskEditor.h \
     tasklistviewitem.h \
