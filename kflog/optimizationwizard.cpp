@@ -8,18 +8,16 @@
 **
 ** Created: Sam Mär 8 12:18:37 2003
 **
+************************************************************************
+**
+**   Copyright (c): 2023 by Axel Pauli
+**
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
-****************************************************************************/
+***********************************************************************/
 
-#ifdef QT_5
-    #include <QtWidgets>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
 
 #include "mainwindow.h"
 #include "optimizationwizard.h"
@@ -240,8 +238,8 @@ void OptimizationWizard::slotStartOptimization()
   btnStart->setEnabled(true);
 
   QString text, distText, rawPointText;
-  rawPointText.sprintf(" %.2f", points);
-  distText.sprintf(" %.2f km  ", distance);
+  rawPointText = rawPointText.asprintf(" %.2f", points);
+  distText = distText.asprintf(" %.2f km  ", distance);
 
   text = "<div align=\"center\"<caption><b>";
   text += tr("Optimization Result")+"</b></div><table align=\"center\" CELLPADDING=3><thead><tr>";

@@ -8,15 +8,16 @@
 **
 ** Created: Sam Mär 8 12:18:37 2003
 **
+************************************************************************
+**
+**   Copyright (c): 2023 by Axel Pauli
+**
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
-****************************************************************************/
+***********************************************************************/
 
-#ifndef OLC_OPTIMIZATION_H
-#define OLC_OPTIMIZATION_H
+#pragma once
 
 #include <QGroupBox>
 #include <QLabel>
@@ -83,5 +84,3 @@ protected slots:
   virtual void languageChange();
 
 };
-
-#endif // OLC_OPTIMIZATION_H
