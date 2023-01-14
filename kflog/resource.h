@@ -14,8 +14,7 @@
 **
 ***********************************************************************/
 
-#ifndef RESSOURCE_H
-#define RESSOURCE_H
+#pragma once
 
 /*
  * Definiert Macros zur Festlegung des Datei-Headers von KFLog-Karten
@@ -137,7 +136,7 @@
 #define AIR_UKN          71 // unknown airspace
 #define TACAN            72 // Tactical Air Navigation (TACAN)
 #define RMZ              73 // Radio Mandatory Zone (RMZ)
-
+#define AIR_G            74 // Airspace G
 /*
  * In einigen ASCII-Dateien taucht der Typ 71 für Kanäle auf,
  * ausserdem gibt es einen Typ für Grenzen in Seen!
@@ -173,5 +172,3 @@
 #define LM_STATION    15
 #define LM_BRIDGE     16
 #define LM_FERRY      17
-
-#endif // RESOURCE_H
