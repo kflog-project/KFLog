@@ -6,17 +6,14 @@
  **
  ************************************************************************
  **
- **   Copyright (c):  2002 by Heiner Lamprecht, 2007 Axel Pauli
+ **   Copyright (c):  2002 by Heiner Lamprecht, 2007-2023 Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   Licence. See the file COPYING for more information.
  **
- **   $Id$
- **
  ***********************************************************************/
 
-#ifndef PROJECTIONBASE_H
-#define PROJECTIONBASE_H
+#pragma once
 
 #include "qdatastream.h"
 
@@ -85,5 +82,3 @@ void SaveProjection(QDataStream &, ProjectionBase *);
  * Loads a ProjectionBase derived projection from a stream
  */
 ProjectionBase * LoadProjection(QDataStream &);
-
-#endif

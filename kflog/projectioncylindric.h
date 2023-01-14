@@ -6,17 +6,14 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2002 by Heiner Lamprecht, 2007 Axel Pauli
+**   Copyright (c):  2002 by Heiner Lamprecht, 2007-2023 Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
-#ifndef PROJECTIONCYLINDRIC_H
-#define PROJECTIONCYLINDRIC_H
+#pragma once
 
 #include "projectionbase.h"
 
@@ -134,5 +131,3 @@ class ProjectionCylindric : public ProjectionBase
 
 
 };
-
-#endif

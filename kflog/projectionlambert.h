@@ -6,17 +6,14 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2002 by Heiner Lamprecht, 2007 Axel Pauli
+**   Copyright (c):  2002 by Heiner Lamprecht, 2007-2013 Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
-#ifndef PROJECTIONLAMBERT_H
-#define PROJECTIONLAMBERT_H
+#pragma once
 
 #include "projectionbase.h"
 
@@ -178,5 +175,3 @@ public:
 
   int i_origin;
 };
-
-#endif
