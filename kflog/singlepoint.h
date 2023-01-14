@@ -7,37 +7,31 @@
 ************************************************************************
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
-**                   2011-2014 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
 ***********************************************************************/
 
-#ifndef SINGLE_POINT_H
-#define SINGLE_POINT_H
-
-#include "basemapelement.h"
-
 /**
  * \class SinglePoint
  *
- * \brief Map element used for a point object definition.
- *
- * Map element used for point objects. The object can be one of:
- * UltraLight, HangGlider, Parachute, Balloon, Village
- * or Landmark.
- *
- * \see BaseMapElement#objectType
- * \see Airfield
- * \see RadioPoint
- *
  * \author Heiner Lamprecht, Florian Ehinger, Axel Pauli
  *
- * \date 2000-2014
+ * \brief Map element used for small point objects.
  *
- * \version 11.11.2014
+ * Map element used for small point objects like obstacles and reporting points.
+ *
+ * \date 2000-2023
+ *
+ * \version 1.2
  */
+
+#pragma once
+
+#include "basemapelement.h"
+#include "wgspoint.h"
 
 class SinglePoint : public BaseMapElement
 {
@@ -60,6 +54,7 @@ class SinglePoint : public BaseMapElement
    * @param  comment An additional comment related to the single point
    * @param  country The country where the point is located.
    * @param  secID  The map section ID
+   * @param compulsory The compulsory of the single point
    * @param  lmTyp Additional field (eg. for the population index for cities or the lm_typ)
    */
   SinglePoint( const QString& name,
@@ -71,6 +66,7 @@ class SinglePoint : public BaseMapElement
                const QString& comment = "",
                const QString& country = "",
                const unsigned short secID = 0,
+               const bool compulsory = false,
                unsigned int lmType = 0 );
   /**
    * Destructor
@@ -168,6 +164,22 @@ class SinglePoint : public BaseMapElement
     };
 
   /**
+   * @return the  short name of the element.
+   */
+  virtual QString getWPName() const
+    {
+      return shortName;
+    };
+
+  /**
+   * @param newName The new short name of the element.
+   */
+  virtual void setWPName( const QString& newName )
+    {
+      shortName = newName;
+    };
+
+  /**
    * @return the position in the current map.
    */
   virtual QPoint getMapPosition() const
@@ -218,6 +230,24 @@ class SinglePoint : public BaseMapElement
     };
 
   /**
+   * @return The compulsory of the single point.
+   */
+  virtual bool getCompulsory() const
+    {
+      return compulsory;
+    }
+
+  /**
+   * Sets the compulsory of the single point.
+   *
+   * @param newValue New country code of the element.
+   */
+  virtual void setCompulsory( bool value )
+    {
+      compulsory = value;
+    }
+
+  /**
    * Reimplemented from BaseMapElement.
    *
    * Proofs, if the object is in the drawing-area of the map.
@@ -251,14 +281,16 @@ protected:
    * The elevation.
    */
   float elevation;
+ /**
+   * Comment related to the single point.
+   */
+  QString comment;
+  /*
+   * Feature of single point.
+   */
+  bool compulsory;
   /**
    * Additional field
    */
   unsigned int lm_typ;
-  /**
-   * Comment related to the single point.
-   */
-  QString comment;
 };
-
-#endif

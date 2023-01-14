@@ -7,18 +7,14 @@
 ************************************************************************
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
-**                   2011-2014 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
 ***********************************************************************/
 
-#ifdef QT_5
-#include <QtWidgets>
-#else
 #include <QtGui>
-#endif
 
 #include "altitude.h"
 #include "singlepoint.h"
@@ -26,6 +22,7 @@
 SinglePoint::SinglePoint() :
   BaseMapElement(),
   elevation(0.0),
+  compulsory(false),
   lm_typ(0)
 {
 }
@@ -39,6 +36,7 @@ SinglePoint::SinglePoint( const QString& name,
                           const QString& comment,
                           const QString& country,
                           const unsigned short secID,
+                          const bool compulsory,
                           unsigned int lmType ) :
   BaseMapElement(name, typ, secID, country),
   wgsPosition(wgsP),
@@ -46,8 +44,9 @@ SinglePoint::SinglePoint( const QString& name,
   shortName(shortName),
   curPos(pos),
   elevation(elev),
-  lm_typ(lmType),
-  comment(comment)
+  comment(comment),
+  compulsory(compulsory),
+  lm_typ(lmType)
 {
 }
 
