@@ -7,25 +7,22 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by André Somers
-**                   2011-2014 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
 ***********************************************************************/
 
-#ifdef QT_5
-    #include <QtWidgets>
-    #include <QFileDialog>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
+#include <QFileDialog>
 #include <QtXml>
 
+#include "airspacelistviewitem.h"
 #include "flightgrouplistviewitem.h"
 #include "flightlistviewitem.h"
-#include "airspacelistviewitem.h"
 #include "flightselectiondialog.h"
+#include "Frequency.h"
 #include "mapcontents.h"
 #include "objecttree.h"
 #include "TaskEditor.h"
@@ -724,21 +721,27 @@ void ObjectTree::slotSaveTask()
     child.setAttribute("Latitude", w->origP.lat());
     child.setAttribute("Longitude", w->origP.lon());
     child.setAttribute("Elevation", w->elevation);
-    child.setAttribute("Frequency", w->frequency);
+
+    Frequency fq;
+    Frequency::getMainFrequency( w->frequencyList, fq );
+
+    child.setAttribute("Frequency", fq.getValue());
     child.setAttribute("Comment", w->comment);
 
     Runway rwy;
 
     if( w->rwyList.size() > 0 )
       {
-        rwy = w->rwyList[0];
+        rwy = Runway::getMainRunway( w->rwyList );
       }
 
-    child.setAttribute("Landable", rwy.m_isOpen);
-    child.setAttribute("Runway", rwy.m_heading.first * 256 + rwy.m_heading.second);
-    child.setAttribute("Length", (int) rwy.m_length);
-    child.setAttribute("Surface", rwy.m_surface);
+    quint16 head1 = rwy.getHeading() / 10;
+    quint16 head2 = ( head1 <= 18 ) ? (head1 + 18) : (head1 - 18);
 
+    child.setAttribute( "Landable", (head1 > 0) ? true : false );
+    child.setAttribute( "Runway", head1 * 256 + head2 & 0xff );
+    child.setAttribute( "Length", (int) rwy.getLength() );
+    child.setAttribute( "Surface", rwy.getSurface() );
     t.appendChild(child);
   }
 
@@ -843,21 +846,27 @@ void ObjectTree::slotSaveAllTask()
         child.setAttribute("Latitude", w->origP.lat());
         child.setAttribute("Longitude", w->origP.lon());
         child.setAttribute("Elevation", w->elevation);
-        child.setAttribute("Frequency", w->frequency);
+
+        Frequency fq;
+        Frequency::getMainFrequency( w->frequencyList, fq );
+
+        child.setAttribute("Frequency", fq.getValue());
         child.setAttribute("Comment", w->comment);
 
         Runway rwy;
 
         if( w->rwyList.size() > 0 )
           {
-            rwy = w->rwyList[0];
+            rwy = Runway::getMainRunway( w->rwyList );
           }
 
-        child.setAttribute("Landable", rwy.m_isOpen);
-        child.setAttribute("Runway", rwy.m_heading.first * 256 + rwy.m_heading.second);
-        child.setAttribute("Length", (int) rwy.m_length);
-        child.setAttribute("Surface", rwy.m_surface);
+        quint16 head1 = rwy.getHeading() / 10;
+        quint16 head2 = ( head1 <= 18 ) ? (head1 + 18) : (head1 - 18);
 
+        child.setAttribute( "Landable", (head1 > 0) ? true : false );
+        child.setAttribute( "Runway", head1 * 256 + head2 & 0xff );
+        child.setAttribute( "Length", (int) rwy.getLength() );
+        child.setAttribute( "Surface", rwy.getSurface() );
         t.appendChild(child);
       }
     }
