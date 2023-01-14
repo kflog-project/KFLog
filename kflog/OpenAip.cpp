@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2013-2014 by Axel Pauli <kflog.cumulus@gmail.com>
+**   Copyright (c):  2013-2023 by Axel Pauli <kflog.cumulus@gmail.com>
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -14,9 +14,9 @@
 ***********************************************************************/
 
 #include <QtCore>
-#include <QtXml>
 
 #include "AirspaceHelper.h"
+#include "distance.h"
 #include "mapcalc.h"
 #include "mapmatrix.h"
 #include "OpenAip.h"
@@ -28,140 +28,209 @@ OpenAip::OpenAip() :
   m_filterRadius(0.0),
   m_filterRunwayLength(0.0)
 {
-  m_supportedDataFormats << "1.0" << "1.1";
 }
 
 OpenAip::~OpenAip()
 {
 }
 
-bool OpenAip::getRootElement( QString fileName,
-                              QString& dataFormat,
-                              QString& dataItem )
+void OpenAip::loadUserFilterValues()
 {
+  m_countryFilterSet.clear();
+  m_filterRadius = 0.0;
+
+  m_homePosition = _globalMapMatrix->getHomeCoord();
+
+  QString cFilter = _settings.value( "/Points/Countries", "" ).toString().toUpper();
+
+  QStringList clist = cFilter.split( QRegExp("[, ]"), Qt::SkipEmptyParts );
+
+  for( int i = 0; i < clist.size(); i++ )
+    {
+      m_countryFilterSet.insert( clist.at(i) );
+    }
+
+  // Get filter radius around the home position in kilometers.
+  m_filterRadius = _settings.value( "/Points/HomeRadius", 0 ).toDouble();
+
+  // Get runway length filter in meters.
+  // m_filterRunwayLength = 0.0;
+}
+
+void OpenAip::fillRunwaySurfaceMapper()
+{
+  m_runwaySurfaceMapper.insert( 0, Runway::Asphalt );
+  m_runwaySurfaceMapper.insert( 1, Runway::Concrete );
+  m_runwaySurfaceMapper.insert( 2, Runway::Grass );
+  m_runwaySurfaceMapper.insert( 3, Runway::Sand );
+  m_runwaySurfaceMapper.insert( 4, Runway::Water );
+  m_runwaySurfaceMapper.insert( 5, Runway::Asphalt );
+  m_runwaySurfaceMapper.insert( 6, Runway::Stone );
+  m_runwaySurfaceMapper.insert( 7, Runway::Asphalt );
+  m_runwaySurfaceMapper.insert( 8, Runway::Stone );
+  m_runwaySurfaceMapper.insert( 9, Runway::Stone );
+  m_runwaySurfaceMapper.insert( 10, Runway::Clay );
+  m_runwaySurfaceMapper.insert( 11, Runway::Earth );
+  m_runwaySurfaceMapper.insert( 12, Runway::Gravel );
+  m_runwaySurfaceMapper.insert( 13, Runway::Earth );
+  m_runwaySurfaceMapper.insert( 14, Runway::Ice );
+  m_runwaySurfaceMapper.insert( 15, Runway::Snow );
+  m_runwaySurfaceMapper.insert( 16, Runway::Rubber );
+  m_runwaySurfaceMapper.insert( 17, Runway::Metal );
+  m_runwaySurfaceMapper.insert( 18, Runway::Metal );
+  m_runwaySurfaceMapper.insert( 19, Runway::Metal );
+  m_runwaySurfaceMapper.insert( 20, Runway::Wood );
+  m_runwaySurfaceMapper.insert( 21, Runway::Earth );
+  m_runwaySurfaceMapper.insert( 22, Runway::Unknown );
+}
+
+bool OpenAip::readSinglePoints( QString fileName,
+                                int type,
+                                QList<SinglePoint>& spList,
+                                QString& errorInfo,
+                                bool useFiltering )
+{
+  if( useFiltering )
+    {
+      // Load the user's defined filter data.
+      loadUserFilterValues();
+    }
+
   QFile file( fileName );
 
-  if( ! file.open(QIODevice::ReadOnly | QIODevice::Text) )
+  if( file.exists() && file.size() == 0 )
     {
-      qWarning() << "OpenAip::getRootElement: cannot open file:" << fileName;
+      errorInfo = QObject::tr("File %1 is empty").arg(fileName);
+      qWarning() << "OpenAip::readSinglePoints: File" << fileName << "is empty!";
       return false;
     }
 
-  QXmlStreamReader xml( &file );
-
-  int elementCounter = 0;
-
-  while( !xml.atEnd() && ! xml.hasError() )
+  if( ! file.open(QIODevice::ReadOnly | QIODevice::Text) )
     {
-      /* Read the next element from the stream.*/
-      QXmlStreamReader::TokenType token = xml.readNext();
+      errorInfo = QObject::tr("Cannot open file") + " " + fileName;
+      qWarning() << "OpenAip::readSinglePoints: cannot open file:" << fileName;
+      return false;
+    }
 
-      /* If token is just StartDocument, we'll go to next.*/
-      if( token == QXmlStreamReader::StartDocument )
+  QString content = file.readAll();
+  file.close();
+
+  QJsonParseError error;
+  QJsonDocument doc = QJsonDocument::fromJson( content.toUtf8(), &error );
+
+  qDebug() << fileName << "SinglePoints Json Parse result:" << error.errorString();
+
+  if( doc.isNull() == true )
+    {
+      errorInfo = QObject::tr("Json parser error for file: ") + fileName;
+      qWarning() << "OpenAip::readSinglePoints: file"
+                 << "'" + fileName + "'"
+                 << "Json parse error:"
+                 << error.errorString();
+      return false;
+    }
+
+  if( doc.isArray() == false )
+    {
+      errorInfo = QObject::tr("Json format error for file: ") + fileName;
+      qWarning() << "OpenAip::readSinglePoints: Error, expecting a Json array as first element";
+      return false;
+   }
+
+  QJsonArray array = doc.array();
+
+  qDebug() << "SinglePoints Doc is a Json Array of size:" << array.size();
+
+  // step over the json array to extract the single point objects
+  for( int i=0; i < array.size(); i++ )
+    {
+      QJsonObject object = array[i].toObject();
+      QString name;
+
+      if( object.contains("name") && object["name"].isString() )
         {
-          qDebug() << "OAIP: File=" << fileName
-                   << "DocVersion=" << xml.documentVersion().toString()
-                   << "DocEncoding=" << xml.documentEncoding().toString();
+          name = object["name"].toString();
+        }
+      else
+        {
+          // Ignore object without a name
           continue;
         }
 
-      /* If token is StartElement, we'll see if we can read it.*/
-      if( token == QXmlStreamReader::StartElement )
+      // check for approval
+      if( object.contains("approved") == false )
         {
-          elementCounter++;
-
-          QString elementName = xml.name().toString();
-
-          QString errorInfo = "OpenAip::getRootElement: ";
-
-          if( elementCounter == 1 )
-            {
-              if( elementName != "OPENAIP" )
-                {
-                  errorInfo += "No OPENAIP XML file";
-                  qWarning() << errorInfo;
-                  file.close();
-                  return false;
-                }
-
-              QString version;
-
-              bool ok = readVersionAndFormat( xml, version, dataFormat );
-
-              if( ! ok )
-                {
-                  errorInfo += "Missing VERSION or DATAFORMAT attribute";
-                  qWarning() << errorInfo;
-                  file.close();
-                  return false;
-                }
-
-              if( ! m_supportedDataFormats.contains( dataFormat ) )
-                {
-                  errorInfo = "OPENAIP data format " + dataFormat +
-                              " is unsupported!";
-                  qWarning() << errorInfo;
-                  file.close();
-                  return false;
-                }
-            }
-          else if( elementCounter == 2 )
-            {
-              dataItem = xml.name().toString();
-              file.close();
-              return true;
-            }
+          qWarning() << "Object" << "'" + name + "'"
+                     << "contains not the approved key, ignoring data";
+          continue;
         }
-    }
 
-  // If the while loop is left, something has going wrong.
-  if( xml.hasError() )
-    {
-      QString errorInfo = "XML-Error: " + xml.errorString() +
-                          " at line=" + xml.lineNumber() +
-                          " column=" + xml.columnNumber() +
-                          " offset=" + xml.characterOffset();
+      if( object.value("approved").toBool() == false )
+        {
+          qWarning() << "Object" << "'" + name + "'"
+                     << "not approved, ignoring data";
+          continue;
+        }
 
-      qWarning() << "OpenAip::getRootElement:" << errorInfo;
-    }
+      SinglePoint sp;
+      sp.setTypeID( static_cast<enum BaseMapElement::objectType>(type) );
 
-  file.close();
-  return false;
+      // Set point name
+      QString wpName = name;
+      upperLowerName( wpName );
+
+      // Long name
+      sp.setName( wpName );
+
+      // Short name only 8 characters long
+      sp.setWPName( wpName.left(8) );
+
+      // iterate over the single point object list
+      for( auto it = object.begin(), end=object.end(); it != end; ++it )
+        {
+          // qDebug() << "Key: " << it.key() << "Val: " << it.value();
+
+          if( it.key() == "compulsory" )
+            {
+              sp.setCompulsory( it.value().toBool( false ) );
+            }
+          else if( it.key() == "country" )
+            {
+              sp.setCountry( it.value().toString().toUpper() );
+            }
+          else if( it.key() == "remarks" )
+            {
+              sp.setComment( it.value().toString() );
+            }
+          else if( it.key() == "elevation" )
+            {
+              QJsonObject object = it.value().toObject();
+              sp.setElevation( getJElevation( object ) );
+            }
+          else if( it.key() == "geometry" )
+            {
+              QJsonObject object = it.value().toObject();
+
+              if( setJGeoLocation( object, sp ) == false )
+                {
+                  // ignore data set
+                  continue;
+                }
+            }
+        } // end of for loop of object list
+
+      if( useFiltering == true &&
+          checkRadius( sp.getWGSPositionPtr() ) == false )
+        {
+          // The radius filter said no. To far away from home.
+          continue;
+        }
+
+      spList.append( sp );
+    }  // end of array for loop
+
+  return true;
 }
-
-bool OpenAip::readVersionAndFormat( QXmlStreamReader& xml,
-                                    QString& version,
-                                    QString& format )
-{
-  int error = 0;
-
-  // Get data format attribute
-  QXmlStreamAttributes attributes = xml.attributes();
-
-  if( attributes.hasAttribute("VERSION") )
-    {
-      version = attributes.value("VERSION").toString();
-    }
-  else
-    {
-      version.clear();
-      error++;
-    }
-
-  if( attributes.hasAttribute("DATAFORMAT") )
-    {
-      format = attributes.value("DATAFORMAT").toString();
-    }
-  else
-    {
-      format.clear();
-      error++;
-    }
-
-  return (error == 0) ? true : false;
-}
-
-// TODO Filtering einbauen!!!
 
 bool OpenAip::readNavAids( QString fileName,
                            QList<RadioPoint>& navAidList,
@@ -176,6 +245,13 @@ bool OpenAip::readNavAids( QString fileName,
 
   QFile file( fileName );
 
+  if( file.exists() && file.size() == 0 )
+    {
+      errorInfo = QObject::tr("File %1 is empty").arg(fileName);
+      qWarning() << "OpenAip::readNavAids: File" << fileName << "is empty!";
+      return false;
+    }
+
   if( ! file.open(QIODevice::ReadOnly | QIODevice::Text) )
     {
       errorInfo = QObject::tr("Cannot open file") + " " + fileName;
@@ -183,417 +259,227 @@ bool OpenAip::readNavAids( QString fileName,
       return false;
     }
 
-  QXmlStreamReader xml( &file );
+  QString content = file.readAll();
+  file.close();
 
-  int elementCounter   = 0;
-  bool oaipFormatOk = false;
+  QJsonParseError error;
+  QJsonDocument doc = QJsonDocument::fromJson( content.toUtf8(), &error );
 
-  // Reset version and data format variable
-  m_oaipVersion.clear();
-  m_oaipDataFormat.clear();
+  qDebug() << fileName << "NavAids Json Parse result:" << error.errorString();
 
-  while( !xml.atEnd() && ! xml.hasError() )
+  if( doc.isNull() == true )
     {
-      /* Read the next element from the stream.*/
-      QXmlStreamReader::TokenType token = xml.readNext();
-
-      /* If token is just StartDocument, we'll go to next.*/
-      if( token == QXmlStreamReader::StartDocument )
-        {
-          // qDebug() << "File=" << fileName
-          //         << "DocVersion=" << xml.documentVersion().toString()
-          //         << "DocEncoding=" << xml.documentEncoding().toString();
-          continue;
-        }
-
-      /* If token is StartElement, we'll see if we can read it.*/
-      if( token == QXmlStreamReader::StartElement )
-        {
-          elementCounter++;
-
-          QString elementName = xml.name().toString();
-
-          // qDebug() << "StartElement=" << elementName;
-
-          if( elementCounter == 1 && elementName == "OPENAIP" )
-            {
-              oaipFormatOk =
-                  readVersionAndFormat( xml, m_oaipVersion, m_oaipDataFormat );
-
-              qDebug() << "OAIP: File=" << fileName
-                       << "Version=" << m_oaipVersion
-                       << "DataFormat=" << m_oaipDataFormat;
-            }
-
-          if( (elementCounter == 1 && elementName != "OPENAIP") ||
-              (elementCounter == 2 && elementName != "NAVAIDS") ||
-              oaipFormatOk == false )
-            {
-              errorInfo = QObject::tr("Wrong XML data format");
-              qWarning() << "OpenAip::readNavAids" << errorInfo;
-              file.close();
-              return false;
-            }
-
-          if( elementCounter > 2 && elementName == "NAVAID" )
-            {
-              RadioPoint rp;
-
-              // read navaid record
-              if( ! readNavAidRecord( xml, rp ) )
-                {
-                  break;
-                }
-
-              if( useFiltering == true )
-                {
-
-                  if( m_filterRadius > 0.0 )
-                    {
-                      double d = dist( &m_homePosition, rp.getWGSPositionPtr() );
-
-                      if( d > m_filterRadius )
-                        {
-                          // The radius filter said no. To far away from home.
-                          continue;
-                        }
-                    }
-                }
-
-              // Short name is only 8 characters long and must be unique
-              rp.setShortName( shortName(rp.getName()) );
-
-              navAidList.append( rp );
-            }
-
-          continue;
-        }
-
-      if( token == QXmlStreamReader::EndElement )
-        {
-          // qDebug() << "EndElement=" << xml.name().toString();
-          continue;
-        }
-    }
-
-  if( xml.hasError() )
-    {
-      errorInfo = "XML-Error: " + xml.errorString() +
-                  " at line=" + xml.lineNumber() +
-                  " column=" + xml.columnNumber() +
-                  " offset=" + xml.characterOffset();
-
-      qWarning() << "OpenAip::readNavAids: XML-Error" << errorInfo;
-      file.close();
+      errorInfo = QObject::tr("Json parser error for file: ") + fileName;
+      qWarning() << "OpenAip::readNavAids: file"
+                 << "'" + fileName + "'"
+                 << "Json parse error:"
+                 << error.errorString();
       return false;
     }
 
-  file.close();
-  return true;
-}
-
-bool OpenAip::readNavAidRecord( QXmlStreamReader& xml, RadioPoint& rp )
-{
-  // Read navaid type
-  QXmlStreamAttributes attributes = xml.attributes();
-
-  if( attributes.hasAttribute("TYPE") )
+  if( doc.isArray() == false )
     {
-      // OpenAip NavAidTypes: "DVOR" "DVOR-DME" "DVORTAC" "VOR" "VOR-DME" "VORTAC"
-      // Cumulus: Vor = VOR, VorDme = VORDME, VorTac = VORTAC, Ndb = NDB, CompPoint = COMPPOINT
-      QString type = attributes.value("TYPE").toString();
+      errorInfo = QObject::tr("Json format error for file: ") + fileName;
+      qWarning() << "OpenAip::readNavAids: Error, expecting a Json array as first element";
+      return false;
+   }
 
-      if( type == "DVOR" || type == "VOR" )
+  QJsonArray array = doc.array();
+
+  qDebug() << "NavAids Doc is a Json Array of size:" << array.size();
+
+  // step over the json array to extract the thermal objects
+  for( int i=0; i < array.size(); i++ )
+    {
+      QJsonObject object = array[i].toObject();
+      QString name;
+
+      if( object.contains("name") && object["name"].isString() )
         {
-          rp.setTypeID( BaseMapElement::Vor );
-        }
-      else if( type == "DVOR-DME" || type == "VOR-DME" || type == "DME" )
-        {
-          rp.setTypeID( BaseMapElement::VorDme );
-        }
-      else if( type == "TACAN" )
-        {
-          rp.setTypeID( BaseMapElement::Tacan );
-        }
-      else if( type == "DVORTAC" || type == "VORTAC" )
-        {
-          rp.setTypeID( BaseMapElement::VorTac );
-        }
-      else if( type == "NDB" )
-        {
-          rp.setTypeID( BaseMapElement::Ndb );
+          name = object["name"].toString();
         }
       else
         {
-          rp.setTypeID( BaseMapElement::NotSelected );
-          qWarning() << "OpenAip::readNavAidRecord: unknown Navaid type" << type;
+          // Ignore object without a name
+          continue;
         }
-    }
 
-  while( !xml.atEnd() && ! xml.hasError() )
-    {
-      /* Read the next element from the stream.*/
-      QXmlStreamReader::TokenType token = xml.readNext();
-
-      if( token == QXmlStreamReader::EndElement )
+      // check for approval
+      if( object.contains("approved") == false )
         {
-          if( xml.name() == "NAVAID" )
-            {
-              // All record data have been read.
-              return true;
-            }
+          qWarning() << "Object" << "'" + name + "'"
+                     << "contains not the approved key, ignoring data";
+          continue;
         }
 
-      /* If token is StartElement, we'll see if we can read it.*/
-      if( token == QXmlStreamReader::StartElement )
+      if( object.value("approved").toBool() == false )
         {
-          QString elementName = xml.name().toString();
-
-          if( elementName == "COUNTRY" )
-            {
-              rp.setCountry( xml.readElementText().left(2).toUpper() );
-            }
-          else if ( elementName == "NAME" )
-            {
-              QString name = xml.readElementText();
-              upperLowerName( name );
-              rp.setName( name );
-            }
-          else if ( elementName == "ID" )
-            {
-              QString id = xml.readElementText();
-              rp.setICAO( id );
-              rp.setShortName( id.left(8) );
-            }
-          else if ( elementName == "GEOLOCATION" )
-            {
-              readGeoLocation( xml, rp );
-            }
-          else if ( elementName == "RADIO" )
-            {
-              readRadio( xml, rp );
-            }
-          else if ( elementName == "PARAMS" )
-            {
-              readParams( xml, rp );
-            }
+          qWarning() << "Object" << "'" + name + "'"
+                     << "not approved, ignoring data";
+          continue;
         }
-    }
+
+      RadioPoint rp;
+      rp.setName( name );
+
+      // iterate over the navaids object list
+      for( auto it = object.begin(), end=object.end(); it != end; ++it )
+        {
+          // qDebug() << "Key: " << it.key() << "Val: " << it.value();
+
+          if( it.key() == "identifier" )
+            {
+              rp.setWPName( it.value().toString() );
+              // rp.setICAO( it.value().toString() );
+            }
+          else if( it.key() == "type" )
+            {
+              int type = it.value().toInt();
+
+              // OpenAip NavAidTypes: dme=0, tacan=1, ndb=2, vor=3, vor_dme=4, vortac=5, dvor=6, dvor_dme=7, dvortac=8
+              // Cumulus: Vor = VOR, VorDme = VORDME, VorTac = VORTAC, Ndb = NDB, CompPoint = COMPPOINT
+
+              if( type == 7 /* "DVOR" */ || type == 3 /* "VOR" */ )
+                {
+                  rp.setTypeID( BaseMapElement::Vor );
+                }
+              else if( type == 7 /* "DVOR-DME" */ || type == 4 /* "VOR-DME" */ ||
+                       type == 0 /* "DME" */ || type == 6 /* "DME" */ )
+                {
+                  rp.setTypeID( BaseMapElement::VorDme );
+                }
+              else if( type == 1 ) // "TACAN"
+                {
+                  rp.setTypeID( BaseMapElement::Tacan );
+                }
+              else if( type == 8 /*"DVORTAC"*/ || type == 5 /* "VORTAC" */ )
+                {
+                  rp.setTypeID( BaseMapElement::VorTac );
+                }
+              else if( type == 2 ) // "NDB"
+                {
+                  rp.setTypeID( BaseMapElement::Ndb );
+                }
+              else
+                {
+                  rp.setTypeID( BaseMapElement::NotSelected );
+                  qWarning() << "OpenAip::readNavAidRecord: unknown Navaid type"
+                             << type << "for" << name;
+                }
+            }
+          else if( it.key() == "remarks" )
+            {
+              rp.setComment( it.value().toString() );
+            }
+          else if( it.key() == "country" )
+            {
+              rp.setCountry( it.value().toString().toUpper() );
+            }
+          else if( it.key() == "channel" )
+            {
+              rp.setChannel( it.value().toString() );
+            }
+          else if( it.key() == "range" )
+            {
+              // The range of the navaid. Always 'NM'. We convert it to meters.
+              QJsonObject object = it.value().toObject();
+              rp.setRange( getJNavaidRange( object ) * Distance::mFromNMile );
+           }
+          else if( it.key() == "alignedTrueNorth" )
+            {
+              rp.setRange( it.value().toBool( false ) );
+            }
+          else if( it.key() == "magneticDeclination" )
+            {
+              rp.setDeclination( it.value().toDouble() );
+            }
+          else if( it.key() == "elevation" )
+            {
+              QJsonObject object = it.value().toObject();
+              rp.setElevation( getJElevation( object ) );
+            }
+          else if( it.key() == "frequency" )
+            {
+              QJsonObject object = it.value().toObject();
+              rp.addFrequency( getJNavaidFrequency( object ) );
+            }
+          else if( it.key() == "geometry" )
+            {
+              QJsonObject object = it.value().toObject();
+
+              if( setJGeoLocation( object, rp ) == false )
+                {
+                  // ignore data set
+                  continue;
+                }
+            }
+        } // end of for loop of object list
+
+      if( useFiltering == true &&
+          checkRadius( rp.getWGSPositionPtr() ) == false )
+        {
+          // The radius filter said no. To far away from home.
+          continue;
+        }
+
+      navAidList.append( rp );
+    }  // end of array for loop
 
   return true;
 }
 
-bool OpenAip::readGeoLocation( QXmlStreamReader& xml, SinglePoint& sp )
+bool OpenAip::setJGeoLocation( QJsonObject& object, SinglePoint& sp )
 {
-  double lat  = INT_MIN;
-  double lon  = INT_MIN;
-  double elev = INT_MIN;
-  QString unit;
+  double lon = INT_MIN;
+  double lat = INT_MIN;
 
-  while( !xml.atEnd() && ! xml.hasError() )
+  if( object.contains("type") && object["type"].isString() )
     {
-      /* Read the next element from the stream.*/
-      QXmlStreamReader::TokenType token = xml.readNext();
+      QString value = object["type"].toString();
 
-      if( token == QXmlStreamReader::EndElement )
+      if( value != "Point")
         {
-          if( xml.name() == "GEOLOCATION" )
-            {
-              // All record data have been read.
-              if( lat != INT_MIN && lon != INT_MIN )
-                {
-                  // Convert latitude and longitude into KFLog's internal
-                  // integer format.
-                  int ilat = static_cast<int> (rint( 600000.0 * lat ));
-                  int ilon = static_cast<int> (rint( 600000.0 * lon ));
-                  WGSPoint wgsPoint( ilat, ilon );
-                  sp.setWGSPosition( wgsPoint );
-
-                  // Map WGS point to map projection
-                  sp.setPosition( _globalMapMatrix->wgsToMap(wgsPoint) );
-                }
-
-              if( elev != INT_MIN )
-                {
-                  if( unit == "M" )
-                    {
-                      // elevation has sometimes decimals. Therefore we round
-                      // it to integer.
-                      sp.setElevation( rint(elev) );
-                    }
-                  else if( unit == "FT" )
-                    {
-                      Distance dist;
-                      dist.setFeet( elev);
-                      sp.setElevation( dist.getMeters() );
-                    }
-                }
-
-              return true;
-            }
-        }
-
-      /* If token is StartElement, we'll see if we can read it.*/
-      if( token == QXmlStreamReader::StartElement )
-        {
-          QString elementName = xml.name().toString();
-
-          if( elementName == "LAT" )
-            {
-              lat = xml.readElementText().toDouble();
-            }
-          else if ( elementName == "LON" )
-            {
-              lon = xml.readElementText().toDouble();
-            }
-          else if ( elementName == "ELEV" )
-            {
-              QXmlStreamAttributes attributes = xml.attributes();
-
-              if( attributes.hasAttribute("UNIT") )
-                {
-                  unit = attributes.value("UNIT").toString().toUpper();
-                }
-
-              elev = xml.readElementText().toDouble();
-            }
+          qWarning() << "GeoLocation is not a Point. Read" << value;
+          return false;
         }
     }
 
-  return true;
-}
-
-bool OpenAip::readRadio( QXmlStreamReader& xml, RadioPoint& rp )
-{
-  while( !xml.atEnd() && ! xml.hasError() )
+  if( object.contains("coordinates") && object["coordinates"].isArray() )
     {
-      /* Read the next element from the stream.*/
-      QXmlStreamReader::TokenType token = xml.readNext();
+      QJsonArray value = object["coordinates"].toArray();
 
-      if( token == QXmlStreamReader::EndElement )
+      if( value.size() != 2 )
         {
-          if( xml.name() == "RADIO" )
-            {
-              // All record data have been read.
-              return true;
-            }
+          qWarning() << "GeoLocation array size != 2. Read" << value.size();
+          return false;
         }
 
-      /* If token is StartElement, we'll see if we can read it.*/
-      if( token == QXmlStreamReader::StartElement )
+      lon = value[0].toDouble( INT_MIN );
+      lat = value[1].toDouble( INT_MIN );
+
+      if( lat == INT_MIN || lon == INT_MIN )
         {
-          QString elementName = xml.name().toString();
-
-          if( elementName == "FREQUENCY" )
-            {
-              bool ok = false;
-              float fre = xml.readElementText().toFloat( &ok );
-
-              if( rp.getTypeID() == BaseMapElement::Ndb )
-        	{
-        	  // TODO Workaround to handle openAIP NDB frequencies.
-        	  // The frequency value is given in KHz and not in MHz.
-        	  // That is a bug in openAIP version 1.x
-        	  fre /= 1000.0;
-        	}
-
-              if( ok) rp.setFrequency( fre );
-             }
-          else if ( elementName == "CHANNEL" )
-            {
-              rp.setChannel( xml.readElementText() );
-            }
+          qWarning() << "GeoLocation coordinate fault";
+          return false;
         }
+
+      // Convert latitude and longitude into KFLog's internal
+      // integer format.
+      int ilat = static_cast<int> (rint( 600000.0 * lat ));
+      int ilon = static_cast<int> (rint( 600000.0 * lon ));
+      WGSPoint wgsPoint( ilat, ilon );
+      sp.setWGSPosition( wgsPoint );
+
+      // Map WGS point to map projection
+      sp.setPosition( _globalMapMatrix->wgsToMap(wgsPoint) );
+      return true;
     }
 
-  return true;
+  return false;
 }
-
-bool OpenAip::readParams( QXmlStreamReader& xml, RadioPoint& rp )
-{
-  while( !xml.atEnd() && ! xml.hasError() )
-    {
-      /* Read the next element from the stream.*/
-      QXmlStreamReader::TokenType token = xml.readNext();
-
-      if( token == QXmlStreamReader::EndElement )
-        {
-          if( xml.name() == "PARAMS" )
-            {
-              // All record data have been read.
-              return true;
-            }
-        }
-
-      /* If token is StartElement, we'll see if we can read it.*/
-      if( token == QXmlStreamReader::StartElement )
-        {
-          QString elementName = xml.name().toString();
-
-          if( elementName == "DECLINATION" )
-            {
-              bool ok = false;
-              float value = xml.readElementText().toFloat( &ok );
-
-              if( ok) rp.setDeclination( value );
-             }
-          else if ( elementName == "ALIGNEDTOTRUENORTH" )
-            {
-              if( xml.readElementText() == "TRUE" )
-                {
-                  rp.setAligned2TrueNorth( true );
-                }
-              else if( xml.readElementText() == "FALSE" )
-                {
-        	  rp.setAligned2TrueNorth( false );
-                }
-            }
-          else if ( elementName == "RANGE" )
-            {
-              QXmlStreamAttributes attributes = xml.attributes();
-
-              if( ! attributes.hasAttribute("UNIT") )
-                {
-                  xml.skipCurrentElement();
-                  return false;
-                }
-
-              QString unit = attributes.value("UNIT").toString();
-              QString unitValue = xml.readElementText();
-
-              bool ok;
-              double range = unitValue.toDouble(&ok);
-
-              if( ok == false )
-                {
-                  qWarning() << "OpenAip::readParams: wrong range value:"
-                             << unitValue;
-                  xml.skipCurrentElement();
-                  return false;
-                }
-
-              if( unit == "NM" )
-                {
-                  Distance sr;
-                  sr.setNautMiles( range );
-                  rp.setRange( sr.getMeters() );
-                  return true;
-                }
-
-              qWarning() << "OpenAip::readParams: Unknown range unit:" << unit;
-              xml.skipCurrentElement();
-              return false;
-            }
-        }
-    }
-
-  return true;
-}
-
-//------------------------------------------------------------------------------
 
 bool OpenAip::readHotspots( QString fileName,
-                            QList<SinglePoint>& hotspotList,
+                            QList<ThermalPoint>& hotspotList,
                             QString& errorInfo,
                             bool useFiltering )
 {
@@ -605,6 +491,13 @@ bool OpenAip::readHotspots( QString fileName,
 
   QFile file( fileName );
 
+  if( file.exists() && file.size() == 0 )
+    {
+      errorInfo = QObject::tr("File %1 is empty").arg(fileName);
+      qWarning() << "OpenAip::readHotspots: File" << fileName << "is empty!";
+      return false;
+    }
+
   if( ! file.open(QIODevice::ReadOnly | QIODevice::Text) )
     {
       errorInfo = QObject::tr("Cannot open file") + " " + fileName;
@@ -612,167 +505,210 @@ bool OpenAip::readHotspots( QString fileName,
       return false;
     }
 
-  QXmlStreamReader xml( &file );
+  QString content = file.readAll();
+  file.close();
 
-  int elementCounter   = 0;
-  bool oaipFormatOk = false;
+  QJsonParseError error;
+  QJsonDocument doc = QJsonDocument::fromJson( content.toUtf8(), &error );
 
-  // Reset version and data format variable
-  m_oaipVersion.clear();
-  m_oaipDataFormat.clear();
+  qDebug() << fileName << "Hotspots Json Parse result:" << error.errorString();
 
-  while( !xml.atEnd() && ! xml.hasError() )
+  if( doc.isNull() == true )
     {
-      /* Read the next element from the stream.*/
-      QXmlStreamReader::TokenType token = xml.readNext();
-
-      /* If token is just StartDocument, we'll go to next.*/
-      if( token == QXmlStreamReader::StartDocument )
-        {
-          // qDebug() << "File=" << fileName
-          //         << "DocVersion=" << xml.documentVersion().toString()
-          //         << "DocEncoding=" << xml.documentEncoding().toString();
-          continue;
-        }
-
-      /* If token is StartElement, we'll see if we can read it.*/
-      if( token == QXmlStreamReader::StartElement )
-        {
-          elementCounter++;
-
-          QString elementName = xml.name().toString();
-
-          // qDebug() << "StartElement=" << elementName;
-
-          if( elementCounter == 1 && elementName == "OPENAIP" )
-            {
-              oaipFormatOk =
-                  readVersionAndFormat( xml, m_oaipVersion, m_oaipDataFormat );
-
-              qDebug() << "OAIP: File=" << fileName
-                       << "Version=" << m_oaipVersion
-                       << "DataFormat=" << m_oaipDataFormat;
-            }
-
-          if( (elementCounter == 1 && elementName != "OPENAIP") ||
-              (elementCounter == 2 && elementName != "HOTSPOTS") ||
-              oaipFormatOk == false )
-            {
-              errorInfo = QObject::tr("Wrong XML data format");
-              qWarning() << "OpenAip::readHotspots" << errorInfo;
-              file.close();
-              return false;
-            }
-
-          if( elementCounter > 2 && elementName == "HOTSPOT" )
-            {
-              SinglePoint sp;
-
-              // Set type as thermal
-              sp.setTypeID( BaseMapElement::Thermal );
-
-              // read hotspot record
-              if( ! readHotspotRecord( xml, sp ) )
-                {
-                  break;
-                }
-
-              if( useFiltering == true )
-                {
-
-                  if( m_filterRadius > 0.0 )
-                    {
-                      double d = dist( &m_homePosition, sp.getWGSPositionPtr() );
-
-                      if( d > m_filterRadius )
-                        {
-                          // The radius filter said no. To far away from home.
-                          continue;
-                        }
-                    }
-                }
-
-              // Short name is only 8 characters long and must be unique
-              sp.setShortName( shortName(sp.getName()) );
-
-              hotspotList.append( sp );
-            }
-
-          continue;
-        }
-
-      if( token == QXmlStreamReader::EndElement )
-        {
-          // qDebug() << "EndElement=" << xml.name().toString();
-          continue;
-        }
-    }
-
-  if( xml.hasError() )
-    {
-      errorInfo = "XML-Error: " + xml.errorString() +
-                  " at line=" + xml.lineNumber() +
-                  " column=" + xml.columnNumber() +
-                  " offset=" + xml.characterOffset();
-
-      qWarning() << "OpenAip::readHotspots: XML-Error" << errorInfo;
-      file.close();
+      errorInfo = QObject::tr("Json parser error for file: ") + fileName;
+      qWarning() << "OpenAip::readHotspots: file"
+                 << "'" + fileName + "'"
+                 << "Json parse error:"
+                 << error.errorString();
       return false;
     }
 
-  file.close();
-  return true;
-}
-
-bool OpenAip::readHotspotRecord( QXmlStreamReader& xml, SinglePoint& sp )
-{
-  while( !xml.atEnd() && ! xml.hasError() )
+  if( doc.isArray() == false )
     {
-      /* Read the next element from the stream.*/
-      QXmlStreamReader::TokenType token = xml.readNext();
+      errorInfo = QObject::tr("Json format error for file: ") + fileName;
+      qWarning() << "OpenAip::readHotspots: Error, expecting a Json array as first element";
+      return false;
+   }
 
-      if( token == QXmlStreamReader::EndElement )
+  // Start index in hotspotList
+  int startIdx = hotspotList.size();
+
+  // Number counter for short name building.
+  uint hsno = 0;
+
+  QJsonArray array = doc.array();
+
+  qDebug() << "Hotspot Doc is a Json Array of size:" << array.size();
+
+  // step over the json array to extract the thermal objects
+  for( int i=0; i < array.size(); i++ )
+    {
+      QJsonObject object = array[i].toObject();
+      QString name;
+
+      if( object.contains("name") && object["name"].isString() )
         {
-          if( xml.name() == "HOTSPOT" )
-            {
-              // All record data have been read.
-              return true;
-            }
+          name = object["name"].toString();
+        }
+      else
+        {
+          // Ignore object without a name
+          continue;
         }
 
-      /* If token is StartElement, we'll see if we can read it.*/
-      if( token == QXmlStreamReader::StartElement )
+      // check for approval
+      if( object.contains("approved") == false )
         {
-          QString elementName = xml.name().toString();
+          qWarning() << "Object" << "'" + name + "'"
+                     << "contains not the approved key, ignoring data";
+          continue;
+        }
 
-          if( elementName == "COUNTRY" )
-            {
-              sp.setCountry( xml.readElementText().left(2).toUpper() );
-            }
-          else if ( elementName == "NAME" )
-            {
-              QString name = xml.readElementText();
+      if( object.value("approved").toBool() == false )
+        {
+          qWarning() << "Object" << "'" + name + "'"
+                     << "not approved, ignoring data";
+          continue;
+        }
 
-              upperLowerName( name );
+      ThermalPoint tp;
 
-              // Long name
-              sp.setName( name );
+      // Set thermal's name
+      QString wpName = name;
+      upperLowerName( wpName );
 
-              // Short name only 8 characters long
-              sp.setShortName( name.left(8) );
-            }
-          else if ( elementName == "COMMENT" )
+      // Long name
+      tp.setName( wpName );
+
+      // Short name only 8 characters long
+      tp.setWPName( wpName.left(8) );
+
+      // iterate over the thermal object list
+      for( auto it = object.begin(), end=object.end(); it != end; ++it )
+        {
+          // qDebug() << "Key: " << it.key() << "Val: " << it.value();
+
+          if( it.key() == "type" )
             {
-              sp.setComment( xml.readElementText() );
+              tp.setType( it.value().toInt() );
             }
-          else if ( elementName == "GEOLOCATION" )
+          else if( it.key() == "reliability" )
             {
-              readGeoLocation( xml, sp );
+              tp.setReliability( it.value().toInt() );
             }
+          else if( it.key() == "occurrence" )
+            {
+              tp.setOccurrence( it.value().toInt() );
+            }
+          else if( it.key() == "category" )
+            {
+              tp.setCategory( it.value().toInt() );
+            }
+          else if( it.key() == "remarks" )
+            {
+              tp.setComment( it.value().toString() );
+            }
+          else if( it.key() == "country" )
+            {
+              tp.setCountry( it.value().toString().toUpper() );
+            }
+          else if( it.key() == "elevation" )
+            {
+              QJsonObject object = it.value().toObject();
+              tp.setElevation( getJElevation( object ) );
+            }
+          else if( it.key() == "geometry" )
+            {
+              QJsonObject object = it.value().toObject();
+
+              if( setJGeoLocation( object, tp ) == false )
+                {
+                  // ignore data set
+                  continue;
+                }
+            }
+        } // end of for loop of object list
+
+      if( useFiltering == true &&
+          checkRadius( tp.getWGSPositionPtr() ) == false )
+        {
+          // The radius filter said no. To far away from home.
+          continue;
+        }
+
+      // Increment name counter for the hotspot.
+      hsno++;
+
+      // Set record number as WP name
+      tp.setWPName( QString("%1").arg(hsno) );
+      hotspotList.append( tp );
+    } // end of array for loop
+
+  if( startIdx < hotspotList.size() )
+    {
+      // Create a short name for the hotspot. The name is build from:
+      // H = Hotspot
+      // Two letter country code
+      // consecutive number
+      int fill = QString("%1").arg(hotspotList.size() - startIdx ).size();
+
+      for( int i = startIdx; i < hotspotList.size(); i++ )
+        {
+          ThermalPoint& tp = hotspotList[i];
+          int idx = tp.getWPName().toInt();
+          tp.setWPName( "H" + tp.getCountry() + QString("%1").arg(idx, fill, 10, QChar('0')));
         }
     }
 
   return true;
+}
+
+float OpenAip::getJElevation( QJsonObject& object )
+{
+  double value = 0.0;
+
+  if( object.contains("value") && object["value"].isDouble() )
+    {
+      value = object["value"].toDouble();
+    }
+
+  return static_cast<float>(value);
+}
+
+Frequency OpenAip::getJNavaidFrequency( QJsonObject& object )
+{
+  float value = 0.0;
+  quint8 unit = 0;
+
+  if( object.contains("value") && object["value"].isString() )
+    {
+      value = object["value"].toString().toFloat();
+    }
+
+  if( object.contains("unit") && object["unit"].isDouble() )
+    {
+      unit = object["unit"].toInt();
+    }
+
+  return Frequency( value, unit, Frequency::Other, "", true, true );
+}
+
+/**
+ * Read and set the range value from a navaid json object.
+ *
+ * @param object
+ * @return float
+ */
+int OpenAip::getJNavaidRange( QJsonObject& object )
+{
+  int value = 0;
+
+  if( object.contains("value") && object["value"].isDouble() )
+    {
+      value = object["value"].toInt();
+    }
+
+  return value;
 }
 
 bool OpenAip::readAirfields( QString fileName,
@@ -780,6 +716,9 @@ bool OpenAip::readAirfields( QString fileName,
                              QString& errorInfo,
                              bool useFiltering )
 {
+  m_shortNameSet.clear();
+  fillRunwaySurfaceMapper();
+
   if( useFiltering )
     {
       // Load the user's defined filter data.
@@ -788,10 +727,10 @@ bool OpenAip::readAirfields( QString fileName,
 
   QFile file( fileName );
 
-  if( file.size() == 0 )
+  if( file.exists() && file.size() == 0 )
     {
-      errorInfo = fileName + " " + QObject::tr("is empty");
-      qWarning() << "OpenAip::readAirfields: " << fileName << "is empty!";
+      errorInfo = QObject::tr("File %1 is empty").arg(fileName);
+      qWarning() << "OpenAip::readAirfields: File" << fileName << "is empty!";
       return false;
     }
 
@@ -802,745 +741,418 @@ bool OpenAip::readAirfields( QString fileName,
       return false;
     }
 
-  m_shortNameSet.clear();
+  QString content = file.readAll();
+  file.close();
 
-  QXmlStreamReader xml( &file );
+  QJsonParseError error;
+  QJsonDocument doc = QJsonDocument::fromJson( content.toUtf8(), &error );
 
-  int elementCounter   = 0;
-  bool oaipFormatOk = false;
+  qDebug() << fileName << "Airfield Json Parse result:" << error.errorString();
 
-  // Reset version and data format variable
-  m_oaipVersion.clear();
-  m_oaipDataFormat.clear();
-
-  while( !xml.atEnd() && ! xml.hasError() )
+  if( doc.isNull() == true )
     {
-      /* Read the next element from the stream.*/
-      QXmlStreamReader::TokenType token = xml.readNext();
-
-      /* If token is just StartDocument, we'll go to next.*/
-      if( token == QXmlStreamReader::StartDocument )
-        {
-          // qDebug() << "File=" << fileName
-          //         << "DocVersion=" << xml.documentVersion().toString()
-          //         << "DocEncoding=" << xml.documentEncoding().toString();
-          continue;
-        }
-
-      /* If token is StartElement, we'll see if we can read it.*/
-      if( token == QXmlStreamReader::StartElement )
-        {
-          elementCounter++;
-
-          QString elementName = xml.name().toString();
-
-          // qDebug() << "StartElement=" << elementName;
-
-          if( elementCounter == 1 && elementName == "OPENAIP" )
-            {
-              oaipFormatOk =
-                  readVersionAndFormat( xml, m_oaipVersion, m_oaipDataFormat );
-
-              qDebug() << "OAIP: File=" << fileName
-                       << "Version=" << m_oaipVersion
-                       << "DataFormat=" << m_oaipDataFormat;
-            }
-
-          if( (elementCounter == 1 && elementName != "OPENAIP") ||
-              (elementCounter == 2 && elementName != "WAYPOINTS") ||
-              oaipFormatOk == false )
-            {
-              errorInfo = QObject::tr("Wrong XML data format");
-              qWarning() << "OpenAip::readAirfields" << errorInfo;
-              file.close();
-              return false;
-            }
-
-          if( elementCounter > 2 && elementName == "AIRPORT" )
-            {
-              Airfield af;
-
-              // read airfield record
-              if( ! readAirfieldRecord( xml, af ) )
-                {
-                  break;
-                }
-
-              if( useFiltering == true )
-                {
-                  if( af.getTypeID() == BaseMapElement::CivHeliport ||
-                      af.getTypeID() == BaseMapElement::MilHeliport )
-                    {
-                      // Filter out heli ports.
-                      continue;
-                    }
-
-                  if( m_filterRadius > 0.0 )
-                    {
-                      double d = dist( &m_homePosition, af.getWGSPositionPtr() );
-
-                      if( d > m_filterRadius )
-                        {
-                          // The radius filter said no. To far away from home.
-                          continue;
-                        }
-                    }
-
-                  if( m_filterRunwayLength > 0.0 )
-                    {
-                      QList<Runway>& rl = af.getRunwayList();
-
-                      if( rl.isEmpty() )
-                        {
-                          // No runways are defined, ignore these data
-                          continue;
-                        }
-
-                      bool rwyLenOk = false;
-                      float rwy2short = 0.0;
-
-                      for( int i = 0; i < rl.size(); i++ )
-                        {
-                          if( rl.at(i).m_length < m_filterRunwayLength )
-                            {
-                              rwy2short = rl.at(i).m_length;
-                              continue;
-                            }
-
-                          // One runway fulfills the length condition, break loop.
-                          rwyLenOk = true;
-                          break;
-                        }
-
-                      if( rwyLenOk == false )
-                        {
-                          qDebug() << "OpenAip::readAirfields:"
-                                   << af.getName() << af.getCountry()
-                                   << "runway length" << rwy2short << "to short!";
-                          continue;
-                        }
-                    }
-                }
-
-              // Short name is only 8 characters long and must be unique
-              af.setShortName( shortName(af.getName()) );
-
-              airfieldList.append( af );
-            }
-
-          continue;
-        }
-
-      if( token == QXmlStreamReader::EndElement )
-        {
-          // qDebug() << "EndElement=" << xml.name().toString();
-          continue;
-        }
-    }
-
-  if( xml.hasError() )
-    {
-      errorInfo = "XML-Error: " + xml.errorString() +
-                  " at line=" + xml.lineNumber() +
-                  " column=" + xml.columnNumber() +
-                  " offset=" + xml.characterOffset();
-
-      qWarning() << "OpenAip::readNavAid: XML-Error" << errorInfo;
-      file.close();
+      errorInfo = QObject::tr("Json parser error for file: ") + fileName;
+      qWarning() << "OpenAip::readAirfields: file"
+                 << "'" + fileName + "'"
+                 << "Json parse error:"
+                 << error.errorString();
       return false;
     }
 
-  file.close();
+  if( doc.isArray() == false )
+    {
+      errorInfo = QObject::tr("Json format error for file: ") + fileName;
+      qWarning() << "OpenAip::readAirfields: Error, expecting a Json array as first element";
+      return false;
+   }
+
+  QJsonArray array = doc.array();
+
+  qDebug() << "Airfield Doc is a Json Array of size:" << array.size();
+
+  // step over the json array to extract the airfield objects
+  for( int i=0; i < array.size(); i++ )
+    {
+      QJsonObject object = array[i].toObject();
+      QString name;
+
+      if( object.contains("name") && object["name"].isString() )
+        {
+          name = object["name"].toString();
+        }
+      else
+        {
+          // Ignore object without a name
+          continue;
+        }
+
+      // check for approval
+      if( object.contains("approved") == false )
+        {
+          qWarning() << "Object" << "'" + name + "'"
+                     << "contains not the approved key, ignoring data";
+          continue;
+        }
+
+      if( object.value("approved").toBool() == false )
+        {
+          qWarning() << "Object" << "'" + name + "'"
+                     << "not approved, ignoring data";
+          continue;
+        }
+
+      Airfield af;
+
+      // Set airfield's name
+      QString wpName = name;
+      upperLowerName( wpName );
+
+      // Long name
+      af.setName( wpName );
+
+      // Set a unique short name
+      af.setWPName( shortName(name) );
+
+      // iterate over the airfield object list
+      for( auto it = object.begin(), end=object.end(); it != end; ++it )
+        {
+          // qDebug() << "Key: " << it.key() << "Val: " << it.value();
+
+          if( it.key() == "type" )
+            {
+              setJAirfieldType( it.value().toInt(0), af );
+            }
+          else if( it.key() == "icaoCode" )
+            {
+              af.setICAO( it.value().toString() );
+            }
+          else if( it.key() == "country" )
+            {
+              af.setCountry( it.value().toString().toUpper() );
+            }
+          else if( it.key() == "elevation" )
+            {
+              QJsonObject object = it.value().toObject();
+              af.setElevation( getJElevation( object ) );
+            }
+          else if( it.key() == "geometry" )
+            {
+              QJsonObject object = it.value().toObject();
+
+              if( setJGeoLocation( object, af ) == false )
+                {
+                  // ignore data set
+                  continue;
+                }
+            }
+          else if( it.key() == "remarks" )
+            {
+              af.setComment( it.value().toString() );
+            }
+          else if( it.key() == "ppr" )
+            {
+              af.setPPR( it.value().toBool(false) );
+            }
+          else if( it.key() == "private" )
+            {
+              af.setPrivate( it.value().toBool(false) );
+            }
+          else if( it.key() == "skydiveActivity" )
+            {
+              af.setSkyDiving( it.value().toBool(false) );
+            }
+          else if( it.key() == "winchOnly" )
+            {
+              af.setWinch( it.value().toBool(false) );
+            }
+          else if( it.key() == "frequencies" )
+            {
+              QJsonArray array = it.value().toArray();
+              setJAirfieldFrequencies( array, af );
+            }
+          else if( it.key() == "runways" )
+            {
+              QJsonArray array = it.value().toArray();
+              setJAirfieldRunways( array, af );
+            }
+        } // end of for loop
+
+      if( useFiltering == true &&
+          checkRadius( af.getWGSPositionPtr() ) == false )
+        {
+          // The radius filter said no. To far away from home.
+          continue;
+        }
+
+      airfieldList.append( af );
+    }
+
   return true;
 }
 
-bool OpenAip::readAirfieldRecord( QXmlStreamReader& xml, Airfield& af )
+bool OpenAip::setJAirfieldType( const int type, Airfield& af )
 {
-  // Read airport type
-  QXmlStreamAttributes attributes = xml.attributes();
-
-  if( attributes.hasAttribute("TYPE") )
-    {
       /* OpenAip types:
 
-      "AD_CLOSED"
-      "AD_MIL"
-      "AF_CIVIL"
-      "AF_MIL_CIVIL"
-      "APT"
-      "GLIDING"
-      "HELI_CIVIL"
-      "HELI_MIL"
-      "INTL_APT"
-      "LIGHT_AIRCRAFT"
+      The type of the airport. Possible values:
+
+      0: Airport (civil/military)
+      1: Glider Site
+      2: Airfield Civil
+      3: International Airport
+      4: Heliport Military
+      5: Military Aerodrome
+      6: Ultra Light Flying Site
+      7: Heliport Civil
+      8: Aerodrome Closed
+      9: Airport resp. Airfield IFR
+      10: Airfield Water
+      11: Landing Strip
+      12: Agricultural Landing Strip
+      13: Altiport
 
       Cumulus types:
       IntAirport, Airport, MilAirport, CivMilAirport,
       Airfield, ClosedAirfield, CivHeliport,
-      MilHeliport, AmbHeliport, Gliderfield, UltraLight
+      MilHeliport, AmbHeliport, Gliderfield, UltraLight, Altiport
       */
 
-      QString type = attributes.value("TYPE").toString();
-
-      if( type == "AD_CLOSED" )
+      if( type == 8 )
         {
           af.setTypeID( BaseMapElement::ClosedAirfield );
         }
-      else if( type == "AD_MIL" )
+      else if( type == 5 )
         {
           af.setTypeID( BaseMapElement::MilAirport );
         }
-      else if( type == "AF_CIVIL" )
+      else if( type == 2 || type == 9 || type == 10 )
         {
           af.setTypeID( BaseMapElement::Airfield );
         }
-      else if( type == "AF_MIL_CIVIL" )
+      else if( type == 0 )
         {
           af.setTypeID( BaseMapElement::CivMilAirport );
         }
-      else if( type == "APT" )
-        {
-          af.setTypeID( BaseMapElement::Airport );
-        }
-      else if( type == "GLIDING" )
-        {
-          af.setTypeID( BaseMapElement::Gliderfield );
-        }
-      else if( type == "HELI_CIVIL" )
-        {
-          af.setTypeID( BaseMapElement::CivHeliport );
-        }
-      else if( type == "HELI_MIL" )
-        {
-          af.setTypeID( BaseMapElement::MilHeliport );
-        }
-      else if( type == "INTL_APT" )
+      else if( type == 3 )
         {
           af.setTypeID( BaseMapElement::IntAirport );
         }
-      else if( type == "LIGHT_AIRCRAFT" )
+      else if( type == 1 )
+        {
+          af.setTypeID( BaseMapElement::Gliderfield );
+        }
+      else if( type == 7 )
+        {
+          af.setTypeID( BaseMapElement::CivHeliport );
+        }
+      else if( type == 4 )
+        {
+          af.setTypeID( BaseMapElement::MilHeliport );
+        }
+      else if( type == 6 )
         {
           af.setTypeID( BaseMapElement::UltraLight );
+        }
+      else if( type == 11 || type == 12 )
+        {
+          af.setTypeID( BaseMapElement::Outlanding );
+        }
+      else if( type == 13 )
+        {
+          // Altiport
+          af.setTypeID( BaseMapElement::Airfield );
         }
       else
         {
           af.setTypeID( BaseMapElement::NotSelected );
-          qWarning() << "OpenAip::readNavAidRecord: unknown airfield type" << type;
+          qWarning() << "OpenAip::setJAirfieldType: unknown airfield type"
+                     << type
+                     << "for"
+                     << af.getName();
         }
-    }
-
-  while( !xml.atEnd() && ! xml.hasError() )
-    {
-      /* Read the next element from the stream.*/
-      QXmlStreamReader::TokenType token = xml.readNext();
-
-      if( token == QXmlStreamReader::EndElement )
-        {
-          if( xml.name() == "AIRPORT" )
-            {
-              // All record data have been read.
-              return true;
-            }
-        }
-
-      /* If token is StartElement, we'll see if we can read it.*/
-      if( token == QXmlStreamReader::StartElement )
-        {
-          QString elementName = xml.name().toString();
-
-          if( elementName == "COUNTRY" )
-            {
-              af.setCountry( xml.readElementText().left(2).toUpper() );
-            }
-          else if ( elementName == "NAME" )
-            {
-              // Airfield name lowered.
-              QString name = xml.readElementText().toLower();
-
-              // Convert airfield name to upper-lower cases
-              upperLowerName( name );
-
-              // Long name
-              af.setName( name );
-
-              // Short name is only 8 characters long
-              af.setShortName( name.left(8) );
-            }
-          else if ( elementName == "ICAO" )
-            {
-              af.setICAO( xml.readElementText() );
-            }
-          else if ( elementName == "GEOLOCATION" )
-            {
-              readGeoLocation( xml, af );
-            }
-          else if ( elementName == "RADIO" )
-            {
-              readAirfieldRadio( xml, af );
-            }
-          else if ( elementName == "RWY" )
-            {
-              if( m_oaipDataFormat == "1.0" )
-                {
-                  readAirfieldRunway10( xml, af );
-                }
-              else if( m_oaipDataFormat == "1.1" )
-                {
-                  readAirfieldRunway11( xml, af );
-                }
-            }
-        }
-    }
 
   return true;
 }
 
-bool OpenAip::readAirfieldRadio( QXmlStreamReader& xml, Airfield& af )
+void OpenAip::setJAirfieldFrequencies( QJsonArray& array, Airfield& af )
 {
-  // Read airfield radio category
-  QXmlStreamAttributes attributes = xml.attributes();
+  QList<Frequency>& fl = af.getFrequencyList();
 
-  if( ! attributes.hasAttribute("CATEGORY") )
+  // step over the json array to extract the frequency objects
+  for( int i=0; i < array.size(); i++ )
     {
-      xml.skipCurrentElement();
-      return false;
-    }
+      QJsonObject object = array[i].toObject();
 
-  QString value = attributes.value("CATEGORY").toString();
+      Frequency fq;
 
-  /*
-  <RADIO CATEGORY="COMMUNICATION"> APPROACH, FIS, INFO, GROUND, TOWER, OTHER
-  <RADIO CATEGORY="INFORMATION"> ATIS
-  <RADIO CATEGORY="NAVIGATION"> ILS
-  <RADIO CATEGORY="OTHER">
-  */
-  if( value != "COMMUNICATION" && value != "INFORMATION" )
-    {
-      xml.skipCurrentElement();
-      return true;
-    }
-
-  // Only communication and information is interesting for us.
-  float frequency = 0.0;
-  bool ok = false;
-  QString type;
-  QString description;
-
-  while( !xml.atEnd() && ! xml.hasError() )
-    {
-      /* Read the next element from the stream.*/
-      QXmlStreamReader::TokenType token = xml.readNext();
-
-      if( token == QXmlStreamReader::EndElement )
+      // iterate over the frequency object list
+      for( auto it = object.begin(), end=object.end(); it != end; ++it )
         {
-          if( xml.name() == "RADIO" )
+          // qDebug() << "Frequency Key: " << it.key() << "Val: " << it.value();
+          if( it.key() == "name" )
             {
-              // All record data have been read inclusive the end element.
-              if( ok )
-                {
-                  if ( type == "INFO" || type == "TOWER" || type == "OTHER" )
-                    {
-                      af.setFrequency( frequency );
-                    }
-                  else if( type == "ATIS" )
-                    {
-                      af.setAtis( frequency );
-                    }
-                }
+              fq.setName( it.value().toString() );
+            }
+          else if( it.key() == "value" )
+            {
+              fq.setValue( it.value().toString().toFloat() );
+            }
+          else if( it.key() == "unit" )
+            {
+              fq.setUnit( it.value().toInt() );
+            }
+          else if( it.key() == "type" )
+            {
+              fq.setType( it.value().toInt() );
+            }
+          else if( it.key() == "primary" )
+            {
+              fq.setPrimary( it.value().toBool(false) );
+            }
+          else if( it.key() == "publicUse" )
+            {
+              fq.setPublicUse( it.value().toBool(false) );
+            }
+        } // End of for loop
 
-              return true;
-            }
-        }
-
-      /* If token is StartElement, we'll see if we can read it.*/
-      if( token == QXmlStreamReader::StartElement )
-        {
-          QString elementName = xml.name().toString();
-
-          if( elementName == "FREQUENCY" )
-            {
-              frequency = xml.readElementText().toFloat(&ok);
-            }
-          else if ( elementName == "TYPE" )
-            {
-              type = xml.readElementText();
-            }
-          else if ( elementName == "DESCRIPTION" )
-            {
-              description = xml.readElementText();
-            }
-        }
+      fl.append( fq );
     }
-
-  return false;
 }
 
-bool OpenAip::readAirfieldRunway10( QXmlStreamReader& xml, Airfield& af )
+void OpenAip::setJAirfieldRunways( QJsonArray& array, Airfield& af )
 {
-  Runway runway;
+  QList<Runway>& rwl = af.getRunwayList();
 
-  while( !xml.atEnd() && ! xml.hasError() )
+  // step over the json array to extract the runway objects
+  for( int i=0; i < array.size(); i++ )
     {
-      /* Read the next element from the stream.*/
-      QXmlStreamReader::TokenType token = xml.readNext();
+      QJsonObject object = array[i].toObject();
 
-      if( token == QXmlStreamReader::EndElement )
+      Runway rwy;
+
+      // iterate over the runway object list
+      for( auto it = object.begin(), end=object.end(); it != end; ++it )
         {
-          if( xml.name() == "RWY" )
+          // qDebug() << "Runway Key: " << it.key() << "Val: " << it.value();
+          if( it.key() == "designator" )
             {
-              runway.m_isOpen = true;
-
-              // All record data have been read inclusive the end element.
-              af.addRunway( runway );
-              return true;
+              rwy.setName( it.value().toString() );
             }
+          else if( it.key() == "trueHeading" )
+            {
+              rwy.setHeading( it.value().toInt() );
+            }
+          else if( it.key() == "alignedTrueNorth" )
+            {
+              rwy.setAlignedTrueNorth( it.value().toBool( false ) );
+            }
+          else if( it.key() == "operations" )
+            {
+              rwy.setOperations( it.value().toInt( 2 ) );
+            }
+          else if( it.key() == "mainRunway" )
+            {
+              rwy.setMainRunway( it.value().toBool( false ) );
+            }
+          else if( it.key() == "turnDirection" )
+            {
+              rwy.setTurnDirection( it.value().toInt( 2 ) );
+            }
+          else if( it.key() == "takeOffOnly" )
+            {
+              rwy.setTakeOffOnly( it.value().toBool( false ) );
+            }
+          else if( it.key() == "landingOnly" )
+            {
+              rwy.setLandingOnly( it.value().toBool( false ) );
+            }
+          else if( it.key() == "dimension" )
+            {
+              setJAirfieldRunwayDimensions( it.value().toObject(), rwy );
+            }
+          else if( it.key() == "surface" )
+            {
+              setJAirfieldRunwaySurface( it.value().toObject(), rwy );
+            }
+        } // End of for loop
+
+      // Check runway designator
+      if( rwy.getName().isEmpty() )
+        {
+          QString name;
+
+          int rd = ( rwy.getHeading() + 5 ) / 10;
+
+          if( rd == 0 ) {
+              rd = 36;
+          }
+
+          if( rd < 10 ) {
+              name += '0';
+          }
+
+          rwy.setName( name + QString::number( rd ) );
+
         }
 
-      /* If token is StartElement, we'll see if we can read it.*/
-      if( token == QXmlStreamReader::StartElement )
-        {
-          QString elementName = xml.name().toString();
-
-          if( elementName == "NAME" )
-            {
-              // That element contains the usable runway headings
-              QString name = xml.readElementText();
-
-              if( name.size() == 2 )
-                {
-                  // We have only one runway heading 06
-                  runway.m_heading.first = name.toUShort();
-                  runway.m_heading.second = name.toUShort();
-                }
-              else if( name.size() == 5 )
-                {
-                  // WE have two runway headings 06/24
-                  ushort dir1 = name.left(2).toUShort() * 256;
-                  ushort dir2 = name.mid(3, 2).toUShort();
-
-                  runway.m_heading.first = dir1;
-                  runway.m_heading.second = dir2;
-                }
-              else if( name.size() == 7 )
-                {
-                  // WE have two directions beside 06R/24L 06L/24R
-                  ushort dir1 = name.left(2).toUShort() * 256;
-                  ushort dir2 = name.mid(4, 2).toUShort();
-
-                  runway.m_heading.first = dir1;
-                  runway.m_heading.second = dir2;
-                }
-            }
-          else if ( elementName == "BIDIRECTIONAL" )
-            {
-              if( xml.readElementText() == "TRUE" )
-                {
-                  runway.m_isBidirectional = true;
-                }
-              else if( xml.readElementText() == "FALSE" )
-                {
-                  runway.m_isBidirectional = false;
-                }
-            }
-          else if( elementName == "SFC" )
-            {
-              /*
-              <SFC>ASPH</SFC>
-              <SFC>CONC</SFC>
-              <SFC>GRAS</SFC>
-              <SFC>GRVL</SFC>
-              <SFC>UNKN</SFC>
-              */
-              QString sfc = xml.readElementText();
-
-              if( sfc == "ASPH" )
-                {
-                  runway.m_surface = Runway::Asphalt;
-                }
-              else if( sfc == "CONC" )
-                {
-                  runway.m_surface = Runway::Concrete;
-                }
-              else if( sfc == "GRAS" )
-                {
-                  runway.m_surface = Runway::Grass;
-                }
-              else if( sfc == "GRVL" )
-                {
-                  runway.m_surface = Runway::Sand;
-                }
-              else if( sfc == "UNKN" )
-                {
-                  runway.m_surface = Runway::Unknown;
-                }
-              else
-                {
-                  runway.m_surface = Runway::Unknown;
-
-                  if( sfc.size() > 0 )
-                    {
-                      qWarning() << "OpenAip::readAirfieldRunway: unknown runway surface type"
-                                 << sfc;
-                    }
-                }
-            }
-          else if ( elementName == "LENGTH" )
-            {
-              float length = 0.0;
-              QString unit;
-
-              QXmlStreamAttributes attributes = xml.attributes();
-
-              if( attributes.hasAttribute("UNIT") )
-                {
-                  unit = attributes.value("UNIT").toString().toUpper();
-                }
-
-              if( getUnitValueAsFloat( xml.readElementText(), unit, length ) )
-                {
-                  runway.m_length = length;
-                }
-            }
-          else if ( elementName == "WIDTH" )
-            {
-              float width = 0;
-              QString unit;
-
-              QXmlStreamAttributes attributes = xml.attributes();
-
-              if( attributes.hasAttribute("UNIT") )
-                {
-                  unit = attributes.value("UNIT").toString().toUpper();
-                }
-
-              if( getUnitValueAsFloat( xml.readElementText(), unit, width ) )
-                {
-                  runway.m_width = width;
-                }
-            }
-        }
+      rwl.append( rwy );
     }
-
-  return false;
 }
 
-bool OpenAip::readAirfieldRunway11( QXmlStreamReader& xml, Airfield& af )
+/**
+ * Read Json runway dimension data of an airfield.
+ */
+void OpenAip::setJAirfieldRunwayDimensions( const QJsonObject& object, Runway& rw )
 {
-  Runway runway;
-
-  // Get RWY OPERATIONS attribute
-  QXmlStreamAttributes attributes = xml.attributes();
-
-  if( attributes.hasAttribute("OPERATIONS") )
+  // iterate over the runway dimension object list
+  for( auto it = object.begin(), end=object.end(); it != end; ++it )
     {
-      QString operations = attributes.value("OPERATIONS").toString();
+      // qDebug() << "Runway dimension Key: " << it.key() << "Val: " << it.value();
 
-      if( operations == "ACTIVE" )
+      if( it.key() == "length" )
         {
-          runway.m_isOpen = true;
-        }
-    }
+          QJsonObject obj = it.value().toObject();
 
-  int rwyNumber = 0;
-
-  while( !xml.atEnd() && ! xml.hasError() )
-    {
-      /* Read the next element from the stream.*/
-      QXmlStreamReader::TokenType token = xml.readNext();
-
-      if( token == QXmlStreamReader::EndElement )
-        {
-          if( xml.name() == "RWY" )
+          if( obj.contains("value") == true )
             {
-              // All record data have been read inclusive the end element.
-              af.addRunway( runway );
-              return true;
+              rw.setLength( obj.value("value").toInt() ); // meters expected
             }
         }
-
-      /* If token is StartElement, we'll see if we can read it.*/
-      if( token == QXmlStreamReader::StartElement )
+      else if( it.key() == "width" )
         {
-          QString elementName = xml.name().toString();
+          QJsonObject obj = it.value().toObject();
 
-          if( elementName == "NAME" )
+          if( obj.contains("value") == true )
             {
-              // That element contains the usable runway headings
-              QString name = xml.readElementText();
-            }
-          else if ( elementName == "DIRECTION" )
-            {
-              QXmlStreamAttributes attributes = xml.attributes();
-
-              if( attributes.hasAttribute("TC") )
-                {
-                  bool ok;
-                  ushort dir = attributes.value("TC").toString().toUShort( &ok );
-
-                  rwyNumber++;
-
-                  // Only two rwy are accepted.
-                  if( ok && rwyNumber <= 2 )
-                    {
-                      // round up direction
-                      dir = (dir + 5) / 10;
-
-                      if( rwyNumber == 1 )
-                        {
-                          runway.m_heading.first = dir;
-                          runway.m_heading.second = dir;
-                        }
-                      else if( rwyNumber == 2 )
-                        {
-                          runway.m_heading.second = dir;
-                          runway.m_isBidirectional = true;
-                        }
-                    }
-                }
-            }
-          else if( elementName == "SFC" )
-            {
-              /*
-              <SFC>ASPH</SFC>
-              <SFC>CONC</SFC>
-              <SFC>GRAS</SFC>
-              <SFC>GRVL</SFC>
-              <SFC>SAND</SFC>
-              <SFC>UNKN</SFC>
-              */
-              QString sfc = xml.readElementText();
-
-              if( sfc == "ASPH" )
-                {
-                  runway.m_surface = Runway::Asphalt;
-                }
-              else if( sfc == "CONC" )
-                {
-                  runway.m_surface = Runway::Concrete;
-                }
-              else if( sfc == "GRAS" )
-                {
-                  runway.m_surface = Runway::Grass;
-                }
-              else if( sfc == "GRVL" || sfc == "SAND" )
-                {
-                  runway.m_surface = Runway::Sand;
-                }
-              else if( sfc == "UNKN" )
-                {
-                  runway.m_surface = Runway::Unknown;
-                }
-              else
-                {
-                  runway.m_surface = Runway::Unknown;
-
-                  if( sfc.size() > 0 )
-                    {
-                      qWarning() << "OpenAip::readAirfieldRunway: unknown runway surface type"
-                                 << sfc;
-                    }
-                }
-            }
-          else if ( elementName == "LENGTH" )
-            {
-              float length = 0.0;
-              QString unit;
-
-              QXmlStreamAttributes attributes = xml.attributes();
-
-              if( attributes.hasAttribute("UNIT") )
-                {
-                  unit = attributes.value("UNIT").toString().toUpper();
-                }
-
-              if( getUnitValueAsFloat( xml.readElementText(), unit, length ) )
-                {
-                  runway.m_length = length;
-                }
-            }
-          else if ( elementName == "WIDTH" )
-            {
-              float width = 0;
-              QString unit;
-
-              QXmlStreamAttributes attributes = xml.attributes();
-
-              if( attributes.hasAttribute("UNIT") )
-                {
-                  unit = attributes.value("UNIT").toString().toUpper();
-                }
-
-              if( getUnitValueAsFloat( xml.readElementText(), unit, width ) )
-                {
-                  runway.m_width = width;
-                }
+              rw.setWidth( obj.value("value").toInt() ); // meters expected
             }
         }
     }
-
-  return false;
 }
 
-bool OpenAip::getUnitValueAsInteger( const QString number,
-                                     const QString unit,
-                                     int& result )
+/**
+ * Read and set Json runway surface data of an airfield.
+ */
+void OpenAip::setJAirfieldRunwaySurface( const QJsonObject& object, Runway& rw )
 {
-  bool ok = false;
-
-  double dValue = number.toDouble( &ok );
-
-  if( !ok )
+  // iterate over the runway surface object list
+  for( auto it = object.begin(), end=object.end(); it != end; ++it )
     {
-      return false;
+      // qDebug() << "Runway surface Key: " << it.key() << "Val: " << it.value();
+
+      if( it.key() == "mainComposite" )
+        {
+          quint8 type = m_runwaySurfaceMapper.value( it.value().toInt(),
+                                                     Runway::Unknown );
+          rw.setSurface( type );
+
+          if( type == Runway::Unknown )
+            {
+              qWarning() << "OpenAip::setJAirfieldRunwaySurface: unknown runway surface type"
+                         << type;
+            }
+        }
     }
-
-  if( unit.toUpper() == "M" )
-    {
-      // Number can have decimals. Therefore we round it to integer.
-      result = static_cast<int>(rint(dValue));
-      return true;
-    }
-  else if( unit.toUpper() == "FT" )
-    {
-      // Number has the unit feet. We must convert it to meter.
-      Distance dist;
-      dist.setFeet( dValue );
-      result = static_cast<int>(rint( dist.getMeters() ));
-      return true;
-    }
-
-  return false;
-}
-
-bool OpenAip::getUnitValueAsFloat( const QString number,
-                                   const QString unit,
-                                   float& result )
-{
-  bool ok = false;
-
-  float fValue = number.toFloat( &ok );
-
-  if( !ok )
-    {
-      return false;
-    }
-
-  if( unit.toUpper() == "M" )
-    {
-      // Number can have decimals. Therefore we round it to integer.
-      result = fValue;
-      return true;
-    }
-  else if( unit.toUpper() == "FT" )
-    {
-      // Number has the unit feet. We must convert it to meter.
-      Distance dist;
-      dist.setFeet( fValue );
-      result = static_cast<float>(dist.getMeters());
-      return true;
-    }
-
-  return false;
 }
 
 void OpenAip::upperLowerName( QString& name )
@@ -1618,29 +1230,6 @@ QString OpenAip::shortName( const QString& name )
   return shortName;
 }
 
-void OpenAip::loadUserFilterValues()
-{
-  m_countryFilterSet.clear();
-  m_filterRadius = 0.0;
-
-  m_homePosition = _globalMapMatrix->getHomeCoord();
-
-  QString cFilter = _settings.value( "/Points/Countries", "" ).toString().toUpper();
-
-  QStringList clist = cFilter.split( QRegExp("[, ]"), QString::SkipEmptyParts );
-
-  for( int i = 0; i < clist.size(); i++ )
-    {
-      m_countryFilterSet.insert( clist.at(i) );
-    }
-
-  // Get filter radius around the home position in kilometers.
-  m_filterRadius = _settings.value( "/Points/HomeRadius", 0 ).toDouble();
-
-  // Get runway length filter in meters.
-  // m_filterRunwayLength = 0.0;
-}
-
 bool OpenAip::readAirspaces( QString fileName,
                              QList<Airspace>& airspaceList,
                              QString& errorInfo )
@@ -1648,32 +1237,49 @@ bool OpenAip::readAirspaces( QString fileName,
   const char* method = "OpenAip::readAirspaces:";
 
   QFileInfo fi(fileName);
-
-  if( fi.suffix().toLower() != "aip" )
-    {
-      errorInfo = fileName + " " + QObject::tr("has not suffix .aip!");
-      qWarning() << method << fileName << "has not suffix .aip!";
-      return false;
-    }
-
   QFile file( fileName );
 
-  if( file.size() == 0 )
+  if( file.exists() && file.size() == 0 )
     {
-      errorInfo = fileName + " " + QObject::tr("is empty");
-      qWarning() << method << fileName << "is empty!";
+      errorInfo = QObject::tr("File %1 is empty").arg(fileName);
+      qWarning() << "OpenAip::readAirspaces: File" << fileName << "is empty!";
       return false;
     }
 
   if( ! file.open(QIODevice::ReadOnly | QIODevice::Text) )
     {
       errorInfo = QObject::tr("Cannot open file") + " " + fileName;
-      qWarning() << method << "cannot open file:" << fileName;
+      qWarning() << "OpenAip::readAirspaces: cannot open file:" << fileName;
       return false;
     }
 
+  QString content = file.readAll();
+  file.close();
+
+  QJsonParseError error;
+  QJsonDocument doc = QJsonDocument::fromJson( content.toUtf8(), &error );
+
+  qDebug() << fileName << "Airspaces Json Parse result:" << error.errorString();
+
+  if( doc.isNull() == true )
+    {
+      errorInfo = QObject::tr("Json parser error for file: ") + fileName;
+      qWarning() << "OpenAip::readAirspaces: file"
+                 << "'" + fileName + "'"
+                 << "Json parse error:"
+                 << error.errorString();
+      return false;
+    }
+
+  if( doc.isArray() == false )
+    {
+      errorInfo = QObject::tr("Json format error for file: ") + fileName;
+      qWarning() << "OpenAip::readAirspaces: Error, expecting a Json array as first element";
+      return false;
+   }
+
   // Initialize airspace type mapper
-  m_airspaceTypeMapper = AirspaceHelper::initializeAirspaceTypeMapping(fileName);
+  m_airspaceTypeMapper = AirspaceHelper::initializeAirspaceTypeMapping( fileName );
 
   if( m_airspaceTypeMapper.isEmpty() )
     {
@@ -1682,461 +1288,345 @@ bool OpenAip::readAirspaces( QString fileName,
       return false;
     }
 
-  QXmlStreamReader xml( &file );
+  QJsonArray array = doc.array();
 
-  int elementCounter   = 0;
-  bool oaipFormatOk = false;
+  qDebug() << "Airspace Doc is a Json Array of size:" << array.size();
 
-  // Reset version and data format variable
-  m_oaipVersion.clear();
-  m_oaipDataFormat.clear();
-
-  while( !xml.atEnd() && ! xml.hasError() )
+  // step over the json array to extract the airfield objects
+  for( int i=0; i < array.size(); i++ )
     {
-      /* Read the next element from the stream.*/
-      QXmlStreamReader::TokenType token = xml.readNext();
+      QJsonObject object = array[i].toObject();
+      QString name;
 
-      /* If token is just StartDocument, we'll go to next.*/
-      if( token == QXmlStreamReader::StartDocument )
+      if( object.contains("name") && object["name"].isString() )
         {
-          // qDebug() << "File=" << fileName
-          //         << "DocVersion=" << xml.documentVersion().toString()
-          //         << "DocEncoding=" << xml.documentEncoding().toString();
+          name = object["name"].toString();
+        }
+      else
+        {
+          // Ignore object without a name
           continue;
         }
 
-      /* If token is StartElement, we'll see if we can read it. */
-      if( token == QXmlStreamReader::StartElement )
+      // check for approval
+      if( object.contains("approved") == false )
         {
-          elementCounter++;
+          qWarning() << "Object" << "'" + name + "'"
+                     << "contains not the approved key, ignoring data";
+          continue;
+        }
 
-          QString elementName = xml.name().toString();
+      if( object.value("approved").toBool() == false )
+        {
+          qWarning() << "Object" << "'" + name + "'"
+                     << "not approved, ignoring data";
+          continue;
+        }
 
-          // qDebug() << "StartElement=" << elementName;
+      Airspace as;
+      as.setName( name );
+      bool ok = true;
 
-          if( elementCounter == 1 && elementName == "OPENAIP" )
+      // iterate over the airfield object list
+      for( auto it = object.begin(), end=object.end(); it != end; ++it )
+        {
+          if( it.key() == "type" )
             {
-              oaipFormatOk = readVersionAndFormat( xml, m_oaipVersion, m_oaipDataFormat );
+              // qDebug() << "AS-Name=" << name << "AS-Type=" << it.value();
 
-              qDebug() << "OAIP: File=" << fileName
-                       << "Version=" << m_oaipVersion
-                       << "DataFormat=" << m_oaipDataFormat;
+              QString type = QString::number( it.value().toInt() );
+
+              // Check not senseful because airspace names are not unique
+              if( m_airspaceTypeMapper.contains( type ) == false )
+                {
+                  qWarning() << method
+                             << "AS-Name:" << name + ","
+                             << "Ignoring Airspace, unknown type:" << type;
+                  ok = false;
+                  break;
+                }
+
+              as.setTypeID( m_airspaceTypeMapper[ type ] );
+            }
+          else if( it.key() == "icaoClass" )
+            {
+             as.setIcaoClass( it.value().toInt() );
+            }
+          else if( it.key() == "country" )
+            {
+              as.setCountry( it.value().toString() );
+            }
+          else if( it.key() == "activity" )
+            {
+              as.setActivity( it.value().toInt() );
+            }
+          else if( it.key() == "byNotam" )
+            {
+              as.setByNotam( it.value().toBool( false ) );
+
+              if( as.isByNotam() )
+                {
+                  qDebug() << "AS" << name << "activated by NOTAM";
+                }
+            }
+          else if( it.key() == "upperLimit" )
+            {
+              Altitude alt;
+              BaseMapElement::elevationType ref;
+              QJsonObject obj = it.value().toObject();
+
+              ok = readJAirspaceLimit( name, obj, ref, alt );
+
+              if( ok == false )
+                {
+                  // ignore data
+                  break;
+                }
+
+              as.setUpperL( alt );
+              as.setUpperT( ref );
+            }
+          else if( it.key() == "lowerLimit" )
+            {
+              Altitude alt;
+              BaseMapElement::elevationType ref;
+              QJsonObject obj = it.value().toObject();
+
+              ok = readJAirspaceLimit( name, obj, ref, alt );
+
+              if( ok == false )
+                {
+                  // ignore data
+                  break;
+                }
+
+              as.setLowerL( alt );
+              as.setLowerT( ref );
+            }
+          else if( it.key() == "geometry" )
+            {
+              QJsonObject obj = it.value().toObject();
+
+              ok = readJAirspaceGeometrie( obj, as );
+
+              if( ok == false )
+                {
+                  // ignore data
+                  break;
+                }
+            }
+        } // End of object for loop
+
+      if( ok == true )
+        {
+          // Check, if set type is not unknown. In this case the ICAO class
+          // has to be mapped as new type.
+          if( as.getTypeID() == BaseMapElement::AirUkn )
+            {
+              BaseMapElement::objectType newType =
+                  AirspaceHelper::mapIcaoClassId( as.getIcaoClass() );
+
+              as.setTypeID( newType );
             }
 
-          if( (elementCounter == 1 && elementName != "OPENAIP") ||
-              (elementCounter == 2 && elementName != "AIRSPACES") ||
-              oaipFormatOk == false )
+          airspaceList.append( as.createAirspaceObject() );
+        }
+
+    } // End of i for loop
+
+  return true;
+}
+
+bool OpenAip::readJAirspaceLimit( const QString& asName,
+                                  const QJsonObject& object,
+                                  BaseMapElement::elevationType& reference,
+                                  Altitude& altitude )
+{
+  // QJsonObject({"referenceDatum":1,"unit":1,"value":1000})
+
+  reference = BaseMapElement::NotSet;
+  int value = -1;
+  int unit = -1;
+  int referenceDatum = -1;
+
+  // iterate over the limit object list
+  for( auto it = object.begin(), end=object.end(); it != end; ++it )
+    {
+      // qDebug() << "Runway dimension Key: " << it.key() << "Val: " << it.value();
+
+      if( it.key() == "value" )
+        {
+          value = it.value().toInt( -1 );
+        }
+      else if( it.key() == "unit" )
+        {
+          unit = it.value().toInt( -1 );
+        }
+      else if( it.key() == "referenceDatum" )
+        {
+          referenceDatum = it.value().toInt( -1 );
+        }
+    }
+
+  if( value == -1 || unit == -1 )
+    {
+      qWarning() << "Airspace limit of"
+                 << asName << "has no value or unit assigned, ignoring it!";
+      return false;
+    }
+
+  switch( unit )
+    {
+    case 0: // m
+      altitude.setMeters( value );
+      break;
+    case 1: // ft
+      altitude.setFeet( value );
+      break;
+    case 6: // FL
+      altitude.setFeet( value );
+      break;
+    default:
+      qWarning() << "Airspace limit of"
+                 << asName << "has an unknown unit"
+                 << unit << "assigned, ignoring it!";
+      return false;
+    }
+
+  if( referenceDatum == -1 )
+    {
+      qWarning() << "Airspace limit of"
+                 << asName << "has no reference datum assigned, ignoring it!";
+      return false;
+    }
+
+  switch( referenceDatum )
+    {
+    case 0: // GND
+      reference = BaseMapElement::GND;
+      break;
+    case 1: // MSL
+      reference = BaseMapElement::MSL;
+      break;
+    case 2: // STD
+      reference = BaseMapElement::FL;
+      break;
+    default:
+      qWarning() << "Airspace limit of"
+                 << asName << "has an unknown reference datum"
+                 << referenceDatum << "assigned, ignoring it!";
+      return false;
+    }
+
+  return true;
+}
+
+bool OpenAip::readJAirspaceGeometrie( const QJsonObject& object, Airspace& as )
+{
+  // iterate over the limit object list
+  for( auto it = object.begin(), end=object.end(); it != end; ++it )
+    {
+      // qDebug() << "AS Geo Key: " << it.key() << "Val: " << it.value();
+
+      if( it.key() == "type" && it.value().toString() != "Polygon" )
+        {
+          qWarning() << "Airspace geometry of"
+                     << as.getName() << "has an unknown type"
+                     << it.value().toString() << "assigned."
+                     << "Can only process Polygon, ignoring airspace!";
+          return false;
+        }
+      else if( it.key() == "coordinates" )
+        {
+          QJsonArray array0 = it.value().toArray();
+          QJsonArray array1 = array0[0].toArray();
+
+          QPolygon asPolygon( array1.size() );
+          extern MapMatrix* _globalMapMatrix;
+
+          // step over the json array to extract the coordinate objects
+          for( int i=0; i < array1.size(); i++ )
             {
-              errorInfo = QObject::tr("Wrong XML data format");
-              qWarning() << method << errorInfo;
-              file.close();
+              QJsonArray lonlat = array1[i].toArray();
+
+              if( lonlat.size() != 2 )
+                {
+                  qWarning() << "Airspace geometry of"
+                             << as.getName() << "has an inconsistent lon/lat pair,"
+                             << "ignoring airspace!";
+
+                  return false;
+                }
+
+              double lon = lonlat[0].toDouble();
+              double lat = lonlat[1].toDouble();
+
+              if( lon < -180.0 || lon > 180.0 )
+                {
+                  qWarning() << "Airspace geometry: wrong longitude value"
+                             << lon
+                             << "read for airspace" << as.getName()
+                             << "ignoring airspace!";
+                  return false;
+                }
+
+              if( lat < -90.0 || lat > 90.0 )
+                {
+                  qWarning() << "Airspace geometry: wrong latitude value"
+                             << lat
+                             << "read for airspace" << as.getName()
+                             << "ignoring airspace!";
+                  return false;
+                }
+
+              // Convert coordinates into KFLog format
+              int latInt = static_cast<int> (rint(600000.0 * lat));
+              int lonInt = static_cast<int> (rint(600000.0 * lon));
+
+              // Project coordinates to map datum and store them in a polygon
+              asPolygon.setPoint( i, _globalMapMatrix->wgsToMap( latInt, lonInt ) );
+            }
+
+          // Airspaces are stored as polygons and should not contain the start point
+          // twice as done in OpenAip description.
+          if( asPolygon.count() > 2 && asPolygon.first() == asPolygon.last() )
+            {
+              // remove the last point because it is identical to the first point
+              asPolygon.remove( asPolygon.count() - 1 );
+            }
+
+          if( asPolygon.count() < 3 )
+            {
+              // A polygon should contain at least 3 coordinates.
+              qWarning() << "Airspace geometry: " << as.getName()
+                         << "contains to less coordinates! Ignoring airspace!";
               return false;
             }
 
-          if( elementCounter > 2 && elementName == "ASP" )
-            {
-              Airspace as;
-
-              // read airspace record
-              if( readAirspaceRecord( xml, as ) )
-                {
-                  // Check lower and upper altitude
-                  if( as.getLowerAltitude() == as.getUpperAltitude() )
-                    {
-                      qWarning() << "QIAP::Airspace Error"
-                                 << "ID="
-                                 << as.getId()
-                                 << "Name="
-                                 << as.getName()
-                                 << "lower and upper altitude ("
-                                 << as.getLowerAltitude().getFeet()
-                                 << ") are the same!";
-                      continue;
-                    }
-
-                  if( AirspaceHelper::addAirspaceIdentifier(as.getId()) )
-                    {
-                      airspaceList.append( as.createAirspaceObject() );
-                    }
-                  else
-                    {
-                      // Airspace is already known. Ignore object.
-                      qDebug() << "QIAP:: Known Airspace"
-                               << as.getName()
-                               << "ignored!";
-                    }
-                }
-            }
-
-          continue;
+          as.setProjectedPolygon( asPolygon );
         }
-
-      if( token == QXmlStreamReader::EndElement )
-        {
-          // qDebug() << "EndElement=" << xml.name().toString();
-          continue;
-        }
-    }
-
-  if( xml.hasError() )
-    {
-      errorInfo = "XML-Error: " + xml.errorString() +
-                  " at line=" + xml.lineNumber() +
-                  " column=" + xml.columnNumber() +
-                  " offset=" + xml.characterOffset();
-
-      qWarning() << method << "XML-Error" << errorInfo;
-      file.close();
-      return false;
-    }
-
-  file.close();
-  return true;
-}
-
-bool OpenAip::readAirspaceRecord( QXmlStreamReader& xml, Airspace& as )
-{
-  const char* method ="OpenAip::readAirspaceRecord:";
-
-  ushort error = 0;
-
-  // Read airspace category
-  QXmlStreamAttributes attributes = xml.attributes();
-
-  if( attributes.hasAttribute("CATEGORY") )
-    {
-      /* OpenAip airspace categories:
-      "A"
-      "B"
-      "C"
-      "CTR"
-      "D"
-      "DANGER"
-      "E"
-      "F"
-      "FIR"
-      "G"
-      "GLIDING"
-      "OTH"
-      "RESTRICTED"
-      "RMZ"  // maybe a category for the future
-      "TMA"
-      "TMZ"
-      "WAVE"
-      */
-
-      QString category = attributes.value("CATEGORY").toString();
-
-      if( m_airspaceTypeMapper.contains(category) == false )
-        {
-          qWarning() << method
-                     << "Line:" << xml.lineNumber()
-                     << "Ignoring Airspace, unknown category:" << category;
-
-          xml.skipCurrentElement();
-          return false;
-        }
-
-      // Apply user mapping rules
-      as.setTypeID( m_airspaceTypeMapper.value(category, BaseMapElement::AirUkn) );
-    }
-
-  while( !xml.atEnd() && ! xml.hasError() )
-    {
-      /* Read the next element from the stream. */
-      QXmlStreamReader::TokenType token = xml.readNext();
-
-      if( token == QXmlStreamReader::EndElement )
-        {
-          if( xml.name() == "ASP" )
-            {
-              // All record data have been read.
-              return (error == 0 ? true : false);
-            }
-
-          continue;
-        }
-
-      BaseMapElement::elevationType altReference;
-      Altitude altitude;
-
-      /* If token is StartElement, we'll see if we can read it.*/
-      if( token == QXmlStreamReader::StartElement )
-        {
-          QString elementName = xml.name().toString();
-
-          // qDebug() << "Element=" << elementName;
-
-          if( elementName == "ID" )
-            {
-              // We store the id in the airspace object, to filter out
-              // duplicates.
-              bool ok;
-              int id = xml.readElementText().toInt(&ok);
-
-              if( ok )
-                {
-                  as.setId(id);
-                }
-            }
-          else if( elementName == "COUNTRY" )
-            {
-              as.setCountry( xml.readElementText().left(2).toUpper() );
-            }
-          else if ( elementName == "NAME" )
-            {
-              // Airspace name
-              as.setName( xml.readElementText() );
-            }
-          else if ( elementName == "ALTLIMIT_TOP" )
-            {
-              bool ok = readAirspaceLimitReference( xml, altReference );
-
-              if( ! ok )
-                {
-                  error++;
-                }
-              else
-                {
-                  as.setUpperT( altReference );
-
-                  QString unit;
-                  ok = readAirspaceAltitude( xml, unit, altitude );
-
-                  if( ! ok )
-                    {
-                      error++;
-                    }
-                  else
-                    {
-                      as.setUpperL( altitude );
-
-                      // Cumulus sets this combination to FL internally.
-                      if( altReference == BaseMapElement::STD && unit == "FL" )
-                        {
-                          as.setUpperT( BaseMapElement::FL );
-                        }
-                    }
-                }
-            }
-          else if ( elementName == "ALTLIMIT_BOTTOM" )
-            {
-              bool ok = readAirspaceLimitReference( xml, altReference );
-
-              if( ! ok )
-                {
-                  error++;
-                }
-              else
-               {
-                 as.setLowerT( altReference );
-
-                 QString unit;
-                 ok = readAirspaceAltitude( xml, unit, altitude );
-
-                 if( ! ok )
-                   {
-                     error++;
-                   }
-                 else
-                   {
-                     as.setLowerL( altitude );
-
-                     // Cumulus sets this combination to FL internally.
-                     if( altReference == BaseMapElement::STD && unit == "FL" )
-                       {
-                         as.setLowerT( BaseMapElement::FL );
-                       }
-                   }
-               }
-            }
-          else if ( elementName == "GEOMETRY" )
-            {
-              bool ok = readAirspaceGeometrie( xml, as );
-
-              if( ! ok )
-                {
-                  error++;
-                }
-            }
-        }
-    }
-
-  return (error == 0 ? true : false);
-}
-
-bool OpenAip::readAirspaceLimitReference( QXmlStreamReader& xml,
-                                          BaseMapElement::elevationType& reference )
-{
-  // Read airspace limit reference
-  QXmlStreamAttributes attributes = xml.attributes();
-
-  reference = BaseMapElement::NotSet;
-
-  if( ! attributes.hasAttribute("REFERENCE") )
-    {
-      xml.skipCurrentElement();
-      return false;
-    }
-
-  QString value = attributes.value("REFERENCE").toString();
-
-  if( value == "GND" )
-    {
-      reference = BaseMapElement::GND;
-    }
-  else if( value == "MSL" )
-    {
-      reference = BaseMapElement::MSL;
-    }
-  else if( value == "STD" )
-    {
-      reference = BaseMapElement::STD;
-    }
-  else
-    {
-      return false;
     }
 
   return true;
 }
 
-bool OpenAip::readAirspaceAltitude( QXmlStreamReader& xml,
-                                    QString& unit,
-                                    Altitude& altitude )
+/**
+ * Check if point is inside a certain radius.
+ *
+ * \return true, if point is inside other wise false
+ */
+bool OpenAip::checkRadius( WGSPoint* point )
 {
-  xml.readNextStartElement();
-
-  if( xml.atEnd() || xml.hasError() || ! xml.isStartElement() || xml.name() != "ALT" )
+  if( m_filterRadius > 0.0 )
     {
-      xml.skipCurrentElement();
-      altitude = Altitude();
-      return false;
-    }
+      double d = dist( &m_homePosition, point );
 
-  QXmlStreamAttributes attributes = xml.attributes();
-
-  if( ! attributes.hasAttribute("UNIT") )
-    {
-      xml.skipCurrentElement();
-      altitude = Altitude();
-      return false;
-    }
-
-  unit = attributes.value("UNIT").toString();
-  QString unitValue = xml.readElementText();
-
-  bool ok;
-  double alt = unitValue.toDouble(&ok);
-
-  if( ok == false )
-    {
-      qWarning() << "OpenAip::readAirspaceAltitude: wrong altitude value:"
-                 << unitValue;
-      xml.skipCurrentElement();
-      altitude = Altitude();
-      return false;
-    }
-
-  if( unit == "F" || unit == "FL" )
-    {
-      altitude.setFeet( alt );
-      return true;
-    }
-
-  qWarning() << "OpenAip::readAirspaceAltitude: Unknown altitude unit:" << unit;
-  xml.skipCurrentElement();
-  altitude = Altitude();
-  return false;
-}
-
-bool OpenAip::readAirspaceGeometrie( QXmlStreamReader& xml, Airspace& as )
-{
-  const char* method = "OpenAip::readAirspaceGeometrie:";
-
-  xml.readNextStartElement();
-
-  if( xml.atEnd() || xml.hasError() || ! xml.isStartElement() || xml.name() != "POLYGON" )
-    {
-      xml.skipCurrentElement();
-      return false;
-    }
-
-  QStringList polygonList = xml.readElementText().split(QRegExp(",?\\s+"), QString::SkipEmptyParts );
-
-  if( polygonList.isEmpty() )
-    {
-      qWarning() << method << "Polygon list is empty at line" << xml.lineNumber();
-      xml.skipCurrentElement();
-      return false;
-    }
-
-  // The list consists of pairs Longitude, Latitude
-  if( polygonList.size() % 2 )
-    {
-      qWarning() << method << "Polygon list is odd at line" << xml.lineNumber();
-      xml.skipCurrentElement();
-      return false;
-    }
-
-  QPolygon asPolygon( polygonList.size() / 2 );
-
-  for( int i = 0; i < polygonList.size(); i += 2 )
-    {
-      // The list consists of pairs Longitude, Latitude
-      // Convert coordinate to double and check range
-      float lon = 0.0, lat = 0.0;
-      bool okLon = false, okLat = false;
-      int error = 0;
-
-      lon = polygonList.at(i).toFloat(&okLon);
-      lat = polygonList.at(i+1).toFloat(&okLat);
-
-      if( okLon == false || lon < -180.0 || lon > 180.0 )
+      if( d > m_filterRadius )
         {
-          qWarning() << method << "Wrong longitude value"
-                     << polygonList.at(i)
-                     << "read at line" << xml.lineNumber();
-          error++;
-        }
-
-      if( okLat == false || lat < -90.0 || lat > 90.0 )
-        {
-          qWarning() << method << "Wrong latitude value"
-                     << polygonList.at(i+1)
-                     << "read at line" << xml.lineNumber();
-          error++;
-        }
-
-      if( error > 0 )
-        {
+          // The radius filter said no. To far away from home.
           return false;
         }
-
-      // Convert coordinates into KFLog format
-      int latInt = static_cast<int> (rint(600000.0 * lat));
-      int lonInt = static_cast<int> (rint(600000.0 * lon));
-
-      // Project coordinates to map datum and store them in a polygon
-      asPolygon.setPoint( i/2, _globalMapMatrix->wgsToMap( latInt, lonInt ) );
     }
 
-  if( asPolygon.count() < 2 )
-    {
-      qWarning() << method << "Line" << xml.lineNumber()
-                 << "Airspace" << as.getName()
-                 << "contains to less coordinates! Ignoring it.";
-      return false;
-    }
-
-  // Airspaces are stored as polygons and should not contain the start point
-  // twice as done in OpenAip description.
-  if ( asPolygon.count() > 2 && asPolygon.first() == asPolygon.last() )
-    {
-      // remove the last point because it is identical to the first point
-      asPolygon.remove(asPolygon.count()-1);
-    }
-
-  as.setProjectedPolygon( asPolygon );
   return true;
 }

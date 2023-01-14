@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2013-2014 by Axel Pauli <kflog.cumulus@gmail.com>
+**   Copyright (c):  2013-2023 by Axel Pauli <kflog.cumulus@gmail.com>
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -18,31 +18,33 @@
  *
  * \author Axel Pauli
  *
- * \brief A class for reading data from openAIP XML files.
+ * \brief A class for reading aeronautical data from openAIP files.
  *
- * A class for reading data from openAIP XML files provided by Butterfly
+ * A class for reading data from openAIP Json files provided by Butterfly
  * Avionics GmbH. The data are licensed under the CC BY-NC-SA license.
  *
  * See here for more info: http://www.openaip.net
  *
- * \date 2013-2014
+ * \date 2013-2023
  *
- * \version $Id$
+ * \version 1.2
  */
 
-#ifndef OpenAip_h
-#define OpenAip_h
+#pragma once
 
 #include <QList>
+#include <QHash>
 #include <QMap>
 #include <QSet>
 #include <QString>
-#include <QXmlStreamReader>
+#include <QJsonDocument>
 
 #include "airfield.h"
 #include "airspace.h"
 #include "altitude.h"
+#include "Frequency.h"
 #include "radiopoint.h"
+#include "ThermalPoint.h"
 
 class OpenAip
 {
@@ -52,30 +54,19 @@ class OpenAip
 
   virtual ~OpenAip();
 
-  /**
-   * Opens the passed file and looks, which kind of OpenAip data is provided.
-   *
-   * \param filename File containing OpenAip XML data definitions.
-   *
-   * \param dataFormat The OpenAip DATAFORMAT attribute
-   *
-   * \param dataItem The second root element of the file after the OPENAIP tag.
-   *
-   * \return true as success otherwise false
-   */
-  bool getRootElement( QString fileName, QString& dataFormat, QString& dataItem );
+  Q_DISABLE_COPY( OpenAip )
 
   /**
-   * Reads in a navigation aid file provided as open aip xml format.
+   * Reads in a navigation aid file provided as openAIP json format.
    *
    * \param filename File containing navigation aid definitions
    *
-   * \param navAidList List in which the read items are stored
+   * \param navAidList List in which the read data are stored
    *
    * \param errorInfo Info about read errors
    *
-   * \param useFiltering If enabled, filter rules will apply
-  *
+   * \param useFiltering If enabled, different filter rules will apply
+   *
    * \return true as success otherwise false
    */
   bool readNavAids( QString fileName,
@@ -84,25 +75,46 @@ class OpenAip
                     bool useFiltering=false );
 
   /**
-   * Reads in a hotspot file provided as open aip xml format.
+   * Reads in a hotspot file provided as openAIP json format.
    *
    * \param filename File containing hotspot definitions
    *
-   * \param hotspotList List in which the read items are stored
+   * \param hotspotList List in which the read data are stored
    *
    * \param errorInfo Info about read errors
    *
-   * \param useFiltering If enabled, filter rules will apply
+   * \param useFiltering If enabled, different filter rules will apply
    *
    * \return true as success otherwise false
    */
   bool readHotspots( QString fileName,
-                     QList<SinglePoint>& hotspotList,
+                     QList<ThermalPoint>& hotspotList,
                      QString& errorInfo,
                      bool useFiltering=false );
 
   /**
-   * Reads in an airfield file provided as open aip xml format.
+   * Reads in a single point file provided as openAIP json format.
+   *
+   * \param filename File containing json definitions
+   *
+   * \param type Type to be set for the single point
+   *
+   * \param spList List in which the read data are stored
+   *
+   * \param errorInfo Info about read errors
+   *
+   * \param useFiltering If enabled, different filter rules will apply
+   *
+   * \return true as success otherwise false
+   */
+  bool readSinglePoints( QString fileName,
+                         int type,
+                         QList<SinglePoint>& spList,
+                         QString& errorInfo,
+                         bool useFiltering=false );
+
+  /**
+   * Reads in an airfield file provided as openAIP json format.
    *
    * \param filename File containing airfield definitions
    *
@@ -110,7 +122,7 @@ class OpenAip
    *
    * \param errorInfo Info about read errors
    *
-   * \param useFiltering If enabled, filter rules will apply
+   * \param useFiltering If enabled, different filter rules will apply
    *
    * \return true as success otherwise false
    */
@@ -120,7 +132,7 @@ class OpenAip
                       bool useFiltering=false );
 
   /**
-   * Reads in an airspace file provided as open aip xml format.
+   * Reads in an airspace file provided as openAIP json format.
    *
    * \param filename File containing airspace definitions
    *
@@ -130,7 +142,8 @@ class OpenAip
    *
    * \return true on success otherwise false
    */
-  bool readAirspaces( QString fileName, QList<Airspace>& airspaceList,
+  bool readAirspaces( QString fileName,
+  										QList<Airspace>& airspaceList,
                       QString& errorInfo );
 
   /**
@@ -160,76 +173,70 @@ class OpenAip
  private:
 
   /**
-   * Read version and format attribute from OPENAIP tag. Returns true in case
-   * of success otherwise false.
+   * Read and set the frequency value from a navaid json object.
+   *
+   * @param object
+   * @return float
    */
-  bool readVersionAndFormat( QXmlStreamReader& xml,
-                             QString& version,
-                             QString& format );
-
-  bool readNavAidRecord( QXmlStreamReader& xml, RadioPoint& rp );
-
-  bool readGeoLocation( QXmlStreamReader& xml, SinglePoint& sp );
-
-  bool readRadio( QXmlStreamReader& xml, RadioPoint& rp );
-
-  bool readParams( QXmlStreamReader& xml, RadioPoint& rp );
-
-  bool readHotspotRecord( QXmlStreamReader& xml, SinglePoint& sp );
-
-  bool readAirfieldRecord( QXmlStreamReader& xml, Airfield& af );
-
-  bool readAirfieldRadio( QXmlStreamReader& xml, Airfield& af );
+  Frequency getJNavaidFrequency( QJsonObject& object );
 
   /**
-   * Read runway data from data format 1.0.
+   * Read and set the range value from a navaid json object.
+   *
+   * @param object
+   * @return float
    */
-  bool readAirfieldRunway10( QXmlStreamReader& xml, Airfield& af );
+  int getJNavaidRange( QJsonObject& object );
 
   /**
-   * Read runway data from data format 1.1.
+   * Read and return the elevation value from a json object as meters.
+   *
+   * @param object
+   * @return float
    */
-  bool readAirfieldRunway11( QXmlStreamReader& xml, Airfield& af );
+  float getJElevation( QJsonObject& object );
 
   /**
-   * Read a complete airspace record.
+   * Read and set the coordinates from a json object.
    */
-  bool readAirspaceRecord( QXmlStreamReader& xml, Airspace& as );
-
-  bool readAirspaceLimitReference( QXmlStreamReader& xml,
-                                   BaseMapElement::elevationType& reference );
-
-  bool readAirspaceAltitude( QXmlStreamReader& xml,
-                             QString& unit,
-                             Altitude& altitude );
-
-  bool readAirspaceGeometrie( QXmlStreamReader& xml, Airspace& as );
+  bool setJGeoLocation( QJsonObject& object, SinglePoint& sp );
 
   /**
-   * Converts a string number with unit to an integer value.
-   *
-   * \param number The number to be converted
-   *
-   * \param unit The unit of the number, can be "M" or "FT"
-   *
-   * \param result The calculated integer value
-   *
-   * \return true in case of success otherwise false
+   * Sets the airfield type.
    */
-  bool getUnitValueAsInteger( const QString number, const QString unit, int& result );
+  bool setJAirfieldType( const int type, Airfield& af );
 
   /**
-   * Converts a string number with unit to an float value.
-   *
-   * \param number The number to be converted
-   *
-   * \param unit The unit of the number, can be "M" or "FT"
-   *
-   * \param result The calculated float value
-   *
-   * \return true in case of success otherwise false
+   * Read and set Json freqeuncy data of an airfield.
    */
-  bool getUnitValueAsFloat( const QString number, const QString unit, float& result );
+  void setJAirfieldFrequencies( QJsonArray& array, Airfield& af );
+
+  /**
+   * Read and set Json runway data of an airfield.
+   */
+  void setJAirfieldRunways( QJsonArray& array, Airfield& af );
+
+  /**
+   * Read and set Json runway dimension data of an airfield.
+   */
+  void setJAirfieldRunwayDimensions( const QJsonObject& object, Runway& rw );
+
+  /**
+   * Read and set Json runway surface data of an airfield.
+   */
+  void setJAirfieldRunwaySurface( const QJsonObject& object, Runway& rw );
+
+  /**
+   * Reads the airspace limit data.
+   */
+ bool readJAirspaceLimit( const QString& asName,
+                           const QJsonObject& object,
+                           BaseMapElement::elevationType& reference,
+                           Altitude& altitude );
+ /**
+  * Reads the airspace coordinates data.
+  */
+  bool readJAirspaceGeometrie( const QJsonObject& object, Airspace& as );
 
   /**
    * Loads the user's defined filter values from the configuration data.
@@ -237,9 +244,16 @@ class OpenAip
   void loadUserFilterValues();
 
   /**
-   * Containing all supported OpenAip data formats.
+   * Fills the mapping hash with the runway surface mapping data.
    */
-  QSet<QString> m_supportedDataFormats;
+  void fillRunwaySurfaceMapper();
+
+  /**
+   * Check if point is inside a certain radius.
+   *
+   * \return true, if point is inside other wise false
+   */
+  bool checkRadius( WGSPoint* point );
 
   /**
    * Country filter with countries as two letter code in upper case.
@@ -263,22 +277,17 @@ class OpenAip
   float m_filterRunwayLength;
 
   /**
-   * Value of VERSION attribute from OPENAIP tag of the current read file.
-   */
-  QString m_oaipVersion;
-  /**
-   * Value of DATAFORMAT attribute from OPENAIP tag of the current read file.
-   */
-  QString m_oaipDataFormat;
-
-  /**
    * Contains an airspace type mapping between read item and related Cumulus
    * airspace item.
    */
   QMap<QString, BaseMapElement::objectType> m_airspaceTypeMapper;
 
+  /**
+   * Contains an airspace type mapping between read item and related Cumulus
+   * airspace item.
+   */
+  QHash<int, Runway::SurfaceType> m_runwaySurfaceMapper;
+
   /** Contains all short names of parsed file. */
   QSet<QString> m_shortNameSet;
 };
-
-#endif /* OpenAip_h */

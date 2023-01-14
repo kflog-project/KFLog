@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2014 by Axel Pauli <kflog.cumulus@gmail.com>
+**   Copyright (c):  2014-2023 by Axel Pauli <kflog.cumulus@gmail.com>
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -18,20 +18,19 @@
  *
  * \author Axel Pauli
  *
- * \brief A class for reading point data from openAIP XML files.
+ * \brief A class for reading point data from openAIP Json files.
  *
- * A class for reading point data from OpenAIP XML files provided by Butterfly
+ * A class for reading point data from OpenAIP Json files provided by Butterfly
  * Avionics GmbH. The data are licensed under the CC BY-NC-SA license.
  *
  * See here for more info: http://www.openaip.net
  *
- * \date 2014
+ * \date 2014-2023
  *
- * \version 1.0
+ * \version 1.1
  */
 
-#ifndef OpenAip_Poi_Loader_h_
-#define OpenAip_Poi_Loader_h_
+#pragma once
 
 #include <QList>
 #include <QMutex>
@@ -39,6 +38,7 @@
 #include "airfield.h"
 #include "radiopoint.h"
 #include "singlepoint.h"
+#include "ThermalPoint.h"
 
 class OpenAipPoiLoader
 {
@@ -69,14 +69,38 @@ class OpenAipPoiLoader
   int load( QList<RadioPoint>& navaidList );
 
   /**
-   * Searches on default places openAIP navAids files and load them. The
+   * Searches on default places openAIP hotspot files and load them. A source
+   * can be an original Json file or a compiled version of it. The
    * results are appended to the passed list.
    *
    * \param hotspotList All read hotspots have to be appended to this list.
    *
+   * \param readSource If true the source files have to be read instead of
+   * compiled sources.
+   *
    * \return number of loaded hotspot files
    */
-  int load( QList<SinglePoint>& hotspotList );
+  int load( QList<ThermalPoint>& hotspotList );
+
+  /**
+   * Searches on default places openAIP files according to the given filter
+   * string and load them. A source can be an original Json file or a compiled
+   * version of it. The results are appended to the passed list.
+   *
+   * \param filter Files to be loaded as wildcard definition.
+   *
+   * \param type Type of single point
+   *
+   * \param spList All read single points have to be appended to this list.
+   *
+   * \param readSource If true the source files have to be read instead of
+   * compiled sources.
+   *
+   * \return number of loaded files
+   */
+  int load( QString filter,
+            int type,
+            QList<SinglePoint>& spList );
 
  private:
 
@@ -84,6 +108,5 @@ class OpenAipPoiLoader
   static QMutex m_mutexAf;
   static QMutex m_mutexNa;
   static QMutex m_mutexHs;
+  static QMutex m_mutexSp;
 };
-
-#endif /* OpenAip_Poi_Loader_h_ */
