@@ -7,21 +7,34 @@
  ************************************************************************
  **
  **   Copyright (c):  2000      by Heiner Lamprecht, Florian Ehinger
- **                   2008-2014 by Axel Pauli
+ **                   2008-2023 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
  **
  ***********************************************************************/
 
-#ifdef QT_5
-#include <QtWidgets>
-#else
 #include <QtGui>
-#endif
 
 #include "airfield.h"
 #include "altitude.h"
+#include "mapconfig.h"
+
+QMutex Airfield::mutex;
+
+Airfield::Airfield() :
+  SinglePoint(),
+  m_icao(),
+  m_atis(0.0),
+  m_winch(false),
+  m_towing(false),
+  m_ppr(false),
+  m_private(false),
+  m_skyDiving(false),
+  m_landable(true),
+  m_rwShift(9)
+ {
+ }
 
 Airfield::Airfield( const QString& name,
                     const QString& icao,
@@ -30,21 +43,29 @@ Airfield::Airfield( const QString& name,
                     const WGSPoint& wgsPos,
                     const QPoint& pos,
                     const float elevation,
-                    const float frequency,
-                    const QString& country,
+                    const QList<Runway>& rwyList,
+                    const QList<Frequency> frequencyList,
+                    const QString country,
                     const QString comment,
-                    bool winch,
-                    bool towing,
-                    bool landable,
-                    const float atis) :
-  SinglePoint(name, shortName, typeId, wgsPos, pos, elevation, comment, country),
+                    bool hasWinch,
+                    bool hasTowing,
+                    bool isPPR,
+                    bool isPrivate,
+                    bool hasSkyDiving,
+                    bool isLandable,
+                    const float atis ) :
+  SinglePoint( name, shortName, typeId, wgsPos, pos, elevation, country, comment ),
   m_icao(icao),
-  m_frequency(frequency),
+  m_frequencyList(frequencyList),
   m_atis(atis),
-  m_winch(winch),
-  m_towing(towing),
-  m_rwShift(0),
-  m_landable(landable)
+  m_rwyList(rwyList),
+  m_winch(hasWinch),
+  m_towing(hasTowing),
+  m_ppr(isPPR),
+  m_private(isPrivate),
+  m_skyDiving(hasSkyDiving),
+  m_landable(isLandable),
+  m_rwShift(0)
 {
 }
 
@@ -58,10 +79,10 @@ QString Airfield::getInfoString()
   QString text;
   QString text1;
 
-  text = QString("<html><center><b>") +
-         "<IMG SRC=" + path + "/" +
-         glConfig->getPixmapName(typeID, hasWinch(), false) + "> " +
-         name;
+  text = QString( "<html><center><b>") +
+                  "<IMG SRC=" + path + "/" +
+                  glConfig->getPixmapName(typeID, hasWinch(), false) + "> " +
+                  name;
 
   if( !m_icao.isEmpty() )
     {
@@ -93,31 +114,59 @@ QString Airfield::getInfoString()
 
   text += "<table cellpadding=5 width=100%>";
 
-  if( getRunwayNumber() > 0 )
+  if( m_rwyList.size() > 0 )
     {
-      for( int i = 0; i < getRunwayNumber(); i++ )
+      for( int i = 0; i < m_rwyList.size(); i++ )
         {
-          text += QString("<tr><td>") + QObject::tr("Runway: ") + "</td><td>";
+          text += QString("<tr><td>") + QObject::tr("Runway:");
 
-          Runway *rw = getRunway(i);
+          const Runway& rwy = m_rwyList.at(i);
 
-          text += QString("<b>%1/%2</b>").arg( rw->m_heading.first, 2, 10, QChar('0') )
-                                         .arg( rw->m_heading.second, 2, 10, QChar('0') );
-          text += " (" + Runway::item2Text( rw->m_surface ) + ")";
-          text += "</td><td>" + QObject::tr("Length:") + "</td><td><b>" +
-                  QString("%1 m").arg(rw->m_length) + "</b><td></tr>";
+          text += QString("&nbsp;<b>%1</b>").arg( rwy.getName() );
+
+          if( rwy.isMainRunway() == true )
+            {
+              text += "&nbsp;*&nbsp;</td>";
+            }
+
+          float rwyLength = rwy.getLength();
+          float rwyWidth = rwy.getWidth();
+          QString rwyUnit = "m";
+
+          if( Altitude::getUnit() != Altitude::meters )
+           {
+              rwyLength /= Distance::mFromFeet;
+              rwyWidth /= Distance::mFromFeet;
+              rwyUnit = "ft";
+           }
+
+          text += "<td> (" + Runway::item2Text( rwy.getSurface() ) + ")</td>" +
+                  "<td>" + QObject::tr("Length:") + " <b>" +
+                  QString("%1 %2").arg( rwyLength, 0, 'f', 0 ).arg( rwyUnit ) + "</b>" +
+                  "</td>" +
+                  "<td>" + QObject::tr("Width:") + " <b>" +
+                  QString("%1 %2").arg( rwyWidth, 0, 'f', 0 ).arg( rwyUnit ) + "</b>";
+
+         if( rwy.isOpen() == false )
+           {
+             text += "&nbsp;" + QObject::tr("Closed!");
+           }
+
+          text += "</td></tr>";
         }
     }
 
-  text += "<tr><td>" + QObject::tr("Frequency:") + "</td><td>";
+  if( m_frequencyList.size() > 0.0 )
+    {
+      for( int i = 0; i < m_frequencyList.size(); i++ )
+        {
+          const Frequency& fq = m_frequencyList.at(i);
 
-  if( m_frequency > 0.0 )
-    {
-      text += "<b>" + frequencyAsString() + " " + QObject::tr("MHz") + "</b></td>";
-    }
-  else
-    {
-      text += "<b>" + QObject::tr("unknown") +"</b></td>";
+          text += "<tr><td colspan=\"4\">" + QObject::tr("Frequency:");
+          text += " <b>" + frequencyAsString( fq.getValue() ) + " " +
+                  QObject::tr("MHz") + "</b> ";
+          text += fq.getName() + "</td></tr>";
+        }
     }
 
   // save current unit
@@ -134,36 +183,24 @@ QString Airfield::getInfoString()
 
   if( currentUnit == Altitude::meters )
    {
-     text += "<td>" + QObject::tr("Elevation:") +
-             "</td><td><b>" + meters + " / " + feet +
-             "</b></td></tr>";
+     text += "<tr><td colspan=\"4\">" + QObject::tr("Elevation:") + "&nbsp;" +
+             "<b>" + meters + " / " + feet +"</b></td></tr>";
    }
   else
    {
-     text += "<td>" + QObject::tr("Elevation:") +
-             "</td><td><b>" + feet + " / " + meters +
-             "</b></td></tr>";
+     text += "<tr><td colspan=\"4\">" + QObject::tr("Elevation:") + "&nbsp;" +
+             "<b>" + feet + " / " + meters + "</b></td></tr>";
    }
 
   if( ! comment.isEmpty() )
     {
-      text += "<tr><td>" + QObject::tr("Comment:") + "</td><td colspan=\"3\">" +
+      text += "<tr><td colspan=\"4\">" + QObject::tr("Comment:") + "&nbsp;" +
               comment + "</td></tr>";
     }
 
   text += "</table></html>";
 
   return text;
-}
-
-Runway* Airfield::getRunway( int index )
-{
-  if( m_rwList.size() == 0 )
-    {
-      return static_cast<Runway*> ( 0 );
-    }
-
-  return &m_rwList[index];
 }
 
 bool Airfield::drawMapElement( QPainter* targetP )
@@ -180,29 +217,16 @@ bool Airfield::drawMapElement( QPainter* targetP )
     {
       QPixmap image( glConfig->getPixmapRotatable(typeID, m_winch) );
 
-      const Runway* runway = getRunway();
-
       // Calculate the default runway shift in 1/10 degrees.
-      // Default is E-W direction, if no runway was defined.
-      int rwShift = 90/10;
-
-      if( runway )
-        {
-	  ushort heading = runway->m_heading.first;
-
-          // calculate the real runway shift in 1/10 degrees.
-          if( heading <= 36 )
-            {
-              rwShift = (heading >= 18 ? (heading - 18) : heading);
-            }
-        }
+      // Default is E-W direction, if no runway data were defined.
+      calculateRunwayShift();
 
       // All icons are squares. Therefore we take the height also as width.
       int ih = image.height();
 
       targetP->drawPixmap( curPos.x() - ih/2, curPos.y() - ih/2,
                            image,
-                           rwShift * ih, 0, ih, ih );
+                           m_rwShift * ih, 0, ih, ih );
     }
   else
     {
@@ -233,7 +257,7 @@ bool Airfield::drawMapElement( QPainter* targetP )
 #warning "Airport::printMapElement not yet ready to use!"
 #endif
 
-void Airfield::printMapElement(QPainter* printPainter, bool isText)
+void Airfield::printMapElement( QPainter* printPainter, bool isText )
 {
   if( !isVisible() )
     {
@@ -434,9 +458,11 @@ void Airfield::printMapElement(QPainter* printPainter, bool isText)
             {
               printPainter->setFont(QFont("helvetica", 10, QFont::Bold));
               printPainter->drawText(printPos.x() - 15,
-                  printPos.y() + iconSize + 4, name);
+              printPos.y() + iconSize + 4, name);
+#if 0
               printPainter->drawText(printPos.x() - 15,
-                  printPos.y() + iconSize + 14, frequencyAsString());
+                            printPos.y() + iconSize + 14, frequencyAsString());
+#endif
             }
         }
 

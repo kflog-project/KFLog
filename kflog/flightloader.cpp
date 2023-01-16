@@ -9,18 +9,14 @@
 ************************************************************************
 **
 **   Copyright (c):  2008 by Constantijn Neeteson
-**                   2011-2014 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
 ***********************************************************************/
 
-#ifdef QT_5
-    #include <QtWidgets>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
 
 #include "altitude.h"
 #include "elevationfinder.h"
@@ -642,7 +638,7 @@ bool FlightLoader::openGardownFile(QFile& gardownFile, QFileInfo& fInfo)
             {
               // IO-Error !!!
               QString lineNr;
-              lineNr.sprintf("%d", lineCount);
+              lineNr = lineNr.asprintf("%d", lineCount);
               KMessageBox::error(0,
 //                  QObject::tr("Syntax-error while loading FlightGear-file"
 //                      "<BR><B>%1</B><BR>Aborting!").arg(flightgearFile.name()),

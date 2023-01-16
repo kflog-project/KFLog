@@ -7,7 +7,7 @@
  ************************************************************************
  **
  **   Copyright (c):  2003 by Harald Maier
- **                   2011-2014 by Axel Pauli
+ **                   2011-2023 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -170,7 +170,7 @@ int SoaringPilot::coordToDegree(QString &s)
   int res = 0;
   QString negChar("swSW");
 
-  s.trimmed();
+  s = s.trimmed();
 
   QStringList tmp = s.left(s.length() - 1).split(":");
 
@@ -204,10 +204,10 @@ QString SoaringPilot::degreeToDegMin(int d, bool isLat)
   double minute = (double)(tmpD - (degree * 600000)) / 10000.0;
 
   if (isLat) {
-    tmp.sprintf("%02d:%02.3f%c", degree, minute, (d < 0 ? 'S' : 'N'));
+    tmp = tmp.asprintf("%02d:%02.3f%c", degree, minute, (d < 0 ? 'S' : 'N'));
   }
   else {
-    tmp.sprintf("%03d:%02.3f%c", degree, minute, (d < 0 ? 'W' : 'E'));
+      tmp = tmp.asprintf("%03d:%02.3f%c", degree, minute, (d < 0 ? 'W' : 'E'));
   }
 
   return tmp;
@@ -223,10 +223,10 @@ QString SoaringPilot::degreeToDegMinSec(int d, bool isLat)
   int seconds = ((tmpD - (degree * 600000) - (10000 * minute)) * 60) / 10000;
 
   if (isLat) {
-    tmp.sprintf("%02d:%02d:%02d.00%c", degree, minute, seconds, (d < 0 ? 'S' : 'N'));
+      tmp = tmp.asprintf("%02d:%02d:%02d.00%c", degree, minute, seconds, (d < 0 ? 'S' : 'N'));
   }
   else {
-    tmp.sprintf("%03d:%02d:%02d.00%c", degree, minute, seconds, (d < 0 ? 'W' : 'E'));
+      tmp = tmp.asprintf("%03d:%02d:%02d.00%c", degree, minute, seconds, (d < 0 ? 'W' : 'E'));
   }
 
   return tmp;
@@ -235,10 +235,10 @@ QString SoaringPilot::degreeToDegMinSec(int d, bool isLat)
 int SoaringPilot::feetToMeter(QString &s)
 {
   int meter = 0;
-  s.trimmed();
+  s = s.trimmed();
   if (s.right(1) == "F") {
     QString tmp;
-    tmp.sprintf("%.0f", (s.left(s.length() - 1).toDouble() * 0.3048));
+    tmp = tmp.asprintf("%.0f", (s.left(s.length() - 1).toDouble() * 0.3048));
     meter = tmp.toInt();
   }
   return meter;
@@ -246,8 +246,7 @@ int SoaringPilot::feetToMeter(QString &s)
 
 QString SoaringPilot::meterToFeet(int m)
 {
-  QString feet;
-  feet.sprintf("%.0fF", m / 0.3048);
+  QString feet = feet.asprintf("%.0fF", m / 0.3048);
   return feet;
 }
 
@@ -356,7 +355,7 @@ int SoaringPilot::downloadFlight(int /*flightID*/, int /*secMode*/, const QStrin
             day = month = year = 0;
           }
 
-          key.sprintf("%02d%02d%02d", day, month, year);
+          key = key.asprintf("%02d%02d%02d", day, month, year);
 
           if ( flightCount.contains(key) ) {
             fc = flightCount.value(key);
@@ -369,13 +368,13 @@ int SoaringPilot::downloadFlight(int /*flightID*/, int /*secMode*/, const QStrin
           }
 
           if (shortName) {
-            _fileName.sprintf("%d%c%cX%s%c.IGC", year, c36[month], c36[day],
-                             _basicData.serialNumber.toLatin1().data(), c36[fc]);
+              _fileName = _fileName.asprintf("%d%c%cX%s%c.IGC", year, c36[month], c36[day],
+                                             _basicData.serialNumber.toLatin1().data(), c36[fc]);
           }
           else {
-            _fileName.sprintf("20%.2d-%.2d-%.2d-XSP-%s-%.2d.IGC",
-                             year, month, day,
-                             _basicData.serialNumber.toLatin1().data(), fc);
+              _fileName = _fileName.asprintf("20%.2d-%.2d-%.2d-XSP-%s-%.2d.IGC",
+                                             year, month, day,
+                                             _basicData.serialNumber.toLatin1().data(), fc);
           }
         }
         else {
@@ -666,14 +665,14 @@ int SoaringPilot::writeTasks(QList<FlightTask*> *tasks)
     else {
       typ = "";
     }
-    tmp.sprintf("TS,%s,%d,%s\r\n", task->getFileName().toLatin1().data(), nrPoints, typ.toLatin1().data());
+    tmp = tmp.asprintf("TS,%s,%d,%s\r\n", task->getFileName().toLatin1().data(), nrPoints, typ.toLatin1().data());
     file.append(tmp);
     foreach(wp, wpList) {
-      tmp.sprintf("TW,%s,%s,%s,%s\r\n",
-                  degreeToDegMinSec(wp->origP.lat(), true).toLatin1().data(),
-                  degreeToDegMinSec(wp->origP.lon(), false).toLatin1().data(),
-                  meterToFeet(wp->elevation).toLatin1().data(),
-                  wp->name.toLatin1().data());
+      tmp = tmp.asprintf("TW,%s,%s,%s,%s\r\n",
+                          degreeToDegMinSec(wp->origP.lat(), true).toLatin1().data(),
+                          degreeToDegMinSec(wp->origP.lon(), false).toLatin1().data(),
+                          meterToFeet(wp->elevation).toLatin1().data(),
+                          wp->name.toLatin1().data());
       file.append(tmp);
     }
     file.append("TE\r\n");
@@ -689,7 +688,6 @@ int SoaringPilot::readWaypoints(QList<Waypoint*> *waypoints)
 {
   QStringList file;
   QStringList tokens;
-  QString tmp;
   int ret;
   Waypoint *frWp;
 
@@ -713,17 +711,21 @@ int SoaringPilot::readWaypoints(QList<Waypoint*> *waypoints)
         frWp->origP.setPos(coordToDegree(tokens[1]), coordToDegree(tokens[2]));
         frWp->elevation = feetToMeter(tokens[3]);
 
-        tmp = tokens[4];
+        QString tmp = tokens[4];
 
         bool isLandable = (tmp.contains('A') > 0) || (tmp.contains('L') > 0);
 
         if (isLandable) {
-          rwy.m_surface = tmp.contains('A') > 0 ? Runway::Asphalt : Runway::Grass;
+            Runway rwy;
+
+          rwy.setSurface( tmp.contains('A') > 0 ? Runway::Asphalt : Runway::Grass );
+          // This runway is incomplete because we have no heading data. It will
+          // no be displayed by other widgets.
+          frWp->addRunway( rwy );
           frWp->type = tmp.contains('A') > 0 ? BaseMapElement::Airfield : BaseMapElement::Gliderfield;
         }
 
         frWp->comment = tokens[6];
-
         waypoints->append(frWp);
       }
     }
@@ -752,10 +754,10 @@ int SoaringPilot::writeWaypoints(QList<Waypoint*> *waypoints)
 
     if( frWp->rwyList.size() > 0 )
       {
-        rwy = frWp->rwyList[0];
+        rwy = Runway::getMainRunway( frWp->getRunwayList() );
       }
 
-    if (rwy.m_isOpen) {
+    if (rwy.isOpen() ) {
       switch(frWp->type) {
         case BaseMapElement::Airfield:
         case BaseMapElement::Airport:
@@ -765,18 +767,19 @@ int SoaringPilot::writeWaypoints(QList<Waypoint*> *waypoints)
           typ += "AL";
           break;
         case BaseMapElement::Gliderfield:
+        default:
           typ += "L";
           break;
       }
     }
-    tmp.sprintf("%d,%s,%s,%s,%s,%s,%s\r\n",
-                line++,
-                degreeToDegMin(frWp->origP.lat(), true).toLatin1().data(),
-                degreeToDegMin(frWp->origP.lon(), false).toLatin1().data(),
-                meterToFeet(frWp->elevation).toLatin1().data(),
-                typ.toLatin1().data(),
-                frWp->name.toLatin1().data(),
-                frWp->comment.toLatin1().data());
+    tmp = tmp.asprintf("%d,%s,%s,%s,%s,%s,%s\r\n",
+                       line++,
+                       degreeToDegMin(frWp->origP.lat(), true).toLatin1().data(),
+                       degreeToDegMin(frWp->origP.lon(), false).toLatin1().data(),
+                       meterToFeet(frWp->elevation).toLatin1().data(),
+                       typ.toLatin1().data(),
+                       frWp->name.toLatin1().data(),
+                       frWp->comment.toLatin1().data());
     file.append(tmp);
   }
   return writeFile(file);

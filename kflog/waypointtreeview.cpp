@@ -30,8 +30,8 @@
 
 extern MainWindow  *_mainWindow;
 extern Map         *_globalMap;
-extern MapConfig   *_globalMapConfig;
 extern MapContents *_globalMapContents;
+extern MapConfig   *_globalMapConfig;
 extern MapMatrix   *_globalMapMatrix;
 extern QSettings   _settings;
 
@@ -342,13 +342,13 @@ void WaypointTreeView::slotOpenWaypointCatalog()
 
   QString filter;
   filter.append(tr("All formats") + " (*.da4 *.DA4 *.dat *.DAT *.dbt *.DBT *.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
-  filter.append(tr("KFLog") + " (*.kflogwp *.KFLOGWP);;");
-  filter.append(tr("Cumulus") + " (*.kwp *.KWP);;");
-  filter.append(tr("Cambridge") + " (*.dat *.DAT);;");
-  filter.append(tr("Filser txt") + " (*.txt *.TXT);;");
-  filter.append(tr("Filser da4") + " (*.da4 *.DA4);;");
-  filter.append(tr("SeeYou") + " (*.cup *.CUP);;");
-  filter.append(tr("Volkslogger") + " (*.dbt *.DBT);;" );
+  filter.append(QString("KFLog") + " (*.kflogwp *.KFLOGWP);;");
+  filter.append(QString("KFLog/Cumulus") + " (*.kwp *.KWP);;");
+  filter.append(QString("Cambridge") + " (*.dat *.DAT);;");
+  filter.append(QString("Filser txt") + " (*.txt *.TXT);;");
+  filter.append(QString("Filser da4") + " (*.da4 *.DA4);;");
+  filter.append(QString("SeeYou") + " (*.cup *.CUP);;");
+  filter.append(QString("Volkslogger") + " (*.dbt *.DBT);;" );
 
   QString fName = QFileDialog::getOpenFileName( this,
                                                 tr("Open waypoint catalog"),
@@ -507,7 +507,7 @@ void WaypointTreeView::slotEditWaypoint()
 }
 
 /** No descriptions */
-void WaypointTreeView::slotEditWaypoint(Waypoint* w)
+void WaypointTreeView::slotEditWaypoint( Waypoint* w )
 {
   if( w == 0 )
     {
@@ -533,7 +533,11 @@ void WaypointTreeView::slotEditWaypoint(Waypoint* w)
   waypointDlg->setElevation(w->elevation);
   waypointDlg->icao->setText(w->icao);
 
-  tmp = QString("%1").arg(w->frequency, 3, 'f', 3, QChar('0'));
+  Frequency mainFq;
+  Frequency::getMainFrequency(w->getFrequencyList(), mainFq);
+  waypointDlg->rwyFrequency = mainFq;
+
+  tmp = QString("%1").arg( mainFq.getValue(), 3, 'f', 3, QChar('0'));
 
   while( tmp.size() < 7 )
     {
@@ -543,69 +547,76 @@ void WaypointTreeView::slotEditWaypoint(Waypoint* w)
 
   waypointDlg->frequency->setText( tmp );
 
-  Runway rwy;
+  const Runway& rwy = Runway::getMainRunway( w->getRunwayList() );
+  waypointDlg->rwy = rwy;
 
-  if( w->rwyList.size() > 0 )
-    {
-      rwy = w->rwyList[0];
-    }
-
-  waypointDlg->runway->setCurrentIndex( rwy.m_heading.first );
-  waypointDlg->length->setText(QString("%1").arg(rwy.m_length, 0, 'f', 0) );
+  waypointDlg->runway->setCurrentIndex( rwy.getHeading() / 10 );
+  waypointDlg->length->setText(QString("%1").arg(rwy.getLength(), 0, 'f', 0) );
 
   // translate to id
-  waypointDlg->setSurface(rwy.m_surface);
+  waypointDlg->setSurface( (enum Runway::SurfaceType) rwy.getSurface() );
   waypointDlg->comment->setText(w->comment);
-  waypointDlg->isLandable->setChecked(rwy.m_isOpen);
+  waypointDlg->isLandable->setChecked(rwy.isOpen() );
   waypointDlg->edit = true;
 
   if( waypointDlg->exec() == QDialog::Accepted )
     {
       if( !waypointDlg->name->text().isEmpty() )
         {
-          w->name = waypointDlg->name->text().toUpper();
-          w->country = waypointDlg->country->text().toUpper();
+          w->name = waypointDlg->name->text().left(8).toUpper();
           w->description = waypointDlg->description->text();
+          w->comment = waypointDlg->comment->text();
+          w->country = waypointDlg->country->text().toUpper();
           w->type = waypointDlg->getWaypointType();
           w->origP.setLat( waypointDlg->latitude->KFLogDegree() );
           w->origP.setLon( waypointDlg->longitude->KFLogDegree() );
           w->elevation = waypointDlg->getElevation();
           w->icao = waypointDlg->icao->text().toUpper();
-          w->frequency = waypointDlg->frequency->text().toFloat();
 
-          rwy.m_heading.first = waypointDlg->runway->currentIndex();
+          float fqValue = waypointDlg->frequency->text().toFloat();
+          waypointDlg->rwyFrequency.setValue( fqValue );
 
-          if( rwy.m_heading.first > 0 )
+          // Old frequency list is cleared, only one frequency is supported in KFLog.
+          w->getFrequencyList().clear();
+          w->addFrequency( waypointDlg->rwyFrequency );
+
+          int heading = waypointDlg->runway->currentIndex();
+          waypointDlg->rwy.setHeading( heading * 10 );
+
+          if( heading == 0 )
             {
-              int rw1 = rwy.m_heading.first;
-
-              rwy.m_heading.second = ((rw1 > 18) ? rw1 - 18 : rw1 + 18);
+              waypointDlg->rwy.setName("");
             }
           else
             {
-              rwy.m_heading = QPair<ushort, ushort> ( 0, 0 );
+              waypointDlg->rwy.setName( QString("%1").arg(heading, 2, 10, QChar('0')) );
             }
 
           tmp = waypointDlg->length->text();
 
           if( !tmp.isEmpty() )
             {
-              rwy.m_length = tmp.toFloat();
+              waypointDlg->rwy.setLength( tmp.toFloat() );
             }
           else
             {
-              rwy.m_length = 0.0;
+              waypointDlg->rwy.setLength( 0.0 );
             }
 
-          rwy.m_surface = (enum Runway::SurfaceType) waypointDlg->getSurface();
-          w->comment = waypointDlg->comment->text();
-          rwy.m_isOpen = waypointDlg->isLandable->isChecked();
+          waypointDlg->rwy.setSurface((enum Runway::SurfaceType) waypointDlg->getSurface() );
 
-          if( w->rwyList.size() > 0 )
+          if( waypointDlg->isLandable->isChecked() == true )
             {
-              w->rwyList.removeFirst();
-              w->rwyList.insert(0, rwy);
+              waypointDlg->rwy.setOperations( Runway::Active );
             }
+          else
+            {
+              waypointDlg->rwy.setOperations( Runway::Closed );
+            }
+
+          // Old runway list is cleared, only one runway is supported in KFLog.
+          w->getRunwayList().clear();
+          w->addRunway( waypointDlg->rwy );
 
           currentWaypointCatalog->modified = true;
           slotFillWaypoints();
@@ -751,6 +762,14 @@ void WaypointTreeView::slotFillWaypoints()
                 }
               break;
 
+            case BaseMapElement::CompPoint:
+
+              if( !currentWaypointCatalog->showReportings )
+                {
+                  continue;
+                }
+              break;
+
             case BaseMapElement::Outlanding:
 
               if( !currentWaypointCatalog->showOutlandings )
@@ -773,6 +792,9 @@ void WaypointTreeView::slotFillWaypoints()
                 {
                   continue;
                 }
+              break;
+
+            default:
               break;
             }
         }
@@ -815,43 +837,53 @@ void WaypointTreeView::slotFillWaypoints()
     if( altUnit == Altitude::feet )
       {
         item->setText(colElev,
-            QString::number( Altitude(w->elevation).getFeet(), 'f', 0) + " " + Altitude::getUnitText());
+                      QString::number( Altitude(w->elevation).getFeet(), 'f', 0) +
+                      " " + Altitude::getUnitText());
       }
     else
       {
         // The default is always meters
         item->setText(colElev,
-            QString::number(w->elevation, 'f', 0) + " " + Altitude::getUnitText());
+                      QString::number(w->elevation, 'f', 0) + " " +
+                      Altitude::getUnitText());
       }
 
-    w->frequency > 0 ? tmp.sprintf("%.3f", w->frequency) : tmp = "";
+    Frequency fq;
+    Frequency::getMainFrequency( w->getFrequencyList(), fq );
 
-    item->setText(colFrequency, tmp);
-
-    Runway rwy;
+    fq.getValue() > 0 ? tmp = tmp.asprintf("%.3f", fq.getValue()) : tmp = "";
+    item->setText( colFrequency, tmp );
 
     if( w->rwyList.size() > 0 )
       {
-        rwy = w->rwyList[0];
-      }
+        const Runway& rwy = Runway::getMainRunway( w->rwyList );
 
-    item->setText(colLandable, rwy.m_isOpen == true ? tr("Yes") : "");
+        item->setText(colLandable, rwy.isOpen() == true ? tr("Yes") : "");
 
-    if( rwy.m_heading.first > 0 )
-      {
-        tmp.sprintf( "%02d/%02d", rwy.m_heading.first, rwy.m_heading.second );
-        item->setText(colRunway, tmp);
-      }
+        if( rwy.getHeading() > 0 )
+          {
+            ushort h1 = rwy.getHeading() / 10;
+            ushort h2 = h1 > 18 ? h1 - 18 : h1 + 18;
 
-    if( rwy.m_length > 0 )
-      {
-        tmp.sprintf( "%.0f m", rwy.m_length );
-        item->setText(colLength, tmp);
-      }
+            if( rwy.isBidirectional() )
+              {
+                tmp = QString( "%1/%2" ).arg(h1, 2, 10, QChar('0')).arg(h2, 2, 10, QChar('0'));
+              }
+            else
+              {
+                tmp = QString( "%1" ).arg(h1, 2, 10, QChar('0'));
+              }
 
-    if( rwy.m_heading.first > 0 )
-      {
-        item->setText( colSurface, Runway::item2Text( rwy.m_surface ) );
+            item->setText(colRunway, tmp);
+          }
+
+        if( rwy.getLength() > 0 )
+          {
+            tmp = QString( "%1 m" ).arg( rwy.getLength(), 0 );
+            item->setText(colLength, tmp);
+          }
+
+        item->setText( colSurface, Runway::item2Text( rwy.getSurface() ) );
       }
 
     item->setText(colComment, w->comment);
@@ -909,13 +941,13 @@ void WaypointTreeView::slotImportWaypointCatalog()
 
   QString filter;
   filter.append(tr("All formats") + " (*.dat *.DAT *.dbt *.DBT *.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
-  filter.append(tr("KFLog") + " (*.kflogwp *.KFLOGWP);;");
-  filter.append(tr("Cumulus") + " (*.kwp *.KWP);;");
-  filter.append(tr("Cambridge") + " (*.dat *.DAT);;");
-  filter.append(tr("Filser txt") + " (*.txt *.TXT);;");
-  filter.append(tr("Filser da4") + " (*.da4 *.DA4);;");
-  filter.append(tr("SeeYou") + " (*.cup *.CUP);;");
-  filter.append(tr("Volkslogger") + " (*.dbt *.DBT);;" );
+  filter.append(QString("KFLog") + " (*.kflogwp *.KFLOGWP);;");
+  filter.append(QString("Cumulus") + " (*.kwp *.KWP);;");
+  filter.append(QString("Cambridge") + " (*.dat *.DAT);;");
+  filter.append(QString("Filser txt") + " (*.txt *.TXT);;");
+  filter.append(QString("Filser da4") + " (*.da4 *.DA4);;");
+  filter.append(QString("SeeYou") + " (*.cup *.CUP);;");
+  filter.append(QString("Volkslogger") + " (*.dbt *.DBT);;" );
 
   QString fName = QFileDialog::getOpenFileName( this,
                                                 tr("Import waypoints from catalog"),
@@ -952,6 +984,7 @@ void WaypointTreeView::slotCloseWaypointCatalog()
         break;
 
       case QMessageBox::Cancel:
+      default:
         return;
     }
   }
@@ -973,12 +1006,11 @@ void WaypointTreeView::slotCloseWaypointCatalog()
 
   if( idx < 0 )
     {
-      // last catalog has been removed
-      updateWpListItems();
-
       // Clear waypoint tree
       waypointTree->clear();
 
+      // last catalog has been removed
+      updateWpListItems();
       emit waypointCatalogChanged(0);
       return;
     }
@@ -1016,6 +1048,11 @@ void WaypointTreeView::slotImportWaypointFromMap()
       if( currentWaypointCatalog->showAll || currentWaypointCatalog->showNavaids )
         {
           searchList.append( MapContents::NavaidList );
+        }
+
+      if( currentWaypointCatalog->showAll || currentWaypointCatalog->showReportings )
+        {
+          searchList.append( MapContents::ReportList );
         }
 
       if( currentWaypointCatalog->showAll || currentWaypointCatalog->showObstacles )
@@ -1116,13 +1153,13 @@ void WaypointTreeView::slotImportWaypointFromMap()
               if( af )
                 {
                   w->icao = af->getICAO();
-                  w->frequency = af->getFrequency();
+                  //w->frequency = af->getFrequency();
                   w->rwyList = af->getRunwayList();
                 }
               else if( rp )
                 {
                   w->icao = rp->getICAO();
-                  w->frequency = rp->getFrequency();
+                  // w->frequency = rp->getFrequency();
                   w->comment = rp->getAdditionalText();
                 }
 
@@ -1167,11 +1204,11 @@ void WaypointTreeView::slotAddWaypoint(Waypoint *w)
 
   if( w->name.isEmpty() || currentWaypointCatalog->findWaypoint( w->name, idx ) )
     {
-      w->name.sprintf( "WPT_%04d", loop );
+      w->name = QString( "WPT_%1" ).arg(loop, 4, 10, QChar('0'));
 
       while( currentWaypointCatalog->findWaypoint( w->name, idx ) && loop < 10000 )
         {
-          w->name.sprintf( "WPT%04d", ++loop );
+          w->name = QString( "WPT_%1" ).arg(++loop, 4, 10, QChar('0'));
         }
 
       if( w->description.isEmpty() )
@@ -1245,11 +1282,11 @@ void WaypointTreeView::setFilterDataInCatalog( WaypointCatalog* catalog )
   catalog->showAirfields = importFilterDlg->airfields->isChecked();
   catalog->showGliderfields = importFilterDlg->gliderfields->isChecked();
   catalog->showNavaids = importFilterDlg->navaids->isChecked();
+  catalog->showReportings = importFilterDlg->reportings->isChecked();
   catalog->showObstacles = importFilterDlg->obstacles->isChecked();
   catalog->showLandmarks = importFilterDlg->landmarks->isChecked();
   catalog->showOutlandings = importFilterDlg->outlandings->isChecked();
   catalog->showHotspots = importFilterDlg->hotspots->isChecked();
-
   catalog->setFilter( importFilterDlg->getFilter() );
   catalog->areaLat1 = importFilterDlg->fromLat->KFLogDegree();
   catalog->areaLat2 = importFilterDlg->toLat->KFLogDegree();
@@ -1315,6 +1352,7 @@ void WaypointTreeView::setFilterDataFromCatalog()
   importFilterDlg->airfields->setChecked(currentWaypointCatalog->showAirfields);
   importFilterDlg->gliderfields->setChecked(currentWaypointCatalog->showGliderfields);
   importFilterDlg->navaids->setChecked(currentWaypointCatalog->showNavaids);
+  importFilterDlg->reportings->setChecked(currentWaypointCatalog->showReportings);
   importFilterDlg->obstacles->setChecked(currentWaypointCatalog->showObstacles);
   importFilterDlg->landmarks->setChecked(currentWaypointCatalog->showLandmarks);
   importFilterDlg->outlandings->setChecked(currentWaypointCatalog->showOutlandings);

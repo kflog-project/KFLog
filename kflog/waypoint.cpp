@@ -7,12 +7,10 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by Heiner Lamprecht
-**                   2011-2013 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -27,7 +25,6 @@ Waypoint::Waypoint( QString name,
                     QString _comment,
                     QString _country,
                     float elev,
-                    float freq,
                     QPoint pP,
                     time_t s1,
                     time_t s2,
@@ -52,7 +49,6 @@ Waypoint::Waypoint( QString name,
   comment(_comment),
   country(_country),
   elevation(elev),
-  frequency(freq),
   importance(import),
   fixTime(GPSFixTime)
 {
@@ -72,12 +68,12 @@ Waypoint::Waypoint(Waypoint &p)
   *this = p;
 }
 
-bool Waypoint::operator<(Waypoint &wp)
+bool Waypoint::operator < (Waypoint &wp)
 {
   return name < wp.name;
 }
 
-bool Waypoint::operator==( const Waypoint& second ) const
+bool Waypoint::operator == ( const Waypoint& second ) const
 {
   if( name == second.name &&
       type == second.type &&

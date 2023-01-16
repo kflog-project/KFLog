@@ -7,12 +7,10 @@
  ************************************************************************
  **
  **   Copyright (c):  2000      by Heiner Lamprecht, Florian Ehinger
- **                   2008-2014 by Axel Pauli
+ **                   2008-2023 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
- **
- **   $Id$
  **
  ***********************************************************************/
 
@@ -25,24 +23,23 @@
  *
  * This class is used for handling of airfields. The object can be one of
  * Airport, MilAirport, CivMilAirport, Airfield, ClosedAirfield,
- * CivHeliport, MilHeliport, AmbHeliport, UltraLight, GliderSite
+ * CivHeliport, MilHeliport, AmbHeliport, UltraLight, Gliderfield
  *
  * \see BaseMapElement#objectType
  *
  * This class is derived from \ref SinglePoint
  *
- * \date 2000-2011
- *
- * $Id$
+ * \date 2000-2023
  *
  */
 
-#ifndef AIRFIELD_H
-#define AIRFIELD_H
+#pragma once
 
 #include <QList>
+#include <QMutex>
 #include <QString>
 
+#include "Frequency.h"
 #include "runway.h"
 #include "singlepoint.h"
 
@@ -53,16 +50,7 @@ class Airfield : public SinglePoint
   /**
    * Airfield default constructor
    */
-  Airfield() :
-    SinglePoint(),
-    m_frequency(0.0),
-    m_atis(0.0),
-    m_winch(false),
-    m_towing(false),
-    m_rwShift(0),
-    m_landable(true)
-   {
-   };
+  Airfield();
 
   /**
    * Creates a new Airfield-object.
@@ -73,14 +61,17 @@ class Airfield : public SinglePoint
    * @param  typeId  The map element type identifier
    * @param  wgsPos The position as WGS84 datum
    * @param  pos  The position
+   * @param  rwList A list with runway objects
    * @param  elevation  The elevation
-   * @param  frequency  The frequency
+   * @param  frequencyList A list with the frequency objects
    * @param  country The country of the airfield as two letter code
    * @param  comment An additional comment related to the airfield
-   * @param  winch  "true", if winch launch is available
-   * @param  towing "true", if aero towing is available
-   * @param  landable "true", if airfield is landable
-   * @param  atis ATIS
+   * @param  hasWinch "true", if winch launch is available
+   * @param  hasTowing "true", if aero towing is available
+   * @param  isPPR "true", if airfield is PPR
+   * @param  isPrivate "true", if airfield is private
+   * @param  hasSkyDiving "true", if airfield has sky diving
+   * @param  isLandable "true", if airfield is landable
    */
   Airfield( const QString& name,
             const QString& icao,
@@ -89,12 +80,16 @@ class Airfield : public SinglePoint
             const WGSPoint& wgsPos,
             const QPoint& pos,
             const float elevation,
-            const float frequency,
-            const QString& country = "",
-            const QString comment = "",
-            bool winch = false,
-            bool towing = false,
-            bool landable = true,
+            const QList<Runway>& rwyList,
+            const QList<Frequency> frequencyList,
+            const QString country,
+            const QString comment,
+            bool hasWinch,
+            bool hasTowing,
+            bool isPPR,
+            bool isPrivate,
+            bool hasSkyDiving,
+            bool isLandable,
             const float atis = 0.0 );
 
   /**
@@ -103,27 +98,27 @@ class Airfield : public SinglePoint
   virtual ~Airfield();
 
   /**
-   * @return the frequency of the airfield as String.
+   * @return The frequency as String.
    */
-  QString frequencyAsString() const
+  QString frequencyAsString( const float frequency ) const
     {
-      return (m_frequency > 0) ? QString("%1").arg(m_frequency, 0, 'f', 3) : QString("");
+      return (frequency > 0) ? QString("%1").arg(frequency, 0, 'f', 3) : QString("");
     };
 
   /**
-   * @return the frequency of the airfield as float value.
+   * @return The frequency list of the airfield.
    */
-  float getFrequency() const
+  QList<Frequency>& getFrequencyList()
     {
-      return m_frequency;
+      return m_frequencyList;
     };
 
   /**
-   * @param value The frequency of the airfield as float value.
+   * @param freq The frequency and its type of the airfield.
    */
-  void setFrequency( const float value )
+  void addFrequency( Frequency freqencyAndType)
     {
-      m_frequency = value;
+      m_frequencyList.append( freqencyAndType );
     };
 
   /**
@@ -159,39 +154,22 @@ class Airfield : public SinglePoint
     };
 
   /**
-   * Returns the data of a runway.
-   *
-   * \param index The index number of the runway.
-   *
-   * \return A runway object, containing the data of the runway.
-   */
-  Runway* getRunway( int index=0 );
-
-  /**
-   * @return The number of available runways.
-   */
-  int getRunwayNumber()
-  {
-    return m_rwList.size();
-  };
-
-  /**
-   * @return The runway list.
+   * @return The runway list, containing the data of all runways.
    */
   QList<Runway>& getRunwayList()
-  {
-    return m_rwList;
-  };
+    {
+      return m_rwyList;
+    };
 
   /**
-   * Adds a runway to the list of runways.
+   * Adds a runway object to the runway list.
    *
-   * \param The new runway to be added to the runway list.
+   * @param value The runway object, containing the data of the runway.
    */
-  void addRunway( Runway& runway )
-  {
-    m_rwList.append( runway );
-  };
+   void addRunway( const Runway& value )
+     {
+       m_rwyList.append( value );
+     };
 
   /**
    * @return "true", if winch launching is available.
@@ -241,6 +219,36 @@ class Airfield : public SinglePoint
       m_landable = value;
     };
 
+  bool isPPR() const
+  {
+    return m_ppr;
+  }
+
+  void setPPR( bool attribute )
+  {
+    m_ppr = attribute;
+  }
+
+  bool isPrivate() const
+  {
+    return m_private;
+  }
+
+  void setPrivate( bool attribute )
+  {
+    m_private = attribute;
+  }
+
+  bool hasSkyDiving() const
+  {
+    return m_skyDiving;
+  }
+
+  void setSkyDiving( bool attribute )
+  {
+    m_skyDiving = attribute;
+  }
+
   /**
    * Return a short html-info-string about the airport, containing the
    * name, the alias, the elevation and the frequency as well as a small
@@ -253,10 +261,13 @@ class Airfield : public SinglePoint
 
   /**
    * Draws the element into the given painter.
-   *
-   * \param targetP The painter to draw the element into.
    */
   virtual bool drawMapElement( QPainter* targetP );
+
+  quint16 getRwShift() const
+  {
+    return m_rwShift;
+  }
 
   /**
    * Prints the element. Reimplemented from BaseMapElement.
@@ -267,53 +278,43 @@ class Airfield : public SinglePoint
    */
   virtual void printMapElement( QPainter* printP, bool isText );
 
- protected:
+  void setRwShift( quint16 mRwShift )
+  {
+    m_rwShift = mRwShift;
+  }
 
   /**
    * Calculates the runway shift for the icon to be drawn.
    */
   void calculateRunwayShift()
-  {
-    // calculate the default runway shift in 1/10 degrees.
-    m_rwShift = 90/10; // default direction is 90 degrees
+    {
+      m_rwShift = Runway::calculateRunwayShift( m_rwyList );
+    }
 
-    // We assume, that the first runway is always the main runway.
-    if( m_rwList.size() > 0 )
-      {
-        Runway rw = m_rwList.first();
-
-        // calculate the real runway shift in 1/10 degrees.
-        if ( rw.m_heading.first <= 36 )
-          {
-            m_rwShift = (rw.m_heading.first >= 18 ? (rw.m_heading.first)-18 : rw.m_heading.first);
-          }
-      }
-  };
-
- private:
-
-   /**
-    * The ICAO name
-    */
-   QString m_icao;
-
-   /**
-    * The frequency
-    */
-   float m_frequency;
-
-   /**
-    * The ATIS frequency
-    */
-   float m_atis;
-
-   /**
-   * Contains the available runways.
-   */
-  QList<Runway> m_rwList;
+ protected:
 
   /**
-   * The launching-type. "true" if the site has a winch.
+  * The ICAO name
+  */
+  QString m_icao;
+
+  /**
+  * All speech frequencies with type of the airfield.
+  */
+  QList<Frequency> m_frequencyList;
+
+  /**
+   * The ATIS frequency
+   */
+  float m_atis;
+
+  /**
+   * Contains all runways.
+   */
+  QList<Runway> m_rwyList;
+
+  /**
+   * The launching-type. "true" if the site has a m_winch.
    */
   bool m_winch;
 
@@ -323,14 +324,32 @@ class Airfield : public SinglePoint
   bool m_towing;
 
   /**
-   * Contains the shift of the runway during drawing.
+   * PPR flag
    */
-  unsigned short m_rwShift;
+  bool m_ppr;
 
   /**
-   * Flag to indicate the landability of the airfield.
+   * Private flag
    */
-  bool m_landable;
-};
+  bool m_private;
 
-#endif
+  /**
+   * sky diving flag
+   */
+   bool m_skyDiving;
+
+   /**
+    * Flag to indicate the land ability of the airfield.
+    */
+   bool m_landable;
+
+   /**
+   * Contains the shift of the runway during drawing in 1/10 degrees.
+   */
+  quint16 m_rwShift;
+
+  /**
+   * Mutex to protect pixmap creation.
+   */
+  static QMutex mutex;
+};

@@ -7,12 +7,10 @@
 ************************************************************************
 **
 **   Copyright (c):  2002 by Heiner Lamprecht
-**                   2011 by Axel Pauli
+**                   2011-2033 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -54,7 +52,7 @@ RecorderDialog::RecorderDialog( QWidget *parent ) :
 
   waypoints = _globalMapContents->getWaypointList();
 
-  qSort(waypoints.begin(), waypoints.end());
+  std::sort(waypoints.begin(), waypoints.end());
 
   QList<BaseFlightElement *> *tList = _globalMapContents->getFlightList();
 
@@ -205,7 +203,7 @@ void RecorderDialog::__createRecorderPage()
   selectPort->addItem("tts/USB0");  // devfs
   selectPort->addItem("usb/tts/0"); // udev
   // bluetooth
-  selectPort->addItem("rfcomm0"); // 
+  selectPort->addItem("rfcomm0"); //
   // we never know if the device name will change again; let the user have a chance
   selectPort->setEditable(true);
 
@@ -317,7 +315,7 @@ void RecorderDialog::__createRecorderPage()
   iGridLayout->addWidget( recType,      row, ++col );
   iGridLayout->addWidget( lblGldID,     row, ++col );
   iGridLayout->addWidget( gldID,        row, ++col );
-  
+
   iGridLayout->addWidget( lblDvcID,     ++row, col=0);
   iGridLayout->addWidget( dvcID,        row, ++col );
   iGridLayout->addWidget( lblGldType,   row, ++col );
@@ -993,7 +991,7 @@ void RecorderDialog::slotConnectRecorder()
 
   statusBar->setText( tr("Connecting to recorder") );
   QCoreApplication::processEvents();
-  QCoreApplication::flush();
+  QCoreApplication::sendPostedEvents();
 
   // check if we have valid parameters, is that true, try to connect!
   switch( activeRecorder->getTransferMode() )
@@ -1071,7 +1069,7 @@ void RecorderDialog::slotCloseRecorder()
 
       statusBar->setText( tr("Closing connection to recorder") );
       QCoreApplication::processEvents();
-      QCoreApplication::flush();
+      QCoreApplication::sendPostedEvents();
 
       qDebug( "A recorder is active. Checking connection." );
 
@@ -1162,7 +1160,7 @@ void RecorderDialog::slotReadFlightList()
 
   statusBar->setText( tr("Reading flights from recorder") );
   QCoreApplication::processEvents();
-  QCoreApplication::flush();
+  QCoreApplication::sendPostedEvents();
 
   flightList->clear();
 
@@ -1217,10 +1215,10 @@ void RecorderDialog::slotReadFlightList()
 
       item->setText(colNo, QString("%1").arg( i + 1));
 
-      day.sprintf( "%d-%.2d-%.2d",
-                   dirListItem->firstTime.tm_year + 1900,
-                   dirListItem->firstTime.tm_mon + 1,
-                   dirListItem->firstTime.tm_mday );
+      day = day.asprintf( "%d-%.2d-%.2d",
+                          dirListItem->firstTime.tm_year + 1900,
+                          dirListItem->firstTime.tm_mon + 1,
+                          dirListItem->firstTime.tm_mday );
       item->setText(colDate, day);
 
       item->setText(colPilot, dirListItem->pilotName);
@@ -1305,7 +1303,7 @@ void RecorderDialog::slotDownloadFlight()
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
   statusBar->setText( tr("Downloading flight from recorder") );
   QCoreApplication::processEvents();
-  QCoreApplication::flush();
+  QCoreApplication::sendPostedEvents();
 
   int ret = activeRecorder->downloadFlight( flightID,
                                             !useFastDownload->isChecked(),
@@ -1360,7 +1358,7 @@ void RecorderDialog::slotWriteDeclaration()
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
   statusBar->setText( tr("Sending flight declaration to the recorder") );
   QCoreApplication::processEvents();
-  QCoreApplication::flush();
+  QCoreApplication::sendPostedEvents();
 
   FRTaskDeclaration taskDecl;
   taskDecl.pilotA = pilotName->text();
@@ -1482,7 +1480,7 @@ void RecorderDialog::slotExportDeclaration()
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
   statusBar->setText( tr("Exporting flight declaration to file") );
   QCoreApplication::processEvents();
-  QCoreApplication::flush();
+  QCoreApplication::sendPostedEvents();
 
   FRTaskDeclaration taskDecl;
   taskDecl.pilotA = pilotName->text();
@@ -1493,7 +1491,7 @@ void RecorderDialog::slotExportDeclaration()
   taskDecl.compClass = compClass->text();
 
   QList<Waypoint*> wpList = tasks.at( taskSelection->currentIndex ())->getWPList();
-  
+
   QString name = tasks.at( taskSelection->currentIndex ())->getFileName ();
 
   qDebug() << "Exporting declaration " << name << " to file...";
@@ -1700,7 +1698,7 @@ void RecorderDialog::slotReadTasks()
 
   statusBar->setText( tr("Reading Tasks from recorder") );
   QCoreApplication::processEvents();
-  QCoreApplication::flush();
+  QCoreApplication::sendPostedEvents();
 
   int ret = activeRecorder->readTasks( &tasks );
 
@@ -1781,7 +1779,7 @@ void RecorderDialog::slotWriteTasks()
 
   statusBar->setText( tr("Writing Tasks to recorder") );
   QCoreApplication::processEvents();
-  QCoreApplication::flush();
+  QCoreApplication::sendPostedEvents();
 
 
   int maxNrTasks = activeRecorder->capabilities().maxNrTasks;
@@ -1936,7 +1934,7 @@ void RecorderDialog::slotReadWaypoints()
 
   statusBar->setText( tr("Reading Waypoints from recorder") );
   QCoreApplication::processEvents();
-  QCoreApplication::flush();
+  QCoreApplication::sendPostedEvents();
 
   int ret = activeRecorder->readWaypoints( &frWaypoints );
 
@@ -2015,7 +2013,7 @@ void RecorderDialog::slotWriteWaypoints()
 
   statusBar->setText( tr("Writing Waypoints to recorder") );
   QCoreApplication::processEvents();
-  QCoreApplication::flush();
+  QCoreApplication::sendPostedEvents();
 
   int maxNrWaypoints = activeRecorder->capabilities().maxNrWaypoints;
 
@@ -2106,7 +2104,7 @@ void RecorderDialog::slotReadDatabase()
 
   statusBar->setText( tr("Reading recorder data") );
   QCoreApplication::processEvents();
-  QCoreApplication::flush();
+  QCoreApplication::sendPostedEvents();
 
   FlightRecorderPluginBase::FR_Capabilities cap = activeRecorder->capabilities();
 
@@ -2342,7 +2340,7 @@ void RecorderDialog::slotWriteConfig()
 
   statusBar->setText( tr("Writing recorder data") );
   QCoreApplication::processEvents();
-  QCoreApplication::flush();
+  QCoreApplication::sendPostedEvents();
 
   int ret = activeRecorder->writeConfigData(basicdata, configdata);
 

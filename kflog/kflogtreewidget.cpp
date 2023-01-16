@@ -6,18 +6,14 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2011 by Axel Pauli
+**   Copyright (c):  2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
 ***********************************************************************/
 
-#ifdef QT_5
-    #include <QtWidgets>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
 
 #include "kflogtreewidget.h"
 #include "rowdelegate.h"
@@ -33,11 +29,7 @@ KFLogTreeWidget::KFLogTreeWidget( const char *name, QWidget *parent ) :
   menuActionGroup( 0 )
 {
   setObjectName( "KFLogTreeWidget" );
-#ifdef QT_5
   header()->setSectionResizeMode( QHeaderView::Interactive );
-#else
-  header()->setResizeMode( QHeaderView::Interactive );
-#endif
 }
 
 KFLogTreeWidget::~KFLogTreeWidget()

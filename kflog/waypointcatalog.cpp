@@ -14,7 +14,7 @@
 **
 ***********************************************************************/
 
-#define DATA_STREAM QDataStream::Qt_4_7
+#define DATA_STREAM QDataStream::Qt_4_8
 
 #ifdef _MSC_VER
     #pragma comment (lib, "advapi32.lib")
@@ -34,6 +34,7 @@
 #include <QtXml>
 
 #include "altitude.h"
+#include "Frequency.h"
 #include "runway.h"
 #include "da4record.h"
 
@@ -53,6 +54,7 @@
 #define FILE_FORMAT_ID_3    103 // waypoint list size added
 #define FILE_FORMAT_ID_4    104 // runway list added
 #define FILE_FORMAT_ID_5    105 // runway length stored as float to avoid rounding issues between ft - m
+#define FILE_FORMAT_ID_8    108 // runway and frequencies handled as lists, compatible to Cumulus
 
 // Center point definition, also used by waypoint import filter.
 #define CENTER_POS      0
@@ -158,6 +160,7 @@ WaypointCatalog::WaypointCatalog(const QString& name) :
   showAirfields = false;
   showGliderfields = false;
   showNavaids = false;
+  showReportings = false;
   showObstacles = false;
   showLandmarks = false;
   showOutlandings = false;
@@ -203,6 +206,8 @@ void WaypointCatalog::setCenterPoint( const WGSPoint& center )
 /** read a catalog from file */
 bool WaypointCatalog::readXml(const QString& catalog)
 {
+  qDebug() << "WaypointCatalog::readXml():" << catalog;
+
   QFile file(catalog);
 
   if( ! file.exists() )
@@ -275,21 +280,45 @@ bool WaypointCatalog::readXml(const QString& catalog)
           w->origP.setLat(nm.namedItem("Latitude").toAttr().value().toInt());
           w->origP.setLon(nm.namedItem("Longitude").toAttr().value().toInt());
           w->elevation = nm.namedItem("Elevation").toAttr().value().toFloat();
-          w->frequency = nm.namedItem("Frequency").toAttr().value().toFloat();
 
-          QPair<ushort, ushort> rwyHeadings = QPair<ushort, ushort>(0, 0);
+          float fqval = nm.namedItem("Frequency").toAttr().value().toDouble();
+          Frequency fq;
+          fq.setUnit( Frequency::MHz );
+          fq.setValue( fqval );
+          w->addFrequency( fq );
 
           ushort rwyHeading = nm.namedItem("Runway").toAttr().value().toUShort();
-          rwyHeadings.first = rwyHeading >> 8;
-          rwyHeadings.second = rwyHeading & 0xff;
-
+          ushort rwyHd[2];
+          rwyHd[0] = rwyHeading >> 8;
+          rwyHd[1] = rwyHeading & 0xff;
           bool isLandable = nm.namedItem("Landable").toAttr().value().toInt();
-          int rwyLength = nm.namedItem("Length").toAttr().value().toFloat();
+          int rwyLength = nm.namedItem("Length").toAttr().value().toInt();
           enum Runway::SurfaceType rwySfc = (enum Runway::SurfaceType) nm.namedItem("Surface").toAttr().value().toInt();
 
-          Runway rwy( rwyLength, rwyHeadings, rwySfc, isLandable );
+          for( int i=0; i < 2; i++ )
+            {
+              if( rwyHd[i] > 0 )
+                {
+                  // only runway headings > 0 are valid and taken into account
+                  Runway rwy;
+                  rwy.setName( QString( "%1").arg( rwyHd[i], 2, 10, QChar('0') ) );
+                  rwy.setHeading( rwyHd[i] * 10 );
+                  rwy.setLength( rwyLength );
+                  rwy.setSurface( rwySfc );
 
-          w->rwyList.append( rwy );
+                  if( isLandable == true )
+                    {
+                      rwy.setOperations( Runway::Active );
+                    }
+                  else
+                    {
+                      rwy.setOperations( Runway::Closed );
+                    }
+
+                  w->addRunway( rwy );
+                }
+            }
+
           w->comment = nm.namedItem("Comment").toAttr().value();
           w->importance = nm.namedItem("Importance").toAttr().value().toInt();
 
@@ -363,22 +392,28 @@ bool WaypointCatalog::writeXml()
     child.setAttribute("Latitude", w->origP.lat());
     child.setAttribute("Longitude", w->origP.lon());
     child.setAttribute("Elevation", w->elevation);
-    child.setAttribute("Frequency", w->frequency);
     child.setAttribute("Comment", w->comment);
     child.setAttribute("Importance", w->importance);
     child.setAttribute("Country", w->country);
 
-    Runway rwy;
+    Frequency fq;
 
-    if( w->rwyList.size() > 0 )
-      {
-        rwy = w->rwyList[0];
-      }
+    if( w->frequencyList.size() == 0 ) {
+      child.setAttribute("Frequency", 0.0);
+    }
+    else {
+      Frequency::getMainFrequency( w->frequencyList, fq );
+    }
 
-    child.setAttribute("Landable", rwy.m_isOpen);
-    child.setAttribute("Runway", (rwy.m_heading.first << 8) + (rwy.m_heading.second & 0xff));
-    child.setAttribute("Length", rwy.m_length);
-    child.setAttribute("Surface", rwy.m_surface);
+    child.setAttribute("Frequency", fq.getValue());
+
+    // Only one runway is stored under XML
+    const Runway& rwy = Runway::getMainRunway( w->rwyList );
+
+    child.setAttribute("Landable", rwy.isOpen() );
+    child.setAttribute("Runway", (rwy.getHeading() << 8 ) );
+    child.setAttribute("Length", rwy.getLength() );
+    child.setAttribute("Surface", rwy.getSurface() );
 
     root.appendChild(child);
   }
@@ -413,7 +448,6 @@ bool WaypointCatalog::writeXml()
 bool WaypointCatalog::writeBinary()
 {
   bool ok = true;
-
   QString wpName="";
   QString wpDescription="";
   QString wpICAO="";
@@ -421,7 +455,6 @@ bool WaypointCatalog::writeBinary()
   qint32 wpLatitude;
   qint32 wpLongitude;
   float wpElevation;
-  float wpFrequency;
   QString wpComment="";
   quint8 wpImportance;
 
@@ -438,10 +471,10 @@ bool WaypointCatalog::writeBinary()
       QDataStream out(& f);
       out.setVersion( DATA_STREAM );
 
-      //write file header
+      // write file header
       out << quint32( KFLOG_FILE_MAGIC );
       out << qint8( FILE_TYPE_WAYPOINTS );
-      out << quint16( FILE_FORMAT_ID_5 );
+      out << quint16( FILE_FORMAT_ID_8 );
       out << qint32( wpList.size() );
 
       foreach(w, wpList)
@@ -453,7 +486,6 @@ bool WaypointCatalog::writeBinary()
           wpLatitude = w->origP.lat();
           wpLongitude = w->origP.lon();
           wpElevation = w->elevation;
-          wpFrequency = w->frequency;
           wpComment = w->comment;
           wpImportance = w->importance;
 
@@ -464,27 +496,16 @@ bool WaypointCatalog::writeBinary()
           out << wpLatitude;
           out << wpLongitude;
           out << wpElevation;
-          out << wpFrequency;
+
+          // The frequency list is saved
+          Frequency::saveFrequencies( out, w->getFrequencyList() );
+
           out << wpComment;
           out << wpImportance;
           out << w->country;
 
           // The runway list is saved
-          out << quint8( w->rwyList.size() );
-
-          for( int i = 0; i < w->rwyList.size(); i++ )
-            {
-              Runway rwy = w->rwyList.at(i);
-
-              QPair<ushort, ushort> rwyHeadings = rwy.getRunwayHeadings();
-
-              out << rwy.m_length;
-              out << rwy.m_width;
-              out << quint16( (rwyHeadings.first * 256) + (rwyHeadings.second & 0xff) );
-              out << quint8( rwy.m_surface );
-              out << quint8( rwy.m_isOpen );
-              out << quint8(  (rwyHeadings.first != rwyHeadings.second) );
-            }
+          Runway::saveRunways( out, w->getRunwayList() );
         }
 
       f.close();
@@ -674,19 +695,18 @@ bool WaypointCatalog::save(bool alwaysAskName)
     {
       QString filter;
       filter.append(QObject::tr("All formats") + " (*.dat *.DAT *.dbt *.DBT *.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
-      filter.append(QObject::tr("KFLog") + " (*.kflogwp *.KFLOGWP);;");
-      filter.append(QObject::tr("Cumulus") + " (*.kwp *.KWP);;");
-      filter.append(QObject::tr("Cambrigde") + " (*.dat *.DAT);;");
-      filter.append(QObject::tr("Filser txt") + " (*.txt *.TXT);;");
-      filter.append(QObject::tr("Filser da4") + " (*.da4 *.DA4);;");
-      filter.append(QObject::tr("SeeYou") + " (*.cup *.CUP);;");
-      filter.append(QObject::tr("Any file") + " (*.*)");
+      filter.append(QString("KFLog") + " (*.kflogwp *.KFLOGWP);;");
+      filter.append(QString("KFLog/Cumulus") + " (*.kwp *.KWP);;");
+      filter.append(QString("Cambrigde") + " (*.dat *.DAT);;");
+      filter.append(QString("Filser txt") + " (*.txt *.TXT);;");
+      filter.append(QString("Filser da4") + " (*.da4 *.DA4);;");
+      filter.append(QString("SeeYou") + " (*.cup *.CUP);;");
+      // filter.append(QString("Any file") + " (*.*)");
 
       fName = QFileDialog::getSaveFileName( _mainWindow,
                                             QObject::tr("Save waypoint catalog"),
                                             path,
                                             filter );
-
       if( fName.isEmpty() )
         {
           return false;
@@ -705,11 +725,13 @@ bool WaypointCatalog::save(bool alwaysAskName)
     return writeDat(fName);
   else if (fName.right(4).toLower() == ".cup")
     return writeCup(fName);
-  else
-    {
-      fName += ".kflogwp";
+  else if (fName.toLower().endsWith( ".kwp" ))
       return writeBinary();
-    }
+  else
+    qWarning() << "WaypointCatalog::load(): unknown file type" << fName;
+
+  return false;
+
 }
 
 /**
@@ -718,6 +740,8 @@ bool WaypointCatalog::save(bool alwaysAskName)
  */
 bool WaypointCatalog::load(const QString& catalog)
 {
+  qDebug() << "load catalog" << catalog;
+
   if (catalog.right(8).toLower() == ".kflogwp")
     return readXml(catalog);
   else if (catalog.right(4).toLower() == ".txt")
@@ -730,8 +754,12 @@ bool WaypointCatalog::load(const QString& catalog)
     return readDat(catalog);
   else if (catalog.right(4).toLower() == ".dbt")
     return readVolkslogger(catalog);
-  else
+  else if (catalog.toLower().endsWith( ".kwp" ))
     return readBinary(catalog);
+  else
+    qWarning() << "WaypointCatalog::load(): unknown file type" << catalog;
+
+  return false;
 }
 
 /** read a waypoint catalog from a filser txt file */
@@ -767,7 +795,7 @@ bool WaypointCatalog::readFilserTXT(const QString& catalog)
                     }
 
                   Waypoint *w = new Waypoint;
-                  w->name = list [1];
+                  w->name = list[1];
                   w->description = "";
                   w->icao = "";
 
@@ -784,35 +812,41 @@ bool WaypointCatalog::readFilserTXT(const QString& catalog)
                   w->origP.setLat((int)(rint(list[3].toDouble() * 600000.0)));
                   w->origP.setLon((int)(rint(list[4].toDouble() * 600000.0)));
                   w->elevation = (int)(rint(list[5].toInt() * 0.3048)); // don't we have conversion constants ?
-                  w->frequency = list[6].toFloat() / 1000.0;
 
-                  Runway rwy;
+                  float fq = list[6].toFloat() / 1000.0;
+                  Frequency freq;
+                  freq.setValue( fq );
+                  freq.setUnit( Frequency::MHz );
+                  freq.setType( Frequency::Unknown );
+                  w->addFrequency( freq );
 
-                  rwy.m_length = list[7].toUInt(); // length ?!
-                  rwy.m_heading.first = list[8].toUShort(); // direction ?!
-                  rwy.m_heading.second = ((rwy.m_heading.first > 18) ? rwy.m_heading.first - 18 : rwy.m_heading.first + 18 );
+                  ushort rwyHeading = list[8].toUShort(); // direction ?!
 
-                  if( rwy.m_heading.first > 0 )
+                  if( rwyHeading > 0 )
                     {
-                      rwy.m_isOpen = true;
+                      Runway rwy;
+                      rwy.setHeading( rwyHeading * 10 );
+                      rwy.setName( QString( "%1").arg( rwyHeading, 2, 10, QChar('0')) );
+                      rwy.setLength( list[7].toUInt() ); // length ?!
+
+                      QChar surface = list[9].toUpper()[0];
+
+                      switch (surface.toLatin1())
+                        {
+                        case 'G':
+                          rwy.setSurface( Runway::Grass );
+                          break;
+                        case 'C':
+                          rwy.setSurface( Runway::Concrete );
+                          break;
+                        default:
+                          rwy.setSurface( Runway::Unknown );
+                          break;
+                        }
+
+                      w->rwyList.append(rwy);
                     }
 
-                  QChar surface = list[9].toUpper()[0];
-
-                  switch (surface.toLatin1())
-                    {
-                    case 'G':
-                      rwy.m_surface = Runway::Grass;
-                      break;
-                    case 'C':
-                      rwy.m_surface = Runway::Concrete;
-                      break;
-                    default:
-                      rwy.m_surface = Runway::Unknown;
-                      break;
-                    }
-
-                  w->rwyList.append(rwy);
                   w->comment = QObject::tr("Imported from %1").arg(catalog);
                   w->importance = 1;
 
@@ -845,7 +879,7 @@ bool WaypointCatalog::writeFilserTXT (const QString& catalog)
       QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
 
       QTextStream out (&f);
-      out << "*,TpName,Type,Latitude,Longitude,Altitude,Frequency,RWY,RWYdir,RWYtype,TCA,TC" << endl;
+      out << "*,TpName,Type,Latitude,Longitude,Altitude,Frequency,RWY,RWYdir,RWYtype,TCA,TC" << Qt::endl;
 
       foreach(Waypoint* w, wpList)
       {
@@ -870,7 +904,11 @@ bool WaypointCatalog::writeFilserTXT (const QString& catalog)
         out << w->origP.lat()/600000.0 << ",";
         out << w->origP.lon()/600000.0 << ",";
         out << (int)(w->elevation/0.3048) << ",";
-        out << (int)(w->frequency*1000) << ",";
+
+        Frequency fq;
+
+        Frequency::getMainFrequency( w->frequencyList, fq );
+        out << (int)(fq.getValue() * 1000) << ",";
 
         Runway rwy;
 
@@ -879,10 +917,10 @@ bool WaypointCatalog::writeFilserTXT (const QString& catalog)
             rwy = w->rwyList[0];
           }
 
-        out << (int) rwy.m_length << ",";
-        out << rwy.m_heading.first << ",";
+        out << (int) rwy.getLength() << ",";
+        out << rwy.getHeading() << ",";
 
-        switch (rwy.m_surface)
+        switch (rwy.getSurface() )
           {
           case Runway::Grass:
             out << "G,";
@@ -895,7 +933,7 @@ bool WaypointCatalog::writeFilserTXT (const QString& catalog)
             break;
           }
 
-        out << "3,I,,," << endl;
+        out << "3,I,,," << Qt::endl;
       }
 
       f.close();
@@ -1021,6 +1059,8 @@ bool WaypointCatalog::writeFilserDA4 (const QString& catalog)
 /** read a catalog from file */
 bool WaypointCatalog::readBinary(const QString &catalog)
 {
+  qDebug() << "WaypointCatalog::readBinary" << catalog;
+
   bool ok = false;
 
   QString wpName="";
@@ -1048,6 +1088,9 @@ bool WaypointCatalog::readBinary(const QString &catalog)
   float wpFrequency3;
   float wpElevation3;
   float wpLength3;
+
+  // new element from format 8
+  QList<Frequency> frequencyList;
 
   // new element from format version 4
   QList<Runway> rwyList;
@@ -1112,6 +1155,7 @@ bool WaypointCatalog::readBinary(const QString &catalog)
 
       while( !in.atEnd() )
         {
+          frequencyList.clear();
           rwyList.clear();
 
           // read values from file
@@ -1122,15 +1166,22 @@ bool WaypointCatalog::readBinary(const QString &catalog)
           in >> wpLatitude;
           in >> wpLongitude;
 
+          qDebug() << "WpName" << wpName << "wpDescription" << wpDescription;
+
           if( fileFormat < FILE_FORMAT_ID_3 )
             {
               in >> wpElevation;
               in >> wpFrequency;
             }
-          else
+          else if( fileFormat < FILE_FORMAT_ID_8 )
             {
               in >> wpElevation3;
               in >> wpFrequency3;
+            }
+          else
+            {
+              in >> wpElevation3;
+              Frequency::loadFrequencies( in, frequencyList );
             }
 
           if( fileFormat < FILE_FORMAT_ID_4 )
@@ -1158,7 +1209,7 @@ bool WaypointCatalog::readBinary(const QString &catalog)
               in >> wpCountry;
             }
 
-          if( fileFormat >= FILE_FORMAT_ID_4 )
+          if( fileFormat >= FILE_FORMAT_ID_4 && fileFormat < FILE_FORMAT_ID_8 )
             {
               // The runway list has to be read
               quint8 listSize;
@@ -1197,14 +1248,24 @@ bool WaypointCatalog::readBinary(const QString &catalog)
                   headings.first = heading >> 8;
                   headings.second = heading & 0xff;
 
-                  Runway rwy( flength,
-                              headings,
-                              static_cast<enum Runway::SurfaceType>(surface),
-                              isOpen,
-                              fwidth );
+                  Runway rwy;
+                  rwy.setLength( flength );
+                  rwy.setWidth( fwidth );
+                  rwy.setHeading( headings.first * 10 );
+                  rwy.setName( QString( "%1").arg(headings.first, 2, 10, QChar('0')) );
+                  rwy.setSurface( surface );
+                  if( isOpen )
+                    rwy.setOperations( Runway::Active );
+                  else
+                    rwy.setOperations( Runway::Closed );
 
-                  rwyList.append(rwy);
+                  rwyList.append( rwy );
                 }
+            }
+
+          if( fileFormat >= FILE_FORMAT_ID_8 )
+            {
+              Runway::loadRunways( in, rwyList );
             }
 
           //create new waypoint object and set the correct properties
@@ -1223,12 +1284,23 @@ bool WaypointCatalog::readBinary(const QString &catalog)
           if( fileFormat < FILE_FORMAT_ID_3 )
             {
               w->elevation = wpElevation;
-              w->frequency = wpFrequency;
+              Frequency fq;
+              fq.setValue( wpFrequency );
+              fq.setUnit( Frequency::MHz );
+              w->addFrequency( fq );
+            }
+          else if( fileFormat < FILE_FORMAT_ID_8 )
+            {
+              w->elevation = wpElevation3;
+              Frequency fq;
+              fq.setValue( wpFrequency3 );
+              fq.setUnit( Frequency::MHz );
+              w->addFrequency( fq );
             }
           else
             {
               w->elevation = wpElevation3;
-              w->frequency = wpFrequency3;
+              w->setFequencyList( frequencyList );
             }
 
           if( fileFormat >= FILE_FORMAT_ID_4 )
@@ -1240,9 +1312,7 @@ bool WaypointCatalog::readBinary(const QString &catalog)
                 }
             }
 
-          //qDebug("Waypoint read: %s (%s - %s) offset %d-%d",w->name.toLatin1().data(),w->description.toLatin1().data(),w->icao.toLatin1().data(), startoffset, f.at());
-
-          if (!insertWaypoint(w))
+          if( ! insertWaypoint(w) )
             {
               qDebug("odd... error reading waypoints");
               delete w;
@@ -1320,16 +1390,51 @@ bool WaypointCatalog::readCup (const QString& catalog)
   QTextStream in(&file);
   in.setCodec( "ISO 8859-15" );
 
+  QString cupFormatMinimal = "name,code,country,lat,lon,elev,style";
+  QString cupFormatOld = cupFormatMinimal + ",rwdir,rwlen,freq,desc";
+  QString cupFormat = cupFormatMinimal + ",rwdir,rwlen,rwwidth,freq,desc";
+
+  int old = 0;
+
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
 
   while (!in.atEnd())
     {
-      QString line = in.readLine();
+      QString line = in.readLine().trimmed();
+
+      if( line[0] == '#' )
+        {
+          // ignore comments at the beginning of the file
+          continue;
+        }
 
       lineNo++;
 
-      if( line.size() == 0 )
+      if( lineNo == 1 )
         {
+          // Check first line, describing cup format
+          if( line.size() > cupFormatMinimal.size() &&
+              line.startsWith( cupFormat ) == true )
+            {
+              old = 0;
+            }
+          else if( line.size() > cupFormatMinimal.size() &&
+                   line.startsWith( cupFormatOld ) == true )
+            {
+              old = 1;
+            }
+          else if( line != cupFormatMinimal )
+            {
+              qWarning() << "WaypointCatalog::readCup(): File"
+                         << catalog
+                         << "is not a supported cup file according"
+                         << "to specification of 2022!";
+
+              file.close();
+              QApplication::restoreOverrideCursor();
+              return false;
+            }
+
           continue;
         }
 
@@ -1343,93 +1448,97 @@ bool WaypointCatalog::readCup (const QString& catalog)
           break;
         }
 
-      // 10 elements are mandatory, element 11 description is optional
-      if( list.count() < 10 ||
-          list[0].toLower() == "name" ||
-          list[1].toLower() == "code" ||
-          list[2].toLower() == "country" )
+      // 7 elements are mandatory, the rest is optional
+      if( list.size() < 7 )
         {
-          // too less elements or a description line, ignore this
+          // too less elements, ignore this entry
           continue;
         }
 
-      // A cup line consists of the following elements:
+      // A cup line consists of the following elements in 2022:
       //
-      // Name,Code,Country,Latitude,Longitude,Elevation,Style,Direction,Length,Frequency,Description
+      // 0     1     2        3    4    5     6      7      8      9        10    11    12        13
+      // name, code, country, lat, lon, elev, style, rwdir, rwlen, rwwidth, freq, desc, userdata, pics
       //
-      // See here for more info: http://download.naviter.com/docs/cup_format.pdf
-      Runway rwy;
-      Waypoint *w = new Waypoint;
+      // Older versions of CUP has no item rwwidth.
+      //
+      // Columns after style field may be missing and can be removed from header and data.
+      //
+      // See here for more info: https://downloads.naviter.com/docs/SeeYou_CUP_file_format.pdf
 
-      w->importance = 0;
+      Waypoint wp;
+      Runway rwy;
 
       if( list[0].length() ) // long name of waypoint
         {
-          w->description = list[0].replace( QRegExp("\""), "" );
+          wp.description = list[0].replace( QRegExp("\""), "" );
         }
       else
         {
-          w->description = "";
-        }
+          qWarning( "CUP Read (%d): No name is defined, ignoring record.",
+                    lineNo );
+          continue;
+         }
 
       if( list[1].isEmpty() )
         {
-          // If no code is set, we assign the long name as code to have a workaround.
+          // If no code (short name) is set, we assign the long name as code to have a workaround.
           list[1] = list[0];
         }
 
-      // short name of a waypoint has only 8 characters and upper cases
-      w->name = list[1].replace( QRegExp("\""), "" ).left(8).toUpper();
-      w->country = list[2].left(2).toUpper();
-      w->icao = "";
-      rwy.m_surface = Runway::Unknown;
+      // short name of a waypoint limited to 8 characters
+      wp.name = list[1].replace( QRegExp("\""), "" ).left(8).toUpper();
+      wp.country = list[2].left(2).toUpper();
+      wp.icao = "";
 
-      // waypoint type
+      // waypoint type aka style
       uint wpType = list[6].toUInt(&ok);
 
       if( ! ok )
         {
           qWarning("CUP Read (%d): Invalid waypoint type '%s'. Ignoring it.",
                    lineNo, list[6].toLatin1().data() );
-          delete w;
           continue;
         }
 
       switch( wpType )
         {
         case 1:
-          w->type = BaseMapElement::Landmark;
+          wp.type = BaseMapElement::Landmark;
           break;
         case 2:
-          w->type = BaseMapElement::Airfield;
-          rwy.m_surface = Runway::Grass;
-          w->importance = 1;
+          wp.type = BaseMapElement::Airfield;
+          rwy.setSurface( Runway::Grass );
           break;
         case 3:
-          w->type = BaseMapElement::Outlanding;
-          w->importance = 1;
+          wp.type = BaseMapElement::Outlanding;
           break;
         case 4:
-          w->type = BaseMapElement::Gliderfield;
-          w->importance = 1;
+          wp.type = BaseMapElement::Gliderfield;
+          rwy.setSurface( Runway::Grass );
           break;
         case 5:
-          w->type = BaseMapElement::Airfield;
-          rwy.m_surface = Runway::Concrete;
-          w->importance = 1;
+          wp.type = BaseMapElement::Airfield;
+          rwy.setSurface( Runway::Concrete );
           break;
         case 9:
-          w->type = BaseMapElement::Ndb;
+          wp.type = BaseMapElement::Vor;
           break;
         case 10:
-          w->type = BaseMapElement::Vor;
+          wp.type = BaseMapElement::Ndb;
           break;
-	case 11:
-          // Mapped to thermal hotspot defined by http://glidinghotspots.eu/
-          w->type = BaseMapElement::Thermal;
+        case 11:
+          wp.type = BaseMapElement::Thermal;
+          break;
+        case 19:
+          wp.type = BaseMapElement::CompPoint;
+          break;
+        case 20:
+        case 21:
+          wp.type = BaseMapElement::HangGlider;
           break;
         default:
-          w->type = BaseMapElement::Landmark;
+          wp.type = BaseMapElement::Landmark;
           break;
         }
 
@@ -1439,7 +1548,6 @@ bool WaypointCatalog::readCup (const QString& catalog)
       if( ! ok )
         {
           qWarning("CUP Read (%d): Error reading coordinate (N/S) (1)", lineNo);
-          delete w;
           continue;
         }
 
@@ -1448,7 +1556,6 @@ bool WaypointCatalog::readCup (const QString& catalog)
       if( ! ok )
         {
           qWarning("CUP Read (%d): Error reading coordinate (N/S) (2)", lineNo);
-          delete w;
           continue;
         }
 
@@ -1465,7 +1572,6 @@ bool WaypointCatalog::readCup (const QString& catalog)
       if( ! ok )
         {
           qWarning("CUP Read (%d): Error reading coordinate (E/W) (1)", lineNo);
-          delete w;
           continue;
         }
 
@@ -1474,7 +1580,6 @@ bool WaypointCatalog::readCup (const QString& catalog)
       if( ! ok )
         {
           qWarning("CUP Read (%d): Error reading coordinate (E/W) (2)", lineNo);
-          delete w;
           continue;
         }
 
@@ -1486,23 +1591,23 @@ bool WaypointCatalog::readCup (const QString& catalog)
           lonTmp = -lonTmp;
         }
 
-      w->origP.setLat((int) rint(latTmp));
-      w->origP.setLon((int) rint(lonTmp));
+      wp.origP.setLat((int) rint(latTmp));
+      wp.origP.setLon((int) rint(lonTmp));
 
+      // read elevation
       // two units are possible:
       // o meter: m
       // o feet:  ft
-      if( list[5].length() ) // elevation in meter or feet
+      if( list[5].length() )
         {
+          // elevation in meter or feet, if missing meter is assumed
           QString unit;
+          list[5] = list[5].toLower();
           int uStart = list[5].indexOf( QRegExp("[mf]") );
 
           if( uStart == -1 )
             {
-              qWarning("CUP Read (%d): Error reading elevation unit '%s'.", lineNo,
-                       list[5].toLatin1().data());
-              delete w;
-              continue;
+              unit = "m";
             }
 
           unit = list[5].mid( uStart ).toLower();
@@ -1513,58 +1618,62 @@ bool WaypointCatalog::readCup (const QString& catalog)
             {
               qWarning("CUP Read (%d): Error reading elevation value '%s'.", lineNo,
                        list[5].left(list[5].length() - unit.length()).toLatin1().data());
-              delete w;
               continue;
             }
 
           if( unit == "m" )
             {
-              w->elevation = tmpElev;
+              wp.elevation = tmpElev;
             }
           else if( unit == "ft" )
             {
-              w->elevation = tmpElev * 0.3048;
+              wp.elevation = tmpElev * 0.3048;
             }
           else
             {
               qWarning("CUP Read (%d): Unknown elevation value '%s'.", lineNo,
                        unit.toLatin1().data());
-              delete w;
               continue;
             }
         }
 
-      if( list[9].trimmed().length() ) // airport frequency
+      if( list.size() == 7 )
         {
-          float frequency = list[9].replace( QRegExp("\""), "" ).toFloat(&ok);
-
-          if( ok )
-            {
-              w->frequency = frequency;
-            }
-          else
-            {
-              w->frequency = 0.0;
-            }
+          // no more data defined
+          continue;
         }
 
-      if( list[7].trimmed().length() ) // runway direction 010...360
+      bool takeRwyData = false;
+
+      // runway direction 010...360
+      if( list.size() >= 8  && list[7].trimmed().size() > 0 )
         {
           uint rdir = list[7].toInt(&ok);
 
           if( ok )
             {
-              rwy.m_heading.first = rdir/10;
-              rwy.m_heading.second = rwy.m_heading.first <= 18 ? rwy.m_heading.first + 18 : rwy.m_heading.first - 18;
+              rwy.setHeading( rdir );
 
-              if( rwy.m_heading.first > 0 )
-                {
-                  rwy.m_isOpen = true;
-                }
+              // set runway designator
+              QString name;
+
+              int rd = ( rdir + 5 ) / 10;
+
+              if( rd == 0 ) {
+                  rd = 36;
+              }
+
+              if( rd < 10 ) {
+                  name += '0';
+              }
+
+              rwy.setName( name + QString::number( rd ) );
+              takeRwyData = true;
             }
         }
 
-      if( list[8].trimmed().length() ) // runway length in meters
+      // runway length with unit
+      if( list.size() >= 9 && list[8].trimmed().size() > 0 )
         {
           // three units are possible:
           // o meter: m
@@ -1572,67 +1681,151 @@ bool WaypointCatalog::readCup (const QString& catalog)
           // o statute mile: ml
           // o feet: ft, @AP: Note that is not conform to the SeeYou specification
           //                  but I saw it in an south African file.
-
+          // If unit is missing, meter is assumed
           QString unit;
+          list[8] = list[8].toLower();
           int uStart = list[8].indexOf( QRegExp("[fmn]") );
+          float length = 0.0;
 
           if( uStart != -1 )
             {
               unit = list[8].mid( uStart ).toLower();
-              float length = list[8].left( list[8].length()-unit.length() ).toFloat(&ok);
+              length = list[8].left( list[8].length()-unit.length() ).toFloat(&ok);
+            }
+          else
+            {
+              unit = "m";
+              length = list[8].toFloat( &ok );
+            }
 
-              if( ok )
+          if( ok )
+            {
+              if( unit == "nm" ) // nautical miles
                 {
-                  if( unit == "nm" ) // nautical miles
-                    {
-                      length *= 1852;
-                    }
-                  else if( unit == "ml" ) // statute miles
-                    {
-                      length *= 1609.34;
-                    }
-                  else if( unit == "ft" ) // feet
-                    {
-                      length *= 0.3048;
-                    }
-
-                  rwy.m_length = length;
+                  length *= 1852;
                 }
+              else if( unit == "ml" ) // statute miles
+                {
+                  length *= 1609.34;
+                }
+              else if( unit == "ft" ) // feet
+                {
+                  length *= 0.3048;
+                }
+
+              rwy.setLength( length );
+              rwy.setOperations( Runway::Active );
+              rwy.setTurnDirection( Runway::Both );
+              takeRwyData = true;
             }
         }
 
-      if( list.count() == 11 && list[10].trimmed().length() ) // description, optional
+      // runway width with unit as new item
+      if( old == 0 && list.size() >= 10 && list[9].trimmed().size() > 0 )
         {
-          w->comment += list[10].replace( QRegExp("\""), "" );
+          // three units are possible:
+          // o meter: m
+          // o nautical mile: nm
+          // o statute mile: ml
+          // o feet: ft, @AP: Note that is not conform to the SeeYou specification
+          //                  but I saw it in an south African file.
+          // If unit is missing, meter is assumed
+          QString unit;
+          list[9] = list[9].toLower();
+          int uStart = list[9].indexOf( QRegExp("[fmn]") );
+          float width = 0.0;
+
+          if( uStart != -1 )
+            {
+              unit = list[9].mid( uStart ).toLower();
+              width = list[9].left( list[9].length()-unit.length() ).toFloat(&ok);
+            }
+          else
+            {
+              unit = "m";
+              width = list[9].toFloat( &ok );
+            }
+
+          if( ok )
+            {
+              if( unit == "nm" ) // nautical miles
+                {
+                  width *= 1852;
+                }
+              else if( unit == "ml" ) // statute miles
+                {
+                  width *= 1609.34;
+                }
+              else if( unit == "ft" ) // feet
+                {
+                  width *= 0.3048;
+                }
+
+              rwy.setWidth( width );
+              takeRwyData = true;
+            }
         }
 
-      w->rwyList.append(rwy);
+      if( takeRwyData == true )
+        {
+          // Store runway in the runway list with the set data
+          wp.rwyList.append( rwy );
+        }
+
+      // airport frequency as 123.500, can be enclosed in quotations marks
+      if( list.size() >= 11 - old && list[10 -old].trimmed().size() )
+        {
+          float frequency = list[10 - old].replace( QRegExp("\""), "" ).toFloat(&ok);
+
+          Frequency freq;
+
+          if( ok )
+            {
+              freq.setValue( frequency );
+              freq.setUnit( Frequency::MHz );
+              freq.setType( Frequency::Info );
+              wp.addFrequency( freq );
+            }
+          else
+            {
+              wp.addFrequency( freq );
+            }
+        }
+
+      // description, optional
+      if( list.count() >= 12 - old && list[11 - old].trimmed().length() )
+        {
+          wp.comment += list[11 - old ].replace( QRegExp("\""), "" );
+        }
 
       // We do check, if the waypoint name is already in use because cup
       // short names are not always unique.
-      if( names.contains( w->name ) )
+      if( names.contains( wp.name ) )
         {
           for( int i = 0; i < 100; i++ )
             {
               // Hope that not more as 100 same names will be exist.
               QString number = QString::number(i);
-               w->name = w->name.left(w->name.size() - number.size()) + number;
+               wp.name = wp.name.left(wp.name.size() - number.size()) + number;
 
-              if( names.contains( w->name ) == false )
+              if( names.contains( wp.name ) == false )
                 {
                   break;
                 }
             }
         }
 
-      if( !insertWaypoint(w) )
+      Waypoint* w = new Waypoint( wp );
+
+      if( ! insertWaypoint( w ) )
         {
-          qWarning("CUP Read (%d): Error inserting waypoint in catalog", lineNo);
+          qWarning("CUP Read (%d): Error inserting waypoint in catalog", lineNo );
+          delete w;
           break;
         }
 
       // Store used waypoint name in set.
-      names.insert( w->name );
+      names.insert( wp.name );
     }
 
   file.close();
@@ -1652,7 +1845,7 @@ bool WaypointCatalog::insertWaypoint(Waypoint *newWaypoint)
 
   if( existingWaypoint != 0 )
     {
-      // qDebug() << "FoundWP" << existingWaypoint->name;
+      qDebug() << "FoundWP" << existingWaypoint->name;
 
       if( existingWaypoint->name != newWaypoint->name ||
           existingWaypoint->angle != newWaypoint->angle ||
@@ -1661,7 +1854,6 @@ bool WaypointCatalog::insertWaypoint(Waypoint *newWaypoint)
           existingWaypoint->distance != newWaypoint->distance ||
           existingWaypoint->elevation != newWaypoint->elevation ||
           existingWaypoint->fixTime != newWaypoint->fixTime ||
-          existingWaypoint->frequency != newWaypoint->frequency ||
           existingWaypoint->icao != newWaypoint->icao ||
           existingWaypoint->importance != newWaypoint->importance ||
           existingWaypoint->origP != newWaypoint->origP ||
@@ -2180,7 +2372,7 @@ bool WaypointCatalog::writeDat(const QString& catalog)
   char *user = getLogin();
 
   out << "*"
-      << endl
+      << Qt::endl
       << "* Winpilot/CAI File generated by KFLog "
       << KFLOG_VERSION
       << " at "
@@ -2193,9 +2385,9 @@ bool WaypointCatalog::writeDat(const QString& catalog)
       out << ", Creator is "  << getLogin();
     }
 
-   out << endl
+   out << Qt::endl
        << "*"
-       << endl;
+       << Qt::endl;
 
   for( int i = 0; i < wpList.size(); i++ )
   {
@@ -2275,7 +2467,7 @@ bool WaypointCatalog::writeDat(const QString& catalog)
         << wpList[i]->description.left(12)
         << ","
         << wpList[i]->comment.left(wpList[i]->comment.indexOf(QChar(';'))).replace( QChar(','), QChar('/'))
-        << endl;
+        << Qt::endl;
   }
 
   file.close();
@@ -2308,28 +2500,22 @@ bool WaypointCatalog::writeCup(const QString& catalog)
 
   // A cup line consists of the following elements:
   //
-  // Name,Code,Country,Latitude,Longitude,Elevation,Style,Direction,Length,Frequency,Description
+  // name,code,country,lat,lon,elev,style,rwdir,rwlen,rwwidth,freq,desc
   //
-  // See here for more info: http://download.naviter.com/docs/cup_format.pdf
+  // Format desciption, see here:
   //
-  // "Aachen Merzbruc",AACHE,DE,5049.383N,00611.183E,189.0m,5,80,530.0m,"122.875",
-
+  // https://downloads.naviter.com/docs/SeeYou_CUP_file_format.pdf
+  //
+  // "Lesce","LJBL",SI,4621.379N,01410.467E,504.0m,5,144,1130.0m,,123.500,"Home Airfield"
+  //
   // That's the first line in a cup waypoint file
-  out << "name,code,country,lat,lon,elev,style,rwdir,rwlen,freq,desc"
-      << endl;
+  out << "name,code,country,lat,lon,elev,style,rwdir,rwlen,rwwidth,freq,desc\r\n";
 
   for( int i = 0; i < wpList.size(); i++ )
     {
       out << "\"" << wpList[i]->description << "\","
           << "\"" << wpList[i]->name << "\","
           << wpList[i]->country << ",";
-
-      Runway rwy;
-
-      if( wpList[i]->rwyList.size() > 0 )
-        {
-          rwy = wpList[i]->rwyList[0];
-        }
 
       int degree;
       double minutes;
@@ -2366,16 +2552,17 @@ bool WaypointCatalog::writeCup(const QString& catalog)
           << ( (degree >= 0) ? "E" : "W" )
           << ",";
 
+      // elevation is always in meters
       float elevation = wpList[i]->elevation;
 
       if( Altitude::getUnit() == Altitude::feet )
         {
           elevation = Altitude(elevation).getFeet();
-          out << QString("%1").arg(elevation, 0, 'f', 1) << "ft,";
+          out << QString("%1ft,").arg(elevation, 0, 'f', 1);
         }
       else
         {
-          out << QString("%1").arg(elevation, 0, 'f', 1) << "m,";
+          out << QString("%1m,").arg(elevation, 0, 'f', 1);
         }
 
       uint wpType = BaseMapElement::Landmark;
@@ -2393,16 +2580,21 @@ bool WaypointCatalog::writeCup(const QString& catalog)
         case BaseMapElement::MilAirport:
         case BaseMapElement::CivMilAirport:
           {
-            if( rwy.m_surface == Runway::Concrete )
+            if( wpList[i]->getRunwayList().size() > 0 )
               {
-                wpType = 5;
-                break;
-              }
+                const Runway& rwy = wpList[i]->getRunwayList().at(0);
 
-            if( rwy.m_surface == Runway::Grass )
-              {
-                wpType = 2;
-                break;
+                if( rwy.getSurface() == Runway::Concrete )
+                  {
+                    wpType = 5;
+                    break;
+                  }
+
+                if( rwy.getSurface() == Runway::Grass )
+                  {
+                    wpType = 2;
+                    break;
+                  }
               }
 
             // default assumption is airfield grass
@@ -2435,24 +2627,64 @@ bool WaypointCatalog::writeCup(const QString& catalog)
 
       out << wpType << ",";
 
-      if( rwy.m_heading.first > 0 )
+      if( wpList[i]->rwyList.size() > 0 )
         {
-          out << (rwy.m_heading.first * 10);
+          Runway rwy = wpList[i]->rwyList[0];
+
+          // heading as 000...360
+          out << QString( "%1,").arg( rwy.getHeading(), 3, 10, QChar('0') );
+
+          if( rwy.getLength() > 0 )
+            {
+              // Runway length in meters
+              out << QString("%1m").arg( rwy.getLength(), 1 );
+            }
+
+          out << ",";
+
+          if( rwy.getWidth() > 0 )
+            {
+              // Runway width in meters
+              out << QString("%1m").arg( rwy.getWidth(), 1 );
+            }
+
+          out << ",";
+        }
+      else
+        {
+          // no runway data available
+          out << ",,";
         }
 
-      out << ",";
+      QList<Frequency>& fqList = wpList[i]->getFrequencyList();
 
-      if( rwy.m_length > 0 )
+      if( fqList.size() > 0.0 )
         {
-          out << QString("%1m").arg( rwy.m_length, 1 );
-        }
+          int i = 0;
+          int fqlIdx = -1;
 
-      out << ",";
+          // Only a main frequency should be shown in the display
+          for( i = 0; i < fqList.size(); i++ )
+            {
+              quint8 type = fqList[i].getType();
 
-      if( wpList[i]->frequency > 0.0 )
-        {
+              if( type == Frequency::Tower || type == Frequency::Info ||
+                  type == Frequency::Information ||
+                  fqList[i].isPrimary() == true )
+                {
+                  fqlIdx = i;
+                  break;
+                }
+            }
+
+          if( fqlIdx == -1  )
+            {
+              // No assignment has been done, take first index.
+              fqlIdx = 0;
+            }
+
           out << "\""
-              << QString("%1").arg( wpList[i]->frequency, 0, 'f', 3, QChar('0') )
+              << QString("%1").arg( fqList[i].getValue(), 0, 'f', 3, QChar('0') )
               << "\"";
         }
 
@@ -2465,10 +2697,10 @@ bool WaypointCatalog::writeCup(const QString& catalog)
               << "\"";
         }
 
-      out << endl;
+      out << "\r\n";
     }
 
-  out << "-----Related Tasks-----" << endl;
+  out << "-----Related Tasks-----" << "\r\n";
 
   file.close();
   QApplication::restoreOverrideCursor();

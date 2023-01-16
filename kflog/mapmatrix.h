@@ -6,12 +6,10 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2001 by Heiner Lamprecht, Florian Ehinger
+**   Copyright (c):  2001-2023 by Heiner Lamprecht, Florian Ehinger
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -40,9 +38,9 @@
  *
  * \author Heiner Lamprecht, Florian Ehinger, Axel Pauli
  *
- * \date 2001-2010
+ * \date 2001-2023
  *
- * \version $Id$
+ * \version 1.1
  */
 class MapMatrix : public QObject
 {
@@ -224,7 +222,9 @@ public:
   /** */
   QPoint invertToMap(const QPoint& pos) const;
 
-  /** */
+  /**
+   * Maps a projected point to WGS84 coordinates.
+   */
   QPoint mapToWgs(const QPoint& pos) const;
 
   /**
@@ -238,12 +238,12 @@ public:
   bool isSwitchScale() const;
 
   /**
-   * @return the lat/lon-position of the map-center.
+   * @return the lat/lon-position of the map-center in WGS84 coordinates.
    */
   QPoint getMapCenter(bool isPrint = false) const;
 
   /**
-   * @returns the coordinates of the home site
+   * @returns the coordinates of the home site in WGS84 coordinates.
    */
   QPoint getHomeCoord() const;
 

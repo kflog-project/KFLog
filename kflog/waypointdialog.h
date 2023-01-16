@@ -7,12 +7,10 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Harald Maier
-**                   2011 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -25,13 +23,12 @@
  *
  * @author Harald Maier, Axel Pauli
  *
- * @date 2001-2011
+ * @date 2001-2023
  *
- * @version  $Id$
+ * @version 1.1
  */
 
-#ifndef WAYPOINT_DIALOG_H
-#define WAYPOINT_DIALOG_H
+#pragma once
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -41,6 +38,7 @@
 #include <QPushButton>
 
 #include "coordedit.h"
+#include "Frequency.h"
 #include "runway.h"
 #include "waypoint.h"
 
@@ -146,6 +144,16 @@ public:
 
   QPushButton *applyButton;
 
+  /**
+   * Runway Frequency, only one frequency is supported.
+   */
+  Frequency rwyFrequency;
+
+  /**
+   * Runway data, only one runway is supported
+   */
+  Runway rwy;
+
   /** Flag to indicate if an existing waypoint is edited. */
   bool edit;
 
@@ -167,7 +175,5 @@ private:
   QLineEdit *elevation;
 
   QLabel *elevationLabel;
-
 };
 
-#endif

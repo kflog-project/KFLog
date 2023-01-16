@@ -7,12 +7,14 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Heiner Lamprecht
-**                   2011-2014 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
 ***********************************************************************/
+
+#pragma once
 
 #include <cmath>
 
@@ -567,6 +569,7 @@
 #define AS_E "Airspace-E"
 #define AS_F "Airspace-F"
 #define AS_FIR "Airspace-FIR"
+#define AS_G "Airspace-G"
 #define AS_LF "Airspace-Low-Flight"
 #define AS_DANGER "Airspace-Danger"
 #define AS_RESTRICTED "Airspace-Restricted"
@@ -575,6 +578,7 @@
 #define AS_GS "Airspace-Glider-Sector"
 #define AS_WW "Airspace-Wave-Window"
 #define AS_PROHIBITED "Airspace-Prohibited"
+#define AS_SUA "Special Used Airspace"
 
 // [Airspace A]
 #define AIRA_PEN_1 4
@@ -904,6 +908,47 @@
 #define PRINT_AIRFIR_BRUSH_STYLE_1 Qt::NoBrush
 #define PRINT_AIRFIR_BRUSH_STYLE_2 Qt::NoBrush
 
+// [Airspace G] used by openAIP for Poland's TSAs
+#define AIRG_PEN_1 4
+#define AIRG_PEN_2 3
+#define AIRG_PEN_3 3
+#define AIRG_PEN_4 2
+
+#define AIRG_PEN_STYLE_1 Qt::SolidLine
+#define AIRG_PEN_STYLE_2 Qt::SolidLine
+#define AIRG_PEN_STYLE_3 Qt::SolidLine
+#define AIRG_PEN_STYLE_4 Qt::SolidLine
+
+#define AIRG_COLOR_1 QColor(0,0,128)
+#define AIRG_COLOR_2 QColor(0,0,128)
+#define AIRG_COLOR_3 QColor(0,0,128)
+#define AIRG_COLOR_4 QColor(0,0,128)
+
+#define AIRG_BRUSH_COLOR_1 QColor(0,0,128)
+#define AIRG_BRUSH_COLOR_2 QColor(0,0,128)
+#define AIRG_BRUSH_COLOR_3 QColor(0,0,128)
+#define AIRG_BRUSH_COLOR_4 QColor(0,0,128)
+
+#define AIRG_BRUSH_STYLE_1 Qt::BDiagPattern
+#define AIRG_BRUSH_STYLE_2 Qt::BDiagPattern
+#define AIRG_BRUSH_STYLE_3 Qt::BDiagPattern
+#define AIRG_BRUSH_STYLE_4 Qt::BDiagPattern
+
+#define PRINT_AIRG_PEN_1 4
+#define PRINT_AIRG_PEN_2 3
+
+#define PRINT_AIRG_PEN_STYLE_1 Qt::DotLine
+#define PRINT_AIRG_PEN_STYLE_2 Qt::DotLine
+
+#define PRINT_AIRG_COLOR_1 QColor(0,0,128)
+#define PRINT_AIRG_COLOR_2 QColor(0,0,128)
+
+#define PRINT_AIRG_BRUSH_COLOR_1 QColor(0,0,128)
+#define PRINT_AIRG_BRUSH_COLOR_2 QColor(0,0,128)
+
+#define PRINT_AIRG_BRUSH_STYLE_1 Qt::BDiagPattern
+#define PRINT_AIRG_BRUSH_STYLE_2 Qt::BDiagPattern
+
 // [Control Zone]
 #define CTR_PEN_1 4
 #define CTR_PEN_2 3
@@ -1231,6 +1276,47 @@
 
 #define PRINT_WAVE_WINDOW_BRUSH_STYLE_1 Qt::SolidPattern
 #define PRINT_WAVE_WINDOW_BRUSH_STYLE_2 Qt::SolidPattern
+
+// SUA Special used airspace
+#define SUA_PEN_1 4
+#define SUA_PEN_2 3
+#define SUA_PEN_3 3
+#define SUA_PEN_4 2
+
+#define SUA_PEN_STYLE_1 Qt::SolidLine
+#define SUA_PEN_STYLE_2 Qt::SolidLine
+#define SUA_PEN_STYLE_3 Qt::SolidLine
+#define SUA_PEN_STYLE_4 Qt::SolidLine
+
+#define SUA_COLOR_1 QColor(180,0,0)
+#define SUA_COLOR_2 QColor(180,0,0)
+#define SUA_COLOR_3 QColor(180,0,0)
+#define SUA_COLOR_4 QColor(180,0,0)
+
+#define SUA_BRUSH_COLOR_1 QColor(180,0,0)
+#define SUA_BRUSH_COLOR_2 QColor(180,0,0)
+#define SUA_BRUSH_COLOR_3 QColor(180,0,0)
+#define SUA_BRUSH_COLOR_4 QColor(180,0,0)
+
+#define SUA_BRUSH_STYLE_1 Qt::Dense7Pattern
+#define SUA_BRUSH_STYLE_2 Qt::Dense7Pattern
+#define SUA_BRUSH_STYLE_3 Qt::Dense7Pattern
+#define SUA_BRUSH_STYLE_4 Qt::Dense7Pattern
+
+#define PRINT_SUA_PEN_1 4
+#define PRINT_SUA_PEN_2 3
+
+#define PRINT_SUA_PEN_STYLE_1 Qt::SolidLine
+#define PRINT_SUA_PEN_STYLE_2 Qt::SolidLine
+
+#define PRINT_SUA_COLOR_1 QColor(180,0,0)
+#define PRINT_SUA_COLOR_2 QColor(180,0,0)
+
+#define PRINT_SUA_BRUSH_COLOR_1 QColor(180,0,0)
+#define PRINT_SUA_BRUSH_COLOR_2 QColor(180,0,0)
+
+#define PRINT_SUA_BRUSH_STYLE_1 Qt::Dense7Pattern
+#define PRINT_SUA_BRUSH_STYLE_2 Qt::Dense7Pattern
 
 // [FAI Area < 500]
 #define FAI_LOW_500_PEN_1 4

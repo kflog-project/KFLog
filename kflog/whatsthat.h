@@ -2,21 +2,19 @@
 **
 **   whatsthat.h
 **
-**   This file is part of Cumulus.
+**   This file is part of KFLog.
 **
 ************************************************************************
 **
 **   Copyright (c):  2002 by André Somers
+**                   2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
-#ifndef WHATS_THAT_H
-#define WHATS_THAT_H
+#pragma once
 
 #include <QString>
 #include <QTimer>
@@ -88,4 +86,3 @@ private:
   QPoint suggestedPos;
 };
 
-#endif

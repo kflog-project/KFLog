@@ -1,20 +1,11 @@
 This directory is used for the point data, such as airfields, navaids,
 hotspots, ...
 
-KFLog supports two different point data sources:
-
- 1. WELT2000. The latest file is to find here:
-
-    http://www.segelflug.de/vereine/welt2000/download/WELT2000.TXT
-
-    More information about WELT2000 is available at:
-
-    http://www.segelflug.de/vereine/welt2000/
+KFLog supports the following point data source:
 
  2. openAIP point data from http://www.openaip.net/. See there
     for more information.
 
 KFLog downloads point data files automatically for you in the KFLog Setup
-Points page. Please define on that page, which point data source
-(Welt2000 or openAIP) do you want to use and for which countries point
-data should be loaded.
+Points page. Please define on that page, which point data countries should be
+downloaded and loaded during run.

@@ -7,19 +7,12 @@
 ************************************************************************
 **
 **   Copyright (c):  2007 by Hendrik Hoeth
-**                   2011-2014 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
-
-/*
- * FIXME:
- *    - I don't use error checking yet, but so far I simply ignore those bytes
- */
 
 #include <QtCore>
 
@@ -90,11 +83,11 @@ void debugHex (const void* buf, unsigned int size)
   for (unsigned int ix1=0; ix1 < size; ix1+=0x10)
   {
     QString line;
-    line.sprintf ("%03X:  ", ix1);
+    line = line.asprintf ("%03X:  ", ix1);
     for (int ix2=0; ix2<0x10; ix2++)
     {
       QString byte;
-      byte.sprintf("%02X ", ((unsigned char*)buf)[ix1+ix2]);
+      byte = byte.asprintf("%02X ", ((unsigned char*)buf)[ix1+ix2]);
       line += byte;
     }
     line += "    ";
@@ -457,11 +450,11 @@ int Cambridge::writeConfigData(FR_BasicData& basicdata, FR_ConfigData& configdat
   wait_ms(100);
   sendCommand("download");
   wait_ms(100);
-  QString LD        = QString().sprintf("%d", configdata.LD       );
-  QString speedLD   = QString().sprintf("%d", configdata.speedLD  );
-  QString speedV2   = QString().sprintf("%d", configdata.speedV2  );
-  QString dryweight = QString().sprintf("%d", configdata.dryweight);
-  QString maxwater  = QString().sprintf("%d", configdata.maxwater );
+  QString LD        = QString().asprintf("%d", configdata.LD       );
+  QString speedLD   = QString().asprintf("%d", configdata.speedLD  );
+  QString speedV2   = QString().asprintf("%d", configdata.speedV2  );
+  QString dryweight = QString().asprintf("%d", configdata.dryweight);
+  QString maxwater  = QString().asprintf("%d", configdata.maxwater );
   QString caiglider = "G," + basicdata.gliderType
                      + "," + basicdata.gliderID
                      + "," + LD
@@ -473,18 +466,18 @@ int Cambridge::writeConfigData(FR_BasicData& basicdata, FR_ConfigData& configdat
   sendCommand(caiglider);
   qDebug("%s", (const char*)caiglider.toLatin1());
   wait_ms(1500);
-  QString sinktone       = QString().sprintf("%d", configdata.sinktone      );
-  QString totalenergyfg  = QString().sprintf("%d", configdata.totalenergyfg );
-  QString fgdiffalt      = QString().sprintf("%d", configdata.fgdiffalt     );
-  QString approachradius = QString().sprintf("%d", configdata.approachradius);
-  QString arrivalradius  = QString().sprintf("%d", configdata.arrivalradius );
-  QString sloginterval   = QString().sprintf("%d", configdata.sloginterval  );
-  QString floginterval   = QString().sprintf("%d", configdata.floginterval  );
-  QString gaptime        = QString().sprintf("%d", configdata.gaptime       );
-  QString minloggingspd  = QString().sprintf("%d", configdata.minloggingspd );
-  QString stfdeadband    = QString().sprintf("%d", configdata.stfdeadband   );
-  QString units          = QString().sprintf("%d", configdata.units         );
-  QString goalalt        = QString().sprintf("%d", configdata.goalalt       );
+  QString sinktone       = QString().asprintf("%d", configdata.sinktone      );
+  QString totalenergyfg  = QString().asprintf("%d", configdata.totalenergyfg );
+  QString fgdiffalt      = QString().asprintf("%d", configdata.fgdiffalt     );
+  QString approachradius = QString().asprintf("%d", configdata.approachradius);
+  QString arrivalradius  = QString().asprintf("%d", configdata.arrivalradius );
+  QString sloginterval   = QString().asprintf("%d", configdata.sloginterval  );
+  QString floginterval   = QString().asprintf("%d", configdata.floginterval  );
+  QString gaptime        = QString().asprintf("%d", configdata.gaptime       );
+  QString minloggingspd  = QString().asprintf("%d", configdata.minloggingspd );
+  QString stfdeadband    = QString().asprintf("%d", configdata.stfdeadband   );
+  QString units          = QString().asprintf("%d", configdata.units         );
+  QString goalalt        = QString().asprintf("%d", configdata.goalalt       );
   QString caipilot = "O," + basicdata.pilotName
                     + "," + "0"
                     + "," + "0"
@@ -603,20 +596,20 @@ int Cambridge::getFlightDir(QList<FRDirEntry*>* dirList)
           m == dirList->at(j)->firstTime.tm_mon  &&
           d == dirList->at(j)->firstTime.tm_mday) dayflightcounter++;
     // create igc filenames
-    dirList->at(i)->shortFileName.sprintf("%c%c%c%c%s%c.igc",
-                                 c36[dirList->at(i)->firstTime.tm_year % 10],
-                                 c36[dirList->at(i)->firstTime.tm_mon + 1],
-                                 c36[dirList->at(i)->firstTime.tm_mday],
-                                 'c',
-                                 _basicData.serialNumber.toLatin1().data(),
-                                 c36[dayflightcounter]);
-    dirList->at(i)->longFileName.sprintf("%d-%.2d-%.2d-%s-%s-%.2d.igc",
-                                 dirList->at(i)->firstTime.tm_year + 1900,
-                                 dirList->at(i)->firstTime.tm_mon + 1,
-                                 dirList->at(i)->firstTime.tm_mday,
-                                 "cam",
-                                 _basicData.serialNumber.toLatin1().data(),
-                                 c36[dayflightcounter]);
+    dirList->at(i)->shortFileName = QString().asprintf("%c%c%c%c%s%c.igc",
+                                                       c36[dirList->at(i)->firstTime.tm_year % 10],
+                                                       c36[dirList->at(i)->firstTime.tm_mon + 1],
+                                                       c36[dirList->at(i)->firstTime.tm_mday],
+                                                       'c',
+                                                       _basicData.serialNumber.toLatin1().data(),
+                                                       c36[dayflightcounter]);
+    dirList->at(i)->longFileName = QString().asprintf("%d-%.2d-%.2d-%s-%s-%.2d.igc",
+                                                      dirList->at(i)->firstTime.tm_year + 1900,
+                                                      dirList->at(i)->firstTime.tm_mon + 1,
+                                                      dirList->at(i)->firstTime.tm_mday,
+                                                      "cam",
+                                                      _basicData.serialNumber.toLatin1().data(),
+                                                      c36[dayflightcounter]);
 
     qDebug("%s   %s", dirList->at(i)->longFileName.toLatin1().data(),
                       dirList->at(i)->shortFileName.toLatin1().data());
@@ -706,8 +699,8 @@ int Cambridge::writeDeclaration(FRTaskDeclaration* /*taskDecl*/, QList<Waypoint*
     QString name = taskPoints->at(i)->description.left(12);
     QString lat = lat2cai(taskPoints->at(i)->origP.x());
     QString lon = lon2cai(taskPoints->at(i)->origP.y());
-    QString elv = QString().sprintf("%d", int(taskPoints->at(i)->elevation));
-    QString  id = QString().sprintf("%d", i+128);
+    QString elv = QString().asprintf("%d", int(taskPoints->at(i)->elevation));
+    QString  id = QString().asprintf("%d", i+128);
     QString caiwp = "D," + id + "," + lat + "," + lon + "," + name + "," + elv;
     qDebug("%s", (const char*)caiwp.toLatin1());
     sendCommand(caiwp);
@@ -757,8 +750,7 @@ int Cambridge::readWaypoints(QList<Waypoint*> *waypoints)
 
   Waypoint * frWp;
   for (size_t i=0; i<Npoints; i++) {
-    QString cmd;
-    cmd.sprintf ("c %d", (int)i);
+    QString cmd = cmd.asprintf ("c %d", (int)i);
     replysize = readReply(cmd, UPS_MODE, reply);
     if (replysize==TIMEOUT_ERROR) return FR_ERROR;
     int lat = extractInteger(reply,  0,  4) -  54000000; // Equator is at 54000000 TTOM
@@ -810,8 +802,8 @@ int Cambridge::writeWaypoints(QList<Waypoint*> *waypoints)
     QString name = waypoints->at(i)->description.left(12);
     QString lat = lat2cai(waypoints->at(i)->origP.x());
     QString lon = lon2cai(waypoints->at(i)->origP.y());
-    QString elv = QString().sprintf("%d", int(waypoints->at(i)->elevation));
-    QString  id = QString().sprintf("%d", i+1);
+    QString elv = QString().asprintf("%d", int(waypoints->at(i)->elevation));
+    QString  id = QString().asprintf("%d", i+1);
     int attribute = CAI_TURNPOINT;
     switch (waypoints->at(i)->type) {
       case BaseMapElement::IntAirport:
@@ -824,7 +816,7 @@ int Cambridge::writeWaypoints(QList<Waypoint*> *waypoints)
         attribute = attribute|CAI_AIRFIELD;
         break;
     }
-    QString att = QString().sprintf("%d", attribute);
+    QString att = QString().asprintf("%d", attribute);
     QString caiwp = "C,," + lat + "," + lon + "," + elv + "," + id + "," + att + "," + name + "," + name;
     qDebug("%s", (const char*)caiwp.toLatin1());
     sendCommand(caiwp);
@@ -841,7 +833,7 @@ QString Cambridge::lat2cai(int lat)
   lat = abs(lat);
   int deg = lat/600000;
   double min = (lat%600000)/10000.;
-  QString result = QString().sprintf("%02d%07.4lf", deg, min);
+  QString result = QString().asprintf("%02d%07.4lf", deg, min);
   result += hemisphere;
   return result;
 }
@@ -852,7 +844,7 @@ QString Cambridge::lon2cai(int lon)
   lon = abs(lon);
   int deg = lon/600000;
   double min = (lon%600000)/10000.;
-  QString result = QString().sprintf("%03d%07.4lf", deg, min);
+  QString result = QString().asprintf("%03d%07.4lf", deg, min);
   result += hemisphere;
   return result;
 }

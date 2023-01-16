@@ -416,8 +416,8 @@ void KFLogConfig::slotOk()
   if( asOpenAipCountries->text().trimmed().toLower().isEmpty() == false )
     {
       if( asOpenAipEnableUpdates->isChecked() &&
-	  ( m_asOpenAipUpdateCheck != asOpenAipEnableUpdates->isChecked() ||
-	    m_asOpenAipUpdateValue != asOpenAipUpdatePeriod->value() ) )
+          ( m_asOpenAipUpdateCheck != asOpenAipEnableUpdates->isChecked() ||
+            m_asOpenAipUpdateValue != asOpenAipUpdatePeriod->value() ) )
       	{
       	  emit checkOpenAipAsData4Update();
       	}
@@ -845,6 +845,7 @@ void KFLogConfig::__addMapTab()
   elementSelect->addItem( tr( "Airspace E" ), KFLogConfig::AirE );
   elementSelect->addItem( tr( "Airspace F" ), KFLogConfig::AirF );
   elementSelect->addItem( tr( "Airspace FIR" ), KFLogConfig::AirFir );
+  elementSelect->addItem( tr( "Airspace G" ), KFLogConfig::AirG );
   elementSelect->addItem( tr( "Control Zone" ), KFLogConfig::Ctr );
   elementSelect->addItem( tr( "Danger/Prohibited" ), KFLogConfig::Danger );
   elementSelect->addItem( tr( "Glider Sector" ), KFLogConfig::GliderSector );
@@ -853,6 +854,7 @@ void KFLogConfig::__addMapTab()
   elementSelect->addItem( tr( "RMZ" ), KFLogConfig::Rmz );
   elementSelect->addItem( tr( "TMZ" ), KFLogConfig::Tmz );
   elementSelect->addItem( tr( "WaveWindow" ), KFLogConfig::WaveWindow );
+  elementSelect->addItem( tr( "SUA" ), KFLogConfig::Sua );
   elementSelect->addItem( "-------------", KFLogConfig::Separator );
 
   // sort order ?
@@ -1916,9 +1918,10 @@ void KFLogConfig::__addPointsTab()
   grow++;
 
   QString tip = tr("Uncheck All to enable loading of single files.") + "\n\n" +
-                tr("*_hot.api containing Hotspot points") + "\n\n" +
-                tr("*_nav.api containing Navaid points") + "\n\n" +
-                tr("*_wpt.api containing Airfield points");
+                tr("*_apt.json containing Airfield points") + "\n\n" +
+                tr("*_hot.json containing Hotspot points") + "\n\n" +
+                tr("*_nav.json containing Navaid points") + "\n\n" +
+                tr("*_rpp.json containing Reporting points");
 
   m_pointFileTable = new QTableWidget( 0, 1, this );
   m_pointFileTable->setToolTip( tip );
@@ -2054,7 +2057,7 @@ void KFLogConfig::__addAirspaceTab()
 
   QString tip = tr("Uncheck All to enable loading of single files.") + "\n\n" +
                 tr("*.txt containing OpenAir data") + "\n\n" +
-                tr("*.aip containing openAIP data");
+                tr("*.json containing openAIP data");
 
   m_asFileTable = new QTableWidget( 0, 1, this );
   m_asFileTable->setToolTip( tip );
@@ -2272,13 +2275,13 @@ void KFLogConfig::slotSearchDefaultWaypoint()
 {
   QString filter;
   filter.append(tr("All formats") + " (*.da4 *.DA4 *.dat *.DAT *.dbt *.DBT *.cup *.CUP *.kflogwp *.KFLOGWP *.kwp *.KWP *.txt *.TXT);;");
-  filter.append(tr("KFLog") + " (*.kflogwp *.KFLOGWP);;");
-  filter.append(tr("Cumulus") + " (*.kwp *.KWP);;");
-  filter.append(tr("Cambridge") + " (*.dat *.DAT);;");
-  filter.append(tr("Filser txt") + " (*.txt *.TXT);;");
-  filter.append(tr("Filser da4") + " (*.da4 *.DA4);;");
-  filter.append(tr("SeeYou") + " (*.cup *.CUP);;");
-  filter.append(tr("Volkslogger") + " (*.dbt *.DBT);;" );
+  filter.append(QString("KFLog") + " (*.kflogwp *.KFLOGWP);;");
+  filter.append(QString("KFLog/Cumulus") + " (*.kwp *.KWP);;");
+  filter.append(QString("Cambridge") + " (*.dat *.DAT);;");
+  filter.append(QString("Filser txt") + " (*.txt *.TXT);;");
+  filter.append(QString("Filser da4") + " (*.da4 *.DA4);;");
+  filter.append(QString("SeeYou") + " (*.cup *.CUP);;");
+  filter.append(QString("Volkslogger") + " (*.dbt *.DBT);;" );
 
   QString fileName = QFileDialog::getOpenFileName( this,
 						   tr("Select a default catalog"),
@@ -2404,7 +2407,7 @@ void KFLogConfig::slotLoadAirspaceFilesIntoTable()
   m_asFileTable->setHorizontalHeaderItem( 0, hrItem );
 
   QDir dir( mapDir );
-  QStringList filters; filters << "*.txt" << "*.TXT" << "*.aip" << "*.AIP";
+  QStringList filters; filters << "*.txt" << "*.TXT" << "*.json" << "*.JSON";
   dir.setNameFilters(filters);
   dir.setFilter( QDir::Files|QDir::Readable);
   dir.setSorting( QDir::Name );
@@ -2481,7 +2484,7 @@ void KFLogConfig::slotLoadOpenAipPointFilesIntoTable()
   m_pointFileTable->setHorizontalHeaderItem( 0, hrItem );
 
   QDir dir( mapDir );
-  QStringList filters; filters << "*.aip";
+  QStringList filters; filters << "*.json";
   dir.setNameFilters(filters);
   dir.setFilter( QDir::Files|QDir::Readable);
   dir.setSorting( QDir::Name );

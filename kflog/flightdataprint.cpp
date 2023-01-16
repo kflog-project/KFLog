@@ -7,23 +7,16 @@
 ************************************************************************
 **
 **   Copyright (c):  2002 by Heiner Lamprecht
-**                   2011 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
-
-#ifdef QT_5
-    #include <QtWidgets>
-    #include <QPrinter>
-    #include <QPrintDialog>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
+#include <QPrinter>
+#include <QPrintDialog>
 
 #include "flightdataprint.h"
 #include "mainwindow.h"
@@ -231,17 +224,17 @@ void FlightDataPrint::__printPositionData( QPainter* painter,
 
   painter->drawText(300, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight,
                     printTime(cPoint->time, true, true));
-  temp.sprintf("%d m", cPoint->height);
+  temp = temp.asprintf("%d m", cPoint->height);
   painter->drawText(360, yPos - 18, 45, 20, Qt::AlignBottom | Qt::AlignRight, temp);
 
   if(printVario)
     {
-      temp.sprintf("%.1f m/s", getVario(*cPoint));
+      temp = temp.asprintf("%.1f m/s", getVario(*cPoint));
       painter->drawText(405, yPos - 18, 60, 20, Qt::AlignBottom | Qt::AlignRight, temp);
     }
   if(printSpeed)
     {
-      temp.sprintf("%.1f km/h", getSpeed(*cPoint));
+      temp = temp.asprintf("%.1f km/h", getSpeed(*cPoint));
       painter->drawText(470, yPos - 18, 65, 20, Qt::AlignBottom | Qt::AlignRight, temp);
     }
 }
@@ -297,7 +290,7 @@ void FlightDataPrint::__printPositionData(QPainter *painter, Waypoint *cPoint, i
 
   if(cPoint->distance != 0)
     {
-      temp.sprintf("%.1f km", cPoint->distance);
+      temp = temp.asprintf("%.1f km", cPoint->distance);
       painter->drawText(410, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight, temp);
 
     if(time && lasttime && !nospeed)
@@ -306,7 +299,7 @@ void FlightDataPrint::__printPositionData(QPainter *painter, Waypoint *cPoint, i
 
         if( speed > 0.0 && speed < 500.0 )
           { // suppress nonsense values
-            temp.sprintf("%.1f km/h", speed);
+            temp = temp.asprintf("%.1f km/h", speed);
             painter->drawText(470, yPos - 18, 55, 20, Qt::AlignBottom | Qt::AlignRight, temp);
         }
       }

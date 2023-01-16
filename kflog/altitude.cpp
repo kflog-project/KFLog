@@ -3,7 +3,7 @@
                              -------------------
     begin                : Sat Jul 20 2002
     copyright            : (C) 2002 by André Somers
-                               2010-2014 by Axel Pauli
+                               2010-2023 by Axel Pauli
 
     This file is part of KFLog.
 
@@ -41,6 +41,17 @@ Altitude::Altitude (const Altitude& alt) : Distance()
   _dist    = alt._dist;
   _isValid = alt._isValid;
 }
+
+/**
+ * copy assignment operator.
+ */
+Altitude& Altitude::operator=( const Altitude& alt )
+{
+  _dist    = alt._dist;
+  _isValid = alt._isValid;
+ return *this;
+}
+
 
 Altitude::Altitude (const Distance& dst): Distance (dst)
 {}

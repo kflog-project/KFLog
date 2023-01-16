@@ -6,23 +6,17 @@
 **
 ************************************************************************
 **
-**   Copyright (c): 2010 Axel Pauli
+**   Copyright (c): 2010-2023 Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
 /**
  * This class is a simple HTTP download client.
  */
-#ifdef QT_5
-    #include <QtWidgets>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
 #include <QtNetwork>
 
 #include "httpclient.h"
@@ -414,7 +408,7 @@ void HttpClient::slotFinished()
  */
 bool HttpClient::parseProxy( QString proxyIn, QString& hostName, quint16& port )
 {
-  QStringList proxyParams = proxyIn.split(":", QString::SkipEmptyParts);
+  QStringList proxyParams = proxyIn.split(":", Qt::SkipEmptyParts);
 
   if( proxyParams.size() != 2 )
     {

@@ -7,18 +7,14 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Heiner Lamprecht
-**                   2011-2014 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
 ***********************************************************************/
 
-#ifdef QT_5
-    #include <QtWidgets>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
 
 #include "configmapelement.h"
 #include "kflogconfig.h"
@@ -500,6 +496,15 @@ void ConfigMapElement::__readMapItems()
   __readBorder(AS_FIR, airFirBorder);
   __readAsOpacity(AS_FIR, airFirOpacityList);
 
+  __readPen(AS_G, airGPenList, AIRG_COLOR_1, AIRG_COLOR_2, AIRG_COLOR_3,
+        AIRG_COLOR_4, AIRG_PEN_1, AIRG_PEN_2, AIRG_PEN_3, AIRG_PEN_4,
+        AIRG_PEN_STYLE_1, AIRG_PEN_STYLE_2, AIRG_PEN_STYLE_3, AIRG_PEN_STYLE_4);
+  __readBrush(AS_G, airGBrushList, AIRG_BRUSH_COLOR_1, AIRG_BRUSH_COLOR_2,
+        AIRG_BRUSH_COLOR_3, AIRG_BRUSH_COLOR_4, AIRG_BRUSH_STYLE_1,
+        AIRG_BRUSH_STYLE_2, AIRG_BRUSH_STYLE_3, AIRG_BRUSH_STYLE_4);
+  __readBorder(AS_G, airGBorder);
+  __readAsOpacity(AS_G, airGOpacityList);
+
   __readPen(AS_CTR, ctrPenList, CTR_COLOR_1, CTR_COLOR_2, CTR_COLOR_3, CTR_COLOR_4,
         CTR_PEN_1, CTR_PEN_2, CTR_PEN_3, CTR_PEN_4,
         CTR_PEN_STYLE_1, CTR_PEN_STYLE_2, CTR_PEN_STYLE_3, CTR_PEN_STYLE_4);
@@ -571,6 +576,15 @@ void ConfigMapElement::__readMapItems()
         WAVE_WINDOW_BRUSH_STYLE_2, WAVE_WINDOW_BRUSH_STYLE_3, WAVE_WINDOW_BRUSH_STYLE_4);
   __readBorder(AS_WW, wwBorder);
   __readAsOpacity(AS_WW, wwOpacityList);
+
+  __readPen(AS_SUA, suaPenList, SUA_COLOR_1, SUA_COLOR_2, SUA_COLOR_3,
+        SUA_COLOR_4, SUA_PEN_1, SUA_PEN_2, SUA_PEN_3, SUA_PEN_4,
+        SUA_PEN_STYLE_1, SUA_PEN_STYLE_2, SUA_PEN_STYLE_3, SUA_PEN_STYLE_4);
+  __readBrush(AS_SUA, suaBrushList, SUA_BRUSH_COLOR_1, SUA_BRUSH_COLOR_2,
+        SUA_BRUSH_COLOR_3, SUA_BRUSH_COLOR_4, SUA_BRUSH_STYLE_1,
+        SUA_BRUSH_STYLE_2, SUA_BRUSH_STYLE_3, SUA_BRUSH_STYLE_4);
+  __readBorder(AS_SUA, suaBorder);
+  __readAsOpacity(AS_SUA, suaOpacityList);
 
 
   __readPen("FAIAreaLow500", faiAreaLow500PenList, FAI_LOW_500_COLOR_1, FAI_LOW_500_COLOR_2, FAI_LOW_500_COLOR_3, FAI_LOW_500_COLOR_4,
@@ -754,6 +768,15 @@ void ConfigMapElement::__readPrintItems()
   __readBorder(AS_FIR, airFirBorder);
   __readAsOpacity(AS_FIR, airFirOpacityList);
 
+  __readPen(AS_G, airGPenList, PRINT_AIRG_COLOR_1, PRINT_AIRG_COLOR_2, PRINT_AIRG_COLOR_2,
+        PRINT_AIRG_COLOR_2, PRINT_AIRG_PEN_1, PRINT_AIRG_PEN_2, PRINT_AIRG_PEN_2, PRINT_AIRG_PEN_2,
+        PRINT_AIRG_PEN_STYLE_1, PRINT_AIRG_PEN_STYLE_2, PRINT_AIRG_PEN_STYLE_2, PRINT_AIRG_PEN_STYLE_2);
+  __readBrush(AS_G, airGBrushList, PRINT_AIRG_BRUSH_COLOR_1, PRINT_AIRG_BRUSH_COLOR_2,
+        PRINT_AIRG_BRUSH_COLOR_2, PRINT_AIRG_BRUSH_COLOR_2, PRINT_AIRG_BRUSH_STYLE_1,
+        PRINT_AIRG_BRUSH_STYLE_2, PRINT_AIRG_BRUSH_STYLE_2, PRINT_AIRG_BRUSH_STYLE_2);
+  __readBorder(AS_G, airGBorder);
+  __readAsOpacity(AS_G, airGOpacityList);
+
   __readPen(AS_CTR, ctrPenList, PRINT_CTR_COLOR_1, PRINT_CTR_COLOR_2, PRINT_CTR_COLOR_2, PRINT_CTR_COLOR_2,
         PRINT_CTR_PEN_1, PRINT_CTR_PEN_2, PRINT_CTR_PEN_2, PRINT_CTR_PEN_2,
         PRINT_CTR_PEN_STYLE_1, PRINT_CTR_PEN_STYLE_2, PRINT_CTR_PEN_STYLE_2, PRINT_CTR_PEN_STYLE_2);
@@ -826,6 +849,16 @@ void ConfigMapElement::__readPrintItems()
   __readBorder(AS_WW, wwBorder);
   __readAsOpacity(AS_WW, wwOpacityList);
 
+  __readPen(AS_SUA, suaPenList, PRINT_SUA_COLOR_1, PRINT_SUA_COLOR_2, PRINT_SUA_COLOR_2,
+        PRINT_SUA_COLOR_2, PRINT_SUA_PEN_1, PRINT_SUA_PEN_2, PRINT_SUA_PEN_2, PRINT_SUA_PEN_2,
+        PRINT_SUA_PEN_STYLE_1, PRINT_SUA_PEN_STYLE_2, PRINT_SUA_PEN_STYLE_2, PRINT_SUA_PEN_STYLE_2);
+  __readBrush(AS_SUA, suaBrushList, PRINT_SUA_BRUSH_COLOR_1, PRINT_SUA_BRUSH_COLOR_2,
+        PRINT_SUA_BRUSH_COLOR_2, PRINT_SUA_BRUSH_COLOR_2, PRINT_SUA_BRUSH_STYLE_1,
+        PRINT_SUA_BRUSH_STYLE_2, PRINT_SUA_BRUSH_STYLE_2, PRINT_SUA_BRUSH_STYLE_2);
+  __readBorder(AS_SUA, suaBorder);
+  __readAsOpacity(AS_SUA, suaOpacityList);
+
+
   __readPen("FAIAreaLow500", faiAreaLow500PenList, PRINT_FAI_LOW_500_COLOR_1, PRINT_FAI_LOW_500_COLOR_2, PRINT_FAI_LOW_500_COLOR_2, PRINT_FAI_LOW_500_COLOR_2,
         PRINT_FAI_LOW_500_PEN_1, PRINT_FAI_LOW_500_PEN_2, PRINT_FAI_LOW_500_PEN_2, PRINT_FAI_LOW_500_PEN_2,
         PRINT_FAI_LOW_500_PEN_STYLE_1, PRINT_FAI_LOW_500_PEN_STYLE_2, PRINT_FAI_LOW_500_PEN_STYLE_2, PRINT_FAI_LOW_500_PEN_STYLE_2);
@@ -880,6 +913,8 @@ void ConfigMapElement::slotOk()
 
   __writeBrush(AS_FIR, airFirBrushList, airFirPenList, airFirBorder);
 
+  __writeBrush(AS_G, airGBrushList, airGPenList, airGBorder);
+
   __writeBrush(AS_CTR, ctrBrushList, ctrPenList, ctrBorder);
 
   __writeBrush(AS_DANGER, dangerBrushList, dangerPenList, dangerBorder);
@@ -895,6 +930,8 @@ void ConfigMapElement::slotOk()
   __writeBrush(AS_GS, gsBrushList, gsPenList, gsBorder);
 
   __writeBrush(AS_WW, wwBrushList, wwPenList, wwBorder);
+
+  __writeBrush(AS_SUA, suaBrushList, suaPenList, suaBorder);
 
   __writeBrush("Forest", forestBrushList, forestPenList, forestBorder);
 
@@ -918,6 +955,7 @@ void ConfigMapElement::slotOk()
   __writeAsOpacity( AS_E, airEhOpacityList );
   __writeAsOpacity( AS_F, airFOpacityList );
   __writeAsOpacity( AS_FIR, airFirOpacityList );
+  __writeAsOpacity( AS_G, airGOpacityList );
   __writeAsOpacity( AS_CTR, ctrOpacityList );
   __writeAsOpacity( AS_LF, lowFOpacityList );
   __writeAsOpacity( AS_DANGER, dangerOpacityList );
@@ -926,6 +964,7 @@ void ConfigMapElement::slotOk()
   __writeAsOpacity( AS_TMZ, tmzOpacityList );
   __writeAsOpacity( AS_GS, gsOpacityList );
   __writeAsOpacity( AS_WW, wwOpacityList );
+  __writeAsOpacity( AS_SUA, suaOpacityList );
 }
 
 void ConfigMapElement::slotDefaultElements()
@@ -947,6 +986,7 @@ void ConfigMapElement::slotDefaultElements()
   __defaultAsOpacity( airEhOpacityList );
   __defaultAsOpacity( airFOpacityList );
   __defaultAsOpacity( airFirOpacityList );
+  __defaultAsOpacity( airGOpacityList );
   __defaultAsOpacity( ctrOpacityList );
   __defaultAsOpacity( lowFOpacityList );
   __defaultAsOpacity( dangerOpacityList );
@@ -955,6 +995,7 @@ void ConfigMapElement::slotDefaultElements()
   __defaultAsOpacity( tmzOpacityList );
   __defaultAsOpacity( gsOpacityList );
   __defaultAsOpacity( wwOpacityList );
+  __defaultAsOpacity( suaOpacityList );
 
   oldElement = -1;
   slotSelectElement( currentElement );
@@ -1102,6 +1143,14 @@ void ConfigMapElement::__readDefaultMapItems()
       AIRFIR_BRUSH_STYLE_1, AIRFIR_BRUSH_STYLE_2,
       AIRFIR_BRUSH_STYLE_2, AIRFIR_BRUSH_STYLE_2);
 
+  __defaultPenBrush(airGPenList, airGBorder, airGBrushList,
+      AIRG_COLOR_1, AIRG_COLOR_2, AIRG_COLOR_2, AIRG_COLOR_2,
+      AIRG_PEN_1, AIRG_PEN_2, AIRG_PEN_2, AIRG_PEN_2,
+      AIRG_BRUSH_COLOR_1, AIRG_BRUSH_COLOR_2,
+      AIRG_BRUSH_COLOR_2, AIRG_BRUSH_COLOR_2,
+      AIRG_BRUSH_STYLE_1, AIRG_BRUSH_STYLE_2,
+      AIRG_BRUSH_STYLE_2, AIRG_BRUSH_STYLE_2);
+
   __defaultPenBrush(ctrPenList, ctrBorder, ctrBrushList,
       CTR_COLOR_1, CTR_COLOR_2, CTR_COLOR_3, CTR_COLOR_4,
       CTR_PEN_1, CTR_PEN_2, CTR_PEN_3, CTR_PEN_4,
@@ -1157,6 +1206,14 @@ void ConfigMapElement::__readDefaultMapItems()
       WAVE_WINDOW_BRUSH_COLOR_3, WAVE_WINDOW_BRUSH_COLOR_4,
       WAVE_WINDOW_BRUSH_STYLE_1, WAVE_WINDOW_BRUSH_STYLE_2,
       WAVE_WINDOW_BRUSH_STYLE_3, WAVE_WINDOW_BRUSH_STYLE_4);
+
+  __defaultPenBrush(suaPenList, suaBorder, suaBrushList,
+      SUA_COLOR_1, SUA_COLOR_2, SUA_COLOR_2, SUA_COLOR_2,
+      SUA_PEN_1, SUA_PEN_2, SUA_PEN_2, SUA_PEN_2,
+      SUA_BRUSH_COLOR_1, SUA_BRUSH_COLOR_2,
+      SUA_BRUSH_COLOR_2, SUA_BRUSH_COLOR_2,
+      SUA_BRUSH_STYLE_1, SUA_BRUSH_STYLE_2,
+      SUA_BRUSH_STYLE_2, SUA_BRUSH_STYLE_2);
 
   __defaultPenBrush(faiAreaLow500PenList, faiAreaLow500Border, faiAreaLow500BrushList,
       FAI_LOW_500_COLOR_1, FAI_LOW_500_COLOR_2, FAI_LOW_500_COLOR_3, FAI_LOW_500_COLOR_4,
@@ -1313,6 +1370,14 @@ void ConfigMapElement::__readDefaultPrintItems()
       PRINT_AIRFIR_BRUSH_STYLE_1, PRINT_AIRFIR_BRUSH_STYLE_2,
       PRINT_AIRFIR_BRUSH_STYLE_2, PRINT_AIRFIR_BRUSH_STYLE_2);
 
+  __defaultPenBrush(airGPenList, airGBorder, airGBrushList,
+      PRINT_AIRG_COLOR_1, PRINT_AIRG_COLOR_2, PRINT_AIRG_COLOR_2, PRINT_AIRG_COLOR_2,
+      PRINT_AIRG_PEN_1, PRINT_AIRG_PEN_2, PRINT_AIRG_PEN_2, PRINT_AIRG_PEN_2,
+      PRINT_AIRG_BRUSH_COLOR_1, PRINT_AIRG_BRUSH_COLOR_2,
+      PRINT_AIRG_BRUSH_COLOR_2, PRINT_AIRG_BRUSH_COLOR_2,
+      PRINT_AIRG_BRUSH_STYLE_1, PRINT_AIRG_BRUSH_STYLE_2,
+      PRINT_AIRG_BRUSH_STYLE_2, PRINT_AIRG_BRUSH_STYLE_2);
+
   __defaultPenBrush(ctrPenList, ctrBorder, ctrBrushList,
       PRINT_CTR_COLOR_1, PRINT_CTR_COLOR_2, PRINT_CTR_COLOR_2, PRINT_CTR_COLOR_2,
       PRINT_CTR_PEN_1, PRINT_CTR_PEN_2, PRINT_CTR_PEN_2, PRINT_CTR_PEN_2,
@@ -1376,6 +1441,14 @@ void ConfigMapElement::__readDefaultPrintItems()
       PRINT_WAVE_WINDOW_BRUSH_COLOR_2, PRINT_WAVE_WINDOW_BRUSH_COLOR_2,
       PRINT_WAVE_WINDOW_BRUSH_STYLE_1, PRINT_WAVE_WINDOW_BRUSH_STYLE_2,
       PRINT_WAVE_WINDOW_BRUSH_STYLE_2, PRINT_WAVE_WINDOW_BRUSH_STYLE_2);
+
+  __defaultPenBrush(suaPenList, suaBorder, suaBrushList,
+      PRINT_SUA_COLOR_1, PRINT_SUA_COLOR_2, PRINT_SUA_COLOR_2, PRINT_SUA_COLOR_2,
+      PRINT_SUA_PEN_1, PRINT_SUA_PEN_2, PRINT_SUA_PEN_2, PRINT_SUA_PEN_2,
+      PRINT_SUA_BRUSH_COLOR_1, PRINT_SUA_BRUSH_COLOR_2,
+      PRINT_SUA_BRUSH_COLOR_2, PRINT_SUA_BRUSH_COLOR_2,
+      PRINT_SUA_BRUSH_STYLE_1, PRINT_SUA_BRUSH_STYLE_2,
+      PRINT_SUA_BRUSH_STYLE_2, PRINT_SUA_BRUSH_STYLE_2);
 
   __defaultPenBrush(faiAreaLow500PenList, faiAreaLow500Border, faiAreaLow500BrushList,
       PRINT_FAI_LOW_500_COLOR_1, PRINT_FAI_LOW_500_COLOR_2, PRINT_FAI_LOW_500_COLOR_2, PRINT_FAI_LOW_500_COLOR_2,
@@ -1707,6 +1780,16 @@ void ConfigMapElement::slotSelectElement(int elementID)
         __saveBrush(wwBrushList);
         __saveAsOpacity( wwOpacityList );
         break;
+      case KFLogConfig::AirG:
+        __savePen(airGPenList, airGBorder);
+        __saveBrush(airGBrushList);
+        __saveAsOpacity(airGOpacityList);
+        break;
+      case KFLogConfig::Sua:
+        __savePen(suaPenList, suaBorder);
+        __saveBrush(suaBrushList);
+        __saveAsOpacity(suaOpacityList);
+        break;
 
       case KFLogConfig::Forest:
         __savePen(forestPenList, forestBorder);
@@ -1847,6 +1930,16 @@ void ConfigMapElement::slotSelectElement(int elementID)
         __showBrush(wwBrushList);
         __showAsOpacity(wwOpacityList);
         break;
+      case KFLogConfig::AirG:
+        __showPen(airGPenList, airGBorder);
+        __showBrush(airGBrushList);
+        __showAsOpacity(airGOpacityList);
+        break;
+      case KFLogConfig::Sua:
+        __showPen(suaPenList, suaBorder);
+        __showBrush(suaBrushList);
+        __showAsOpacity(suaOpacityList);
+        break;
 
       case KFLogConfig::Forest:
         __showPen(forestPenList, forestBorder);
@@ -1908,6 +2001,8 @@ void ConfigMapElement::slotToggleFirst(bool toggle)
       case KFLogConfig::GliderSector:
       case KFLogConfig::WaveWindow:
       case KFLogConfig::Prohibited:
+      case KFLogConfig::AirG:
+      case KFLogConfig::Sua:
 
       case KFLogConfig::Glacier:
       case KFLogConfig::PackIce:
@@ -1976,6 +2071,8 @@ void ConfigMapElement::slotToggleSecond( bool toggle )
       case KFLogConfig::GliderSector:
       case KFLogConfig::WaveWindow:
       case KFLogConfig::Prohibited:
+      case KFLogConfig::AirG:
+      case KFLogConfig::Sua:
 
       case KFLogConfig::Glacier:
       case KFLogConfig::PackIce:
@@ -2044,6 +2141,8 @@ void ConfigMapElement::slotToggleThird(bool toggle)
       case KFLogConfig::GliderSector:
       case KFLogConfig::WaveWindow:
       case KFLogConfig::Prohibited:
+      case KFLogConfig::AirG:
+      case KFLogConfig::Sua:
 
       case KFLogConfig::Glacier:
       case KFLogConfig::PackIce:
@@ -2110,6 +2209,8 @@ void ConfigMapElement::slotToggleForth(bool toggle)
       case KFLogConfig::GliderSector:
       case KFLogConfig::WaveWindow:
       case KFLogConfig::Prohibited:
+      case KFLogConfig::AirG:
+      case KFLogConfig::Sua:
 
       case KFLogConfig::Glacier:
       case KFLogConfig::PackIce:
@@ -2273,7 +2374,8 @@ void ConfigMapElement::__defaultPenBrush( QList<QPen> &penList,
                                            Qt::PenStyle defaultPenStyle1,
                                            Qt::PenStyle defaultPenStyle2,
                                            Qt::PenStyle defaultPenStyle3,
-                                           Qt::PenStyle defaultPenStyle4,                                           QColor defaultBrushColor1,
+                                           Qt::PenStyle defaultPenStyle4,
+                                           QColor defaultBrushColor1,
                                            QColor defaultBrushColor2,
                                            QColor defaultBrushColor3,
                                            QColor defaultBrushColor4,

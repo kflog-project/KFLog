@@ -6,17 +6,14 @@
 **
 ************************************************************************
 **
-**   Copyright (c): 2010-2011 Axel Pauli
+**   Copyright (c): 2010-2023 Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
 ***********************************************************************/
-#ifdef QT_5
-    #include <QtWidgets>
-#else
-    #include <QtGui>
-#endif
+
+#include <QtWidgets>
 
 #include "aboutwidget.h"
 

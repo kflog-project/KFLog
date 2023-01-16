@@ -7,7 +7,7 @@
                              -------------------
     begin                : Fri Nov 30 2001
     copyright            : (C) 2001 by Harald Maier
-                               2011-2014 by Axel Pauli
+                               2011-2023 by Axel Pauli
 
     This file is distributed under the terms of the General Public
     License. See the file COPYING for more information.
@@ -23,13 +23,12 @@
  *
  * Waypoint tree widget for display of waypoints and their management.
  *
- * \date 2001-2014
+ * \date 2001-2023
  *
- * \version $Id$
+ * \version 1.1
  */
 
-#ifndef WAYPOINT_TREE_VIEW_H
-#define WAYPOINT_TREE_VIEW_H
+#pragma once
 
 #include "kflogtreewidget.h"
 #include "waypoint.h"
@@ -52,7 +51,7 @@ private:
 
 public:
 
-  WaypointTreeView(QWidget *parent = 0, const QString& catalog = QString::null);
+  WaypointTreeView(QWidget *parent = 0, const QString& catalog = QString());
 
   ~WaypointTreeView();
   /**
@@ -231,5 +230,3 @@ private: // Private methods
    */
   void centerMap(int, int);
 };
-
-#endif

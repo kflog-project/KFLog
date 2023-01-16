@@ -6,20 +6,14 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2002 by the KFLog-Team
+**   Copyright (c):  2002-2023 by the KFLog-Team
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
-#ifdef QT_5
-    #include <QtWidgets>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
 
 #include "igc3ddialog.h"
 #include "mapcalc.h"

@@ -29,8 +29,7 @@
  * \version 1.1
  */
 
-#ifndef WAYPOINT_CATALOG_H
-#define WAYPOINT_CATALOG_H
+#pragma once
 
 #include <QList>
 #include <QSet>
@@ -147,6 +146,7 @@ public:
   bool showAirfields;
   bool showGliderfields;
   bool showNavaids;
+  bool showReportings;
   bool showObstacles;
   bool showLandmarks;
   bool showOutlandings;
@@ -188,5 +188,3 @@ private: // Private attributes
   /** Set of existing catalog pathes. */
   static QSet<QString> catalogSet;
 };
-
-#endif

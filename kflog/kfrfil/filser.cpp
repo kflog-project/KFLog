@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by Christian Fughe, Harald Maier, Eggert Ehmke
-**                   2011-2016 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -132,13 +132,11 @@ void debugHex (const void* buf, unsigned int size)
 {
   for( unsigned int ix1 = 0; ix1 < size; ix1 += 0x10 )
     {
-      QString line;
-      line.sprintf( "%03X:  ", ix1 );
+      QString line = line.asprintf( "%03X:  ", ix1 );
 
       for( int ix2 = 0; ix2 < 0x10; ix2++ )
         {
-          QString byte;
-          byte.sprintf( "%02X ", ((unsigned char*) buf)[ix1 + ix2] );
+          QString byte = byte.asprintf( "%02X ", ((unsigned char*) buf)[ix1 + ix2] );
           line += byte;
         }
 
@@ -366,28 +364,28 @@ int Filser::getFlightDir( QList<FRDirEntry *>* dirList )
       {
         for( i = 0; i < flightCount; i++ )
           {
-            dirList->at(i)->shortFileName.sprintf("%c%c%c%c%s%c.igc",
-                                         c36[dirList->at(i)->firstTime.tm_year % 10],
-                                         c36[dirList->at(i)->firstTime.tm_mon + 1],
-                                         c36[dirList->at(i)->firstTime.tm_mday],
-                                         manufactureShortKey,
-                                         wordtoserno((flightIndex.at(i)->record[91] << 8)
-                                                    + flightIndex.at(i)->record[92]),
-                                         c36[flightIndex.at(i)->record[94]]); // 09.03.2005 Fughe: This is
-                                                                              // the counter of the flight
-                                                                              // of the day (IGC tech specs).
-                                                                              // Please, keep it this way.
-            dirList->at(i)->longFileName.sprintf("%d-%.2d-%.2d-%s-%s-%.2d.igc",
-                                        dirList->at(i)->firstTime.tm_year + 1900,
-                                        dirList->at(i)->firstTime.tm_mon + 1,
-                                        dirList->at(i)->firstTime.tm_mday,
-                                        manufactureKey,
-                                        wordtoserno((flightIndex.at(i)->record[91] << 8)
-                                                   + flightIndex.at(i)->record[92]),
-                                        flightIndex.at(i)->record[94]); // 09.03.2005 Fughe: This is
-                                                                        // the counter of the flight
-                                                                        // of the day (IGC tech specs).
-                                                                        // Please, keep it this way.
+            dirList->at(i)->shortFileName = QString().asprintf("%c%c%c%c%s%c.igc",
+                                                               c36[dirList->at(i)->firstTime.tm_year % 10],
+                                                               c36[dirList->at(i)->firstTime.tm_mon + 1],
+                                                               c36[dirList->at(i)->firstTime.tm_mday],
+                                                               manufactureShortKey,
+                                                               wordtoserno((flightIndex.at(i)->record[91] << 8)
+                                                                          + flightIndex.at(i)->record[92]),
+                                                               c36[flightIndex.at(i)->record[94]]); // 09.03.2005 Fughe: This is
+                                                                                                    // the counter of the flight
+                                                                                                    // of the day (IGC tech specs).
+                                                                                                    // Please, keep it this way.
+                                  dirList->at(i)->longFileName = QString().asprintf("%d-%.2d-%.2d-%s-%s-%.2d.igc",
+                                                                                    dirList->at(i)->firstTime.tm_year + 1900,
+                                                                                    dirList->at(i)->firstTime.tm_mon + 1,
+                                                                                    dirList->at(i)->firstTime.tm_mday,
+                                                                                    manufactureKey,
+                                                                                    wordtoserno((flightIndex.at(i)->record[91] << 8)
+                                                                                               + flightIndex.at(i)->record[92]),
+                                                                                    flightIndex.at(i)->record[94]); // 09.03.2005 Fughe: This is
+                                                                                                                    // the counter of the flight
+                                                                                                                    // of the day (IGC tech specs).
+                                                                                                                    // Please, keep it this way.
             qWarning("%s   %s", dirList->at(i)->longFileName.toLatin1().data(),
                                 dirList->at(i)->shortFileName.toLatin1().data());
           }

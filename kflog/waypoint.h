@@ -7,22 +7,22 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by Heiner Lamprecht
-**                   2011-2014 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
 ***********************************************************************/
 
-#ifndef WAYPOINT_H
-#define WAYPOINT_H
+#pragma once
 
 #include <ctime>
 
-#include <QPair>
+#include <QList>
 #include <QPoint>
 #include <QString>
 
+#include "Frequency.h"
 #include "runway.h"
 #include "wgspoint.h"
 
@@ -33,15 +33,19 @@
   *
   * @author Heiner Lamprecht, Axel Pauli
   *
-  * @date 2003-2014
+  * @date 2003-2023
   *
-  * @version 1.0
+  * @version 1.2
   */
 
 class Waypoint
 {
-
  public:
+
+  /**
+   * contains an priority indication for a waypoint
+   */
+  enum Priority { Low=0, Normal=1, High=2, Top=3 };
 
   Waypoint() :
     sector1(0),
@@ -52,7 +56,6 @@ class Waypoint
     tpType(0),
     distance(0.0),
     elevation(0.0),
-    frequency(0.0),
     importance(2),
     fixTime(0)
     {
@@ -66,7 +69,6 @@ class Waypoint
             QString _comment,
             QString _country,
             float elev = 0.0,
-            float freq = 0.0,
             QPoint pP = QPoint(),
             time_t s1 = 0,
             time_t s2 = 0,
@@ -81,11 +83,65 @@ class Waypoint
 
   Waypoint(Waypoint &p);
 
+  Waypoint& operator=(const Waypoint& wp) = default;
+
   virtual ~Waypoint();
 
   bool operator<(Waypoint &wp);
 
   bool operator==( const Waypoint& second ) const;
+
+  /**
+   * @return The frequency list as reference.
+   */
+  QList<Frequency>& getFrequencyList()
+    {
+      return frequencyList;
+    }
+
+  /**
+   * Sets a new frequency list.
+   */
+  void setFequencyList( QList<Frequency>& fqList )
+  {
+    frequencyList = fqList;
+  }
+
+  /**
+   * Adds a new frequency to the frequency list.
+   *
+   * @param freq The frequency and its type.
+   */
+  void addFrequency( const Frequency& frequencyAndType )
+    {
+      frequencyList.append( frequencyAndType );
+    }
+
+  /**
+   * @return The runway list as reference.
+   */
+  QList<Runway>& getRunwayList()
+    {
+      return rwyList;
+    }
+
+  /**
+   * Sets a new runway list.
+   */
+  void setRunwayList( QList<Runway>& runwayList )
+  {
+    rwyList = runwayList;
+  }
+
+  /**
+   * Adds a new runway to the runway list.
+   *
+   * @param rwy The runway to be added.
+   */
+  void addRunway( const Runway& runway )
+    {
+      rwyList.append( runway );
+    }
 
   /**
    * The name of the waypoint.
@@ -119,10 +175,12 @@ class Waypoint
    * The type of the waypoint
    */
   int type;
+
   /**
    * The type as taskpoint
    */
   int tpType;
+
   /**
    * The distance to the previous waypoint in kilometers
    */
@@ -150,7 +208,8 @@ class Waypoint
   QString country;
 
   /**
-   * A list of runways is managed by the waypoint object.
+   * A list of runways is managed by the airfield object. If a waypoint is
+   * derived temporary from an airfield object, these data is also taken over.
    */
   QList<Runway> rwyList;
 
@@ -160,9 +219,9 @@ class Waypoint
   float elevation;
 
   /**
-   * Frequency of waypoint.
-   */
-  float frequency;
+  * All speech frequencies with type of the airfield.
+  */
+  QList<Frequency> frequencyList;
 
   /**
     * contains an importance indication for the waypoint
@@ -174,5 +233,3 @@ class Waypoint
 
   time_t fixTime;
 };
-
-#endif

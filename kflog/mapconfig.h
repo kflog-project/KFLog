@@ -30,8 +30,7 @@
  * \version 1.1
  */
 
-#ifndef MAP_CONFIG_H
-#define MAP_CONFIG_H
+#pragma once
 
 #include <QBrush>
 #include <QList>
@@ -378,6 +377,9 @@ private:
   QList<QPen> airFirPenList;
   QList<QBrush> airFirBrushList;
 
+  QList<QPen> airGPenList;
+  QList<QBrush> airGBrushList;
+
   QList<QPen> ctrPenList;
   QList<QBrush> ctrBrushList;
 
@@ -434,6 +436,7 @@ private:
   QList<int> airEOpacityList;
   QList<int> airFOpacityList;
   QList<int> airFirOpacityList;
+  QList<int> airGOpacityList;
   QList<int> ctrOpacityList;
   QList<int> suaOpacityList;
   QList<int> dangerOpacityList;
@@ -457,6 +460,7 @@ private:
   bool airEBorder[6];
   bool airFBorder[6];
   bool airFirBorder[6];
+  bool airGBorder[6];
   bool ctrBorder[6];
   bool dangerBorder[6];
   bool suaBorder[6];
@@ -508,4 +512,3 @@ private:
   int _drawWpLabelScale;
 };
 
-#endif

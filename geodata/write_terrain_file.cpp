@@ -32,7 +32,7 @@ void process_terrain_file (const Q_INT16 saveSecID, const Q_INT8 saveTypeID) {
   // Open input file. This is a GRASS ascii file, generated with
   // v.out.ascii input=<map> output=<file> format=standard
   QString infilename;
-  infilename.sprintf("%c_%.5d", saveTypeID, saveSecID);
+  infilename = QString().asprintf("%c_%.5d", saveTypeID, saveSecID);
   QFile infile(infilename);
   infile.open(IO_ReadOnly);
   QTextStream in(&infile);
@@ -45,7 +45,7 @@ void process_terrain_file (const Q_INT16 saveSecID, const Q_INT8 saveTypeID) {
 
   // Open output file for binary writing
   QString outfilename;
-  outfilename.sprintf("%c_%.5d.kfl", saveTypeID, saveSecID);
+  outfilename = QString().asprintf("%c_%.5d.kfl", saveTypeID, saveSecID);
   QFile outfile(outfilename);
   outfile.open(IO_WriteOnly);
   QDataStream out(&outfile);
@@ -107,7 +107,7 @@ void process_binary_file (const Q_INT16 saveSecID, const Q_INT8 saveTypeID) {
   // Open input file. This is a GRASS ascii file, generated with
   // v.out.ascii input=<map> output=<file> format=standard
   QString infilename;
-  infilename.sprintf("/home/hoeth/grassdata/%c_%.5d", saveTypeID, saveSecID);
+  infilename = QString().asprintf("/home/hoeth/grassdata/%c_%.5d", saveTypeID, saveSecID);
   QFile infile(infilename);
   infile.open(IO_ReadOnly);
   QTextStream in(&infile);
@@ -120,7 +120,7 @@ void process_binary_file (const Q_INT16 saveSecID, const Q_INT8 saveTypeID) {
 
   // Open output file for binary writing
   QString outfilename;
-  outfilename.sprintf("%c_%.5d.kfl", saveTypeID, saveSecID);
+  outfilename = QString().asprintf("%c_%.5d.kfl", saveTypeID, saveSecID);
   QFile outfile(outfilename);
   outfile.open(IO_WriteOnly);
   QDataStream out(&outfile);

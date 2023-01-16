@@ -8,18 +8,14 @@
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
 **                :  2008 by Constantijn Neeteson
-**                :  2011-2014 by Axel Pauli
+**                :  2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
 ***********************************************************************/
 
-#ifdef QT_5
-    #include <QtWidgets>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
 
 #include "evaluationdialog.h"
 #include "evaluationframe.h"
@@ -148,7 +144,7 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
       }
     else
       {
-        text.sprintf("%.1fm/s", getVario(p1));
+        text = text.asprintf("%.1fm/s", getVario(p1));
       }
 
     htmlText += text + tr(" Speed=");
@@ -159,7 +155,7 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
       }
     else
       {
-        text.sprintf("%.1fkm/h", getSpeed(p1));
+        text = text.asprintf("%.1fkm/h", getSpeed(p1));
       }
 
     htmlText += text + "</TD>";
@@ -175,7 +171,7 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
       }
     else
       {
-        text.sprintf("%.1fm/s", getVario(p2));
+        text = text.asprintf("%.1fm/s", getVario(p2));
       }
 
     htmlText += text + tr(" Speed=");
@@ -186,7 +182,7 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
       }
     else
       {
-        text.sprintf("%.1fkm/h", getSpeed(p2));
+        text = text.asprintf("%.1fkm/h", getSpeed(p2));
       }
 
     htmlText += text + "</TD></TR></TABLE></HTML>";
@@ -321,28 +317,30 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
               case Flight::Straight:
                 text = QString( tr("Straight") );
                 break;
+              default:
+                break;
             }
 
-          //text.sprintf("%i", state_list.at(n)->f_state);
+          //text = text.asprintf("%i", state_list.at(n)->f_state);
           htmlText += (QString) "<TR><TD align=\"left\"><pre>" + text + "</pre></TD>";
-          text.sprintf("%s", printTime(state_list.at(n)->start_time, true).toLatin1().data());
+          text = text.asprintf("%s", printTime(state_list.at(n)->start_time, true).toLatin1().data());
           htmlText += (QString) "<TD align='right'>" + text + "</TD>";
-          text.sprintf("%s", printTime(state_list.at(n)->end_time, true).toLatin1().data());
+          text = text.asprintf("%s", printTime(state_list.at(n)->end_time, true).toLatin1().data());
           htmlText += (QString) "<TD align='right'>" + text + "</TD>";
-          text.sprintf("%s", printTime(state_list.at(n)->duration, true, true, true).toLatin1().data());
+          text = text.asprintf("%s", printTime(state_list.at(n)->duration, true, true, true).toLatin1().data());
           htmlText += (QString) "<TD align='right'>" + text + "</TD>";
-          text.sprintf("%i", state_list.at(n)->dH_pos);
+          text = text.asprintf("%i", state_list.at(n)->dH_pos);
           htmlText += (QString) "<TD align='right'>" + text + " m</TD>";
-          text.sprintf("%i", state_list.at(n)->dH_neg);
+          text = text.asprintf("%i", state_list.at(n)->dH_neg);
           htmlText += (QString) "<TD align='right'>" + text + " m</TD>";
-          text.sprintf("%i", (state_list.at(n)->dH_pos+state_list.at(n)->dH_neg));
+          text = text.asprintf("%i", (state_list.at(n)->dH_pos+state_list.at(n)->dH_neg));
           htmlText += (QString) "<TD align='right'>" + text + " m</TD>";
-          text.sprintf("%.1f", state_list.at(n)->distance);
+          text = text.asprintf("%.1f", state_list.at(n)->distance);
           htmlText += (QString) "<TD align='right'>" + text + " km</TD>";
 
           if(state_list.at(n)->f_state==Flight::Straight)
             {
-              text.sprintf("%.1f %s", state_list.at(n)->speed, "km/h");
+              text = text.asprintf("%.1f %s", state_list.at(n)->speed, "km/h");
             }
           else
             {
@@ -356,7 +354,7 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
               if(abs((int) state_list.at(n)->L_D)>1000)
                   text = tr("inf");
               else
-                  text.sprintf("%.0f", state_list.at(n)->L_D);
+                  text = text.asprintf("%.0f", state_list.at(n)->L_D);
             }
           else
             {
@@ -364,7 +362,7 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
             }
 
           htmlText += (QString) "<TD align='right'>" + text + "</TD>";
-          text.sprintf("%.1f", state_list.at(n)->vario);
+          text = text.asprintf("%.1f", state_list.at(n)->vario);
           htmlText += (QString) "<TD align='right'>" + text + " m/s</TD>";
           htmlText += (QString) "</TR>";
           }
@@ -376,12 +374,12 @@ void EvaluationDialog::updateText(int index1, int index2, bool updateAll)
     break;
 
   case BaseMapElement::Task:
-    emit textChanged(QString::null);
+    emit textChanged(QString());
     htmlText = "<DIV ALIGN=CENTER>" + tr("Cannot evaluate task") + "</DIV>";
     break;
 
   case BaseMapElement::FlightGroup:
-    emit textChanged(QString::null);
+    emit textChanged(QString());
     htmlText = "<DIV ALIGN=CENTER>" + tr("Cannot (yet) evaluate a flight group") + "</DIV>";
     break;
 

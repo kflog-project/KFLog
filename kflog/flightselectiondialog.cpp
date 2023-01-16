@@ -7,20 +7,14 @@
 ************************************************************************
 **
 **   Copyright (c):  2002 by Harald Maier
-**                   2011 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
-#ifdef QT_5
-    #include <QtWidgets>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
 
 #include "flightselectiondialog.h"
 #include "mainwindow.h"

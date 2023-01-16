@@ -7,13 +7,13 @@
 ************************************************************************
 **
 **   Copyright (c):  1999, 2000 by Heiner Lamprecht, Florian Ehinger
+**                   2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
+
 #ifdef _MSC_VER
 #define _USE_MATH_DEFINES
 #endif
@@ -28,9 +28,13 @@
 
 #define PI2 M_PI*2
 
-static const char *timeFormat[6] = {"%2d:%2d", "%2d:%2d:%2d", "%02d:%02d", "%02d:%02d:%02d", "%2d:%02d", "%2d:%02d:%02d"};
+static const char *timeFormat[ 6 ] =
+  { "%2d:%2d", "%2d:%2d:%2d", "%02d:%02d", "%02d:%02d:%02d", "%2d:%02d",
+      "%2d:%02d:%02d" };
 
-static const char *monthAbb[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+static const char *monthAbb[ 12 ] =
+  { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov",
+      "Dec" };
 
 static const double rad = M_PI / 108000000.0; // Pi / (180 degrees * 600000 KFlog degrees)
 static const double pi_180 = M_PI / 108000000.0;
@@ -139,21 +143,21 @@ QString printPos(int coord, bool isLat)
   sec = (sec * 60) / 10000;
 
   min = (int)sqrt(min * min);
-  posMin.sprintf(" %02d'", min);
+  posMin = posMin.asprintf(" %02d'", min);
 
   sec = (int)sqrt(sec * sec);
-  posSec.sprintf(" %02d\"", sec);
+  posSec = posSec.asprintf(" %02d\"", sec);
 
   if(isLat)
     {
       if(coord < 0)
         {
-          posDeg.sprintf("%02d°", -degree);
+          posDeg = posDeg.asprintf("%02d°", -degree);
           pos = posDeg + posMin + posSec + " S";
         }
       else
         {
-          posDeg.sprintf("%02d°", degree);
+          posDeg = posDeg.asprintf("%02d°", degree);
           pos = posDeg + posMin + posSec + " N";
         }
     }
@@ -161,12 +165,12 @@ QString printPos(int coord, bool isLat)
     {
       if(coord < 0)
         {
-          posDeg.sprintf("%03d°", -degree);
+          posDeg = posDeg.asprintf("%03d°", -degree);
           pos = posDeg + posMin + posSec + " W";
         }
       else
         {
-          posDeg.sprintf("%03d°", degree);
+          posDeg = posDeg.asprintf("%03d°", degree);
           pos = posDeg + posMin + posSec + " E";
         }
     }
@@ -189,8 +193,8 @@ QString printTime(time_t time, bool isZero, bool isSecond)
     memcpy(&lt,blubb,sizeof(struct tm));
 #endif
 
-  return tmpbuf.sprintf(timeFormat[isSecond + 2*isZero], lt.tm_hour, lt.tm_min, lt.tm_sec);
-
+  tmpbuf = tmpbuf.asprintf(timeFormat[isSecond + 2*isZero], lt.tm_hour, lt.tm_min, lt.tm_sec);
+  return tmpbuf;
 }
 
 
@@ -204,7 +208,8 @@ QString printTime(int time, bool isZero, bool isSecond, bool noZeroHour)
 
   if(noZeroHour==true) isZero = true;
 
-  return tmpbuf.sprintf(timeFormat[isSecond + 2*isZero + 2*noZeroHour], hh, mm, ss);
+  tmpbuf = tmpbuf.asprintf(timeFormat[isSecond + 2*isZero + 2*noZeroHour], hh, mm, ss);
+  return tmpbuf;
 }
 
 time_t timeToDay(const int year, const int month, const int day, const char *monabb)
@@ -423,10 +428,7 @@ float getBearing(QPoint p1, QPoint p2)
       if (angle>(2* M_PI )) angle-=(2* M_PI);
 
       return angle;
-
 }
-
-
 
 /**
  * Calculates the direction of the vector pointing to the outside

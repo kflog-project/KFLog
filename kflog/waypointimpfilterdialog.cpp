@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2002 by Harald Maier
-**                   2011-2014 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -17,12 +17,8 @@
 #include "mapcontents.h"
 #include "waypointimpfilterdialog.h"
 
-#ifdef QT_5
-    #include <QtWidgets>
-    #include <QFileDialog>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
+#include <QFileDialog>
 
 extern MapContents *_globalMapContents;
 
@@ -47,6 +43,7 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
   gliderfields = new QCheckBox(tr("&Gliderfields"));
   outlandings  = new QCheckBox(tr("Ou&tlandings"));
   navaids      = new QCheckBox(tr("&Navaids"));
+  reportings   = new QCheckBox(tr("&Reportings"));
   obstacles    = new QCheckBox(tr("O&bstacles"));
   landmarks    = new QCheckBox(tr("&Landmarks"));
   hotspots     = new QCheckBox(tr("&Hotspots"));
@@ -61,6 +58,7 @@ WaypointImpFilterDialog::WaypointImpFilterDialog( QWidget *parent ) :
   typeLayout->addWidget( gliderfields );
   typeLayout->addWidget( outlandings );
   typeLayout->addWidget( navaids );
+  typeLayout->addWidget( reportings );
   typeLayout->addWidget( obstacles );
   typeLayout->addWidget( landmarks );
   typeLayout->addWidget( hotspots );
@@ -303,6 +301,7 @@ void WaypointImpFilterDialog::slotChangeUseAll()
   airfields->setChecked(show);
   gliderfields->setChecked(show);
   navaids->setChecked(show);
+  reportings->setChecked(show);
   outlandings->setChecked(show);
   obstacles->setChecked(show);
   landmarks->setChecked(show);
@@ -316,6 +315,7 @@ void WaypointImpFilterDialog::slotClear()
   airfields->setChecked( false );
   gliderfields->setChecked( false );
   navaids->setChecked( false );
+  reportings->setChecked( false );
   outlandings->setChecked( false );
   obstacles->setChecked( false );
   landmarks->setChecked( false );
@@ -466,6 +466,7 @@ void WaypointImpFilterDialog::saveValues()
   save.airfields = airfields->isChecked();
   save.gliderfields = gliderfields->isChecked();
   save.navaids = navaids->isChecked();
+  save.reportings = reportings->isChecked();
   save.outlandings = outlandings->isChecked();
   save.obstacles = obstacles->isChecked();
   save.landmarks = landmarks->isChecked();
@@ -592,6 +593,7 @@ void WaypointImpFilterDialog::restoreValues()
   airfields->setChecked( save.airfields );
   gliderfields->setChecked( save.gliderfields );
   navaids->setChecked( save.navaids );
+  reportings->setChecked( save.reportings );
   outlandings->setChecked( save.outlandings );
   obstacles->setChecked( save.obstacles );
   landmarks->setChecked( save.landmarks );

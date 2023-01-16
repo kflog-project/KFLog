@@ -354,6 +354,21 @@ void MapConfig::slotReadConfig()
         PRINT_AIRFIR_BRUSH_STYLE_1, PRINT_AIRFIR_BRUSH_STYLE_2);
   __readAsOpacity(AS_FIR, airFirOpacityList);
 
+  __readPenBrush(AS_G, airGPenList, airGBorder, airGBrushList,
+        AIRG_COLOR_1, AIRG_COLOR_2, AIRG_COLOR_3, AIRG_COLOR_4,
+        PRINT_AIRG_COLOR_1, PRINT_AIRG_COLOR_2,
+        AIRG_PEN_1, AIRG_PEN_2, AIRG_PEN_3, AIRG_PEN_4,
+        PRINT_AIRG_PEN_1, PRINT_AIRG_PEN_2,
+        AIRG_PEN_STYLE_1, AIRG_PEN_STYLE_2, AIRG_PEN_STYLE_3, AIRG_PEN_STYLE_4,
+        PRINT_AIRG_PEN_STYLE_1, PRINT_AIRG_PEN_STYLE_2,
+        AIRG_BRUSH_COLOR_1, AIRG_BRUSH_COLOR_2,
+        AIRG_BRUSH_COLOR_3, AIRG_BRUSH_COLOR_4,
+        PRINT_AIRG_BRUSH_COLOR_1, PRINT_AIRG_BRUSH_COLOR_2,
+        AIRG_BRUSH_STYLE_1, AIRG_BRUSH_STYLE_2,
+        AIRG_BRUSH_STYLE_3, AIRG_BRUSH_STYLE_4,
+        PRINT_AIRG_BRUSH_STYLE_1, PRINT_AIRG_BRUSH_STYLE_2);
+  __readAsOpacity(AS_G, airGOpacityList);
+
   __readPenBrush(AS_CTR, ctrPenList, ctrBorder, ctrBrushList,
         CTR_COLOR_1, CTR_COLOR_2, CTR_COLOR_3, CTR_COLOR_4,
         PRINT_CTR_COLOR_1, PRINT_CTR_COLOR_2,
@@ -474,6 +489,20 @@ void MapConfig::slotReadConfig()
         PRINT_WAVE_WINDOW_BRUSH_STYLE_1, PRINT_WAVE_WINDOW_BRUSH_STYLE_2);
   __readAsOpacity(AS_WW, wwOpacityList);
 
+  __readPenBrush(AS_SUA, suaPenList, suaBorder, suaBrushList,
+        SUA_COLOR_1, SUA_COLOR_2, SUA_COLOR_3, SUA_COLOR_4,
+        PRINT_SUA_COLOR_1, PRINT_SUA_COLOR_2,
+        SUA_PEN_1, SUA_PEN_2, SUA_PEN_3, SUA_PEN_4,
+        PRINT_SUA_PEN_1, PRINT_SUA_PEN_2,
+        SUA_PEN_STYLE_1, SUA_PEN_STYLE_2, SUA_PEN_STYLE_3, SUA_PEN_STYLE_4,
+        PRINT_SUA_PEN_STYLE_1, PRINT_SUA_PEN_STYLE_2,
+        SUA_BRUSH_COLOR_1, SUA_BRUSH_COLOR_2,
+        SUA_BRUSH_COLOR_3, SUA_BRUSH_COLOR_4,
+        PRINT_SUA_BRUSH_COLOR_1, PRINT_SUA_BRUSH_COLOR_2,
+        SUA_BRUSH_STYLE_1, SUA_BRUSH_STYLE_2,
+        SUA_BRUSH_STYLE_3, SUA_BRUSH_STYLE_4,
+        PRINT_SUA_BRUSH_STYLE_1, PRINT_SUA_BRUSH_STYLE_2);
+  __readAsOpacity(AS_SUA, suaOpacityList);
 
   __readPenBrush("FAIAreaLow500", faiAreaLow500PenList, faiAreaLow500Border, faiAreaLow500BrushList,
       FAI_LOW_500_COLOR_1, FAI_LOW_500_COLOR_2, FAI_LOW_500_COLOR_3, FAI_LOW_500_COLOR_4,
@@ -742,6 +771,8 @@ QPen& MapConfig::__getPen( unsigned int typeID, int sIndex )
           return airFPenList[sIndex];
       case BaseMapElement::AirFir:
           return airFirPenList[sIndex];
+      case BaseMapElement::AirG:
+          return airGPenList[sIndex];
       case BaseMapElement::Ctr:
           return ctrPenList[sIndex];
       case BaseMapElement::Danger:
@@ -799,6 +830,8 @@ int MapConfig::getAsOpacity( uint asType )
           return airFOpacityList[scaleIndex];
       case BaseMapElement::AirFir:
           return airFirOpacityList[scaleIndex];
+      case BaseMapElement::AirG:
+          return airGOpacityList[scaleIndex];
       case BaseMapElement::Ctr:
           return ctrOpacityList[scaleIndex];
       case BaseMapElement::Danger:
@@ -870,6 +903,8 @@ bool MapConfig::isBorder( unsigned int typeID )
           return airFBorder[scaleIndex];
       case BaseMapElement::AirFir:
           return airFirBorder[scaleIndex];
+      case BaseMapElement::AirG:
+          return airGBorder[scaleIndex];
       case BaseMapElement::Ctr:
           return ctrBorder[scaleIndex];
       case BaseMapElement::Danger:
@@ -887,7 +922,6 @@ bool MapConfig::isBorder( unsigned int typeID )
           return gsBorder[scaleIndex];
       case BaseMapElement::WaveWindow:
           return wwBorder[scaleIndex];
-
       case BaseMapElement::Forest:
           return forestBorder[scaleIndex];
       case BaseMapElement::Glacier:
@@ -1000,6 +1034,8 @@ QBrush& MapConfig::__getBrush(unsigned int typeID, int index)
           return airFBrushList[index];
       case BaseMapElement::AirFir:
           return airFirBrushList[index];
+      case BaseMapElement::AirG:
+          return airGBrushList[index];
       case BaseMapElement::Ctr:
           return ctrBrushList[index];
       case BaseMapElement::Danger:
@@ -1080,7 +1116,7 @@ QPixmap MapConfig::loadPixmap( const QString& pixmapName, bool smallIcon )
 
   QPixmap pm;
 
-  if( QPixmapCache::find( path, pm ) )
+  if( QPixmapCache::find( path, &pm ) )
     {
       return pm;
     }

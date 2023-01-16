@@ -6,7 +6,7 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2014 by Axel Pauli
+**   Copyright (c):  2014-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -26,13 +26,12 @@
  * the combo list box. The current selected entry in the combo list box is
  * emitted as signal, if the set button is clicked.
  *
- * \date 2014
+ * \date 2014-2023
  *
- * \version 1.0
+ * \version 1.1
  */
 
-#ifndef AirfieldSelectionList_h
-#define AirfieldSelectionList_h
+#pragma once
 
 #include <QComboBox>
 #include <QGroupBox>
@@ -120,4 +119,3 @@ class AirfieldSelectionList : public QWidget
   QHash<QString, SinglePoint*> m_airfieldDict;
 };
 
-#endif /* AirfieldSelectionList_h */

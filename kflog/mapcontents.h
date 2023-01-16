@@ -30,8 +30,7 @@
  * \version 1.2
  */
 
-#ifndef MAP_CONTENTS_H
-#define MAP_CONTENTS_H
+#pragma once
 
 #include <QBitArray>
 #include <QFile>
@@ -52,6 +51,7 @@
 #include "isolist.h"
 #include "radiopoint.h"
 #include "singlepoint.h"
+#include "ThermalPoint.h"
 
 class Distance;
 class Flight;
@@ -113,6 +113,11 @@ class MapContents : public QObject
   virtual ~MapContents();
 
   static MapContents* instance();
+
+  /**
+   * Clears all loaded lists.
+   */
+  void clearMaps();
 
   /**
    * @return the current length of the given list.
@@ -263,7 +268,7 @@ class MapContents : public QObject
   /**
    * @returns The hotspot list.
    */
-  QList<SinglePoint>& getHotspotList()
+  QList<ThermalPoint>& getHotspotList()
   {
     return hotspotList;
   };
@@ -576,7 +581,12 @@ class MapContents : public QObject
   /**
    * hotspotList contains all thermal hotspots.
    */
-  QList<SinglePoint> hotspotList;
+  QList<ThermalPoint> hotspotList;
+
+  /**
+   * reportList contains all Airport Reporting Points.
+   */
+  QList<SinglePoint> reportList;
 
   /**
    * airspaceList contains all airspaces. The sort function on this
@@ -598,11 +608,6 @@ class MapContents : public QObject
    * as the spots and passes.
    */
   QList<SinglePoint> obstacleList;
-
-  /**
-   * reportList contains all reporting points.
-   */
-  QList<SinglePoint> reportList;
 
   /**
    * cityList contains all cities (areas).
@@ -764,5 +769,3 @@ class MapContents : public QObject
    */
   int m_currentFlightListIndex;
 };
-
-#endif

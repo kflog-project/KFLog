@@ -23,9 +23,9 @@
  * Application built with the QT/X11 SDK from Digia. Qt is a cross-platform
  * application and UI framework. See here for more information:
  *
- * http://qt-project.org/
+ * https://www.qt.io/
  *
- * KFLog is built with the Qt release 5.x
+ * KFLog is built with the Qt release 5.15.2
  *
  * \date 2001-2023
  */
@@ -35,14 +35,8 @@
 #include <libgen.h>
 #endif
 
-
-
-#ifdef QT_5
-    #include <QtWidgets>
-    #include <QApplication>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
+#include <QApplication>
 
 #include "kflogconfig.h"
 #include "mainwindow.h"

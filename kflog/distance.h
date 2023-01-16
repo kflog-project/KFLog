@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2002      by Andre Somers
-**                   2007-2014 by Axel Pauli
+**                   2007-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -26,13 +26,12 @@
  * It also features a couple of static methods to convert from the set
  * unit to meters or to display a distance in the currently selected unit.
  *
- * \date 2002-2014
+ * \date 2002-2023
  *
- * \version 1.1
+ * \version 1.3
  */
 
-#ifndef DISTANCE_H
-#define DISTANCE_H
+#pragma once
 
 #include <QString>
 
@@ -68,6 +67,11 @@ class Distance
    * Copy constructor
    */
   Distance(const Distance& dst);
+
+  /**
+   * Copy assignment operator
+   */
+  Distance& operator=(const Distance& dst);
 
   /**
    * Destructor
@@ -260,5 +264,3 @@ class Distance
 
   static distanceUnit _distanceUnit;
 };
-
-#endif

@@ -125,7 +125,7 @@ void CoordEdit::showEvent( QShowEvent * )
 
   if ( WGSPoint::getFormat() == WGSPoint::DMS )
     {
-      int strWidth = fm.width(QString("00000"));
+      int strWidth = fm.horizontalAdvance(QString("00000"));
 
       degreeBox->setMinimumWidth( strWidth );
       degreeBox->setMaximumWidth( strWidth );
@@ -136,8 +136,8 @@ void CoordEdit::showEvent( QShowEvent * )
     }
   else if ( WGSPoint::getFormat() == WGSPoint::DDM )
     {
-      int strWidth1 = fm.width(QString("00000"));
-      int strWidth2 = fm.width(QString("00.00000"));
+      int strWidth1 = fm.horizontalAdvance(QString("00000"));
+      int strWidth2 = fm.horizontalAdvance(QString("00.00000"));
 
       degreeBox->setMinimumWidth( strWidth1 );
       degreeBox->setMaximumWidth( strWidth1 );
@@ -146,7 +146,7 @@ void CoordEdit::showEvent( QShowEvent * )
     }
   else if ( WGSPoint::getFormat() == WGSPoint::DDD )
     {
-      int strWidth = fm.width(QString("000.0000000"));
+      int strWidth = fm.horizontalAdvance(QString("000.0000000"));
 
       degreeBox->setMinimumWidth( strWidth );
       degreeBox->setMaximumWidth( strWidth );
@@ -378,18 +378,18 @@ void CoordEdit::setKFLogDegree( const int coord, const bool isLat )
 
       if (isLat)
         {
-          posDeg.sprintf("%02d", degree);
+          posDeg = posDeg.asprintf("%02d", degree);
         }
       else
         {
-          posDeg.sprintf("%03d", degree);
+          posDeg = posDeg.asprintf("%03d", degree);
         }
 
       min = abs(min);
-      posMin.sprintf("%02d", min);
+      posMin = posMin.asprintf("%02d", min);
 
       sec = abs(sec);
-      posSec.sprintf("%02d", sec);
+      posSec = posSec.asprintf("%02d", sec);
 
       degreeBox->setText( posDeg );
       minuteBox->setText( posMin );
@@ -408,16 +408,16 @@ void CoordEdit::setKFLogDegree( const int coord, const bool isLat )
 
       if (isLat)
         {
-          posDeg.sprintf("%02d", degree);
+          posDeg = posDeg.asprintf("%02d", degree);
         }
       else
         {
-          posDeg.sprintf("%03d", degree);
+          posDeg = posDeg.asprintf("%03d", degree);
         }
 
       decMin = fabs(decMin);
 
-      posMin.sprintf("%.3f", decMin);
+      posMin = posMin.asprintf("%.3f", decMin);
 
       // Unfortunately sprintf does not support leading zero in float
       // formating. So we must do it alone.
@@ -439,7 +439,7 @@ void CoordEdit::setKFLogDegree( const int coord, const bool isLat )
       WGSPoint::calcPos (coord, decDegree);
       decDegree = (decDegree < 0)  ? -decDegree : decDegree;
 
-      posDeg.sprintf("%.5f", decDegree);
+      posDeg = posDeg.asprintf("%.5f", decDegree);
 
       // Unfortunately sprintf does not support leading zero in float
       // formating. So we must do it alone.

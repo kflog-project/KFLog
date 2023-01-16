@@ -56,6 +56,9 @@ public:
                const unsigned short secID=0,
                const QString& country="" );
 
+  LineElement(const LineElement&) = default;
+  LineElement& operator=(const LineElement&) = default;
+
   /**
    * Destructor.
    */

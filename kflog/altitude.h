@@ -3,11 +3,9 @@
                              -------------------
     begin                : Sat Jul 20 2002
     copyright            : (C) 2002      by André Somers
-                               2010-2011 by Axel Pauli
+                               2010-2023 by Axel Pauli
 
     This file is part of KFLog.
-
-    $Id: altitude.h 4502 2010-12-09 22:32:02Z axel $
 
  ***************************************************************************/
 
@@ -20,8 +18,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef ALTITUDE_H
-#define ALTITUDE_H
+#pragma once
 
 #include <cmath>
 
@@ -36,7 +33,7 @@
  *
  * This class handles different altitude units and arithmetics.
  *
- * \date 2002-2011
+ * \date 2002-2023
  */
 
 class Altitude : public Distance
@@ -73,6 +70,11 @@ public:
      * copy constructor
      */
     Altitude(const Distance&);
+
+    /**
+     * copy assignment operator.
+     */
+    Altitude& operator=( const Altitude& a );
 
     /**
      * destuctor
@@ -274,15 +276,5 @@ struct AltitudeCollection
      * @see gndAltitude, @see gpsAltitudeError
      */
     Distance gndAltitudeError;
-#if 0   // not used in KFlog
-    /**
-     * The estimation for the error in the GPS measurement for the altitude. This data is taken from
-     * the GPS if available.
-     *
-     * @see gndAltitude, @see gndAltitudeError
-     */
-    Distance gpsAltitudeError;
-#endif
 };
 
-#endif

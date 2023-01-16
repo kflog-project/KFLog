@@ -30,8 +30,7 @@
  * \date 2000-2023
  */
 
-#ifndef BASE_MAP_ELEMENT_H
-#define BASE_MAP_ELEMENT_H
+#pragma once
 
 #include "resource.h"
 
@@ -82,6 +81,7 @@ class BaseMapElement
     AirE = AIR_E,
     AirF = AIR_F,
     AirFir = AIR_FIR,
+    AirG = AIR_G,
     AirUkn = AIR_UKN,
     Ctr = CONTROL_ZONE,
     Danger = DANGER,
@@ -116,6 +116,9 @@ class BaseMapElement
    * Default constructor
    */
   BaseMapElement();
+
+  BaseMapElement(const BaseMapElement&) = default;
+  BaseMapElement& operator=(const BaseMapElement&) = default;
 
   /**
    * Creates a new (virtual) map element.
@@ -315,5 +318,3 @@ protected:
    */
   unsigned short MapSegment;
 };
-
-#endif

@@ -28,9 +28,7 @@
  *
  * \version 1.3
  */
-
-#ifndef KFLOG_CONFIG_H
-#define KFLOG_CONFIG_H
+#pragma once
 
 #include <QByteArray>
 #include <QButtonGroup>
@@ -73,8 +71,8 @@ class KFLogConfig : public QDialog
 
   /** */
   enum ElementType { Road = 0, Motorway, Railway, River, Canal, City,
-      AirA, AirB, AirC, AirD, AirElow, AirE, AirF, AirFir, Ctr, Danger,
-      LowFlight, Restricted, Prohibited, Rmz, Tmz, GliderSector, WaveWindow,
+      AirA, AirB, AirC, AirD, AirElow, AirE, AirF, AirFir, AirG, Ctr, Danger,
+      LowFlight, Restricted, Prohibited, Rmz, Tmz, GliderSector, Sua, WaveWindow,
       Forest, Trail, Railway_D, Aerial_Cable, River_T,
       Glacier, PackIce, FAIAreaLow500, FAIAreaHigh500, Separator };
 
@@ -598,5 +596,3 @@ class KFLogConfig : public QDialog
 
   static QTranslator* s_qtTranslator;
 };
-
-#endif

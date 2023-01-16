@@ -24,11 +24,10 @@
  *
  * \date 2010
  *
- * \version $Id$
+ * \version 1.1
  */
 
-#ifndef HTTP_CLIENT_H
-#define HTTP_CLIENT_H
+#pragma once
 
 #include <QString>
 #include <QFile>
@@ -132,4 +131,3 @@ class HttpClient : public QObject
   QTimer                *timer;
 };
 
-#endif /* HTTP_CLIENT_H */

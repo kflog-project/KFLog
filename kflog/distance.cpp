@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2002      by Andre Somers
-**                   2007-2014 by Axel Pauli
+**                   2007-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -52,6 +52,16 @@ Distance::Distance(const Distance& dst)
 {
   _dist = dst._dist;
   _isValid=dst._isValid;
+}
+
+/**
+ * Copy assignment operator
+ */
+Distance& Distance::operator=(const Distance& dst)
+{
+  _dist = dst._dist;
+  _isValid = dst._isValid;
+  return *this;
 }
 
 
@@ -163,130 +173,117 @@ QString Distance::getUnitText()
   return unit;
 }
 
-QString Distance::getText(bool withUnit, uint precision, uint chopOrder) const
+QString Distance::getText( bool withUnit, uint precision, uint chopOrder ) const
 {
-  QString result, unit;
+  QString result;
   double dist;
 
-  switch (_distanceUnit) {
-  case meters:
-    unit="m";
-    dist=getMeters();
-    break;
-  case feet:
-    unit="ft";
-    dist=getFeet();
-    break;
-  case kilometers:
-    unit="Km";
-    dist=getKilometers();
-    break;
-  case miles:
-    unit="SM";
-    dist=getMiles();
-    break;
-  case nautmiles:
-    unit="NM";
-    dist=getNautMiles();
-    break;
-  default:
-    unit="m";
-    dist=getMeters();
-    break;
-  }
-
-  QString prec;
-  //see if we need to lower the precision
-  if (chopOrder>0) {
-    while (precision>0 && pow(10,chopOrder)<=dist) {
-      precision--;
-      chopOrder++;
+  switch( _distanceUnit )
+    {
+    case meters:
+      dist = getMeters();
+      break;
+    case feet:
+      dist = getFeet();
+      break;
+    case kilometers:
+      dist = getKilometers();
+      break;
+    case miles:
+      dist = getMiles();
+      break;
+    case nautmiles:
+      dist = getNautMiles();
+      break;
+    default:
+      dist = getMeters();
+      break;
     }
-  }
-  prec.setNum(precision);
-  if (withUnit) {
 
-    QString fms = QString("%1.") + prec + "f %s";
-    result.sprintf( fms.toLatin1().data(), dist, unit.toLatin1().data() );
-  } else {
-    QString fms = QString("%1.") + prec + "f";
-    result.sprintf( fms.toLatin1().data(), dist );
-  }
+  // see if we need to lower the precision
+  if( chopOrder > 0 )
+    {
+      while( precision > 0 && pow( 10, chopOrder ) <= dist )
+        {
+          precision--;
+          chopOrder++;
+        }
+    }
+
+  if( withUnit )
+    {
+      result = QString("%1 %2").arg( dist, 0, 'f', precision )
+                               .arg( getUnitText() );
+    }
+  else
+    {
+      result = QString("%1").arg( dist, 0, 'f', precision );
+    }
+
   return result;
 }
 
-QString Distance::getText(double meter, bool withUnit, int precision)
+QString Distance::getText(double meters, bool withUnit, int precision)
 {
-  QString result, unit;
+  QString result;
   double dist;
-  uint defprec=1;
+  int defprec;
 
-  switch (_distanceUnit)
+  switch( _distanceUnit )
     {
-      case 0: //meters:
-	unit="m";
-	dist=meter;
-	defprec=0;
-	break;
-      case 1: //feet:
-	unit="ft";
-	dist=meter/mFromFeet;
-	defprec=0;
-	break;
-      case 2: //kilometers:
-	unit="Km";
-	dist=meter/mFromKm;
-	defprec=2;
-	break;
-      case 3: //miles:
-	unit="SM";
-	dist=meter/mFromMile;
-	defprec=3;
-	break;
-      case 4: //nautmiles:
-	unit="NM";
-	dist=meter/mFromNMile;
-	defprec=3;
-	break;
-      default:
-	unit="m";
-	dist=meter;
-	defprec=0;
-	break;
+    case 0: // meters:
+      dist = meters;
+      defprec = 0;
+      break;
+    case 1: // feet:
+      dist = meters / mFromFeet;
+      defprec = 0;
+      break;
+    case 2: // kilometers:
+      dist = meters / mFromKm;
+      defprec = ( dist < 1.0 ) ? 2 : 1;
+      break;
+    case 3: // statute miles:
+      dist = meters / mFromMile;
+      defprec = ( dist < 1.0 ) ? 3 : 2;
+      break;
+    case 4: // nautical miles:
+      dist = meters / mFromNMile;
+      defprec = ( dist < 1.0 ) ? 3 : 2;
+      break;
+    default:
+      dist = meters;
+      defprec = 0;
+      break;
     }
 
-  if (precision < 0)
+  if( precision < 0 )
     {
       precision = defprec;
     }
 
-  QString prec;
-  prec.setNum (precision);
-
-  if (dist < 0)
+  if( dist < 0 )
     {
-      if (withUnit)
-	{
-	  result = unit;
-	}
+      if( withUnit )
+        {
+          result = getUnitText();
+        }
       else
-	{
-	  result = "";
-	}
+        {
+          result = "";
+        }
     }
   else
     {
-      if (withUnit)
-	{
-	  QString fms = QString ("%1.") + prec + "f %s";
-	  result.sprintf (fms.toLatin1 ().data (), dist,
-			  unit.toLatin1 ().data ());
-	}
+      if( withUnit )
+        {
+          result = QString("%1 %2").arg( dist, 0, 'f', precision )
+                                   .arg( getUnitText() );
+        }
       else
-	{
-	  QString fms = QString ("%1.") + prec + "f";
-	  result.sprintf (fms.toLatin1 ().data (), dist);
-	}
+        {
+          result = QString("%1").arg( dist, 0, 'f', precision );
+        }
     }
 
   return result;

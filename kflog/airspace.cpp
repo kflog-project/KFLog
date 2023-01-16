@@ -15,12 +15,16 @@
  **
  ***********************************************************************/
 
+#include <QDebug>
+
 #include "airspace.h"
 
 Airspace::Airspace() :
   m_lLimitType(BaseMapElement::NotSet),
   m_uLimitType(BaseMapElement::NotSet),
-  m_id(-1)
+  m_icaoClass( AS_Unkown ),
+  m_activity( 0 ),
+  m_byNotam( false )
 {
   // All Airspaces are closed regions ...
   closed = true;
@@ -33,12 +37,16 @@ Airspace::Airspace( QString name,
                     BaseMapElement::elevationType uType,
                     const float lower,
                     BaseMapElement::elevationType lType,
-                    const int identifier,
-                    QString country ) :
+                    const int icaoClass,
+                    QString country,
+                    quint8 activity,
+                    bool byNotam ) :
   LineElement( name, oType, pP, false, 0, country ),
   m_lLimitType(lType),
   m_uLimitType(uType),
-  m_id(identifier)
+  m_icaoClass(icaoClass),
+  m_activity(activity),
+  m_byNotam(byNotam)
 {
   // All Airspaces are closed regions ...
   closed = true;
@@ -64,6 +72,7 @@ Airspace::Airspace( QString name,
       break;
     default:
       lLim=0.0;
+      break;
   }
 
   m_lLimit.setMeters( lLim );
@@ -88,7 +97,7 @@ Airspace::Airspace( QString name,
     default:
       uLim=0.0;
     break;
-  };
+  }
 
   m_uLimit.setMeters( uLim );
 
@@ -103,14 +112,15 @@ Airspace Airspace::createAirspaceObject()
   // complete airspace. The default constructor is only used as a collection
   // container during parsing of airspace source file.
   return Airspace( getName(),
-		   getTypeID(),
-		   getProjectedPolygon(),
-		   m_uLimit.getFeet(),
-		   m_uLimitType,
-		   m_lLimit.getFeet(),
-		   m_lLimitType,
-		   m_id,
-		   getCountry() );
+                   getTypeID(),
+                   getProjectedPolygon(),
+                   m_uLimit.getFeet(),
+                   m_uLimitType,
+                   m_lLimit.getFeet(),
+                   m_lLimitType,
+                   m_icaoClass,
+                   getCountry(),
+                   isByNotam() );
 }
 
 void Airspace::drawRegion( QPainter* targetP, const QRect &viewRect )
@@ -203,6 +213,8 @@ QString Airspace::getTypeName (objectType type)
       return QObject::tr("Wave Window");
     case BaseMapElement::AirF:
       return QObject::tr("AS-F");
+    case BaseMapElement::AirG:
+      return QObject::tr("AS-G");
     case BaseMapElement::AirFir:
       return QObject::tr("AS-FIR");
     case BaseMapElement::Restricted:
@@ -230,48 +242,53 @@ QString Airspace::getInfoString(bool ExtendedHTMLFormat) const
 {
   QString text, tempL, tempU;
 
-  QString type;
-
-  switch(m_lLimitType)
+  switch( m_lLimitType )
   {
     case MSL:
-      tempL.sprintf("%s MSL", m_lLimit.getText(true,0).toLatin1().data());
+      tempL = QString( "%1 ft (%2 m) MSL" ).arg( m_lLimit.getFeet(), 0, 'f', 0 )
+                                           .arg( m_lLimit.getMeters(), 0, 'f', 0 );
       break;
     case GND:
-      if(m_lLimit.getMeters())
-        tempL.sprintf("%s GND", m_lLimit.getText(true,0).toLatin1().data());
+      if( m_lLimit.getMeters() )
+        tempL = QString( "%1 ft (%2 m) AGL" ).arg( m_lLimit.getFeet(), 0, 'f', 0 )
+                                             .arg( m_lLimit.getMeters(), 0, 'f', 0 );
       else
         tempL = "GND";
       break;
     case FL:
-      tempL.sprintf("FL %d (%s)", (int) rint(m_lLimit.getFeet()/100.), m_lLimit.getText(true,0).toLatin1().data());
+      tempL = QString( "FL %1 (%2)" ).arg( (int) rint( m_lLimit.getFeet() / 100.) )
+                                     .arg( m_lLimit.getText( true, 0 ) );
       break;
     case STD:
-      tempL.sprintf("%s STD", m_lLimit.getText(true,0).toLatin1().data());
+      tempL = QString( "%1 STD" ).arg( m_lLimit.getText(true,0) );
       break;
     case UNLTD:
       tempL = QObject::tr("Unlimited");
-    break;
+      break;
     default:
       break;
   }
 
-  switch(m_uLimitType)
+  switch( m_uLimitType )
   {
     case MSL:
       if(m_uLimit.getMeters() >= 99999)
         tempU = QObject::tr("Unlimited");
       else
-        tempU.sprintf("%s MSL", m_uLimit.getText(true,0).toLatin1().data());
+        tempU = QString( "%1 ft (%2 m) MSL" ).arg( m_uLimit.getFeet(), 0, 'f', 0 )
+                                             .arg( m_uLimit.getMeters(), 0, 'f', 0 );
       break;
     case GND:
-      tempU.sprintf("%s GND", m_uLimit.getText(true,0).toLatin1().data());
+      tempU = QString( "%1 ft (%2 m) AGL" ).arg( m_uLimit.getFeet(), 0, 'f', 0 )
+                                           .arg( m_uLimit.getMeters(), 0, 'f', 0 );
+
       break;
     case FL:
-      tempU.sprintf("FL %d (%s)", (int) rint(m_uLimit.getFeet()/100.), m_uLimit.getText(true,0).toLatin1().data());
+      tempU = QString( "FL %1 (%2)" ).arg( (int) rint(m_uLimit.getFeet() / 100.) )
+                                     .arg( m_uLimit.getText(true,0) );
       break;
     case STD:
-      tempU.sprintf("%s STD", m_uLimit.getText(true,0).toLatin1().data());
+      tempU = QString( "%1 STD" ).arg( m_uLimit.getText(true,0) );
       break;
     case UNLTD:
       tempU = QObject::tr("Unlimited");
@@ -279,17 +296,18 @@ QString Airspace::getInfoString(bool ExtendedHTMLFormat) const
     default:
       break;
   }
-  if (ExtendedHTMLFormat)
-  {
-      text = getTypeName(typeID);
 
-      text += " " + name + "<BR>" +
-              "<FONT SIZE=-1>" + tempL + " / " + tempU + "</FONT>";
-  }
+  if (ExtendedHTMLFormat)
+    {
+        text = getTypeName(typeID);
+
+        text += " " + name + "<BR>" +
+                "<FONT SIZE=-1>" + tempL + " / " + tempU + "</FONT>";
+    }
   else
-  {
-      text +=  tempL + " / " + tempU ;
-  }
+    {
+        text +=  tempL + " / " + tempU ;
+    }
 
   return text;
 }
@@ -435,4 +453,14 @@ bool Airspace::operator == (const Airspace& other) const
     {
       return false;
     }
+}
+
+void Airspace::debug()
+{
+  qDebug() << "AsName=" << getName()
+           << "AsType=" << getTypeName(getTypeID())
+           << "IcaoClass=" << getIcaoClass()
+           << "Country=" << getCountry()
+           << "ULimit=" << m_uLimit.getMeters()
+           << "LLimit=" << m_lLimit.getMeters();
 }

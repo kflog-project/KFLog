@@ -7,30 +7,22 @@
 ************************************************************************
 **
 **   Copyright (c):  2002 by Heiner Lamprecht
-**                   2011 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
-#ifdef QT_5
-    #include <QtWidgets>
-    #include <QPrinter>
-    #include <QPrintDialog>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
+#include <QPrinter>
+#include <QPrintDialog>
 
 #include "mapcalc.h"
 #include "mainwindow.h"
 #include "target.h"
 #include "taskdataprint.h"
 #include "wgspoint.h"
-
-#define VERSION "4.0.0"
 
 TaskDataPrint::TaskDataPrint(FlightTask* task)
 {

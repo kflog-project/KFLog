@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c): 2013 by Matthias Degenkolb
-**                  2014 by Axel Pauli
+**                  2014-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -165,7 +165,7 @@ void AirSpaceListViewItem::createChildren()
 
 #ifdef AIRSPACELISTVIEWITEM_EXTENDED_TRACE
               QString FirstID;
-              FirstID.sprintf("%d",Violations[i].FirstIndexPointinRoute());
+              FirstID = FirstID.asprintf("%d",Violations[i].FirstIndexPointinRoute());
               sl = (QStringList() << QObject::tr("First ID") << FirstID);
               subsubItem = new AirSpaceListViewItem::AirSpaceFlagListViewItem(subItem, sl, Violations[i], m_Flight );
               subsubItem->setFlags( Qt::ItemIsEnabled );
@@ -200,7 +200,7 @@ void AirSpaceListViewItem::createChildren()
 
 #ifdef AIRSPACELISTVIEWITEM_EXTENDED_TRACE
               QString LastID;
-              LastID.sprintf("%d",Violations[i].LastIndexPointinRoute());
+              LastID = LastID.asprintf("%d",Violations[i].LastIndexPointinRoute());
               sl = (QStringList() << QObject::tr("Last ID") << LastID);
               subsubItem = new AirSpaceListViewItem::AirSpaceFlagListViewItem(subItem, sl, Violations[i], m_Flight );
               subsubItem->setFlags( Qt::ItemIsEnabled );

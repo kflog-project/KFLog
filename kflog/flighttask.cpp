@@ -7,7 +7,7 @@
  ************************************************************************
  **
  **   Copyright (c):  2001 by Heiner Lamprecht
- **                   2011-2014 by Axel Pauli
+ **                   2011-2023 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -16,11 +16,7 @@
 
 #include <cmath>
 
-#ifdef QT_5
-    #include <QtWidgets>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
 
 #include "distance.h"
 #include "flighttask.h"
@@ -207,7 +203,7 @@ void FlightTask::__checkType()
               isFAI(distance_task, dist(wpList.at(2), wpList.at(4)),
                     wpList.at(3)->distance, wpList.at(4)->distance))
             flightType = FlightTask::Unknown;
-            break;
+          break;
         default:
           flightType = FlightTask::Unknown;
           break;
@@ -507,7 +503,7 @@ bool FlightTask::drawMapElement( QPainter* targetPainter )
       QPolygon pp = glMapMatrix->map(sect->pos->getProjectedPolygon());
 
       if (label == "FAILow500Sector" || label == "FAIHigh500Sector") {
-        label.sprintf("%.0f km", sect->dist);
+        label = label.asprintf("%.0f km", sect->dist);
         tempP = pp[0];
         targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
         targetPainter->setBrush(QBrush(QColor(0, 255, 128)));
@@ -669,7 +665,7 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool /*isText*/)
       sect->pos->printMapElement(targetPainter, false);
       label = sect->pos->getName();
       if (label == "FAILow500Sector" || label == "FAIHigh500Sector") {
-        label.sprintf("%.0f km", sect->dist);
+        label =  label.asprintf("%.0f km", sect->dist);
         QPolygon pp = sect->pos->getProjectedPolygon();
         tempP = glMapMatrix->print(pp[0]);
         targetPainter->setPen(QPen(QColor(0, 0, 0), 2));
@@ -1089,12 +1085,12 @@ QString FlightTask::getPointsString()
   QString pointString;
 
   if (flightType == OLC2003)
-    pointString.sprintf("%.2f", olcPoints);
+    pointString = pointString.asprintf("%.2f", olcPoints);
   else{
     int points1 = (int) taskPoints;
     if((int) ( (taskPoints - points1) * 10 ) > 5) points1++;
 
-    pointString.sprintf("%d", points1);
+    pointString = pointString.asprintf("%d", points1);
   }
 
   return pointString;
@@ -1317,7 +1313,7 @@ void FlightTask::printMapElement(QPainter* targetPainter, bool /*isText*/, doubl
       sect->pos->printMapElement(targetPainter, false);
       label = sect->pos->getName();
       if(label == "FAILow500Sector" || label == "FAIHigh500Sector") {
-        label.sprintf("%.0f km", sect->dist);
+        label =  label.asprintf("%.0f km", sect->dist);
         QPolygon pp = sect->pos->getProjectedPolygon();
         tempP = glMapMatrix->print(pp[0]);
         targetPainter->setPen(QPen(QColor(0, 0, 0), 2));

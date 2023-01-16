@@ -1,6 +1,6 @@
 This directory is used for the KFLog landscape map files. The needed files are
 downloaded automatically by KFLog from the Internet.
 
-You can find the landscape map files under the following link:
+You can find the landscape map files under the following link in GIT-Hub:
 
-http://www.kflog.org/maproom/
+https://github.com/kflog-project/MapConverting/tree/master/Landscape

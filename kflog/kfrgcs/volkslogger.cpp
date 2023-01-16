@@ -2,12 +2,12 @@
 **
 **   volkslogger.cpp
 **
-**   This file is part of KFLog2.
+**   This file is part of KFLog.
 **
 ************************************************************************
 **
 **   Copyright (c):  2003 by Harald Maier
-**                   2011-2014 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -122,13 +122,12 @@ int Volkslogger::getFlightDir(QList<FRDirEntry*>* dirList)
       entry->lastTime = flight.lasttime;
       entry->duration = flight.recordingtime;
       entry->shortFileName = flight.filename;
-      //cerr << flight.filename << endl;
-      entry->longFileName.sprintf("%d-%.2d-%.2d-GCS-%s-%.2d.igc",
-                                  flight.firsttime.tm_year + 1900,
-                                  flight.firsttime.tm_mon + 1,
-                                  flight.firsttime.tm_mday,
-                                  wordtoserno(flight.serno),
-                                  flightCount);
+      entry->longFileName = QString().asprintf("%d-%.2d-%.2d-GCS-%s-%.2d.igc",
+                                      flight.firsttime.tm_year + 1900,
+                                      flight.firsttime.tm_mon + 1,
+                                      flight.firsttime.tm_mday,
+                                      wordtoserno(flight.serno),
+                                      flightCount);
 
       dirList->append(entry);
 
@@ -422,10 +421,11 @@ int Volkslogger::readWaypoints(QList<Waypoint*> *waypoints)
 
     bool isLandable = (wp->typ & VLAPI_DATA::WPT::WPTTYP_L) > 0;
 
-    if (isLandable) {
-      rwy.m_isOpen = true;
-      rwy.m_surface = (wp->typ & VLAPI_DATA::WPT::WPTTYP_H) > 0 ? Runway::Asphalt : Runway::Grass;
-    }
+    // TODO
+//    if (isLandable) {
+//      rwy.m_isOpen = true;
+//      rwy.m_surface = (wp->typ & VLAPI_DATA::WPT::WPTTYP_H) > 0 ? Runway::Asphalt : Runway::Grass;
+//    }
 
     frWp->type = (wp->typ & VLAPI_DATA::WPT::WPTTYP_A) > 0 ? BaseMapElement::Airfield : -1;
 
@@ -474,12 +474,13 @@ int Volkslogger::writeWaypoints(QList<Waypoint*> *waypoints)
         rwy = frWp->rwyList[0];
       }
 
-    wp->typ =
-      (rwy.m_isOpen ? VLAPI_DATA::WPT::WPTTYP_L : 0) |
-      (rwy.m_surface == Runway::Asphalt || rwy.m_surface == Runway::Concrete ? VLAPI_DATA::WPT::WPTTYP_H : 0) |
-      (frWp->type == BaseMapElement::Airfield || frWp->type == BaseMapElement::Gliderfield ||
-       frWp->type == BaseMapElement::Airport || frWp->type == BaseMapElement::IntAirport ||
-       frWp->type == BaseMapElement::MilAirport || frWp->type == BaseMapElement::CivMilAirport ? VLAPI_DATA::WPT::WPTTYP_A : 0);
+    // TODO
+//    wp->typ =
+//      (rwy.m_isOpen ? VLAPI_DATA::WPT::WPTTYP_L : 0) |
+//      (rwy.m_surface == Runway::Asphalt || rwy.m_surface == Runway::Concrete ? VLAPI_DATA::WPT::WPTTYP_H : 0) |
+//      (frWp->type == BaseMapElement::Airfield || frWp->type == BaseMapElement::Gliderfield ||
+//       frWp->type == BaseMapElement::Airport || frWp->type == BaseMapElement::IntAirport ||
+//       frWp->type == BaseMapElement::MilAirport || frWp->type == BaseMapElement::CivMilAirport ? VLAPI_DATA::WPT::WPTTYP_A : 0);
   }
 
   return vl.write_db_and_declaration() == VLA_ERR_NOERR ? FR_OK : FR_ERROR;

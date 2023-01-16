@@ -7,18 +7,14 @@
  ************************************************************************
  **
  **   Copyright (c):  2002 by Harald Maier
- **                   2011-2014 by Axel Pauli
+ **                   2011-2023 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
  **
  ***********************************************************************/
 
-#ifdef QT_5
-    #include <QtWidgets>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
 
 #include "mapcalc.h"
 #include "mapcontents.h"
@@ -297,7 +293,7 @@ void TaskEditor::createDialog()
   // The minimum input field length should be 12 characters. We calculate
   // that as 12 characters M.
   QFontMetrics fm( font() );
-  int charWidth = fm.width(QChar('M'));
+  int charWidth = fm.horizontalAdvance(QChar('M'));
 
   m_pointSearchInput = new QLineEdit;
   m_pointSearchInput->setToolTip( tr("Enter a search string, to navigate to a certain list entry.") );
@@ -416,7 +412,7 @@ void TaskEditor::setEntriesInPointSourceBox()
 
   QList<RadioPoint> &navaidList = _globalMapContents->getNavaidList();
 
-  QList<SinglePoint> &hotspotList = _globalMapContents->getHotspotList();
+  QList<ThermalPoint> &hotspotList = _globalMapContents->getHotspotList();
 
   m_pointSourceBox->clear();
 
@@ -579,30 +575,30 @@ void TaskEditor::slotLoadSelectableWaypoints( int index )
   else if( selectedItem == Hotspots )
     {
       // Gets current hotspot list from MapContents
-      QList<SinglePoint> &list = _globalMapContents->getHotspotList();
+      QList<ThermalPoint> &list = _globalMapContents->getHotspotList();
 
       for( int i = 0; i < list.size(); i++ )
-	{
-	  SinglePoint& sp = list[i];
+        {
+          SinglePoint& sp = list[i];
 
-	  QTreeWidgetItem *item = new QTreeWidgetItem;
+          QTreeWidgetItem *item = new QTreeWidgetItem;
 
-	  item->setText(colWpName, sp.getShortName() );
-	  item->setIcon(colWpName, _globalMapConfig->getPixmap(sp.getTypeID(), false, true) );
-	  item->setText(colWpDescription, sp.getName() );
-	  item->setText(colWpCountry, sp.getCountry() );
-	  item->setText(colWpIcao, "" );
+          item->setText(colWpName, sp.getShortName() );
+          item->setIcon(colWpName, _globalMapConfig->getPixmap(sp.getTypeID(), false, true) );
+          item->setText(colWpDescription, sp.getName() );
+          item->setText(colWpCountry, sp.getCountry() );
+          item->setText(colWpIcao, "" );
 
-	  item->setTextAlignment( colWpName, Qt::AlignLeft|Qt::AlignVCenter );
-	  item->setTextAlignment( colWpDescription, Qt::AlignLeft|Qt::AlignVCenter );
-	  item->setTextAlignment( colWpCountry, Qt::AlignCenter );
-	  item->setTextAlignment( colWpIcao, Qt::AlignCenter );
+          item->setTextAlignment( colWpName, Qt::AlignLeft|Qt::AlignVCenter );
+          item->setTextAlignment( colWpDescription, Qt::AlignLeft|Qt::AlignVCenter );
+          item->setTextAlignment( colWpCountry, Qt::AlignCenter );
+          item->setTextAlignment( colWpIcao, Qt::AlignCenter );
 
-	  QVariant v;
-	  v.setValue(&sp);
-	  item->setData( 0, Qt::UserRole, v );
-	  m_wpListView->insertTopLevelItem( i, item );
-	}
+          QVariant v;
+          v.setValue(&sp);
+          item->setData( 0, Qt::UserRole, v );
+          m_wpListView->insertTopLevelItem( i, item );
+        }
     }
   else if( selectedItem == Navaids )
     {
@@ -675,6 +671,9 @@ void TaskEditor::slotSetPlanningType( const QString& text )
     m_right->setEnabled(false);
     m_left->setChecked(false);
     m_right->setChecked(false);
+    break;
+
+  default:
     break;
   }
 
@@ -1028,7 +1027,7 @@ void TaskEditor::slotAddWaypoint()
       af = item->data(0, Qt::UserRole).value<AirfieldPtr>();
       newWp = new Waypoint;
       newWp->icao = af->getICAO();
-      newWp->frequency = af->getFrequency();
+      newWp->frequencyList = af->getFrequencyList();
       newWp->rwyList = af->getRunwayList();
       sp = af;
     }
@@ -1037,7 +1036,7 @@ void TaskEditor::slotAddWaypoint()
       rp = item->data(0, Qt::UserRole).value<RadioPointPtr>();
       newWp = new Waypoint;
       newWp->icao = rp->getICAO();
-      newWp->frequency = rp->getFrequency();
+      newWp->frequencyList = rp->getFrequencyList();
       newWp->comment = rp->getAdditionalText();
       sp = rp;
     }

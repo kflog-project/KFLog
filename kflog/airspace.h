@@ -7,12 +7,10 @@
 ************************************************************************
 **
 **   Copyright (c):  2000      by Heiner Lamprecht, Florian Ehinger
-**                   2009-2014 by Axel Pauli
+**                   2009-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -25,20 +23,20 @@
  *
  * This class is used for the several airspaces. The object can be
  * one of: AirC, AirCtemp, AirD, AirDtemp, ControlD, AirElow, WaveWindow,
- * AirF, Restricted, Danger, LowFlight ...
+ * AirF, Restricted, Danger, SUA ...
  *
  * Due to the cross pointer reference to the air region this class do not
  * allow copies and assignments of an existing instance.
  *
- * \date 2000-2014
+ * \date 2000-2023
  *
- * \version $Id$
+ * \version 1.4
  *
  */
 
-#ifndef AIRSPACE_H
-#define AIRSPACE_H
+#pragma once
 
+#include <algorithm>
 #include <QDateTime>
 #include <QPolygon>
 #include <QPainter>
@@ -55,6 +53,33 @@ class Airspace : public LineElement
 public:
 
   enum ConflictType { None, NearAbove, NearBelow, VeryNearAbove, VeryNearBelow, Inside };
+
+  /**
+   * ICAO airspace classes of openAIP.
+   */
+  enum icaoClass {
+    AS_A=0,
+    AS_B=1,
+    AS_C=2,
+    AS_D=3,
+    AS_E=4,
+    AS_F=5,
+    AS_G=6,
+    AS_SUA=8,
+    AS_Unkown=255
+  };
+
+  /**
+   * Kind of activity used by openAIP
+   */
+  enum activity {
+    No=0, // No specific activity (default)
+    Parachuting=1,
+    Aerobatics=2,
+    AeroclubAndArialWorkArea=3,
+    UltraLightMachines=4, // (ULM) Activity
+    HangGlidingAndParagliding=5
+  };
 
   Airspace();
 
@@ -78,8 +103,20 @@ public:
             const BaseMapElement::elevationType upperType,
             const float lower,
             const BaseMapElement::elevationType lowerType,
-            const int identifier=-1,
-            QString country="" );
+            const int icaoClass=AS_Unkown,
+            QString country="",
+            quint8 activity=0,
+            bool byNotam=false );
+
+  Airspace(const Airspace& a) = default;
+  Airspace& operator=(const Airspace& a) = default;
+
+  /**
+   * Destructor
+   */
+  virtual ~Airspace()
+  {
+  }
 
   /**
    * Creates a new airspace object using the current set airspace data.
@@ -147,7 +184,7 @@ public:
   };
 
   /**
-   * Returns the upper limit of the airspace.
+   * Returns the upper limit of the airspace in meters.
    */
   unsigned int getUpperL() const
   {
@@ -171,7 +208,7 @@ public:
   };
 
   /**
-   * Returns the lower limit of the airspace.
+   * Returns the lower limit of the airspace in meters.
    */
   unsigned int getLowerL() const
   {
@@ -187,7 +224,7 @@ public:
   };
 
   /**
-   * Returns the type of the upper limit (MSN, GND, FL)
+   * Returns the type of the upper limit (MSL, GND, FL)
    * @see BaseMapElement#elevationType
    * @see #uLimitType
    */
@@ -202,7 +239,7 @@ public:
   };
 
   /**
-   * Returns the type of the lower limit (MSN, GND, FL)
+   * Returns the type of the lower limit (MSL, GND, FL)
    * @see BaseMapElement#elevationType
    * @see #lLimitType
    */
@@ -252,24 +289,59 @@ public:
   bool operator < (const Airspace& other) const;
 
   /**
-   * Get airspace identifier.
+   * Get icao airspace identifier.
    *
    * \return airspace identifier
    */
-  int getId() const
+  quint8 getIcaoClass() const
   {
-    return m_id;
-  };
+    return m_icaoClass;
+  }
 
   /**
-   * Set airspace identifier
+   * Set icao airspace identifier
    *
    * \param id airspace identifier
    */
-  void setId(int id)
+  void setIcaoClass( int icaoClass)
   {
-    m_id = id;
-  };
+    m_icaoClass = icaoClass;
+  }
+
+  /**
+   * Print out degug info.
+   */
+  void debug();
+
+  /**
+   * Kind of activity used by openAip.
+   *
+   * @return
+   */
+  quint8 getActivity() const
+  {
+    return m_activity;
+  }
+
+  /**
+   * Kind of activity used by openAip.
+   *
+   * @param activity enumeration
+   */
+  void setActivity( quint8 activity )
+  {
+    m_activity = activity;
+  }
+
+  bool isByNotam() const
+  {
+    return m_byNotam;
+  }
+
+  void setByNotam( bool byNotam )
+  {
+    m_byNotam = byNotam;
+  }
 
 private:
   /**
@@ -277,12 +349,14 @@ private:
    * @see #getLowerL
    */
   Altitude m_lLimit;
+
   /**
    * Contains the type of the lower limit
    * @see #lLimit
    * @see #getLowerT
    */
   BaseMapElement::elevationType m_lLimitType;
+
   /**
    * Contains the upper limit.
    * @see #getUpperL
@@ -301,9 +375,19 @@ private:
   QPainterPath m_airspaceRegion;
 
   /**
-   * Unique identifier used by openAip.
+   * ICAO identifier used by openAip.
    */
-  int m_id;
+  quint8 m_icaoClass;
+
+  /**
+   * Kind of activity used by openAip.
+   */
+  quint8 m_activity;
+
+  /**
+   * Activation by NOTAM
+   */
+  bool m_byNotam;
 };
 
 /**
@@ -363,8 +447,6 @@ public:
 
   void sort ()
   {
-    qSort( begin(), end(), CompareAirspaces() );
-  };
+    std::sort( begin(), end(), CompareAirspaces() );
+  }
 };
-
-#endif

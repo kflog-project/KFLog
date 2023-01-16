@@ -7,12 +7,10 @@
 ************************************************************************
 **
 **   Copyright (c):  2002 by Heiner Lamprecht
-**                   2011 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -473,11 +471,11 @@ MapPrint::MapPrint(bool flightLoaded)
          */
         int tempScale = (int)(selectedScale / 25.4 * 72 * 2);
 
-        scaleText.sprintf("1:%d.000", tempScale);
+        scaleText = scaleText.asprintf("1:%d.000", tempScale);
 
         if(tempScale >= 1000)          // >= 1:1.000.000
           {
-            scaleText.sprintf("1:%d.%3d.000",
+            scaleText = scaleText.asprintf("1:%d.%3d.000",
                 (int)(tempScale / 1000.0), tempScale - 1000);
             stop10 = 10;
             stop_small10 = 5;
@@ -578,7 +576,7 @@ MapPrint::MapPrint(bool flightLoaded)
     {
       printPainter.drawLine((int)(scaleX + (10000 * loop / selectedScale)), scaleY,
           (int)(scaleX + (10000 * loop / selectedScale)), scale10Y);
-      scaleText.sprintf("%d", loop * 10);
+      scaleText = scaleText.asprintf("%d", loop * 10);
       printPainter.drawText((int)(scaleX - 9 + (10000 * loop / selectedScale)),
               scale10Y - 5, scaleText);
       printPainter.drawLine((int)(scaleX + ((10000 * loop - 5000) / selectedScale)),
@@ -587,7 +585,7 @@ MapPrint::MapPrint(bool flightLoaded)
         {
           int dx = 4;
           if(loop > 1) dx = 9;
-          scaleText.sprintf("%d", (loop * 10) - 5);
+          scaleText = scaleText.asprintf("%d", (loop * 10) - 5);
           printPainter.drawText((int)(scaleX - dx + ((10000 * loop - 5000) / selectedScale)),
               scale10Y - 5, scaleText);
         }
@@ -600,7 +598,7 @@ MapPrint::MapPrint(bool flightLoaded)
             (int)(scaleX + (1000 * loop / selectedScale)), scale1Y);
       if(show1)
         {
-          scaleText.sprintf("%d", loop);
+          scaleText = scaleText.asprintf("%d", loop);
           printPainter.drawText((int)(scaleX - 4 + (1000 * loop / selectedScale)),
                 scale10Y - 5, scaleText);
         }
@@ -663,9 +661,9 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
           gridP->setPen(QPen(QColor(0,0,0), 1));
           gridP->drawLine(cP.x(), cP.y(), cP2.x(), cP2.y());
 
-          // Hier k�nnte mal 'ne Abfrage hin, ob wir zu nah am Rand sind ...
+          // Hier könnte mal 'ne Abfrage hin, ob wir zu nah am Rand sind ...
           gridP->setFont(QFont("helvetica", 14, QFont::Bold));
-          text.sprintf("%d�", loop);
+          text = text.asprintf("%d°", loop);
           if(cP.x() > gridLeft && cP.x() < gridRight)
               gridP->drawText(cP.x() - 101, (int)gridTop - 28, 100, 50,
                   Qt::AlignTop | Qt::AlignRight, text);
@@ -695,18 +693,18 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
               if(cP.x() > gridLeft && cP.x() < gridRight)
                 {
                   gridP->drawLine(cP.x(), cP.y(), cP2.x(), cP2.y());
-                  text.sprintf("%d�", loop);
+                  text = text.asprintf("%d°", loop);
                   gridP->drawText(cP.x() - 101, (int)gridTop - 27, 100, 50,
                       Qt::AlignTop | Qt::AlignRight, text);
-                  text.sprintf("%d'", loop2 * step);
+                  text = text.asprintf("%d'", loop2 * step);
                   gridP->drawText(cP.x() + 3, (int)gridTop - 27, 100, 50,
                       Qt::AlignTop | Qt::AlignLeft, text);
                   if(cP2.x() > gridLeft && cP2.x() < gridRight)
                     {
-                      text.sprintf("%d�", loop);
+                      text = text.asprintf("%d°", loop);
                       gridP->drawText(cP2.x() - 101, (int)gridBot + 3, 100, 50,
                           Qt::AlignTop | Qt::AlignRight, text);
-                      text.sprintf("%d'", loop2 * step);
+                      text = text.asprintf("%d'", loop2 * step);
                       gridP->drawText(cP2.x() + 3, (int)gridBot + 3, 100, 50,
                           Qt::AlignTop | Qt::AlignLeft, text);
                     }
@@ -755,7 +753,7 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
               gridP->setPen(QPen(QColor(0,0,0), 1));
               gridP->drawPolyline(pointArray);
               gridP->setFont(QFont("helvetica", 14, QFont::Bold));
-              text.sprintf("%d�", lat2 + loop);
+              text = text.asprintf("%d°", lat2 + loop);
               gridP->drawText((int)gridLeft - 27, cP4.y() - 52, 100, 50,
                   Qt::AlignBottom | Qt::AlignLeft, text);
               gridP->drawText((int)gridRight + 3, cP4.y() - 52, 100, 50,
@@ -797,12 +795,12 @@ void MapPrint::__drawGrid(const double selectedScale, QPainter* gridP,
                       gridP->setPen(QPen(QColor(0,0,0), 1, Qt::DotLine));
                       gridP->drawPolyline(pointArraySmall);
                     }
-                  text.sprintf("%d�", lat2 + loop);
+                  text = text.asprintf("%d°", lat2 + loop);
                   gridP->drawText((int)gridLeft - 27, cP4.y() - 52, 100, 50,
                       Qt::AlignBottom | Qt::AlignLeft, text);
                   gridP->drawText((int)gridRight + 3, cP4.y() - 52, 100, 50,
                       Qt::AlignBottom | Qt::AlignLeft, text);
-                  text.sprintf("%d'", loop2 * step);
+                  text = text.asprintf("%d'", loop2 * step);
                   gridP->drawText((int)gridLeft - 27, cP4.y() + 2, 100, 50,
                       Qt::AlignTop | Qt::AlignLeft, text);
                   gridP->drawText((int)gridRight + 3, cP4.y() + 2, 100, 50,

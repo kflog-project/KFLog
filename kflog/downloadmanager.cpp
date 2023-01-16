@@ -6,12 +6,10 @@
 **
 ************************************************************************
 **
-**   Copyright (c): 2010-2014 Axel Pauli
+**   Copyright (c): 2010-2023 Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -71,7 +69,8 @@ bool DownloadManager::downloadRequest( QString &url, QString &destination )
       return false;
     }
 
-  if( url.contains("http://www.kflog.org") && logList.contains(url) )
+  if( url.contains("https://raw.githubusercontent.com/kflog-project/MapConverting/master/Landscape/") &&
+      logList.contains(url) )
     {
       // That shall prevent the repeated download of wrong map files.
       qWarning( "DownloadManager(%d): %s already downloaded. Request is rejected!",

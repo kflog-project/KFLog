@@ -6,12 +6,10 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2008-2014 by Axel Pauli (kflog.cumulus@gmail.com)
+**   Copyright (c):  2008-2023 by Axel Pauli (kflog.cumulus@gmail.com)
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -222,25 +220,21 @@ QString WGSPoint::printPos( int coord, bool isLat )
 
       if (isLat)
         {
-          // posDeg.sprintf("%02d° ", (degree < 0)  ? -degree : degree);
           posDeg = QString("%1%2 ")
                       .arg( ((degree < 0)  ? -degree : degree), 2, 10, QChar('0') )
                       .arg( degreeChar );
         }
       else
         {
-          // posDeg.sprintf("%03d° ", (degree < 0)  ? -degree : degree);
           posDeg = QString("%1%2 ")
                       .arg( ((degree < 0)  ? -degree : degree), 3, 10, QChar('0') )
                       .arg( degreeChar );
         }
 
       min = abs(min);
-      // posMin.sprintf("%02d'", min);
       posMin = QString("%1'").arg( min, 2, 10, QChar('0') );
 
       sec = abs(sec);
-      // posSec.sprintf(" %02d\"", sec);
       posSec = QString(" %1\"").arg( sec, 2, 10, QChar('0') );
     }
   else if ( getFormat() == WGSPoint::DDM )
@@ -250,14 +244,12 @@ QString WGSPoint::printPos( int coord, bool isLat )
 
       if (isLat)
         {
-          // posDeg.sprintf("%02d° ", (degree < 0)  ? -degree : degree);
           posDeg = QString("%1%2 ")
                       .arg( ((degree < 0)  ? -degree : degree), 2, 10, QChar('0') )
                       .arg( degreeChar );
         }
       else
         {
-          // posDeg.sprintf("%03d° ", (degree < 0)  ? -degree : degree);
           posDeg = QString("%1%2 ")
                       .arg( ((degree < 0)  ? -degree : degree), 3, 10, QChar('0') )
                       .arg( degreeChar );
@@ -265,10 +257,9 @@ QString WGSPoint::printPos( int coord, bool isLat )
 
       decMin = fabs(decMin);
 
-      // posMin.sprintf("%.3f'", decMin);
       posMin = QString("%1'").arg( decMin, 0, 'f', 3 );
 
-      // Unfortunately sprintf does not support leading zero in float
+      // Unfortunately printf does not support leading zero in float
       // formating. So we must do it alone.
       if ( decMin < 10.0 )
         {
@@ -280,13 +271,12 @@ QString WGSPoint::printPos( int coord, bool isLat )
       // decimal degrees
       calcPos (coord, decDegree);
 
-      // posDeg.sprintf("%.5f°", (decDegree < 0)  ? -decDegree : decDegree);
       posDeg = QString("%1%2")
                   .arg( ((decDegree < 0)  ? -decDegree : decDegree), 0, 'f', 5 )
                   .arg( degreeChar );
 
 
-      // Unfortunately sprintf does not support leading zero in float
+      // Unfortunately printf does not support leading zero in float
       // formating. So we must do it alone.
       if (isLat)
         {

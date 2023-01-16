@@ -3,4 +3,4 @@ This directory is used for the airspace files.
 Two airspace file formats are supported:
 
   1. OpenAir format, files with the extension .txt
-  2. openAIP format, files with the extension .aip
+  2. openAIP format, files with the extension <iso-two-letter-code>_asp.json

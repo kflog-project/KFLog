@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2011 by Eggert Ehmke
+**                   2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -14,12 +15,10 @@
 **   This module implements the Flarm data port protocol as specified
 **   in the document 
 **   	DATA PORT SPECIFICATIONS Software version 5.00 (Mar 01, 2011)
-**   or newer. This document is issued by
+**    or newer. This document is issued by
 **   	2011 FLARM Technology GmbH
 **	Baar-Switzerland
 **   http://www.flarm.com/support/manual/FLARM_DataportManual_v5.00E.pdf
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -36,11 +35,7 @@
 #include <cmath>
 #include <cstring>
 
-#ifdef QT_5
-    #include <QtWidgets>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
 
 #include "flarm.h"
 
@@ -443,7 +438,8 @@ ushort Flarm::calcCheckSum (int pos, const QString& sentence)
 
 /**
   * This method copied from Cumulus
-  * This method checks if the checksum in the sentence matches the sentence. It retuns true if it matches, and false otherwise.
+  * This method checks if the checksum in the sentence matches the sentence.
+  * It retuns true if it matches, and false otherwise.
   */
 bool Flarm::checkCheckSum(int pos, const QString& sentence)
 {
@@ -591,7 +587,7 @@ QString Flarm::lat2flarm(int lat)
   // in Flarm spec this is defined as 1/1000 minutes.
   int dec = (sec / 60.0) * 1000;
 
-  QString result = QString().sprintf("%02d%02d%03d", deg, min, dec);
+  QString result = QString().asprintf("%02d%02d%03d", deg, min, dec);
   result += hemisphere;
   return result;
 }
@@ -608,7 +604,7 @@ QString Flarm::lon2flarm(int lon)
   WGSPoint::calcPos (lon, deg, min, sec);
   // in Flarm spec this is defined as 1/1000 minutes.
   int dec = (sec / 60.0) * 1000;
-  QString result = QString().sprintf("%03d%02d%03d", deg, min, dec);
+  QString result = QString().asprintf("%03d%02d%03d", deg, min, dec);
   result += hemisphere;
   return result;
 }
@@ -660,7 +656,7 @@ int Flarm::writeDeclaration(FRTaskDeclaration* decl, QList<Waypoint*>* wpList, c
 
     //TODO: make configurable?
     // Logger interval
-    if (!putFlarmData (file, "$PFLAC", "LOGINT", "4"))
+    if (!putFlarmData (file, "$PFLAC", "LOGINT", "3"))
       return FR_ERROR;
 
     // Task declaration
@@ -729,7 +725,7 @@ int Flarm::sendStreamData (QTextStream& stream, FRTaskDeclaration* decl, QList<W
     sendStreamComment (stream, "deactivated competition mode");
     sendStreamData (stream, "$PFLAC,S,CFLAGS,0");
 
-    sendStreamComment (stream, "deaktivated Stealth mode");
+    sendStreamComment (stream, "deactivated Stealth mode");
     sendStreamData (stream, "$PFLAC,S,PRIV,0");
 
     sendStreamComment (stream, "aircraft type;  1 = glider");
@@ -755,7 +751,7 @@ int Flarm::sendStreamData (QTextStream& stream, FRTaskDeclaration* decl, QList<W
 
     //TODO: make configurable?
     sendStreamComment (stream, "Logger interval");
-    sendStreamData (stream, "$PFLAC,S,LOGINT,4");
+    sendStreamData (stream, "$PFLAC,S,LOGINT,3");
 
     //TODO: use task name?
     sendStreamComment (stream, "Task declaration");

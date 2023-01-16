@@ -6,20 +6,14 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2002 by Andreé Somers, 2011 by Axel Pauli
+**   Copyright (c):  2002 by Andreé Somers, 2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
-#ifdef QT_5
-    #include <QtWidgets>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
 
 #include "centertodialog.h"
 #include "mapcontents.h"

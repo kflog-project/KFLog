@@ -125,9 +125,9 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
         }
     }
 
-  // Initialize the openAIP link
+  // Initialize the openAIP link at google cloud
   _settings.setValue( "/OpenAip/Link",
-                      "9EEAi^^HHH]@A6?2:A]?6E^<7=@806IA@CE097uwab`987" );
+                      "https://storage.googleapis.com/download/storage/v1/b/29f98e10-a489-4c82-ae5e-489dbcd4912f/o/%1?alt=media" );
 
   // Initialize the GUI language
   QString langSet = _settings.value( "/PersonalData/Language", "??" ).toString();
@@ -204,7 +204,7 @@ MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
 
   connect(_globalMapContents, SIGNAL(activatePlanning()), map,SLOT(slotActivatePlanning()));
   connect(_globalMapContents, SIGNAL(closingFlight(BaseFlightElement*)), objectTree, SLOT(slotCloseFlight(BaseFlightElement*)));
-  connect(_globalMapContents, SIGNAL(contentsChanged()),map, SLOT(slotScheduleRedrawMap()));
+  connect(_globalMapContents, SIGNAL(contentsChanged()), map, SLOT(slotScheduleRedrawMap()));
   connect(_globalMapContents, SIGNAL(currentFlightChanged()), this, SLOT(slotModifyMenu()));
   connect(_globalMapContents, SIGNAL(currentFlightChanged()), dataView, SLOT(slotSetFlightData()));
   connect(_globalMapContents, SIGNAL(currentFlightChanged()), evaluationWindow, SLOT(slotShowFlightData()));
@@ -1303,14 +1303,10 @@ void MainWindow::slotOpenFile()
   fd->setFileMode( QFileDialog::ExistingFiles );
 
   QStringList filter;
-  filter.append(tr("All types") + " (*.igc *.IGC *.flightgear *.trk *.TRK *.gdn *.GDN)");
-  filter.append(tr("IGC") + " (*.igc *.IGC)");
-  filter.append(tr("Garmin") + " (*.trk *.TRK *.gdn *.GDN)");
-#ifdef QT_5
+  filter.append(QString("All types") + " (*.igc *.IGC *.flightgear *.trk *.TRK *.gdn *.GDN)");
+  filter.append(QString("IGC") + " (*.igc *.IGC)");
+  filter.append(QString("Garmin") + " (*.trk *.TRK *.gdn *.GDN)");
   fd->setNameFilters( filter );
-#else
-  fd->setFilters( filter );
-#endif
 
   // We need this to sort the file names alphabetically
   QSortFilterProxyModel *sorter = new QSortFilterProxyModel();
@@ -1402,12 +1398,7 @@ void MainWindow::slotOpenTask()
 
   QStringList filters;
   filters.append( tr( "KFLog tasks" ) + "(*.kflogtsk *.KFLOGTSK)" );
-
-#ifdef QT_5
   fd->setNameFilters( filters );
-#else
-  fd->setFilters( filters );
-#endif
 
   // We need this to sort the file names alphabetically
   QSortFilterProxyModel *sorter = new QSortFilterProxyModel();

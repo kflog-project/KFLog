@@ -6,18 +6,14 @@
 **
 ************************************************************************
 **
-**   Copyright (c):  2014 by Axel Pauli <kflog.cumulus@gmail.com>
+**   Copyright (c):  2014-2023 by Axel Pauli <kflog.cumulus@gmail.com>
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
 ***********************************************************************/
 
-#ifdef QT_5
-    #include <QtWidgets>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
 
 #include "MessageHelpBox.h"
 

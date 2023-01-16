@@ -7,18 +7,14 @@
 ************************************************************************
 **
 **   Copyright (c):  2000 by Heiner Lamprecht, Florian Ehinger
-**                   2011-2014 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
 ***********************************************************************/
 
-#ifdef QT_5
-    #include <QtWidgets>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
 
 #include "evaluationdialog.h"
 #include "evaluationview.h"
@@ -462,7 +458,7 @@ void EvaluationView::__drawCsystem(QPainter* painter)
       while(h / scale_h < height - (Y_DISTANCE * 2))
         {
           painterText.setPen(QPen(QColor(100,100,255), 1));
-          text.sprintf("%d m",h);
+          text = text.asprintf("%d m",h);
           painterText.drawText(0,height - (int)( h / scale_h ) - Y_DISTANCE - 10,
                            COORD_DISTANCE - 3,20,Qt::AlignRight | Qt::AlignVCenter,text);
 
@@ -496,7 +492,7 @@ void EvaluationView::__drawCsystem(QPainter* painter)
 
       while(va / scale_va < (height / 2) - Y_DISTANCE)
         {
-          text.sprintf("%.1f m/s",va);
+          text = text.asprintf("%.1f m/s",va);
           painterText.setPen(QPen(QColor(255,100,100), 1));
           painterText.drawText(0,(height / 2) - (int)( va / scale_va ) - 10,
                            COORD_DISTANCE - 3,20,Qt::AlignRight | Qt::AlignVCenter,text);
@@ -507,7 +503,7 @@ void EvaluationView::__drawCsystem(QPainter* painter)
 
           if(va != 0)
             {
-              text.sprintf("-%.1f m/s",va);
+              text = text.asprintf("-%.1f m/s",va);
               painterText.setPen(QPen(QColor(255,100,100), 1));
 
               painterText.drawText(0,(height / 2) + (int)( va / scale_va ) -10,
@@ -535,7 +531,7 @@ void EvaluationView::__drawCsystem(QPainter* painter)
 
       while(v / scale_v < height - (Y_DISTANCE * 2))
         {
-          text.sprintf("%d km/h",v);
+          text = text.asprintf("%d km/h",v);
           painterText.setPen(QPen(QColor(0,0,0), 1));
           painterText.drawText(0,height - (int)( v / scale_v ) - Y_DISTANCE - 10,
                      COORD_DISTANCE - 3,20,Qt::AlignRight | Qt::AlignVCenter,text);

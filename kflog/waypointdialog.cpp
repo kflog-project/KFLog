@@ -7,20 +7,14 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Harald Maier
-**                   2011 by Axel Pauli
+**                   2011-2013 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
-#ifdef QT_5
-    #include <QtWidgets>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
 
 #include "altitude.h"
 #include "basemapelement.h"
@@ -339,38 +333,58 @@ void WaypointDialog::slotAddWaypoint()
   w->type = getWaypointType();
   w->origP.setLat(latitude->KFLogDegree());
   w->origP.setLon(longitude->KFLogDegree());
-
-  float newElevation = elevation->text().toFloat();
+  w->elevation = elevation->text().toFloat();
 
   if( Altitude::getUnit() == Altitude::feet )
     {
-      w->elevation = Altitude::convertToMeters(newElevation);
+      w->elevation = Altitude::convertToMeters( w->elevation );
     }
 
   w->icao = icao->text().toUpper();
-  w->frequency = frequency->text().toFloat();
+
+  float fqValue = frequency->text().toFloat();
+  Frequency fq;
+  fq.setValue( fqValue );
+  fq.setType( Frequency::MHz );
+  w->addFrequency( fq );
 
   Runway rwy;
-  w->rwyList.append(rwy);
 
-  rwy.m_heading.first = runway->currentIndex();
+  int heading = runway->currentIndex();
+  rwy.setHeading( heading * 10 );
 
-  if( runway->currentIndex() > 0 )
+  if( heading == 0 )
     {
-      int rw1 = rwy.m_heading.first;
-
-      rwy.m_heading.second = ((rw1 > 18) ? rw1 - 18 : rw1 + 18 );
+      rwy.setName("");
+    }
+  else
+    {
+      rwy.setName( QString("%1").arg(heading, 2, 10, QChar('0')) );
     }
 
-  text = length->text();
+  QString tmp = length->text();
 
-  if( !text.isEmpty() )
+  if( !tmp.isEmpty() )
     {
-      rwy.m_length = text.toFloat();
+      rwy.setLength( tmp.toFloat() );
+    }
+  else
+    {
+      rwy.setLength( 0.0 );
     }
 
-  rwy.m_surface = getSurface();
-  rwy.m_isOpen = isLandable->isChecked();
+  rwy.setSurface((enum Runway::SurfaceType) getSurface() );
+
+  if( isLandable->isChecked() == true )
+    {
+      rwy.setOperations( Runway::Active );
+    }
+  else
+    {
+      rwy.setOperations( Runway::Closed );
+    }
+
+  w->rwyList.append( rwy );
 
   emit addWaypoint(w);
   // clear should not be called when apply was pressed ...

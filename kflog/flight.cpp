@@ -14,6 +14,7 @@
 **                :  2008, 2009 Improvements by Constantijn Neeteson
 **
 **                :  2011-2014 Portage to Qt4 by Axel Pauli
+**                :  2023      Portage to Qt5 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -23,11 +24,7 @@
 #include <cmath>
 #include <cstdlib>
 
-#ifdef QT_5
-    #include <QtWidgets>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
 
 #include "airspace.h"
 #include "airspacewarningdistance.h"
@@ -660,117 +657,117 @@ QStringList Flight::getFlightValues(unsigned int start, unsigned int end)
 
   // Kreisflug / Circling
   //index: 0 right turn time
-  text.sprintf("%s <small>(%.1f%%)</small>",
+  text = text.asprintf("%s <small>(%.1f%%)</small>",
                printTime(kurbel_r, true, true, true).toLatin1().data(),
                (float) kurbel_r / (float)(kurbel_r + kurbel_l + kurbel_v) * 100.0);
   result.append(text);
   //index: 1 left turn time
-  text.sprintf("%s <small>(%.1f%%)</small>",
+  text = text.asprintf("%s <small>(%.1f%%)</small>",
                printTime(kurbel_l, true, true, true).toLatin1().data(),
                (float) kurbel_l / (float)(kurbel_r + kurbel_l + kurbel_v) * 100.0);
   result.append(text);
   //index: 2 mixed turn time
-  text.sprintf("%s <small>(%.1f%%)</small>",
+  text = text.asprintf("%s <small>(%.1f%%)</small>",
                printTime(kurbel_v, true, true, true).toLatin1().data(),
                (float) kurbel_v / (float)(kurbel_r + kurbel_l + kurbel_v) * 100.0);
   result.append(text);
   //index: 3 total turn time
-  text.sprintf("%s <small>(%.1f%%)</small>",
+  text = text.asprintf("%s <small>(%.1f%%)</small>",
                printTime((kurbel_r + kurbel_l + kurbel_v), true, true, true).toLatin1().data(),
                (float)(kurbel_r + kurbel_l + kurbel_v) / (float)( route.at(end)->time - route.at(start)->time ) * 100.0);
   result.append(text);
 
   //index: 4 right turn vario
-  text.sprintf("%.2f m/s",(k_height_pos_r + k_height_neg_r) / (kurbel_r));
+  text = text.asprintf("%.2f m/s",(k_height_pos_r + k_height_neg_r) / (kurbel_r));
   result.append(text);
   //index: 5 left turn vario
-  text.sprintf("%.2f m/s",(k_height_pos_l + k_height_neg_l) / (kurbel_l));
+  text = text.asprintf("%.2f m/s",(k_height_pos_l + k_height_neg_l) / (kurbel_l));
   result.append(text);
   //index: 6 mixed turn vario
-  text.sprintf("%.2f m/s",(k_height_pos_v + k_height_neg_v) / (kurbel_v));
+  text = text.asprintf("%.2f m/s",(k_height_pos_v + k_height_neg_v) / (kurbel_v));
   result.append(text);
   //index: 7 total turn vario
-  text.sprintf("%.2f m/s",
+  text = text.asprintf("%.2f m/s",
            (k_height_pos_r + k_height_pos_l + k_height_pos_v +
             k_height_neg_r + k_height_neg_l + k_height_neg_v) /
            (kurbel_r + kurbel_l + kurbel_v));
   result.append(text);
 
   //index: 8 right turn dH
-  text.sprintf("%.0f m",k_height_pos_r);
+  text = text.asprintf("%.0f m",k_height_pos_r);
   result.append(text);
   //index: 9 left turn dH
-  text.sprintf("%.0f m",k_height_pos_l);
+  text = text.asprintf("%.0f m",k_height_pos_l);
   result.append(text);
   //index: 10 mixed turn dH
-  text.sprintf("%.0f m",k_height_pos_v);
+  text = text.asprintf("%.0f m",k_height_pos_v);
   result.append(text);
   //index: 11 total turn dH
-  text.sprintf("%.0f m",k_height_pos_r + k_height_pos_l + k_height_pos_v);
+  text = text.asprintf("%.0f m",k_height_pos_r + k_height_pos_l + k_height_pos_v);
   result.append(text);
   //index: 12 right turn -dH
-  text.sprintf("%.0f m",k_height_neg_r);
+  text = text.asprintf("%.0f m",k_height_neg_r);
   result.append(text);
   //index: 13 left turn -dH
-  text.sprintf("%.0f m",k_height_neg_l);
+  text = text.asprintf("%.0f m",k_height_neg_l);
   result.append(text);
   //index: 14 mixed turn -dH
-  text.sprintf("%.0f m",k_height_neg_v);
+  text = text.asprintf("%.0f m",k_height_neg_v);
   result.append(text);
   //index: 15 total turn -dH
-  text.sprintf("%.0f m",k_height_neg_r + k_height_neg_l + k_height_neg_v);
+  text = text.asprintf("%.0f m",k_height_neg_r + k_height_neg_l + k_height_neg_v);
   result.append(text);
   //index: 16 right turn dH netto
-  text.sprintf("%.0f m",k_height_pos_r + k_height_neg_r);
+  text = text.asprintf("%.0f m",k_height_pos_r + k_height_neg_r);
   result.append(text);
   //index: 17 left turn dH netto
-  text.sprintf("%.0f m",k_height_pos_l + k_height_neg_l);
+  text = text.asprintf("%.0f m",k_height_pos_l + k_height_neg_l);
   result.append(text);
   //index: 18 mixed turn dH netto
-  text.sprintf("%.0f m",k_height_pos_v + k_height_neg_v);
+  text = text.asprintf("%.0f m",k_height_pos_v + k_height_neg_v);
   result.append(text);
   //index: 19 total turn dH netto
-  text.sprintf("%.0f m",k_height_pos_r + k_height_pos_l + k_height_pos_v  +  k_height_neg_r + k_height_neg_l + k_height_neg_v);
+  text = text.asprintf("%.0f m",k_height_pos_r + k_height_pos_l + k_height_pos_v  +  k_height_neg_r + k_height_neg_l + k_height_neg_v);
   result.append(text);
 
   // Strecke / Straight
   //index: 20 straight L/D
-  text.sprintf("%.0f",distance / (s_height_pos + s_height_neg) *-1);
+  text = text.asprintf("%.0f",distance / (s_height_pos + s_height_neg) *-1);
   result.append(text);
   //index: 21 straight speed
-  text.sprintf("%.1f km/h",distance /
+  text = text.asprintf("%.1f km/h",distance /
         ((float)(route.at(end)->time - route.at(start)->time -
         (kurbel_r + kurbel_l + kurbel_v))) * 3.6);
   result.append(text);
   //index: 22 straight dH
-  text.sprintf("%.0f m",s_height_pos);
+  text = text.asprintf("%.0f m",s_height_pos);
   result.append(text);
   //index: 23 straight -dH
-  text.sprintf("%.0f m",s_height_neg);
+  text = text.asprintf("%.0f m",s_height_neg);
   result.append(text);
   //index: 24 straight dH netto
-  text.sprintf("%.0f m",s_height_pos + s_height_neg);
+  text = text.asprintf("%.0f m",s_height_pos + s_height_neg);
   result.append(text);
   //index: 25 straight total distance
-  text.sprintf("%.0f km",distance / 1000);
+  text = text.asprintf("%.0f km",distance / 1000);
   result.append(text);
   //index: 26 straight time
-  text.sprintf("%s <small>(%.1f%%)</small>",
+  text = text.asprintf("%s <small>(%.1f%%)</small>",
                printTime( (int)( route.at(end)->time - route.at(start)->time - ( kurbel_r + kurbel_l + kurbel_v ) ) , true, true, true).toLatin1().data(),
                (float)( route.at(end)->time - route.at(start)->time - ( kurbel_r + kurbel_l + kurbel_v ) ) / (float)( route.at(end)->time - route.at(start)->time ) * 100.0);
   result.append(text);
 
   //Total
   //index: 27 total time
-  text.sprintf("%s",
+  text = text.asprintf("%s",
       printTime((int)(route.at(end)->time - route.at(start)->time), true, true, true).toLatin1().data());
   result.append(text);
   //index: 28 total dH
-  text.sprintf("%.0f m",s_height_pos   + k_height_pos_r
+  text = text.asprintf("%.0f m",s_height_pos   + k_height_pos_r
                       + k_height_pos_l + k_height_pos_v);
   result.append(text);
   //index: 29 total -dH
-  text.sprintf("%.0f m",s_height_neg   + k_height_neg_r
+  text = text.asprintf("%.0f m",s_height_neg   + k_height_neg_r
                       + k_height_neg_l + k_height_neg_v);
   result.append(text);
 
@@ -1171,11 +1168,11 @@ bool Flight::optimizeTask()
   QString text, distText, pointText;
 
   if(FlightTask::isFAI(totalDist, dist1, dist2, dist3))
-      pointText.sprintf(" %d (FAI)", (int)(totalDist * 2.0 * 0.85));
+    pointText = pointText.asprintf(" %d (FAI)", (int)(totalDist * 2.0 * 0.85));
   else
-      pointText.sprintf(" %d", (int)(totalDist * 1.75 * 0.85));
+    pointText = pointText.asprintf(" %d", (int)(totalDist * 1.75 * 0.85));
 
-  distText.sprintf(" %.2f km  ", totalDist);
+  distText = distText.asprintf(" %.2f km  ", totalDist);
   text = QObject::tr("The task has been optimized. The best task found is:\n\n");
   text = text + "\t1:  "
       + WGSPoint::printPos(route.at(idList[0])->origP.lat()) + " / "

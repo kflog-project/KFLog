@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Heiner Lamprecht
-**                   2011-2014 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -23,13 +23,12 @@
  *
  * Configuration widget for map and print items.
  *
- * \date 2001-2014
+ * \date 2001-2023
  *
- * \version 1.0
+ * \version 1.1
  */
 
-#ifndef CONFIG_MAP_ELEMENT_H
-#define CONFIG_MAP_ELEMENT_H
+#pragma once
 
 #include <QBrush>
 #include <QCheckBox>
@@ -363,6 +362,10 @@ class ConfigMapElement : public QWidget
   QList<QBrush> airFirBrushList;
   QList<int> airFirOpacityList;
 
+  QList<QPen> airGPenList;
+  QList<QBrush> airGBrushList;
+  QList<int> airGOpacityList;
+
   QList<QPen> ctrPenList;
   QList<QBrush> ctrBrushList;
   QList<int> ctrOpacityList;
@@ -394,6 +397,10 @@ class ConfigMapElement : public QWidget
   QList<QPen> wwPenList;
   QList<QBrush> wwBrushList;
   QList<int> wwOpacityList;
+
+  QList<QPen> suaPenList;
+  QList<QBrush> suaBrushList;
+  QList<int> suaOpacityList;
 
   QList<QPen> motorwayPenList;
   QList<QPen> roadPenList;
@@ -439,6 +446,7 @@ class ConfigMapElement : public QWidget
   bool airEhBorder[4];
   bool airFBorder[4];
   bool airFirBorder[4];
+  bool airGBorder[4];
   bool ctrBorder[4];
   bool dangerBorder[4];
   bool lowFBorder[4];
@@ -447,6 +455,7 @@ class ConfigMapElement : public QWidget
   bool tmzBorder[4];
   bool gsBorder[4];
   bool wwBorder[4];
+  bool suaBorder[4];
 
   bool trailBorder[4];
   bool roadBorder[4];
@@ -478,5 +487,3 @@ class ConfigMapElement : public QWidget
   int oldElement;
   int currentElement;
 };
-
-#endif

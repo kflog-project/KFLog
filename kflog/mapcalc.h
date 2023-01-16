@@ -11,12 +11,9 @@
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
-#ifndef MAP_CALC_H
-#define MAP_CALC_H
+#pragma once
 
 #include <ctime>
 
@@ -152,5 +149,3 @@ QRect getTileBox(const ushort tileNo);
  * @return map tile number 0...16199
  */
 int mapTileNumber( double lat, double lon );
-
-#endif

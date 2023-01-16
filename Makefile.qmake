@@ -31,8 +31,9 @@ QT_TRANSLATIONS=$(shell qmake -query QT_INSTALL_TRANSLATIONS)
 # Qt5 translation files, which are referenced by qt_de.qm.
 QT5_TL_FILES= \
   qtbase_de.qm \
+  qtconnectivity_de.qm \
   qtscript_de.qm \
-  qtquick1_de.qm \
+  qtquickcontrols_de.qm \
   qtmultimedia_de.qm \
   qtxmlpatterns_de.qm
 

@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2002 by Harald Maier
-**                   2011-2014 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -28,8 +28,7 @@
  * \version $Id$
  */
 
-#ifndef WAYPOINT_IMP_FILTER_DIALOG_H
-#define WAYPOINT_IMP_FILTER_DIALOG_H
+#pragma once
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -100,6 +99,7 @@ public:
   QCheckBox *airfields;
   QCheckBox *gliderfields;
   QCheckBox *navaids;
+  QCheckBox *reportings;
   QCheckBox *outlandings;
   QCheckBox *obstacles;
   QCheckBox *landmarks;
@@ -202,6 +202,7 @@ private:
       bool airfields;
       bool gliderfields;
       bool navaids;
+      bool reportings;
       bool outlandings;
       bool obstacles;
       bool landmarks;
@@ -231,5 +232,3 @@ private:
       int airfieldRefIdx;
     } save;
 };
-
-#endif

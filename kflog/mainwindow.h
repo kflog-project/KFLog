@@ -7,7 +7,7 @@
  ************************************************************************
  **
  **   Copyright (c):  2001      by Heiner Lamprecht, Florian Ehinger
- **                   2010-2014 by Axel Pauli
+ **                   2010-2023 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   License. See the file COPYING for more information.
@@ -24,13 +24,12 @@
  * This class provides the main window of KFLog. All needed GUI stuff
  * is initialized and handled here.
  *
- * \date 2001-2014
+ * \date 2001-2023
  *
- * \version 1.0
+ * \version 1.1
  */
 
-#ifndef MAIN_WINDOW_H
-#define MAIN_WINDOW_H
+#pragma once
 
 #include <QAction>
 #include <QActionGroup>
@@ -62,7 +61,7 @@ private:
 
 public:
 
-  MainWindow( QWidget * parent = 0, Qt::WindowFlags flags = 0 );
+  MainWindow( QWidget * parent = 0, Qt::WindowFlags flags = Qt::WindowFlags() );
 
   virtual ~MainWindow();
 
@@ -497,4 +496,3 @@ private:
   QString taskDir;
 };
 
-#endif // MAIN_WINDOW_H

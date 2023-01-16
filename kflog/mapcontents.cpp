@@ -213,8 +213,17 @@ bool MapContents::__downloadMapFile( QString &file, QString &directory )
                _mainWindow, SLOT(slotSetStatusMsg(const QString &)) );
     }
 
+  // That is the new map link at git hub.
+  QString mapSrvLink = "https://raw.githubusercontent.com/kflog-project/MapConverting/master/Landscape/";
+  QString mapSrvLinkOld = "http://www.kflog.org/data/landscape/";
   QString srvUrl = _settings.value( "/MapData/MapServer",
                                     "http://www.kflog.org/data/landscape/" ).toString();
+
+  if( srvUrl == mapSrvLinkOld )
+    {
+      // Replace old link against the new one at git hub.
+      srvUrl = mapSrvLink;
+    }
 
   _settings.setValue( "/MapData/MapServer", srvUrl );
 
@@ -268,6 +277,7 @@ void MapContents::slotReloadPointData()
   outLandingList.clear();
   navaidList.clear();
   hotspotList.clear();
+  reportList.clear();
 
   loadPoints = true;
   emit contentsChanged();
@@ -305,14 +315,14 @@ void MapContents::slotDownloadOpenAipAirspaceFiles( bool askUser )
 
   QStringList countryList = countries.split(QRegExp("[ ,;]"));
 
-  const QString urlPrefix = KFLogConfig::rot47(_settings.value("/OpenAip/Link", "").toByteArray()) + "/";
+  const QString svrUrl = _settings.value("/OpenAip/Link", "").toByteArray();
   const QString destPrefix = getMapRootDirectory() + "/airspaces/";
 
   for( int i = 0; i < countryList.size(); i++ )
     {
       // File name format: <country-code>_asp.aip, example: de_asp.aip
-      QString file = countryList.at(i).toLower() + "_asp.aip";
-      QString url  = urlPrefix + file;
+      QString file = countryList.at(i).toLower() + "_asp.json";
+      QString url  = QString( svrUrl ).arg(file);
       QString dest = destPrefix + file;
 
       m_downloadOpenAipAsManger->downloadRequest( url, dest );
@@ -403,26 +413,32 @@ void MapContents::slotDownloadOpenAipPointFiles( bool askUser )
 
   QStringList countryList = countries.split(QRegExp("[ ,;]"));
 
-  const QString urlPrefix = KFLogConfig::rot47(_settings.value("/OpenAip/Link", "").toByteArray()) + "/";
+  const QString svrUrl = _settings.value("/OpenAip/Link", "").toByteArray();
   const QString destPrefix = getMapRootDirectory() + "/points/";
 
   for( int i = 0; i < countryList.size(); i++ )
     {
-      // Airfield file name format: <country-code>_wpt.aip, example: de_wpt.aip
-      QString file = countryList.at(i).toLower() + "_wpt.aip";
-      QString url  = urlPrefix + file;
+      // Airfield file name format: <country-code>_apt.json, example: de_apt.json
+      QString file = countryList.at(i).toLower() + "_apt.json";
+      QString url  = QString( svrUrl ).arg(file);
       QString dest = destPrefix + file;
       m_downloadOpenAipPoiManger->downloadRequest( url, dest );
 
-      // Navaids file name format: <country-code>_nav.aip, example: de_nav.aip
-      file = countryList.at(i).toLower() + "_nav.aip";
-      url  = urlPrefix + file;
+      // Navaids file name format: <country-code>_nav.json, example: de_nav.json
+      file = countryList.at(i).toLower() + "_nav.json";
+      url  = QString( svrUrl ).arg(file);
       dest = destPrefix + file;
       m_downloadOpenAipPoiManger->downloadRequest( url, dest );
 
-      // Hotspot file name format: <country-code>_hot.aip, example: de_hot.aip
-      file = countryList.at(i).toLower() + "_hot.aip";
-      url  = urlPrefix + file;
+      // Hotspot file name format: <country-code>_hot.json, example: de_hot.json
+      file = countryList.at(i).toLower() + "_hot.json";
+      url  = QString( svrUrl ).arg(file);
+      dest = destPrefix + file;
+      m_downloadOpenAipPoiManger->downloadRequest( url, dest );
+
+      // Radio point file name format: <country-code>_rpp.json, example: de_rpp.json
+      file = countryList.at(i).toLower() + "_rpp.json";
+      url  = QString( svrUrl ).arg(file);
       dest = destPrefix + file;
       m_downloadOpenAipPoiManger->downloadRequest( url, dest );
     }
@@ -434,7 +450,7 @@ void MapContents::slotOpenAipPoiDownloadsFinished( int requests, int errors )
   m_downloadOpenAipPoiManger->deleteLater();
   m_downloadOpenAipPoiManger = static_cast<DownloadManager *> (0);
 
-  // initiate a reload of all airfield data
+  // initiate a reload of all point data
   slotReloadPointData();
 
   if( errors )
@@ -443,8 +459,8 @@ void MapContents::slotOpenAipPoiDownloadsFinished( int requests, int errors )
       msg = QString(tr("%1 download(s) with %2 error(s) done.")).arg(requests).arg(errors);
 
       QMessageBox::warning( _mainWindow,
-			    tr("openAIP Point Data Downloads finished"),
-			    msg );
+                            tr("openAIP Point Data Downloads finished"),
+                            msg );
     }
 
   emit pointsDownloaded();
@@ -497,9 +513,10 @@ void MapContents::slotCheckOpenAipPointData4Update()
 
   for( int i = 0; i < countries.size(); i++ )
     {
-      files << countries.at(i) + "_hot.aip";
-      files << countries.at(i) + "_nav.aip";
-      files << countries.at(i) + "_wpt.aip";
+      files << countries.at(i) + "_apt.json";
+      files << countries.at(i) + "_nav.json";
+      files << countries.at(i) + "_hot.json";
+      files << countries.at(i) + "_rpp.json";
     }
 
   QString mapDir = getMapRootDirectory();
@@ -508,14 +525,14 @@ void MapContents::slotCheckOpenAipPointData4Update()
     {
       // Search for the openAIP point source file.
       QString path2File = mapDir + QDir::separator() +
-	                  "points" + QDir::separator() + files.at(j);
+	                        "points" + QDir::separator() + files.at(j);
 
       QFileInfo test( path2File );
 
       if( ! test.exists() )
         {
           // No file exists. In this case we ignore that because not all three
-	  // files are exist in every country.
+	        // files are exist in every country.
           continue;
         }
 
@@ -554,11 +571,11 @@ void MapContents::slotCheckOpenAipAsData4Update()
 
   for( int i = 0; i < countries.size (); i++ )
     {
-      // Example airspace file name for CZ: cz_asp.aip
+      // Example airspace file name for CZ: cz_asp.json
       // Search for the openAIP airspace source file.
       QString path2File = mapDir + QDir::separator() +
-	                  "airspaces" + QDir::separator() +
-			  countries.at(i) + "_asp.aip";
+	                        "airspaces" + QDir::separator() +
+			                    countries.at(i) + "_asp.json";
 
       qDebug() << "Check AS File" << path2File;
 
@@ -684,11 +701,9 @@ bool MapContents::__readTerrainFile( const int fileSecID,
       return false;
     }
 
-  QString path, file;
-
-  path = getMapRootDirectory() + "/landscape/";
-
-  file.sprintf( "%c_%.5d.kfl", fileTypeID, fileSecID );
+  QString path = getMapRootDirectory() + "/landscape/";
+  QString file = QString( "%1_%2.kfl" ).arg( QChar(fileTypeID) )
+                                       .arg( fileSecID, 5, 10, QChar('0') );
 
   QString pathName = path + file;
 
@@ -874,7 +889,6 @@ bool MapContents::__readTerrainFile( const int fileSecID,
     }
 
   mapfile.close();
-
   return true;
 }
 
@@ -883,11 +897,9 @@ bool MapContents::__readBinaryFile( const int  fileSecID,
 {
   extern MapMatrix *_globalMapMatrix;
 
-  QString path, file;
-
-  path = getMapRootDirectory() + "/landscape/";
-
-  file.sprintf("%c_%.5d.kfl", fileTypeID, fileSecID);
+  QString path = getMapRootDirectory() + "/landscape/";
+  QString file = QString( "%1_%2.kfl" ).arg( QChar(fileTypeID) )
+                                       .arg( fileSecID, 5, 10, QChar('0') );
 
   QString pathName = path + file;
 
@@ -1300,11 +1312,51 @@ QString MapContents::getMapRootDirectory()
   return mapRootDir;
 }
 
-void MapContents::proofeSection(bool isPrint)
+void MapContents::proofeSection( bool isPrint )
 {
   extern MainWindow *_mainWindow;
   extern MapMatrix  *_globalMapMatrix;
   QRect mapBorder;
+
+  // Store the last used map center to decide a reload of all map data, if we
+  // moved to far away.
+  static QPoint lastMapCenter;
+  static bool first = true;
+
+  if( first == true )
+    {
+      // Load last map center at startup.
+      first = false;
+      lastMapCenter = _globalMapMatrix->getMapCenter();
+    }
+
+  // Current used map center
+  QPoint mapCenter = _globalMapMatrix->getMapCenter();
+
+  // Current used projection type
+  int projectionType = _settings.value( "/MapData/ProjectionType" ).toInt();
+
+  // latitude delta in degrees
+  double delta = fabs( (lastMapCenter.x() - mapCenter.x()) / 600000.0 );
+
+  if( projectionType == ProjectionBase::Cylindric && delta > 1.0 )
+    {
+      // Set a new center parallel for the cylinder map projection, if
+      // the latitude delta is bigger a one degree to ensure a low-distortion
+      // map display.
+      int parallel = static_cast<int>(round( mapCenter.x() / 600000.0 ) );
+      _settings.setValue( "/CylindricalProjection/Parallel", parallel * 600000 );
+
+      // save last map center
+      lastMapCenter = mapCenter;
+
+      // clear all maps, they will be reloaded by this method later on.
+      clearMaps();
+      loadAirspaces = true;
+      loadPoints = true;
+
+      qDebug() << "Setting new cylinder parallel: Delta-Lat" << delta << "parallel" << parallel;
+    }
 
   if(isPrint)
       mapBorder = _globalMapMatrix->getPrintBorder();
@@ -1346,7 +1398,6 @@ void MapContents::proofeSection(bool isPrint)
 
   emit loadingMessage(tr("Loading map data ..."));
 
-  char step, hasstep; // used as small integers
   TilePartMap::Iterator it;
 
   for(int row = northCorner; row <= southCorner; row++)
@@ -1362,7 +1413,8 @@ void MapContents::proofeSection(bool isPrint)
               if (! tileSectionSet.contains(secID))
                 {
                   // qDebug(" Tile %d is missing", secID );
-                  step = 0;
+                  char step = 0;
+                  char hasstep = 0;
                   // check to see if parts of this tile has already been loaded before
                   it = tilePartMap.find(secID);
 
@@ -1430,13 +1482,15 @@ void MapContents::proofeSection(bool isPrint)
           // No airspace files found, try to download any.
           QTimer::singleShot(500, this, SLOT(slotGetOpenAipAirspaces()));
         }
+      else
+        {
+          // finally, sort the airspaces
+          airspaceList.sort();
 
-      // finally, sort the airspaces
-      airspaceList.sort();
-
-      // Say the world that airspaces have been changed.
-      updateFlightAirspaceIntersections();
-      emit airspacesLoaded();
+          // Say the world that airspaces have been changed.
+          updateFlightAirspaceIntersections();
+          emit airspacesLoaded();
+        }
     }
 
   // qDebug() << "MapContents::proofeSection() loadPoints=" << loadPoints;
@@ -1448,12 +1502,16 @@ void MapContents::proofeSection(bool isPrint)
 
       int pointSource = _settings.value( "/Points/Source", KFLogConfig::OpenAIP ).toInt();
 
-      if( pointSource == 0 )
+      // At the moment only openAIP is supported for download.
+      if( pointSource == KFLogConfig::OpenAIP )
         {
           OpenAipPoiLoader poiLoader;
           int res = poiLoader.load( airfieldList );
           res += poiLoader.load( navaidList );
           res += poiLoader.load( hotspotList );
+          res += poiLoader.load( "*_rpp.json",
+                                 BaseMapElement::CompPoint,
+                                 reportList );
 
           if( res == 0 )
             {
@@ -1608,26 +1666,30 @@ SinglePoint* MapContents::getSinglePoint(int listIndex, uint index)
 void MapContents::slotReloadMapData()
 {
   // qDebug() << "MapContents::slotReloadMapData(): Clears all Maps!";
+  clearMaps();
+  emit contentsChanged();
+}
 
+void MapContents::clearMaps()
+{
   airspaceList.clear();
   airspaceRegionList.clear();
-
-  airfieldList.clear();
-  gliderfieldList.clear();
-  outLandingList.clear();
-  navaidList.clear();
-  hotspotList.clear();
-  obstacleList.clear();
-  reportList.clear();
-  cityList.clear();
-  villageList.clear();
-  landmarkList.clear();
-  highwayList.clear();
-  roadList.clear();
-  railList.clear();
-  hydroList.clear();
-  lakeList.clear();
-  topoList.clear();
+  airfieldList = QList<Airfield>();
+  gliderfieldList = QList<Airfield>();
+  outLandingList = QList<Airfield>();
+  navaidList = QList<RadioPoint>();
+  hotspotList = QList<ThermalPoint>();
+  obstacleList = QList<SinglePoint>();
+  reportList = QList<SinglePoint>();
+  cityList = QList<LineElement>();
+  villageList = QList<SinglePoint>();
+  landmarkList = QList<SinglePoint>();
+  highwayList = QList<LineElement>();
+  roadList = QList<LineElement>();
+  railList = QList<LineElement>();
+  hydroList = QList<LineElement>();
+  lakeList = QList<LineElement>();
+  topoList = QList<LineElement>();
 
   // all isolines are cleared
   groundMap.clear();
@@ -1636,8 +1698,6 @@ void MapContents::slotReloadMapData()
   // map tiles are cleared
   tileSectionSet.clear();
   tilePartMap.clear();
-
-  emit contentsChanged();
 }
 
 
@@ -1816,7 +1876,7 @@ void MapContents::drawIsoList( QPainter* targetP, QRect windowRect )
 {
   // qDebug() << "MapContents::drawIsoList():";
 
-  QTime t;
+  QElapsedTimer t;
   t.start();
 
   extern MapConfig* _globalMapConfig;
@@ -1881,7 +1941,7 @@ void MapContents::drawIsoList( QPainter* targetP, QRect windowRect )
   pathIsoLines.sort();
   _isoLevelReset = false;
 
-  // qDebug( "IsoList, drawTime=%dms", t.elapsed() );
+  qDebug( "IsoList, drawTime=%lldms", t.elapsed() );
 
 #if 0
   QString isos;
@@ -1991,7 +2051,6 @@ void MapContents::slotNewTask()
 
   // opens help window.
   emit taskHelp(helpText);
-
   emit currentFlightChanged();
 }
 
@@ -2128,25 +2187,31 @@ bool MapContents::loadTask(QFile& path)
 
   if(!fInfo.exists())
     {
-      QMessageBox::warning( _mainWindow, tr("File does not exist"), "<html>" + tr("The selected file<BR><B>%1</B><BR>does not exist!").arg(path.fileName()) + "</html>", QMessageBox::Ok );
+      QMessageBox::warning( _mainWindow, tr("File does not exist"), "<html>" +
+                            tr("The selected file<BR><B>%1</B><BR>does not exist!").arg(path.fileName()) + "</html>",
+                            QMessageBox::Ok );
       return false;
     }
 
   if(!fInfo.size())
     {
-      QMessageBox::warning( _mainWindow, tr("File is empty"), "<html>" + tr("The selected file<BR><B>%1</B><BR>is empty!").arg(path.fileName()) + "</html>", QMessageBox::Ok );
+      QMessageBox::warning( _mainWindow, tr("File is empty"), "<html>" +
+                            tr("The selected file<BR><B>%1</B><BR>is empty!").arg(path.fileName()) + "</html>",
+                            QMessageBox::Ok );
       return false;
     }
 
   if(!path.open(QIODevice::ReadOnly))
     {
-      QMessageBox::warning( _mainWindow, tr("No permission"), "<html>" + tr("You don't have permission to access file<BR><B>%1</B>").arg(path.fileName()) + "</html>", QMessageBox::Ok );
+      QMessageBox::warning( _mainWindow, tr("No permission"), "<html>" +
+                            tr("You don't have permission to access file<BR><B>%1</B>").arg(path.fileName()) + "</html>",
+                            QMessageBox::Ok );
       return false;
     }
 
   QDomDocument doc;
   QList<Waypoint*> wpList;
-  FlightTask *f, *firstTask = 0;
+  FlightTask *firstTask = nullptr;
 
   doc.setContent(&path);
 
@@ -2174,21 +2239,48 @@ bool MapContents::loadTask(QFile& path)
               w->origP.setLon(nm.namedItem("Longitude").toAttr().value().toInt());
               w->projP = _globalMapMatrix->wgsToMap(w->origP);
               w->elevation = nm.namedItem("Elevation").toAttr().value().toInt();
-              w->frequency = nm.namedItem("Frequency").toAttr().value().toDouble();
+
+              float fqval = nm.namedItem("Frequency").toAttr().value().toDouble();
+              Frequency fq;
+              fq.setUnit( Frequency::MHz );
+              fq.setValue( fqval );
+              w->addFrequency( fq );
               w->comment = nm.namedItem("Comment").toAttr().value();
 
-              QPair<ushort, ushort> rwyHeadings = QPair<ushort, ushort>(0, 0);
-
               ushort rwyHeading = nm.namedItem("Runway").toAttr().value().toUShort();
-              rwyHeadings.first = rwyHeading >> 8;
-              rwyHeadings.second = rwyHeading & 0xff;
-
+              ushort rwyH1 = rwyHeading >> 8;
+              ushort rwyH2 = rwyHeading & 0xff;
               bool isLandable = nm.namedItem("Landable").toAttr().value().toInt();
               int rwyLength = nm.namedItem("Length").toAttr().value().toInt();
               enum Runway::SurfaceType rwySfc = (enum Runway::SurfaceType) nm.namedItem("Surface").toAttr().value().toInt();
 
-              Runway rwy( rwyLength, rwyHeadings, rwySfc, isLandable );
-              w->rwyList.append( rwy );
+              Runway rwy;
+              rwy.setLength( rwyLength );
+              rwy.setSurface( rwySfc );
+
+              if( isLandable == true )
+                {
+                  rwy.setOperations( Runway::Active );
+                }
+              else
+                {
+                  rwy.setOperations( Runway::Closed );
+                }
+
+              // Add runway only, if it has a heading > 0.
+              if( rwyH1 > 0 )
+                {
+                  rwy.setName( QString( "%1").arg( rwyH1, 2, 10, QChar('0') ) );
+                  rwy.setHeading( rwyH1 * 10 );
+                  w->addRunway( rwy );
+                }
+
+              if( rwyH2 > 0 )
+                {
+                  rwy.setName( QString( "%1").arg( rwyH2, 2, 10, QChar('0') ) );
+                  rwy.setHeading( rwyH2 * 10 );
+                  w->addRunway( rwy );
+                }
 
               wpList.append(w);
             }
@@ -2200,12 +2292,12 @@ bool MapContents::loadTask(QFile& path)
               taskName = genTaskName();
             }
 
-          f = new FlightTask(wpList, false, taskName);
+          FlightTask* f = new FlightTask(wpList, false, taskName);
           f->setPlanningType(nmTask.namedItem("PlanningType").toAttr().value().toInt());
           f->setPlanningDirection(nmTask.namedItem("PlanningDirection").toAttr().value().toInt());
 
           // remember first task in file
-          if( firstTask == 0 )
+          if( firstTask == nullptr )
             {
               firstTask = f;
             }
@@ -2233,11 +2325,9 @@ bool MapContents::loadTask(QFile& path)
 
 QString MapContents::genTaskName()
 {
-  static int tCount = 1;
-  QString tmp;
+  static quint16 tCount = 1;
 
-  tmp.sprintf("TASK%03d", tCount++);
-  return tmp;
+  return QString( "TASK%1" ).arg( tCount++, 3, 10, QChar('0') );
 }
 
 QString MapContents::genTaskName(QString suggestion)

@@ -7,18 +7,14 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by Christof Bodner
-**                   2011-2014 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
 ***********************************************************************/
 
-#ifdef QT_5
-    #include <QtWidgets>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
 
 #include "openglwidget.h"
 #include "glview.h"

@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  1999-2000 by Heiner Lamprecht, Florian Ehinger
-**                   2010-2014 by Axel Pauli
+**                   2010-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -16,12 +16,8 @@
 
 #include <cmath>
 
-#ifdef QT_5
-    #include <QtWidgets>
-    #include <QApplication>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
+#include <QApplication>
 
 #include "airfield.h"
 #include "airspace.h"
@@ -553,10 +549,12 @@ QString getInfoString (Waypoint* wp)
 
   text += QString ("<TR><TD></TD><TD><FONT SIZE=-1> %1 m").arg(wp->elevation);
 
-  if (wp->frequency > 0.0)
-  {
-    text += QString ("<BR>%1").arg(wp->frequency, 0, 'f', 3);
-  }
+  QList<Frequency>& fql = wp->getFrequencyList();
+
+  if ( fql.size() > 0 )
+    {
+      text += QString ("<BR>%1").arg( fql.at(0).getValue(), 0, 'f', 3);
+    }
 
   text += "<BR>" + WGSPoint::printPos(wp->origP.lat());
   text += "<BR>" + WGSPoint::printPos(wp->origP.lon(), false);
@@ -606,7 +604,8 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
 	     << MapContents::AirfieldList
 	     << MapContents::OutLandingList
 	     << MapContents::NavaidList
-	     << MapContents::HotspotList;
+	     << MapContents::HotspotList
+	     << MapContents::ReportList;
 
   for( int k = 0; k < searchList.size(); k++ )
     {
@@ -1150,14 +1149,14 @@ void Map::mousePressEvent(QMouseEvent* event)
 
       if( event->modifiers() == Qt::ShiftModifier )
         {
-	  // Check if task planning is active.
-	  if( planning == 1 )
-	    {
-	      __graphicalPlanning( current, event );
-	      event->accept();
-	      return;
-	    }
-        }
+          // Check if task planning is active.
+          if( planning == 1 )
+            {
+              __graphicalPlanning( current, event );
+              event->accept();
+              return;
+            }
+              }
     }
   else if( event->button() == Qt::RightButton )
     {
@@ -1500,8 +1499,8 @@ void Map::__drawAirspaces()
   QPainter cuAeroMapP;
   cuAeroMapP.begin(&pixAirspace);
 
-  QTime t;
-  t.start();
+  // QElapsedTimer t;
+  // t.start();
 
   QList<QPair<QPainterPath, Airspace *> >& airspaceRegionList =
                                     _globalMapContents->getAirspaceRegionList();
@@ -1526,7 +1525,7 @@ void Map::__drawAirspaces()
     }
 
   cuAeroMapP.end();
-  // qDebug("Airspace, drawTime=%d ms", t.elapsed());
+  // qDebug("Airspace, drawTime=%lld ms", t.elapsed());
 }
 
 void Map::__drawFlight()
@@ -1722,7 +1721,7 @@ void Map::slotSavePixmap(QUrl fUrl, int width, int height)
   if( flight != 0 )
     {
       QFontMetrics fm( font );
-      int strWidth = fm.width( msg );
+      int strWidth = fm.horizontalAdvance( msg );
 
       QString text = tr( "%1 with %2 (%3) on %4" )
                     .arg( flight->getPilot() )
@@ -2739,6 +2738,14 @@ void Map::slotWaypointCatalogChanged(WaypointCatalog* c)
                   }
                 break;
 
+              case BaseMapElement::CompPoint:
+
+                if( !c->showReportings )
+                  {
+                    continue;
+                  }
+                break;
+
               case BaseMapElement::Outlanding:
 
                 if( !c->showOutlandings )
@@ -2816,7 +2823,8 @@ void Map::__findElevation( const QPoint& coordMap )
 
 void Map::__setCursor()
 {
-  static const unsigned char cross_bits[] = {
+  static const unsigned char cross_bits[] =
+    {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x01, 0x00,
     0x00, 0x80, 0x01, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0x98, 0x19, 0x00,
@@ -2830,9 +2838,9 @@ void Map::__setCursor()
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
   };
 
-  static const QBitmap cross = QBitmap::fromData( QSize(32,32), cross_bits );
+  static const QBitmap cross = QBitmap::fromData( QSize( 32, 32 ), cross_bits );
 
-  static const QCursor crossCursor(cross, cross);
+  static const QCursor crossCursor( cross, cross );
 
   setCursor(crossCursor);
 }
@@ -2939,7 +2947,7 @@ void Map::__showPopupMenu(QMouseEvent* event)
 
       if( findMapPoint( 16, popupPos, &w ) == true )
         {
-	  // There is found a point in the other lists
+          // There is found a point in the other lists
           QString text(tr("Add %1 as waypoint").arg(w.name));
           miAddAsWaypointAction->setText( text );
           miAddAsWaypointAction->setVisible( true );
@@ -2947,10 +2955,10 @@ void Map::__showPopupMenu(QMouseEvent* event)
           miAddWaypointAction->setVisible( false );
         }
       else
-	{
-	  miAddAsWaypointAction->setVisible( false );
+        {
+          miAddAsWaypointAction->setVisible( false );
           miAddWaypointAction->setVisible( true );
-	}
+        }
 
       miEditWaypointAction->setVisible( false );
       miDeleteWaypointAction->setVisible( false );
@@ -3031,7 +3039,7 @@ void Map::leaveEvent( QEvent *event )
 
 void Map::wheelEvent(QWheelEvent *event)
 {
-  int numDegrees = event->delta() / 8;
+  int numDegrees = event->angleDelta().y() / 8;
   int numSteps = numDegrees / 15;
 
   if( abs(numSteps) > 10 || numSteps == 0 )
@@ -3249,10 +3257,11 @@ bool Map::findMapPoint( int delta, const QPoint& mapPosition, Waypoint *w )
   // compose search list
   QList<int> searchList;
   searchList << MapContents::GliderfieldList
-	     << MapContents::AirfieldList
-	     << MapContents::OutLandingList
-	     << MapContents::NavaidList
-	     << MapContents::HotspotList;
+             << MapContents::AirfieldList
+             << MapContents::OutLandingList
+             << MapContents::NavaidList
+             << MapContents::ReportList
+             << MapContents::HotspotList;
 
   int dX, dY;
 
@@ -3288,7 +3297,7 @@ bool Map::findMapPoint( int delta, const QPoint& mapPosition, Waypoint *w )
             w->elevation = sp->getElevation();
             w->comment = sp->getComment();
             w->icao = "";
-            w->frequency = 0.0;
+            w->frequencyList.clear();
             w->rwyList.clear();
 
             Airfield *af   = dynamic_cast<Airfield *>(sp); // try casting to an airfield
@@ -3297,20 +3306,14 @@ bool Map::findMapPoint( int delta, const QPoint& mapPosition, Waypoint *w )
             if( af )
               {
                 w->icao = af->getICAO();
-                w->frequency = af->getFrequency();
+                w->frequencyList = af->getFrequencyList();
                 w->rwyList = af->getRunwayList();
               }
             else if( rp )
               {
                 w->icao = rp->getICAO();
-                w->frequency = rp->getFrequency();
+                w->frequencyList = rp->getFrequencyList();
                 w->comment = rp->getAdditionalText();
-              }
-            else
-              {
-                w->icao = "";
-                w->frequency = 0.0;
-                w->rwyList.clear();
               }
 
           return true;

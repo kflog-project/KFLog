@@ -27,7 +27,9 @@ extern QSettings _settings;
 
 QMap<QString, BaseMapElement::objectType> AirspaceHelper::m_airspaceTypeMap;
 
-QSet<int> AirspaceHelper::m_airspaceDictionary;
+QSet<QString> AirspaceHelper::m_airspaceDictionary;
+
+QMap<quint16, BaseMapElement::objectType> AirspaceHelper::m_icaoClassMap;
 
 QMutex AirspaceHelper::m_mutex;
 
@@ -35,7 +37,8 @@ int AirspaceHelper::loadAirspaces( QList<Airspace>& list )
 {
   // Set a global lock during execution to avoid calls in parallel.
   QMutexLocker locker( &m_mutex );
-  QTime t; t.start();
+  QElapsedTimer t;
+  t.start();
   uint loadCounter = 0; // number of successfully loaded files
 
   m_airspaceDictionary.clear();
@@ -44,7 +47,7 @@ int AirspaceHelper::loadAirspaces( QList<Airspace>& list )
   QStringList preselect;
 
   // Setup a filter for the desired file extensions.
-  QString filter = "*.txt *.TXT *.aip";
+  QString filter = "*.txt *.TXT *.json *.JSON";
 
   MapContents::addDir( preselect, mapDir, filter );
 
@@ -87,12 +90,11 @@ int AirspaceHelper::loadAirspaces( QList<Airspace>& list )
     {
       QString srcName;
 
-      if( preselect.first().endsWith(QString(".TXT")) ||
-	  preselect.first().endsWith(QString(".txt")) )
+      if( preselect.first().toUpper().endsWith( QString(".TXT") ) )
         {
           srcName = preselect.first();
 
-          if( oap.parse(srcName, list) )
+          if( oap.parse( srcName, list ) )
             {
               loadCounter++;
             }
@@ -101,13 +103,11 @@ int AirspaceHelper::loadAirspaces( QList<Airspace>& list )
           continue;
         }
 
-      if( preselect.first().endsWith(QString(".aip")) )
+      if( preselect.first().toLower().endsWith(QString(".json")) )
         {
-          // there can't be the same name aic after this aip
-          // parse found aip file
           srcName = preselect.first();
 
-          if( oaip.readAirspaces(srcName, list, errorInfo ) )
+          if( oaip.readAirspaces( srcName, list, errorInfo ) )
             {
               loadCounter++;
             }
@@ -115,10 +115,9 @@ int AirspaceHelper::loadAirspaces( QList<Airspace>& list )
           preselect.removeAt(0);
           continue;
         }
-
     } // End of While
 
-  qDebug("ASH: %d Airspace file(s) loaded in %dms", loadCounter, t.elapsed());
+  qDebug("ASH: %d Airspace file(s) loaded in %lldms", loadCounter, t.elapsed());
 
 //    for(int i=0; i < list.size(); i++ )
 //      {
@@ -137,11 +136,11 @@ void AirspaceHelper::loadAirspaceTypeMapping()
   m_airspaceTypeMap.insert("AirC", BaseMapElement::AirC);
   m_airspaceTypeMap.insert("AirD", BaseMapElement::AirD);
   m_airspaceTypeMap.insert("AirE", BaseMapElement::AirE);
-  //m_airspaceTypeMap.insert("AirG", BaseMapElement::AirG);
+  m_airspaceTypeMap.insert("AirG", BaseMapElement::AirG);
   m_airspaceTypeMap.insert("WaveWindow", BaseMapElement::WaveWindow);
   m_airspaceTypeMap.insert("AirF", BaseMapElement::AirF);
   m_airspaceTypeMap.insert("AirFIR", BaseMapElement::AirFir);
-  m_airspaceTypeMap.insert("CTR", BaseMapElement::Ctr);
+  m_airspaceTypeMap.insert("Ctr", BaseMapElement::Ctr);
   m_airspaceTypeMap.insert("Danger", BaseMapElement::Danger);
   m_airspaceTypeMap.insert("Restricted", BaseMapElement::Restricted);
   m_airspaceTypeMap.insert("Prohibited", BaseMapElement::Prohibited);
@@ -168,6 +167,7 @@ AirspaceHelper::initializeAirspaceTypeMapping(const QString& mapFilePath)
       typeMap.insert("D", BaseMapElement::AirD);
       typeMap.insert("E", BaseMapElement::AirE);
       typeMap.insert("F", BaseMapElement::AirF);
+      typeMap.insert("G", BaseMapElement::AirG);
       typeMap.insert("UKN", BaseMapElement::AirUkn);
       typeMap.insert("GP", BaseMapElement::Restricted);
       typeMap.insert("R", BaseMapElement::Restricted);
@@ -180,26 +180,39 @@ AirspaceHelper::initializeAirspaceTypeMapping(const QString& mapFilePath)
       typeMap.insert("W", BaseMapElement::WaveWindow);
       typeMap.insert("GSEC", BaseMapElement::GliderSector);
     }
-  else if( fi.suffix().toLower() == "aip" )
+  else if( fi.suffix().toLower() == "json" )
     {
       // OpenAip default airspace mapping
-      typeMap.insert("A", BaseMapElement::AirA);
-      typeMap.insert("B", BaseMapElement::AirB);
-      typeMap.insert("C", BaseMapElement::AirC);
-      typeMap.insert("D", BaseMapElement::AirD);
-      typeMap.insert("E", BaseMapElement::AirE);
-      typeMap.insert("F", BaseMapElement::AirF);
-      typeMap.insert("FIR", BaseMapElement::AirFir);
-      typeMap.insert("CTR", BaseMapElement::Ctr);
-      typeMap.insert("DANGER", BaseMapElement::Danger);
-      typeMap.insert("RESTRICTED", BaseMapElement::Restricted);
-      typeMap.insert("PROHIBITED", BaseMapElement::Prohibited);
-      typeMap.insert("RMZ", BaseMapElement::Rmz);
-      typeMap.insert("TMA", BaseMapElement::Ctr);
-      typeMap.insert("TMZ", BaseMapElement::Tmz);
-      typeMap.insert("GLIDING", BaseMapElement::GliderSector);
-      typeMap.insert("WAVE", BaseMapElement::WaveWindow);
-      typeMap.insert("OTH", BaseMapElement::AirUkn);
+      typeMap.insert("0", BaseMapElement::AirUkn);
+      typeMap.insert("1", BaseMapElement::Restricted);
+      typeMap.insert("2", BaseMapElement::Danger);
+      typeMap.insert("3", BaseMapElement::Prohibited);
+      typeMap.insert("4", BaseMapElement::Ctr);
+      typeMap.insert("5", BaseMapElement::Tmz);
+      typeMap.insert("6", BaseMapElement::Rmz);
+      typeMap.insert("7", BaseMapElement::Sua); // TMA
+      typeMap.insert("8", BaseMapElement::Sua); // TRA
+      typeMap.insert("9", BaseMapElement::Sua); // TSA
+      typeMap.insert("10", BaseMapElement::AirFir);
+      typeMap.insert("11", BaseMapElement::Sua); // UIR
+      typeMap.insert("12", BaseMapElement::Sua); // ADIZ
+      typeMap.insert("13", BaseMapElement::Sua); // ATZ
+      typeMap.insert("14", BaseMapElement::Sua); // Alert Area
+      typeMap.insert("15", BaseMapElement::Sua); // Airway
+      typeMap.insert("16", BaseMapElement::Sua); // Military Training Route (MTR)
+      typeMap.insert("17", BaseMapElement::Sua); // Alert Area
+      typeMap.insert("18", BaseMapElement::Sua); // Warning Area
+      typeMap.insert("19", BaseMapElement::Restricted); // Protected Area
+      typeMap.insert("20", BaseMapElement::Sua); // Helicopter Traffic Zone (HTZ)
+      typeMap.insert("21", BaseMapElement::GliderSector);
+      typeMap.insert("22", BaseMapElement::Tmz); // Transponder Setting (TRP)
+      typeMap.insert("23", BaseMapElement::AirFir); // Traffic Information Zone (TIZ)
+      typeMap.insert("24", BaseMapElement::AirFir); // Traffic Information Area (TIA)
+      typeMap.insert("25", BaseMapElement::Sua); // Military Training Area (MTA)
+      typeMap.insert("26", BaseMapElement::Ctr); // Controlled Area (CTA)
+      typeMap.insert("27", BaseMapElement::Sua); // ACC Sector (ACC)
+      typeMap.insert("28", BaseMapElement::Sua); // Aerial Sporting Or Recreational Activity
+      typeMap.insert("29", BaseMapElement::Sua); // Low Altitude Overflight Restriction
     }
   else
     {
@@ -232,7 +245,7 @@ AirspaceHelper::initializeAirspaceTypeMapping(const QString& mapFilePath)
             }
 
           QTextStream in(&f);
-          qDebug() << "Parsing mapping file" << fList.at(i);
+          qDebug() << "ASH: Parsing mapping file" << fList.at(i);
 
           // start parsing
           while (!in.atEnd())
@@ -275,6 +288,23 @@ AirspaceHelper::initializeAirspaceTypeMapping(const QString& mapFilePath)
     }
 
   return typeMap;
+}
+
+/**
+ * Initialize a mapping from an openAIP ICAO class integer to the related
+ * Cumulus integer type.
+ */
+void AirspaceHelper::loadIcaoClassMapping()
+{
+  m_icaoClassMap.clear();
+  m_icaoClassMap.insert( 0, BaseMapElement::AirA );
+  m_icaoClassMap.insert( 1, BaseMapElement::AirB );
+  m_icaoClassMap.insert( 2, BaseMapElement::AirC );
+  m_icaoClassMap.insert( 3, BaseMapElement::AirD );
+  m_icaoClassMap.insert( 4, BaseMapElement::AirE );
+  m_icaoClassMap.insert( 5, BaseMapElement::AirF );
+  m_icaoClassMap.insert( 6, BaseMapElement::AirG );
+  m_icaoClassMap.insert( 8, BaseMapElement::Sua );
 }
 
 /*---------------------- AirspaceHelperThread --------------------------------*/

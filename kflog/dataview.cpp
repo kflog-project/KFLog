@@ -7,18 +7,14 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Heiner Lamprecht
-**                   2011-2014 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
 ***********************************************************************/
 
-#ifdef QT_5
-    #include <QtWidgets>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
 
 #include "dataview.h"
 #include "distance.h"
@@ -360,7 +356,7 @@ void DataView::slotSetFlightData()
                   Flight *flight = fl.at(loop);
                   // store pointer of flight instead of index
                   // flight list of mapcontents will change
-                  idString.sprintf("%lu", (unsigned long)flight);
+                  idString = idString.asprintf("%lu", (unsigned long)flight);
                   fi.setFile(flight->getFileName());
 
                   htmlText +=

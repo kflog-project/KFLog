@@ -2,25 +2,20 @@
 **
 **   whatsthat.cpp
 **
-**   This file is part of Cumulus
+**   This file is part of KFLog
 **
 ************************************************************************
 **
 **   Copyright (c):  2002 by André Somers
+**                   2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
-#ifdef QT_5
-    #include <QtWidgets>
-    #include <QApplication>
-#else
-    #include <QtGui>
-#endif
+#include <QtWidgets>
+#include <QApplication>
 
 #include "whatsthat.h"
 

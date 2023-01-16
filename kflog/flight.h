@@ -8,15 +8,14 @@
 **
 **   Copyright (c):  2001 Heiner Lamprecht, Florian Ehinger, Jan Max Walter Krueger
 **                :  2008 Constantijn Neeteson
-**                :  2011-2014 Axel Pauli
+**                :  2011-2023 Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
 ***********************************************************************/
 
-#ifndef FLIGHT_H
-#define FLIGHT_H
+#pragma once
 
 #include <ctime>
 
@@ -82,6 +81,8 @@ class Flight : public BaseFlightElement
         m_FirstPointIndexinRoute(other.m_FirstPointIndexinRoute),
         m_LastPointIndexinRoute(other.m_LastPointIndexinRoute)
       {};
+
+      AirSpaceIntersection& operator = ( const Flight::AirSpaceIntersection& asi) = default;
 
       Airspace* AirSpace()
         { return m_AirSpace; };
@@ -567,5 +568,3 @@ private:
   /* The data type to be used for flight drawing. */
   enum MapConfig::DrawFlightPointType m_dfpt;
 };
-
-#endif

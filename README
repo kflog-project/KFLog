@@ -1,8 +1,8 @@
-=============
-Current state
-=============
+=====================
+Current state at 2023
+=====================
 
-- KFLog is ported fully to Qt4 without using any Qt3 support library parts.
+- KFLog is ported fully to Qt5.15.2 without using any old support library parts.
   Not all parts are tested in detail. Some parts can be unstable.
 
 Known bugs
@@ -11,14 +11,16 @@ Known bugs
 - if the font size in KDE is too large, the numbers in the status
   bar are truncated (e.g. the speed). Maybe we can give those boxes
   a variable size?
+  
+- Map print support is missing, not yet ported to Qt5.
 
 not really bugs
 ===============
 
-- configure needs to check for OpenGL and if it's not available, we
+- Configure needs to check for OpenGL and if it's not available, we
   either need to complain or we need to disable the GL-3D-view.
 
-- show engine noise in evaluation window
+- Show engine noise in evaluation window
 
 
 Things that disappeared while we got rid of KDE
@@ -32,16 +34,5 @@ Things that disappeared while we got rid of KDE
 
 - Cumulus flight recorder plugin -- this thing wouldn't work with
   the current Cumulus versions anyhow.
-  
-- dockwidgets are standard turned off in the mainwindow, because the layout is
-  ugly. Hopefully it is solvable in Qt4. In the meantim they can be made visible
-  by selecting them in the Settings menu.
-  
-- The shortcuts and toolbar cannot be edited anymore, because Qt lacks the
-  widgets that KDE had.
 
-- In some messageboxes there was a checkbox to disable the same message in the
-  future. Also, some messageboxes of recorderdialog contained a small screen with
-  detailed information about an error. QMessageBox doesn't support this and
-  therefore it has been removed.
     
