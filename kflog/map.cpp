@@ -68,7 +68,8 @@ Map::Map( QWidget* parent ) :
   isMapMoveActive(false),
   isDrawing(false),
   redrawRequest(false),
-  preSnapPoint(-999, -999)
+  preSnapPoint(-999, -999),
+  m_zooming(0)
 {
   pixCursor = QPixmap(40,40);
   pixCursor.fill(Qt::transparent);
@@ -144,6 +145,10 @@ Map::Map( QWidget* parent ) :
   mapInfoTimer = new QTimer(this);
   mapInfoTimer->setSingleShot( true );
   connect (mapInfoTimer, SIGNAL(timeout()), SLOT(slotMapInfoTimeout()));
+
+  mapZoomTimer = new QTimer(this);
+  mapZoomTimer->setSingleShot( true );
+  connect (mapZoomTimer, SIGNAL(timeout()), SLOT(slotMapZoomTimeout()));
 
   /** Create a timer for queuing draw events. */
   redrawMapTimer = new QTimer(this);
@@ -3042,22 +3047,31 @@ void Map::wheelEvent(QWheelEvent *event)
   int numDegrees = event->angleDelta().y() / 8;
   int numSteps = numDegrees / 15;
 
-  if( abs(numSteps) > 10 || numSteps == 0 )
+  if( numSteps == 0 )
     {
       event->ignore();
       return;
     }
 
-  if( numSteps > 0 )
+  m_zooming += numSteps;
+  event->accept();
+
+  // start a single shot timer to handle collected zoom events.
+  mapZoomTimer->start( 350 );
+}
+
+void Map::slotMapZoomTimeout()
+{
+    // Handle map zoom events
+  if( m_zooming > 0 )
     {
-      _globalMapMatrix->slotZoomIn( numSteps );
+      _globalMapMatrix->slotZoomIn( m_zooming );
     }
   else
     {
-      _globalMapMatrix->slotZoomOut( -numSteps );
+      _globalMapMatrix->slotZoomOut( abs(m_zooming) );
     }
-
-  event->accept();
+  m_zooming = 0;
 }
 
 void Map::slotMapInfoTimeout()

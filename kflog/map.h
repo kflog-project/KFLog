@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  1999, 2000 by Heiner Lamprecht, Florian Ehinger
-**                   2010-2014  by Axel Pauli
+**                   2010-2023  by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -23,13 +23,12 @@
  *
  * This class provides basic functions for displaying the map.
  *
- * \date 1999-2014
+ * \date 1999-2023
  *
- * \version $Id$
+ * \version 1.1
  */
 
-#ifndef MAP_H
-#define MAP_H
+#pragma once
 
 #include <QBitmap>
 #include <QList>
@@ -203,6 +202,11 @@ private:
      * Called on timeout of the MapMoveTimer. Triggers a display of the map.
      */
     void slotMapMoveTimeout();
+
+    /**
+     * Called on timeout of the MapZoomTimer. Triggers a zoom of the map.
+     */
+    void slotMapZoomTimeout();
 
   signals:
 
@@ -537,6 +541,10 @@ private:
 
     /** List of drawn cities. */
     QList<BaseMapElement *> m_drawnCityList;
-};
 
-#endif
+    QTimer *mapZoomTimer;
+    /**
+     * Storage for mouse wheel events, used for zooming of map.
+     */
+    short m_zooming;
+};
