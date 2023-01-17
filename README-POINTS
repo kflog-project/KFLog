@@ -1,11 +1,26 @@
 This directory is used for the point data, such as airfields, navaids,
-hotspots, ...
+reporting points, hotspots, ...
 
 KFLog supports the following point data source:
 
- 2. openAIP point data from http://www.openaip.net/. See there
-    for more information.
+openAIP point data from http://www.openaip.net/. See there for more information.
 
-KFLog downloads point data files automatically for you in the KFLog Setup
+Please read the openAIP license for their data usage at:
+
+https://creativecommons.org/licenses/by-nc/4.0
+
+OpenAIP data is licensed under the Attribution-NonCommercial 4.0 International
+(CC BY-NC 4.0) license. This license allows third parties to share openAIP data
+in any format or medium and remix, transform and build on it's data. OpenAIP
+data must remain free for everyone to use. Third parties may ship openAIP data
+with paid/commercial applications as long as they don't exclusively sell openAIP
+data, e.g. as a paid monthly data update.   
+
+KFLog downloads openAIP point data files automatically for you in the KFLog Setup
 Points page. Please define on that page, which point data countries should be
-downloaded and loaded during run.
+downloaded and loaded during run. The following file types are used:
+
+<iso-two-letter-country-code>_apt.json Airports, Airfields, Gliderfields, ...
+<iso-two-letter-country-code>_hot.json Thermal hotspots
+<iso-two-letter-country-code>_nav.json Navigation aids
+<iso-two-letter-country-code>_rpp.json Reporting points

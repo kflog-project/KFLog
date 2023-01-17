@@ -2,5 +2,20 @@ This directory is used for the airspace files.
 
 Two airspace file formats are supported:
 
-  1. OpenAir format, files with the extension .txt
-  2. openAIP format, files with the extension <iso-two-letter-code>_asp.json
+1. OpenAir format, files with the extension .txt
+2. openAIP format, files with the extension <iso-two-letter-code>_asp.json
+
+Please read the openAIP license for their data usage at:
+
+https://creativecommons.org/licenses/by-nc/4.0
+
+OpenAIP data is licensed under the Attribution-NonCommercial 4.0 International
+(CC BY-NC 4.0) license. This license allows third parties to share openAIP data
+in any format or medium and remix, transform and build on it's data. OpenAIP
+data must remain free for everyone to use. Third parties may ship openAIP data
+with paid/commercial applications as long as they don't exclusively sell openAIP
+data, e.g. as a paid monthly data update.   
+
+KFLog downloads airspace data files automatically for you in the KFLog Setup
+Points page. Please define on that page, which airspace data countries should be
+downloaded and loaded during run.

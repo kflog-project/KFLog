@@ -35,4 +35,8 @@ Things that disappeared while we got rid of KDE
 - Cumulus flight recorder plugin -- this thing wouldn't work with
   the current Cumulus versions anyhow.
 
-    
+The current bug tracker is to find in Git-Hub:
+
+https://github.com/kflog-project/KFLog/issues
+
+Please report any found bugs or change requests there.
