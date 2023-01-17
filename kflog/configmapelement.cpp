@@ -195,28 +195,30 @@ ConfigMapElement::ConfigMapElement( QWidget* parent, bool configMap ) :
   border4BrushColorButton->setToolTip( tr("Select your desired brush color.") );
   connect(border4BrushColorButton, SIGNAL(clicked()), this, SLOT(slotSelectBorder4BrushColor()));
 
+  QString bushToolTip = tr("Select solid pattern brush (black square) to enable airspace/forest structure filling.");
+
   border1BrushStyle = new QComboBox(this);
   border1BrushStyle->setMinimumWidth(60);
   border1BrushStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
-  border1BrushStyle->setToolTip( tr("Select solid pattern brush to enable airspace structure filling.") );
+  border1BrushStyle->setToolTip( bushToolTip );
   __fillStyle(border1PenStyle, border1BrushStyle);
 
   border2BrushStyle = new QComboBox(this);
   border2BrushStyle->setMinimumWidth(35);
   border2BrushStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
-  border2BrushStyle->setToolTip( tr("Select solid pattern brush to enable airspace structure filling.") );
+  border2BrushStyle->setToolTip( bushToolTip );
   __fillStyle(border2PenStyle, border2BrushStyle);
 
   border3BrushStyle = new QComboBox(this);
   border3BrushStyle->setMinimumWidth(35);
   border3BrushStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
-  border3BrushStyle->setToolTip( tr("Select solid pattern brush to enable airspace structure filling.") );
+  border3BrushStyle->setToolTip( bushToolTip );
   __fillStyle(border3PenStyle, border3BrushStyle);
 
   border4BrushStyle = new QComboBox(this);
   border4BrushStyle->setMinimumWidth(35);
   border4BrushStyle->setSizeAdjustPolicy( QComboBox::AdjustToContents );
-  border4BrushStyle->setToolTip( tr("Select solid pattern brush to enable airspace structure filling.") );
+  border4BrushStyle->setToolTip( bushToolTip );
   __fillStyle(border4PenStyle, border4BrushStyle);
 
   QSpinBox** oSpinArray[4];
@@ -404,6 +406,7 @@ void ConfigMapElement::__readMapItems()
         FRST_BRUSH_COLOR_3, FRST_BRUSH_COLOR_4, FRST_BRUSH_STYLE_1,
         FRST_BRUSH_STYLE_2, FRST_BRUSH_STYLE_3, FRST_BRUSH_STYLE_4);
   __readBorder("Forest", forestBorder);
+  __readAsOpacity(MAP_FOREST, forestOpacityList);
 
   __readPen("Glacier", glacierPenList, GLACIER_COLOR_1, GLACIER_COLOR_2, GLACIER_COLOR_3,
         GLACIER_COLOR_4, GLACIER_PEN_1, GLACIER_PEN_2, GLACIER_PEN_3, GLACIER_PEN_4,
@@ -676,6 +679,7 @@ void ConfigMapElement::__readPrintItems()
         PRINT_FRST_BRUSH_COLOR_2, PRINT_FRST_BRUSH_COLOR_2, PRINT_FRST_BRUSH_STYLE_1,
         PRINT_FRST_BRUSH_STYLE_2, PRINT_FRST_BRUSH_STYLE_2, PRINT_FRST_BRUSH_STYLE_2);
   __readBorder("Forest", forestBorder);
+  __readAsOpacity(MAP_FOREST, forestOpacityList);
 
   __readPen("Glacier", glacierPenList, PRINT_GLACIER_COLOR_1, PRINT_GLACIER_COLOR_2, PRINT_GLACIER_COLOR_2,
         PRINT_GLACIER_COLOR_2, PRINT_GLACIER_PEN_1, PRINT_GLACIER_PEN_2, PRINT_GLACIER_PEN_2, PRINT_GLACIER_PEN_2,
@@ -965,6 +969,7 @@ void ConfigMapElement::slotOk()
   __writeAsOpacity( AS_GS, gsOpacityList );
   __writeAsOpacity( AS_WW, wwOpacityList );
   __writeAsOpacity( AS_SUA, suaOpacityList );
+  __writeAsOpacity( MAP_FOREST, forestOpacityList );
 }
 
 void ConfigMapElement::slotDefaultElements()
@@ -996,6 +1001,7 @@ void ConfigMapElement::slotDefaultElements()
   __defaultAsOpacity( gsOpacityList );
   __defaultAsOpacity( wwOpacityList );
   __defaultAsOpacity( suaOpacityList );
+  __defaultAsOpacity( forestOpacityList );
 
   oldElement = -1;
   slotSelectElement( currentElement );
@@ -1794,6 +1800,7 @@ void ConfigMapElement::slotSelectElement(int elementID)
       case KFLogConfig::Forest:
         __savePen(forestPenList, forestBorder);
         __saveBrush(forestBrushList);
+        __saveAsOpacity(forestOpacityList);
         break;
       case KFLogConfig::Glacier:
         __savePen(glacierPenList, glacierBorder);
@@ -1944,6 +1951,7 @@ void ConfigMapElement::slotSelectElement(int elementID)
       case KFLogConfig::Forest:
         __showPen(forestPenList, forestBorder);
         __showBrush(forestBrushList);
+        __showAsOpacity(forestOpacityList);
         break;
       case KFLogConfig::Glacier:
         __showPen(glacierPenList, glacierBorder);
@@ -2010,19 +2018,13 @@ void ConfigMapElement::slotToggleFirst(bool toggle)
       case KFLogConfig::River_T:
       case KFLogConfig::FAIAreaLow500:
       case KFLogConfig::FAIAreaHigh500:
+      case KFLogConfig::Forest:
         border1PenStyle->setEnabled(toggle);
         border1BrushColorButton->setEnabled(toggle);
         border1BrushStyle->setEnabled(toggle);
         slotCheckOpacity1( border1BrushStyle->currentIndex() );
         connect( border1BrushStyle, SIGNAL(currentIndexChanged(int)),
                  this, SLOT(slotCheckOpacity1(int)) );
-        break;
-      case KFLogConfig::Forest:
-        //border1ColorButton->setEnabled(false);
-        //border1Pen->setEnabled(false);
-        border1PenStyle->setEnabled(false);
-        border1BrushColorButton->setEnabled(toggle);
-        border1BrushStyle->setEnabled(toggle);
         break;
       default:
         border1PenStyle->setEnabled(toggle);
@@ -2080,19 +2082,13 @@ void ConfigMapElement::slotToggleSecond( bool toggle )
       case KFLogConfig::River_T:
       case KFLogConfig::FAIAreaLow500:
       case KFLogConfig::FAIAreaHigh500:
+      case KFLogConfig::Forest:
         border2PenStyle->setEnabled(toggle);
         border2BrushColorButton->setEnabled(toggle);
         border2BrushStyle->setEnabled(toggle);
         slotCheckOpacity2( border2BrushStyle->currentIndex() );
         connect( border2BrushStyle, SIGNAL(currentIndexChanged(int)),
                  this, SLOT(slotCheckOpacity2(int)) );
-        break;
-      case KFLogConfig::Forest:
-        //border2ColorButton->setEnabled(false);
-        //border2Pen->setEnabled(false);
-        border2PenStyle->setEnabled(false);
-        border2BrushColorButton->setEnabled(toggle);
-        border2BrushStyle->setEnabled(toggle);
         break;
       default:
         border2PenStyle->setEnabled(toggle);
@@ -2150,19 +2146,13 @@ void ConfigMapElement::slotToggleThird(bool toggle)
       case KFLogConfig::River_T:
       case KFLogConfig::FAIAreaLow500:
       case KFLogConfig::FAIAreaHigh500:
+      case KFLogConfig::Forest:
         border3PenStyle->setEnabled(toggle);
         border3BrushColorButton->setEnabled(toggle);
         border3BrushStyle->setEnabled(toggle);
         slotCheckOpacity3( border3BrushStyle->currentIndex() );
         connect( border3BrushStyle, SIGNAL(currentIndexChanged(int)),
                  this, SLOT(slotCheckOpacity3(int)) );
-        break;
-      case KFLogConfig::Forest:
-        //border3ColorButton->setEnabled(false);
-        //border3Pen->setEnabled(false);
-        border3PenStyle->setEnabled(false);
-        border3BrushColorButton->setEnabled(toggle);
-        border3BrushStyle->setEnabled(toggle);
         break;
       default:
         border3PenStyle->setEnabled(toggle);
@@ -2218,19 +2208,13 @@ void ConfigMapElement::slotToggleForth(bool toggle)
       case KFLogConfig::River_T:
       case KFLogConfig::FAIAreaLow500:
       case KFLogConfig::FAIAreaHigh500:
-        border4PenStyle->setEnabled(toggle);
+      case KFLogConfig::Forest:
+         border4PenStyle->setEnabled(toggle);
         border4BrushColorButton->setEnabled(toggle);
         border4BrushStyle->setEnabled(toggle);
         slotCheckOpacity4( border4BrushStyle->currentIndex() );
         connect( border4BrushStyle, SIGNAL(currentIndexChanged(int)),
                  this, SLOT(slotCheckOpacity4(int)) );
-        break;
-      case KFLogConfig::Forest:
-        //border4ColorButton->setEnabled(false);
-        //border4Pen->setEnabled(false);
-        border4PenStyle->setEnabled(false);
-        border4BrushColorButton->setEnabled(toggle);
-        border4BrushStyle->setEnabled(toggle);
         break;
       default:
         border4PenStyle->setEnabled(toggle);
