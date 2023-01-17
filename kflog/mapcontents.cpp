@@ -1407,7 +1407,6 @@ void MapContents::proofeSection( bool isPrint )
       for(int col = westCorner; col <= eastCorner; col++)
         {
           int secID = row + (col + (row * 179));
-          qDebug( "Needed BoxSecID=%d", secID );
 
           if( secID >= 0 && secID <= MAX_TILE_NUMBER )
             {
@@ -1494,8 +1493,6 @@ void MapContents::proofeSection( bool isPrint )
           emit airspacesLoaded();
         }
     }
-
-  qDebug() << "MapContents::proofeSection() loadPoints=" << loadPoints;
 
   // Checking for point data
   if( loadPoints == true )
