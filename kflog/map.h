@@ -33,6 +33,7 @@
 #include <QBitmap>
 #include <QList>
 #include <QMenu>
+#include <QPoint>
 #include <QRegion>
 #include <QSize>
 #include <QTimer>
@@ -547,4 +548,9 @@ private:
      * Storage for mouse wheel events, used for zooming of map.
      */
     short m_zooming;
+
+    /**
+     * Last known mouse position
+     */
+    QPoint m_lastMousePosition;
 };

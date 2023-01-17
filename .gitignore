@@ -47,3 +47,4 @@ build-kflog-QT*
 
 # Temporary and lock files.
 .*.swp
+/.qmake.stash

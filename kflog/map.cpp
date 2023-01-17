@@ -202,6 +202,9 @@ QList<Flight *> Map::getFlightList()
 
 void Map::mouseMoveEvent( QMouseEvent* event )
 {
+  // save last mouse position
+  m_lastMousePosition = event->pos();
+
   if( isMapMoveActive )
     {
       // Activate supervision timer for map redrawing
@@ -714,6 +717,8 @@ void Map::__displayMapInfo(const QPoint& current, bool automatic)
                     break;
                   case FlightTask::Landing:
                     tmpText = QObject::tr("Landing");
+                    break;
+                  default:
                     break;
                 }
 
@@ -3062,7 +3067,13 @@ void Map::wheelEvent(QWheelEvent *event)
 
 void Map::slotMapZoomTimeout()
 {
-    // Handle map zoom events
+  // Move Map to new center point
+  _globalMapMatrix->centerToPoint( m_lastMousePosition );
+
+  // Move cursor into the window center
+  QCursor::setPos( mapToGlobal( QPoint( width() / 2, height() / 2) ) );
+
+  // Handle map zoom events
   if( m_zooming > 0 )
     {
       _globalMapMatrix->slotZoomIn( m_zooming );
@@ -3071,6 +3082,7 @@ void Map::slotMapZoomTimeout()
     {
       _globalMapMatrix->slotZoomOut( abs(m_zooming) );
     }
+
   m_zooming = 0;
 }
 
