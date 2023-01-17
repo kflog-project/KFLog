@@ -408,10 +408,10 @@
 #define FRST_BRUSH_COLOR_3 QColor(130,233,147)
 #define FRST_BRUSH_COLOR_4 QColor(130,233,147)
 
-#define FRST_BRUSH_STYLE_1 Qt::Dense6Pattern
-#define FRST_BRUSH_STYLE_2 Qt::Dense6Pattern
-#define FRST_BRUSH_STYLE_3 Qt::Dense6Pattern
-#define FRST_BRUSH_STYLE_4 Qt::Dense6Pattern
+#define FRST_BRUSH_STYLE_1 Qt::SolidPattern
+#define FRST_BRUSH_STYLE_2 Qt::SolidPattern
+#define FRST_BRUSH_STYLE_3 Qt::SolidPattern
+#define FRST_BRUSH_STYLE_4 Qt::SolidPattern
 
 #define PRINT_FRST_COLOR_1 QColor(12,86,35)
 #define PRINT_FRST_COLOR_2 QColor(12,86,35)
@@ -579,6 +579,9 @@
 #define AS_WW "Airspace-Wave-Window"
 #define AS_PROHIBITED "Airspace-Prohibited"
 #define AS_SUA "Special Used Airspace"
+
+// Map keys
+#define MAP_FOREST "Forest"
 
 // [Airspace A]
 #define AIRA_PEN_1 4
@@ -929,10 +932,10 @@
 #define AIRG_BRUSH_COLOR_3 QColor(0,0,128)
 #define AIRG_BRUSH_COLOR_4 QColor(0,0,128)
 
-#define AIRG_BRUSH_STYLE_1 Qt::BDiagPattern
-#define AIRG_BRUSH_STYLE_2 Qt::BDiagPattern
-#define AIRG_BRUSH_STYLE_3 Qt::BDiagPattern
-#define AIRG_BRUSH_STYLE_4 Qt::BDiagPattern
+#define AIRG_BRUSH_STYLE_1 Qt::SolidPattern
+#define AIRG_BRUSH_STYLE_2 Qt::SolidPattern
+#define AIRG_BRUSH_STYLE_3 Qt::SolidPattern
+#define AIRG_BRUSH_STYLE_4 Qt::SolidPattern
 
 #define PRINT_AIRG_PEN_1 4
 #define PRINT_AIRG_PEN_2 3
@@ -946,8 +949,8 @@
 #define PRINT_AIRG_BRUSH_COLOR_1 QColor(0,0,128)
 #define PRINT_AIRG_BRUSH_COLOR_2 QColor(0,0,128)
 
-#define PRINT_AIRG_BRUSH_STYLE_1 Qt::BDiagPattern
-#define PRINT_AIRG_BRUSH_STYLE_2 Qt::BDiagPattern
+#define PRINT_AIRG_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_AIRG_BRUSH_STYLE_2 Qt::SolidPattern
 
 // [Control Zone]
 #define CTR_PEN_1 4
@@ -1298,10 +1301,10 @@
 #define SUA_BRUSH_COLOR_3 QColor(180,0,0)
 #define SUA_BRUSH_COLOR_4 QColor(180,0,0)
 
-#define SUA_BRUSH_STYLE_1 Qt::Dense7Pattern
-#define SUA_BRUSH_STYLE_2 Qt::Dense7Pattern
-#define SUA_BRUSH_STYLE_3 Qt::Dense7Pattern
-#define SUA_BRUSH_STYLE_4 Qt::Dense7Pattern
+#define SUA_BRUSH_STYLE_1 Qt::SolidPattern
+#define SUA_BRUSH_STYLE_2 Qt::SolidPattern
+#define SUA_BRUSH_STYLE_3 Qt::SolidPattern
+#define SUA_BRUSH_STYLE_4 Qt::SolidPattern
 
 #define PRINT_SUA_PEN_1 4
 #define PRINT_SUA_PEN_2 3
@@ -1315,8 +1318,8 @@
 #define PRINT_SUA_BRUSH_COLOR_1 QColor(180,0,0)
 #define PRINT_SUA_BRUSH_COLOR_2 QColor(180,0,0)
 
-#define PRINT_SUA_BRUSH_STYLE_1 Qt::Dense7Pattern
-#define PRINT_SUA_BRUSH_STYLE_2 Qt::Dense7Pattern
+#define PRINT_SUA_BRUSH_STYLE_1 Qt::SolidPattern
+#define PRINT_SUA_BRUSH_STYLE_2 Qt::SolidPattern
 
 // [FAI Area < 500]
 #define FAI_LOW_500_PEN_1 4
