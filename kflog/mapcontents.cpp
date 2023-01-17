@@ -199,6 +199,8 @@ bool MapContents::__downloadMapFile( QString &file, QString &directory )
       return false;
     }
 
+  qDebug() << "MapContents::__downloadMissingMapFile()" << file;
+
   if( m_downloadManger == static_cast<DownloadManager *> (0) )
     {
       m_downloadManger = new DownloadManager(this);
@@ -1405,7 +1407,7 @@ void MapContents::proofeSection( bool isPrint )
       for(int col = westCorner; col <= eastCorner; col++)
         {
           int secID = row + (col + (row * 179));
-          // qDebug( "Needed BoxSecID=%d", secID );
+          qDebug( "Needed BoxSecID=%d", secID );
 
           if( secID >= 0 && secID <= MAX_TILE_NUMBER )
             {
@@ -1493,7 +1495,7 @@ void MapContents::proofeSection( bool isPrint )
         }
     }
 
-  // qDebug() << "MapContents::proofeSection() loadPoints=" << loadPoints;
+  qDebug() << "MapContents::proofeSection() loadPoints=" << loadPoints;
 
   // Checking for point data
   if( loadPoints == true )
