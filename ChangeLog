@@ -11,6 +11,17 @@
 #
 ################################################################################
 
+2023-01-17 Axel Pauli <kflog.cumulus@gmail.com>
+
+  * Issue #10 fixed. Enhance user experience with mouse wheel zooming.
+  * Issue #25 fixed. Allow to set transparency on forest areas.
+  * Issue #62 fixed. Remove obsolete welt2000 support.
+  * Issue #63 fixed. Adapt openAIP aeronautical data to its new Json interfaces.
+  * Issue #64 fixed. Remove Qt4 deprecation warnings reported by the compiler.
+  * Issue #65 fixed. Update SeeYou file reader and writer.
+  * Issue #66 fixed. Update cylinder map projection automatically to the center
+                     of displayed map.
+                     
 2016-12-28 Axel Pauli <kflog.cumulus@gmail.com>
 
   * Issue #56 fixed. Wrong IGC output by Filser.
