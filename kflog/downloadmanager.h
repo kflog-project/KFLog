@@ -11,8 +11,6 @@
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
 /**
@@ -28,8 +26,7 @@
  * \date 2010-2023
  */
 
-#ifndef DOWNLOAD_MANAGER_H
-#define DOWNLOAD_MANAGER_H
+#pragma once
 
 #include <QtCore>
 
@@ -46,15 +43,28 @@ class DownloadManager : public QObject
  public:
 
   /**
+   * Types used by automatic download actions.
+   */
+  enum AutoDownloadType { ADT_NotSet = 0, Automatic, Inhibited };
+
+  /**
    * Creates a download manager instance.
    */
   DownloadManager( QObject *parent = 0 );
+
+  virtual ~DownloadManager();
 
   /**
    * Requests to download the passed url and to store the result under the
    * passed file destination. Destination must consist of a full path.
    */
   bool downloadRequest( QString &url, QString &destination );
+
+  /**
+   * Displays a message box and ask the user, weather files shall be downloaded
+   * from the Internet.
+   */
+  int askUserForDownload();
 
   signals:
 
@@ -100,8 +110,11 @@ class DownloadManager : public QObject
    */
   QQueue< QPair<QString, QString> > queue;
 
-  /** Mutex to protect data accesses. */
+  /** Mutex to protect local data accesses. */
   QMutex mutex;
+
+  /** Mutex to protect global data accesses. */
+  static QMutex mutexGlobal;
 
   /** Counter for download request. */
   int requests;
@@ -119,7 +132,7 @@ class DownloadManager : public QObject
    * A black list, containing all not downloadable URLs to avoid a download
    * dead lock.
    */
-  static QSet<QString> blackList;
+  static QStringList blackList;
 
   /**
    * A log list, containing all downloaded URLs to avoid a download
@@ -128,6 +141,12 @@ class DownloadManager : public QObject
    * the right format and were downloaded again and again.
    */
   static QSet<QString> logList;
+
+  /**
+   * Used to determine, if we shall display message box asking for download
+   * of missing data from the Internet.
+   *
+   */
+  static bool askUser;
 };
 
-#endif /* DOWNLOAD_MANAGER_H */

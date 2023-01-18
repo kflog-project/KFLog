@@ -98,11 +98,6 @@ class MapContents : public QObject
                            FlightList };
 
   /**
-   * Types used by automatic download actions.
-   */
-  enum AutoDownloadType { ADT_NotSet = 0, Automatic, Inhibited };
-
-  /**
    * Creates a new MapContents-object.
    */
   MapContents( QObject* object = 0 );
@@ -395,7 +390,7 @@ class MapContents : public QObject
   /*
    * Called, if openAIP airspace files shall be downloaded.
    */
-  void slotDownloadOpenAipAirspaceFiles(bool askUser);
+  void slotDownloadOpenAipAirspaceFiles();
 
   /**
    * Reload airspace data. Can be called after a configuration change.
@@ -405,7 +400,7 @@ class MapContents : public QObject
   /*
    * Called, if openAIP point data files shall be downloaded.
    */
-  void slotDownloadOpenAipPointFiles(bool askUser);
+  void slotDownloadOpenAipPointFiles();
 
   /**
    * Called to check, if an openAIP point data update is necessary. The update
@@ -697,12 +692,6 @@ class MapContents : public QObject
   QString mapDir;
 
   /**
-   * Used to determine, if we must display message boxes on missing
-   * map-directories.
-   */
-  bool askUser;
-
-  /**
    * Flag to indicate, if point data load is needed.
    */
   bool loadPoints;
@@ -737,14 +726,6 @@ class MapContents : public QObject
    * index as value
    */
   QHash<short, uchar> isoHash;
-
-  /**
-   * Displays a message box and asks, weather files shall be downloaded from
-   * the Internet.
-   *
-   * \param what A description what shall be downloaded.
-   */
-  int __askUserForDownload( QString what );
 
   /**
    * Try to download a missing ground/terrain file.

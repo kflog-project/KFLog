@@ -95,7 +95,6 @@ extern QSettings _settings;
 MapContents::MapContents( QObject* object ) :
   QObject(object),
   currentFlight(0),
-  askUser(true),
   loadPoints(true),
   loadAirspaces(true),
   m_downloadManger(0),
@@ -117,10 +116,6 @@ MapContents::MapContents( QObject* object ) :
 
   // Create all needed map directories.
   createMapDirectories();
-
-  // The user is asked once after each startup, if he wants to download
-  // missing map files.
- _settings.setValue("/Internet/AutomaticMapDownload", ADT_NotSet);
 }
 
 MapContents::~MapContents()
@@ -193,12 +188,6 @@ void MapContents::slotCloseFlight()
  */
 bool MapContents::__downloadMapFile( QString &file, QString &directory )
 {
-  if( _settings.value( "/Internet/AutomaticMapDownload", ADT_NotSet ).toInt() == Inhibited )
-    {
-      qDebug() << "Auto Download Inhibited";
-      return false;
-    }
-
   qDebug() << "MapContents::__downloadMissingMapFile()" << file;
 
   if( m_downloadManger == static_cast<DownloadManager *> (0) )
@@ -285,14 +274,8 @@ void MapContents::slotReloadPointData()
   emit contentsChanged();
 }
 
-void MapContents::slotDownloadOpenAipAirspaceFiles( bool askUser )
+void MapContents::slotDownloadOpenAipAirspaceFiles()
 {
-  if( askUser == true && __askUserForDownload( tr("openAIP airspace") ) != Automatic )
-    {
-      qDebug() << "openAipAirspaces: Auto Download Inhibited";
-      return;
-    }
-
   QString countries = _settings.value("/Airspace/Countries", "").toString();
 
   if( countries.isEmpty() )
@@ -383,14 +366,8 @@ void MapContents::slotReloadAirspaceData()
   emit contentsChanged();
 }
 
-void MapContents::slotDownloadOpenAipPointFiles( bool askUser )
+void MapContents::slotDownloadOpenAipPointFiles()
 {
-  if( askUser == true && __askUserForDownload(tr("openAIP points") ) != Automatic )
-    {
-      qDebug() << "openAipPointFiles: Auto Download Inhibited";
-      return;
-    }
-
   QString countries = _settings.value("/Points/Countries", "").toString();
 
   if( countries.isEmpty() )
@@ -545,7 +522,7 @@ void MapContents::slotCheckOpenAipPointData4Update()
         }
 
       // If one file is out of date we download all files.
-      slotDownloadOpenAipPointFiles( true );
+      slotDownloadOpenAipPointFiles();
       break;
     }
 }
@@ -596,7 +573,7 @@ void MapContents::slotCheckOpenAipAsData4Update()
         }
 
       // If one file is out of date we download all files.
-      slotDownloadOpenAipAirspaceFiles( true );
+      slotDownloadOpenAipAirspaceFiles();
       break;
     }
 }
@@ -633,7 +610,7 @@ void MapContents::slotGetOpenAipPoints()
 
   if( pc.isEmpty() == false )
     {
-      slotDownloadOpenAipPointFiles( true );
+      slotDownloadOpenAipPointFiles();
     }
 }
 
@@ -669,7 +646,7 @@ void MapContents::slotGetOpenAipAirspaces()
 
   if( ac.isEmpty() == false )
     {
-      slotDownloadOpenAipAirspaceFiles( true );
+      slotDownloadOpenAipAirspaceFiles();
     }
 }
 
@@ -715,17 +692,7 @@ bool MapContents::__readTerrainFile( const int fileSecID,
     {
       qWarning() << "KFLog: Can not open Terrain file" << pathName;
 
-      int answer = __askUserForDownload( tr("KFLog maps") );
-
-      if( answer == Automatic )
-        {
-          __downloadMapFile( file, path );
-        }
-      else
-        {
-          qDebug() << "Auto download is disabled! Bye";
-        }
-
+      __downloadMapFile( file, path );
       return false;
     }
 
@@ -911,13 +878,7 @@ bool MapContents::__readBinaryFile( const int  fileSecID,
     {
       qWarning() << "KFLog: Can not open map file" << pathName;
 
-      int answer = __askUserForDownload( tr("KFLog maps") );
-
-      if( answer == Automatic )
-        {
-          __downloadMapFile( file, path );
-        }
-
+      __downloadMapFile( file, path );
       return false;
     }
 
@@ -1171,50 +1132,6 @@ void MapContents::appendFlight(Flight* flight)
   // Signal to object tree about new flight to slotNewFlightAdded
   emit newFlightAdded( flight );
   emit currentFlightChanged();
-}
-
-int MapContents::__askUserForDownload( QString what )
-{
-  extern MainWindow *_mainWindow;
-
-  int result = _settings.value( "/Internet/AutomaticMapDownload", ADT_NotSet ).toInt();
-
-  if( askUser == true && result == ADT_NotSet )
-    {
-      int ret = QMessageBox::question(_mainWindow,
-                tr("Automatic data download?"),
-                tr("<html>There are <b>%1</b> data missing or out dated!"
-                "<br><br>Do you want to download these data from the Internet?</html>")
-                 .arg( what ),
-                 QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel );
-
-      switch (ret)
-        {
-          case QMessageBox::Yes:
-
-            _settings.setValue("/Internet/AutomaticMapDownload", Automatic);
-            result = Automatic;
-            askUser = false;
-
-            break;
-
-          case QMessageBox::No:
-
-            _settings.setValue( "/Internet/AutomaticMapDownload", Inhibited );
-            result = Inhibited;
-            askUser = false;
-            break;
-
-          case QMessageBox::Cancel:
-
-            _settings.setValue( "/Internet/AutomaticMapDownload", ADT_NotSet );
-            result = ADT_NotSet;
-            askUser = false;
-            break;
-        }
-    }
-
-  return result;
 }
 
 /**

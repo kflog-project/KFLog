@@ -11,6 +11,10 @@
 #
 ################################################################################
 
+2023-01-18 Axel Pauli <kflog.cumulus@gmail.com>
+
+  * Issue #67 fixed. Store download blacklist permanently.
+
 2023-01-17 Axel Pauli <kflog.cumulus@gmail.com>
 
   * Issue #10 fixed. Enhance user experience with mouse wheel zooming.

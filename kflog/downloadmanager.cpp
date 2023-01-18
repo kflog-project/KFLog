@@ -26,15 +26,19 @@
 #include <qt_windows.h>
 #endif
 
-#include <QtCore>
+#include <QtWidgets>
 #include <QtNetwork>
 
 #include "downloadmanager.h"
+#include "mainwindow.h"
+extern QSettings _settings;
 
 const double DownloadManager::MinFsSpace = 25.0; // 25MB
 
-QSet<QString> DownloadManager::blackList;
+QStringList DownloadManager::blackList;
 QSet<QString> DownloadManager::logList;
+QMutex DownloadManager::mutexGlobal;
+bool DownloadManager::askUser = true;
 
 /**
  * Creates a download manager instance.
@@ -46,10 +50,77 @@ DownloadManager::DownloadManager( QObject *parent ) :
   requests(0),
   errors(0)
 {
+  static bool first = true;
+  mutexGlobal.lock();
+
+  if( first == true )
+    {
+      // Load blacklist from configuration at first call of class.
+      first = false;
+      blackList = _settings.value( "/DownloadManager/BlackList", QStringList() ).toStringList();
+
+      // The user is asked once after each startup, if he wants to download
+      // missing map files.
+     _settings.setValue("/Internet/AutomaticMapDownload", ADT_NotSet);
+    }
+
+  mutexGlobal.unlock();
+
   client = new HttpClient(this, false);
 
   connect( client, SIGNAL( finished(QString &, QNetworkReply::NetworkError) ),
            this, SLOT( slotFinished(QString &, QNetworkReply::NetworkError) ));
+}
+
+DownloadManager::~DownloadManager()
+{
+  mutexGlobal.lock();
+  _settings.setValue( "/DownloadManager/BlackList", blackList );
+  _settings.sync();
+  mutexGlobal.unlock();
+}
+
+int DownloadManager::askUserForDownload()
+{
+  extern MainWindow* _mainWindow;
+
+  int result = _settings.value( "/Internet/AutomaticMapDownload", ADT_NotSet ).toInt();
+
+  if( askUser == true && result == ADT_NotSet )
+    {
+      int ret = QMessageBox::question(_mainWindow,
+                tr("Automatic data download?"),
+                tr("<html>There are data missing or out dated!"
+                "<br><br>Do you want to download these data from the Internet?</html>"),
+                 QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel );
+
+      switch (ret)
+        {
+          case QMessageBox::Yes:
+
+            _settings.setValue("/Internet/AutomaticMapDownload", Automatic);
+            result = Automatic;
+            askUser = false;
+            break;
+
+          case QMessageBox::No:
+
+            _settings.setValue( "/Internet/AutomaticMapDownload", Inhibited );
+            result = Inhibited;
+            askUser = false;
+            break;
+
+          case QMessageBox::Cancel:
+          default:
+
+            _settings.setValue( "/Internet/AutomaticMapDownload", ADT_NotSet );
+            result = ADT_NotSet;
+            askUser = false;
+            break;
+        }
+    }
+
+  return result;
 }
 
 /**
@@ -59,13 +130,23 @@ DownloadManager::DownloadManager( QObject *parent ) :
 bool DownloadManager::downloadRequest( QString &url, QString &destination )
 {
   mutex.lock();
+  mutexGlobal.lock();
+
+  bool isBlackListed = blackList.contains(url) ;
 
   // Check input parameters. If url was already requested the download
   // is rejected.
   if( url.isEmpty() || urlSet.contains(url) || destination.isEmpty() ||
-      blackList.contains(url) )
+      isBlackListed )
     {
+      if( isBlackListed )
+        {
+          qWarning( "DownloadManager(%d): %s is black listed. Request is rejected!",
+                    __LINE__, url.toLatin1().data() );
+        }
+
       mutex.unlock();
+      mutexGlobal.unlock();
       return false;
     }
 
@@ -73,11 +154,20 @@ bool DownloadManager::downloadRequest( QString &url, QString &destination )
       logList.contains(url) )
     {
       // That shall prevent the repeated download of wrong map files.
-      qWarning( "DownloadManager(%d): %s already downloaded. Request is rejected!",
+      qWarning( "DownloadManager(%d): %s was already downloaded. Request is rejected!",
                 __LINE__, url.toLatin1().data() );
       mutex.unlock();
+      mutexGlobal.unlock();
       return false;
     }
+
+  if( askUserForDownload() != Automatic )
+    {
+      mutexGlobal.unlock();
+      return false;
+    }
+
+  mutexGlobal.unlock();
 
   QString destDir = QFileInfo(destination).absolutePath();
 
@@ -151,16 +241,23 @@ void DownloadManager::slotFinished( QString &urlIn, QNetworkReply::NetworkError 
       // Error already reported by the HTTP client
       errors++;
 
-      // Put URL in the black list to avoid a new download action.
-      blackList.insert( urlIn );
+      if( codeIn == QNetworkReply::ContentNotFoundError )
+        {
+          // Put URL in the black list to avoid a new download action.
+          mutexGlobal.lock();
+          blackList.append( urlIn );
+          mutexGlobal.unlock();
 
-      qWarning( "DownloadManager(%d): URL %s put into black list due to ERROR %d!",
-                __LINE__, urlIn.toLatin1().data(), codeIn );
+          qWarning( "DownloadManager(%d): URL %s put into black list due to ERROR %d!",
+                    __LINE__, urlIn.toLatin1().data(), codeIn );
+        }
     }
   else
     {
-      // Store download url in log list.
+      // Store downloaded url in log list.
+      mutexGlobal.lock();
       logList.insert( urlIn );
+      mutexGlobal.unlock();
     }
 
   // Remove the last done request from the queue and from the url set.
