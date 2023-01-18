@@ -12,9 +12,8 @@ airfields and airspaces, but a complete elevation-map, roads cities, rivers
 and lots of other interesting objects.
 
 KFLog is fully ported to Qt5.15.2 the last official Qt5 release. Current
-Debian packages are to find [here in Git-Hub](https://github.com/kflog-project/KFLog/tree/master/Releases).
-
-And this is the latest [change log file](https://github.com/kflog-project/KFLog/blob/master/ChangeLog).
+Debian packages are to find [here in Git-Hub](https://github.com/kflog-project/KFLog/tree/master/Releases)
+together the latest [change log file](https://github.com/kflog-project/KFLog/blob/master/ChangeLog).
 
 The current bug tracker is located at Git-Hub:
 
