@@ -1,4 +1,5 @@
-KFLog a flight planning and analysis software for Gliders running under Linux
+KFLog
+A flight planning and analysis software for Gliders running under Linux
 =====
 
 KFLog is a flight planning and post flight analysis application running on a
