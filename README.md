@@ -1,4 +1,5 @@
 KFLog
+=====
 A flight planning and analysis software for Gliders running under Linux
 =====
 
