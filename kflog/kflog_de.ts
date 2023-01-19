@@ -292,13 +292,23 @@
 <context>
     <name>DownloadManager</name>
     <message>
-        <location filename="downloadmanager.cpp" line="109"/>
-        <location filename="downloadmanager.cpp" line="230"/>
+        <location filename="downloadmanager.cpp" line="92"/>
+        <source>Automatic data download?</source>
+        <translation>Automatisches Herunterladen von Daten?</translation>
+    </message>
+    <message>
+        <location filename="downloadmanager.cpp" line="93"/>
+        <source>&lt;html&gt;There are data missing or out dated!&lt;br&gt;&lt;br&gt;Do you want to download these data from the Internet?&lt;/html&gt;</source>
+        <translation>&lt;html&gt;Dateien fehlen oder sind veraltet!&lt;br&gt;&lt;br&gt;Möchten Sie diese Dateien aus dem Internet herunterladen?&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="downloadmanager.cpp" line="199"/>
+        <location filename="downloadmanager.cpp" line="327"/>
         <source>downloading %1</source>
         <translation>lade %1 herunter</translation>
     </message>
     <message>
-        <location filename="downloadmanager.cpp" line="179"/>
+        <location filename="downloadmanager.cpp" line="276"/>
         <source>Downloads finished</source>
         <translation>Herunterladen beendet</translation>
     </message>
@@ -1638,7 +1648,7 @@
         <translation>Über &amp;KFLog</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1925"/>
+        <location filename="mainwindow.cpp" line="1924"/>
         <source>About KFLog</source>
         <translation>Über KFLog</translation>
     </message>
@@ -1664,8 +1674,8 @@
         <location filename="mainwindow.cpp" line="1384"/>
         <location filename="mainwindow.cpp" line="1427"/>
         <location filename="mainwindow.cpp" line="1508"/>
-        <location filename="mainwindow.cpp" line="1850"/>
-        <location filename="mainwindow.cpp" line="1875"/>
+        <location filename="mainwindow.cpp" line="1849"/>
+        <location filename="mainwindow.cpp" line="1874"/>
         <source>Ready.</source>
         <translation>Fertig.</translation>
     </message>
@@ -1675,19 +1685,7 @@
         <translation>Öffne Aufgabe</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1928"/>
-        <source>&lt;html&gt;KFLog %1, &amp;copy; 2000-2015, The KFLog-Team&lt;/html&gt;</source>
-        <oldsource>&lt;html&gt;KFLog %1, &amp;copy; 2000-2014, The KFLog-Team&lt;/html&gt;</oldsource>
-        <translation>&lt;html&gt;KFLog %1, &amp;copy; 2000-2015, Das KFLog-Team&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="1932"/>
-        <source>&lt;html&gt;KFLog %1, compiled at %2 with QT %3&lt;br&gt;&lt;br&gt;Homepage: &lt;a href=&quot;http://www.kflog.org/kflog/&quot;&gt;www.kflog.org/kflog/&lt;/a&gt;&lt;br&gt;&lt;br&gt;GitHub Software Repository: &lt;a href=&quot;https://github.com/kflog-project/KFLog&quot;&gt;https://github.com/kflog-project/KFLog&lt;/a&gt;&lt;br&gt;&lt;br&gt;ChangeLog of &lt;a href=&quot;https://github.com/kflog-project/KFLog/blob/%1/ChangeLog&quot;&gt;%1&lt;/a&gt;&lt;br&gt;&lt;br&gt;Report bugs to: &lt;a href=&quot;https://github.com/kflog-project/KFLog/issues&quot;&gt;kflog-project/KFLog/issues&lt;/a&gt;&lt;br&gt;&lt;br&gt;Published under the &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPLv3&lt;/a&gt;&lt;/html&gt;</source>
-        <oldsource>&lt;html&gt;KFLog %1, compiled at %2 with QT %3&lt;br&gt;&lt;br&gt;Homepage: &lt;a href=&quot;http://www.kflog.org/kflog/&quot;&gt;www.kflog.org/kflog/&lt;/a&gt;&lt;br&gt;&lt;br&gt;GitHub Software Repository: &lt;a href=&quot;https://github.com/kflog-project/KFLog&quot;&gt;https://github.com/kflog-project/KFLog&lt;/a&gt;&lt;br&gt;&lt;br&gt;ChangeLog &lt;a href=&quot;https://github.com/kflog-project/KFLog/blob/%1/ChangeLog&quot;&gt;%1&lt;/a&gt;&lt;br&gt;&lt;br&gt;Report bugs to: &lt;a href=&quot;https://github.com/kflog-project/KFLog/issues&quot;&gt;kflog-project/KFLog/issues&lt;/a&gt;&lt;br&gt;&lt;br&gt;Published under the &lt;a href=&quot;http://www.gnu.org/licenses/licenses.html#GPL&quot;&gt;GPLv3&lt;/a&gt;&lt;/html&gt;</oldsource>
-        <translation>&lt;html&gt;KFLog %1, gebaut am %2 mit QT %3&lt;br&gt;&lt;br&gt;Internet Adresse: &lt;a href=&quot;http://www.kflog.org/kflog/&quot;&gt;www.kflog.org/kflog/&lt;/a&gt;&lt;br&gt;&lt;br&gt;GitHub Software Archiv: &lt;a href=&quot;https://github.com/kflog-project/KFLog&quot;&gt;https://github.com/kflog-project/KFLog&lt;/a&gt;&lt;br&gt;&lt;br&gt;Änderungen zu &lt;a href=&quot;https://github.com/kflog-project/KFLog/blob/%1/ChangeLog&quot;&gt;%1&lt;/a&gt;&lt;br&gt;&lt;br&gt;Melde Fehler an: &lt;a href=&quot;https://github.com/kflog-project/KFLog/issues&quot;&gt;kflog-project/KFLog/issues&lt;/a&gt;&lt;br&gt;&lt;br&gt;Veröffentlicht unter der &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPLv3&lt;/a&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="1946"/>
+        <location filename="mainwindow.cpp" line="1945"/>
         <source>&lt;html&gt;&lt;b&gt;Temporarily Maintainer&lt;/b&gt;&lt;blockquote&gt;Axel Pauli &amp;lt;&lt;a href=&quot;mailto:kflog.cumulus&amp;#64;gmail.com&quot;&gt;kflog.cumulus&amp;#64;gmail.com&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;&lt;b&gt;Developers, Maintainers&lt;/b&gt;&lt;blockquote&gt;Axel Pauli (Developer, Portage to Qt4)&lt;br&gt;Constantijn Neeteson (Maintenance, Core-developer)&lt;br&gt;Florian Ehinger (Maintenance, Core-developer, Mapdata)&lt;br&gt;Heiner Lamprecht (Maintenance, Core-developer)&lt;br&gt;Andr&amp;eacute; Somers (Developer, Waypoint-handling, Plugin architecture, ...)&lt;br&gt;Christof Bodner (Developer, OLC Optimization)&lt;br&gt;Eggert Ehmke (Developer)&lt;br&gt;Harald Maier (Developer, Waypoint-Dialog, Task-handling)&lt;br&gt;Thomas Nielsen (Developer, 3D-Dialog)&lt;br&gt;Jan Kr&amp;uuml;ger (Developer, 3D-Dialog)&lt;br&gt;Matthias Degenkolb (Developer, MS-Windows portage)&lt;br&gt;Peter Simon (Developer, MS-Windows portage)&lt;/blockquote&gt;&lt;b&gt;Server Sponsor&lt;/b&gt;&lt;blockquote&gt;Heiner Lamprecht &amp;lt;&lt;a href=&quot;mailto:heiner&amp;#64;kflog.org&quot;&gt;heiner&amp;#64;kflog.org&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;Thanks to all, who have made available this software!&lt;br&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;b&gt;Augenblickliche Wartung durch&lt;/b&gt;&lt;blockquote&gt;Axel Pauli &amp;lt;&lt;a href=&quot;mailto:kflog.cumulus&amp;#64;gmail.com&quot;&gt;kflog.cumulus&amp;#64;gmail.com&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;&lt;b&gt;Entwickler und Instandhalter&lt;/b&gt;&lt;blockquote&gt;Axel Pauli (Entwickler, Portierung zu Qt4)&lt;br&gt;Constantijn Neeteson (Instandhalter, Kernentwickler)&lt;br&gt;Florian Ehinger (Instandhalter, Kernentwickler, Kartendaten)&lt;br&gt;Heiner Lamprecht (Instandhalter, Kernentwickler)&lt;br&gt;Andr&amp;eacute; Somers (Entwickler, Wegpunkte, Plugin Architektur, ...)&lt;br&gt;Christof Bodner (Entwickler, OLC Optimierung)&lt;br&gt;Eggert Ehmke (Entwickler)&lt;br&gt;Harald Maier (Entwickler, Wegpunkt-Dialog, Aufgaben)&lt;br&gt;Thomas Nielsen (Entwickler, 3D-Dialog)&lt;br&gt;Jan Kr&amp;uuml;ger (Entwickler, 3D-Dialog)&lt;br&gt;Matthias Degenkolb (Entwickler, MS-Windows Portierung)&lt;br&gt;Peter Simon (Entwickler, MS-Windows Portierung)&lt;/blockquote&gt;&lt;b&gt;Server Sponsor&lt;/b&gt;&lt;blockquote&gt;Heiner Lamprecht &amp;lt;&lt;a href=&quot;mailto:heiner&amp;#64;kflog.org&quot;&gt;heiner&amp;#64;kflog.org&lt;/a&gt;&amp;gt;&lt;/blockquote&gt;Danke an alle, die beim Erstellen dieser Software mitgewirkt haben und sie weiter pflegen!&lt;br&gt;&lt;/html&gt;</translation>
     </message>
@@ -1955,24 +1953,34 @@ Flugaufgaben können ebenso mit dem Flugaufgaben-Editor bearbeite werden: &lt;i&
         <translation>Drucke Karte ...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1862"/>
+        <location filename="mainwindow.cpp" line="1861"/>
         <source>Printing flight ...</source>
         <translation>Drucke Flug ...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1866"/>
+        <location filename="mainwindow.cpp" line="1865"/>
         <source>Printing task ...</source>
         <translation>Drucke Aufgabe ...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1870"/>
+        <location filename="mainwindow.cpp" line="1869"/>
         <source>Not yet available for type: %1</source>
         <translation>Nicht verfügbar für Typ: %1</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="1871"/>
+        <location filename="mainwindow.cpp" line="1870"/>
         <source>Type not available</source>
         <translation>Typ nicht verfügbar</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="1927"/>
+        <source>&lt;html&gt;KFLog %1, &amp;copy; 2000-2023, The KFLog-Team&lt;/html&gt;</source>
+        <translation>&lt;html&gt;KFLog %1, &amp;copy; 2000-2023, Das KFLog-Team&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="1931"/>
+        <source>&lt;html&gt;KFLog %1, compiled at %2 with QT %3&lt;br&gt;&lt;br&gt;Homepage: &lt;a href=&quot;http://www.kflog.org/kflog/&quot;&gt;www.kflog.org/kflog/&lt;/a&gt; outdated, use GitHub link&lt;br&gt;&lt;br&gt;GitHub Software Repository: &lt;a href=&quot;https://github.com/kflog-project/KFLog&quot;&gt;https://github.com/kflog-project/KFLog&lt;/a&gt;&lt;br&gt;&lt;br&gt;ChangeLog of &lt;a href=&quot;https://github.com/kflog-project/KFLog/blob/%1/ChangeLog&quot;&gt;%1&lt;/a&gt;&lt;br&gt;&lt;br&gt;Report bugs to: &lt;a href=&quot;https://github.com/kflog-project/KFLog/issues&quot;&gt;kflog-project/KFLog/issues&lt;/a&gt;&lt;br&gt;&lt;br&gt;Published under the &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPLv3&lt;/a&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;KFLog %1, compiliert am %2 mit QT %3&lt;br&gt;&lt;br&gt;Homepage: &lt;a href=&quot;http://www.kflog.org/kflog/&quot;&gt;www.kflog.org/kflog/&lt;/a&gt; veraltet, benutze GitHub Link&lt;br&gt;&lt;br&gt;GitHub Software Archiv: &lt;a href=&quot;https://github.com/kflog-project/KFLog&quot;&gt;https://github.com/kflog-project/KFLog&lt;/a&gt;&lt;br&gt;&lt;br&gt;ChangeLog von &lt;a href=&quot;https://github.com/kflog-project/KFLog/blob/%1/ChangeLog&quot;&gt;%1&lt;/a&gt;&lt;br&gt;&lt;br&gt;Melde Fehler an: &lt;a href=&quot;https://github.com/kflog-project/KFLog/issues&quot;&gt;kflog-project/KFLog/issues&lt;/a&gt;&lt;br&gt;&lt;br&gt;Publiziert unter der &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPLv3&lt;/a&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="286"/>
@@ -2118,143 +2126,117 @@ Weitere Mausunterstützung in der Karte:
 <context>
     <name>MapContents</name>
     <message>
-        <location filename="mapcontents.cpp" line="252"/>
-        <location filename="mapcontents.cpp" line="346"/>
-        <location filename="mapcontents.cpp" line="461"/>
+        <location filename="mapcontents.cpp" line="241"/>
+        <location filename="mapcontents.cpp" line="329"/>
+        <location filename="mapcontents.cpp" line="438"/>
         <source>%1 download(s) with %2 error(s) done.</source>
         <translation>%1 Download(s) mit %2 Fehler(n) beendet.</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="255"/>
+        <location filename="mapcontents.cpp" line="244"/>
         <source>Downloads finished</source>
         <translation>Herunterladen beendet</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="268"/>
-        <location filename="mapcontents.cpp" line="367"/>
-        <location filename="mapcontents.cpp" line="482"/>
+        <location filename="mapcontents.cpp" line="257"/>
+        <location filename="mapcontents.cpp" line="350"/>
+        <location filename="mapcontents.cpp" line="459"/>
         <source>Network error occurred.
 All downloads are canceled!</source>
         <translation>Netwerk Fehler aufgetreten.
 Alle Downloads verworfen!</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="271"/>
-        <location filename="mapcontents.cpp" line="370"/>
-        <location filename="mapcontents.cpp" line="485"/>
+        <location filename="mapcontents.cpp" line="260"/>
+        <location filename="mapcontents.cpp" line="353"/>
+        <location filename="mapcontents.cpp" line="462"/>
         <source>Network Error</source>
         <translation>Netzwerk Fehler</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="290"/>
-        <source>openAIP airspace</source>
-        <translation>openAIP Luftraum</translation>
-    </message>
-    <message>
-        <location filename="mapcontents.cpp" line="349"/>
+        <location filename="mapcontents.cpp" line="332"/>
         <source>openAIP Airspace Downloads finished</source>
         <translation>openAIP Luftraum Downloads beendet</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="464"/>
+        <location filename="mapcontents.cpp" line="441"/>
         <source>openAIP Point Data Downloads finished</source>
         <translation>openAIP Punkt-Daten Download beendet</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="1185"/>
-        <source>Automatic data download?</source>
-        <translation>Automatisches Herunterladen von Daten?</translation>
-    </message>
-    <message>
-        <location filename="mapcontents.cpp" line="1186"/>
-        <source>&lt;html&gt;There are &lt;b&gt;%1&lt;/b&gt; data missing or out dated!&lt;br&gt;&lt;br&gt;Do you want to download these data from the Internet?&lt;/html&gt;</source>
-        <translation>&lt;html&gt;Es fehlen &lt;b&gt;%1&lt;/b&gt; oder sie sind veraltet!&lt;br&gt;&lt;br&gt;Möchtest du diese Daten aus dem Internet laden?&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location filename="mapcontents.cpp" line="1381"/>
+        <location filename="mapcontents.cpp" line="1298"/>
         <source>Map directories not found</source>
         <translation>Karten Verzeichnisse nicht gefunden</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="1383"/>
+        <location filename="mapcontents.cpp" line="1300"/>
         <source>The directories for the map files do not exist.</source>
         <translation>Die Verzeichnisse für die Karten Dateien gibt es nicht.</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="1384"/>
+        <location filename="mapcontents.cpp" line="1301"/>
         <source>Please select the map root directory.</source>
         <translation>Bitte wähle ein Karten Wurzelverzeichnis aus.</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="1388"/>
+        <location filename="mapcontents.cpp" line="1305"/>
         <source>Select a map root directory!</source>
         <translation>Wähle ein Karten Wurzelverzeichnis aus!</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="1401"/>
+        <location filename="mapcontents.cpp" line="1318"/>
         <source>Loading map data ...</source>
         <translation>Lade Karten Dateien ...</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="2035"/>
+        <location filename="mapcontents.cpp" line="1952"/>
         <source>&lt;html&gt;&lt;b&gt;Graphical Task Planning&lt;/b&gt;&lt;br&gt;&lt;br&gt;If a new task is created the graphical task planning is activated automatically. Press the left mouse button on a point at the map and you will get displayed a popup menu with the possible actions. Position the mouse pointer at an existing waypoint to add or delete it from the task. Position the mouse pointer at a free point at the map to create a new waypoint. The new created waypoint will be added to the task. Waypoints are always appended at the end of the task. If you need more flexibility, you should open the task in the task editor. With the editor you have more possibilities to modify the task.&lt;br&gt;&lt;br&gt;To finish the graphical task planning use the menu point &lt;b&gt;&lt;i&gt;End task planning&lt;/i&gt;&lt;/b&gt;. It is important to do that otherwise the task is not closed.&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;b&gt;Grafische Aufgabenplanung&lt;/b&gt;&lt;br&gt;&lt;br&gt;Beim Erstellen einer neuen Aufgabe wird der grafische Aufgabenplaner automatisch gestartet. Beim Drücken der linken Maustaste über einem Punkt auf der karte wird ein Popup Menu mit den verfügbaren Aktionen angezeigt. Positioniere die Maus über einen existierenden Wegpunkt um diesen zur Aufgabe hinzuzufügen oder aus der Aufgabe zu löschen. Positioniere die Maus über einer freien Fläche auf der Karte um einen neuen Wegpunkt an der Mausposition zu definieren. Der neue Wegpunkt wird automatsich zur Aufgabe hinzugefügt. Wegpunkte werden immer an eine Aufgabe angefügt. Falls sie mehr flexibilität in der Aufgabenbearbeitung benötigen, öffnen sie bitte den Aufgabeneditor.&lt;br&gt;&lt;br&gt;Um den graphischen Aufgabenplaner zu beenden wählen sie den Menupunkt&lt;b&gt;&lt;i&gt;Aufgabenplaner beenden&lt;/i&gt;&lt;/b&gt;. Falls sie das nicht tun, wird die Definition der Aufgabe nicht abgeschlossen!&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="2091"/>
+        <location filename="mapcontents.cpp" line="2008"/>
         <source>Group-%1</source>
         <translation>Gruppe-%1</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="2189"/>
+        <location filename="mapcontents.cpp" line="2106"/>
         <source>File does not exist</source>
         <translation>Datei existiert nicht</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="2190"/>
+        <location filename="mapcontents.cpp" line="2107"/>
         <source>The selected file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;does not exist!</source>
         <translation>Die ausgewählte Datei&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;existiert nicht!</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="2197"/>
+        <location filename="mapcontents.cpp" line="2114"/>
         <source>File is empty</source>
         <translation>Datei ist leer</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="2198"/>
+        <location filename="mapcontents.cpp" line="2115"/>
         <source>The selected file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;is empty!</source>
         <translation>Die ausgewählte Datei&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;&lt;BR&gt;ist leer!</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="2205"/>
+        <location filename="mapcontents.cpp" line="2122"/>
         <source>No permission</source>
         <translation>Keine Rechte</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="2206"/>
+        <location filename="mapcontents.cpp" line="2123"/>
         <source>You don&apos;t have permission to access file&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;</source>
         <translation>Du hast keine Zugriffsrechte auf die Datei&lt;BR&gt;&lt;B&gt;%1&lt;/B&gt;</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="2318"/>
+        <location filename="mapcontents.cpp" line="2235"/>
         <source>Load task failed!</source>
         <translation>Aufgabe laden fehlgeschlagen!</translation>
     </message>
     <message>
-        <location filename="mapcontents.cpp" line="2319"/>
+        <location filename="mapcontents.cpp" line="2236"/>
         <source>Wrong XML task document type </source>
         <translation>Falscher XML Aufgaben Dokumenten Typ </translation>
-    </message>
-    <message>
-        <location filename="mapcontents.cpp" line="388"/>
-        <source>openAIP points</source>
-        <translation>openAIP-Punkte</translation>
-    </message>
-    <message>
-        <location filename="mapcontents.cpp" line="718"/>
-        <location filename="mapcontents.cpp" line="914"/>
-        <source>KFLog maps</source>
-        <translation>KFLog-Karten</translation>
     </message>
 </context>
 <context>
