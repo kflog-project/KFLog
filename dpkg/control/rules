@@ -8,9 +8,12 @@
 # This special exception was added by Craig Small in version 0.37 of dh-make.
 
 # Uncomment this to turn on verbose mode.
-#export DH_VERBOSE=1
+export DH_VERBOSE=1
 
 CFLAGS = -Wall
+
+# This is the debhelper compatability version to use.
+export DH_COMPAT=10
 
 configure: configure-stamp
 configure-stamp:

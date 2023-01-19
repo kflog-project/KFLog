@@ -1,15 +1,17 @@
 Source: kflog
-Section: other
+Section: utils
 Priority: optional
 Maintainer: Axel Pauli <kflog.cumulus@gmail.com>
-Build-Depends: debhelper (>= 7.0.50~)
-Standards-Version: 3.9.1
-Homepage: http://www.kflog.org/
-#Vcs-Git: git://git.debian.org/collab-maint/kflog-4.0.0.git
-#Vcs-Browser: http://git.debian.org/?p=collab-maint/kflog-4.0.0.git;a=summary
+Build-Depends: debhelper-compat (= 13), libqt5core5a:amd64 (>= 5.14.0), libqt5network5:amd64 (>= 5.14.0), libqt5xml5:amd64 (>= 5.14.0), libqt5gui5:amd64 (>= 5.14.0), libqt5widgets5:amd64 (>= 5.14.0), qt5-qmake:amd64 (>= 5.14.0), qttools5-dev-tools (>= 5.14.0)
+Standards-Version: 4.5.1
+Homepage: https://github.com/kflog-project/KFLog
+Vcs-Browser: https://github.com/kflog-project/KFLog
+Vcs-Git: https://github.com/kflog-project/KFLog
 
 Package: kflog
 Architecture: any
+Section: utils
+Priority: optional
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Flight planner and logger for glider pilots
  KFLog gives you a powerful tool to plan your flight tasks and analyze your
@@ -21,4 +23,4 @@ Description: Flight planner and logger for glider pilots
  and lots of other interesting objects.
  .
  For more information about KFLog please take a look at its home page at
- http://www.kflog.org/ and at https://github.com/kflog-project/KFLog.
+ https://github.com/kflog-project/KFLog.

@@ -43,12 +43,16 @@ LANG=
 
 DATE=$(shell date +'%a, %d %b %Y %H:%M:%S %z')
 
+# Debian binary package options
+# BIN_PACK=--build=any --no-sign
+BIN_PACK=-b --no-sign
+
 # adapt install path to your needs if necessary
 INSTALL_ROOT = /opt/kflog
 
 # dh_make tool version 0.58 requires option '-r old' to get working right
 ifeq "$(shell dh_make -v | grep -c 'version 0\.58')" "1"
-	DH_MAKE_OPT=-r old
+	#DH_MAKE_OPT=-r old
 endif
 
 usage:
@@ -75,7 +79,7 @@ resetdate:
 .PHONY : qmake
 qmake:
 	qmake -Wall -nocache kflog.pro
-  
+
 install_test: all
 	make INSTALL_ROOT=$(shell pwd)/release -f Makefile install
 	make INSTALL_ROOT=$(shell pwd)/release -f Makefile.qmake install_lang
@@ -109,9 +113,11 @@ distclean:	qmake
 
 .PHONY : dpkg dpkg_prepare dpkg_make dpkg_build
 
-dpkg:
-	@echo "===== Building a Debian package for KFLog $(VERSION) ====="
-	@$(MAKE) -f Makefile.qmake VERSION=$(VERSION) dpkg_prepare dpkg_make dpkg_build
+dpkg:	dpkg_prepare
+	@echo "===== Building a Debian binary package for KFLog $(VERSION) ====="
+	$(MAKE) -f Makefile.qmake VERSION=$(VERSION) \
+	DPKG_OPT="$(BIN_PACK)" DH_MAKE_OPT="-s --native" \
+	dpkg_make dpkg_build
 
 # This target prepares the Debian build. A fresh copy of KFLog is cheched out
 # from subversion. Therefore you need subversion access!
@@ -129,19 +135,23 @@ dpkg_prepare:
 # due to the VERSION macro. The special letters apostroph and quotation mark
 # cause problems in other shell commands, if they not expanded before.
 dpkg_make:
+	@rm -rf $(KFLOG_DEB)/debian
 	cd $(KFLOG_DEB); \
 	export DEBEMAIL='kflog.cumulus@gmail.com'; \
 	export DEBFULLNAME='Axel Pauli'; \
-	echo '\n' | dh_make --packagename $(KFLOG_REL) -c GPL -s --native $(DH_MAKE_OPT)
+	dh_make --packagename kflog -c gpl3 --yes $(DH_MAKE_OPT)
 	cd $(KFLOG_DEB)/dpkg/control; \
 	cp control rules prerm postinst ../../debian/; \
 	sed -e "s/__VERSION__/$(VERSION)/g" -e "s/__DATE__/$(DATE)/g" copyright > ../../debian/copyright; \
 	sed -e "s/__VERSION__/$(VERSION)/g" -e "s/__DATE__/$(DATE)/g" changelog > ../../debian/changelog
+	# Define the package format as native
+	@mkdir -p $(KFLOG_DEB)/debian/source
+	@echo '3.0 (native)' > $(KFLOG_DEB)/debian/source/format
 	
 # This target builds the debian package, if all is prepared before.
 dpkg_build:
 	cd $(KFLOG_DEB); \
-	dpkg-buildpackage -rfakeroot -b -us -uc
+	dpkg-buildpackage $(DPKG_OPT)
 
 # Copies all files of KFLog into the debian package area. It is called by the
 # Debian rule file.
@@ -167,28 +177,3 @@ dpkg_install:
 
 make_tar:	distclean
 	tar jcf $(HOME)/kflog.tar.bz2 .
-
-# copies change log and debian package to kflog web page
-.PHONY : copy2web
-
-copy2web:
-	@echo "ARCHITECTURE=$(ARCHITECTURE)"
-ifneq ($(ARCHITECTURE),amd64)
-	# 32bit is assumed
-	@rm -rf /tmp/kflog
-	@mkdir -p /tmp/kflog
-	@cp -p ChangeLog /tmp/kflog/ChangeLog_$(VERSION)
-	@cp -p $(KFLOG_DEB_ROOT)/kflog_$(VERSION)_i386.changes /tmp/kflog/kflog_$(VERSION)_$(DIST_NAME)_$(DIST_REL)_i386.changes
-	@cp -p $(KFLOG_DEB_ROOT)/kflog_$(VERSION)_i386.deb /tmp/kflog/kflog_$(VERSION)_$(DIST_NAME)_$(DIST_REL)_i386.deb
-	scp -C /tmp/kflog/* web31_axel@kflog.org:/srv/www/web31/web/fileadmin/user_upload/kflog_downloads/src/
-	@rm -rf /tmp/kflog
-else
-	# 64bit is assumed
-	@rm -rf /tmp/kflog
-	@mkdir -p /tmp/kflog
-	@cp -p ChangeLog /tmp/kflog/ChangeLog_$(VERSION)
-	@cp -p $(KFLOG_DEB_ROOT)/kflog_$(VERSION)_amd64.changes /tmp/kflog/kflog_$(VERSION)_$(DIST_NAME)_$(DIST_REL)_amd64.changes
-	@cp -p $(KFLOG_DEB_ROOT)/kflog_$(VERSION)_amd64.deb /tmp/kflog/kflog_$(VERSION)_$(DIST_NAME)_$(DIST_REL)_amd64.deb
-	scp -C /tmp/kflog/* web31_axel@kflog.org:/srv/www/web31/web/fileadmin/user_upload/kflog_downloads/src/
-	@rm -rf /tmp/kflog
-endif
