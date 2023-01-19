@@ -102,6 +102,14 @@ private:
      */
     bool findMapPoint( int delta, const QPoint& mapPosition, Waypoint *w );
 
+    /*
+     * Get the content of the map pixmap buffer.
+     */
+    const QPixmap& getPixMap() const
+    {
+      return pixBuffer;
+    }
+
   public slots:
 
     /**  */

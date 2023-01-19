@@ -83,7 +83,7 @@ MapConfig *_globalMapConfig = static_cast<MapConfig *> (0);
 /**
  * The map widget.
  */
-Map *_globalMap = static_cast<Map *> (0);
+Map *_globalMap = nullptr;
 
 
 MainWindow::MainWindow( QWidget *parent, Qt::WindowFlags flags ) :
@@ -305,7 +305,7 @@ QPixmap MainWindow::getPixmap( const QString& pixmapName )
 
   QPixmap pm;
 
-  if( ! QPixmapCache::find( path, pm ) )
+  if( ! QPixmapCache::find( path, &pm ) )
     {
       if( ! pm.load( path ) )
         {
@@ -981,7 +981,7 @@ void MainWindow::createStatusBar()
   statusLabel->setLineWidth(0);
   statusLabel->setAlignment( Qt::AlignHCenter | Qt::AlignVCenter );
 
-  int mw = QFontMetrics(font()).width(" 99:99:99 ");
+  int mw = QFontMetrics(font()).horizontalAdvance(" 99:99:99 ");
 
   statusTimeL = new QLabel(statusBar());
   statusTimeL->setMinimumWidth( mw );
@@ -991,7 +991,7 @@ void MainWindow::createStatusBar()
   statusTimeL->setLineWidth(0);
   statusTimeL->setAlignment( Qt::AlignHCenter | Qt::AlignVCenter );
 
-  mw = QFontMetrics(font()).width("999999 ft MSL");
+  mw = QFontMetrics(font()).horizontalAdvance("999999 ft MSL");
 
   statusAltitudeL = new QLabel(statusBar());
   statusAltitudeL->setMinimumWidth( mw );
@@ -1001,7 +1001,7 @@ void MainWindow::createStatusBar()
   statusAltitudeL->setLineWidth(0);
   statusAltitudeL->setAlignment( Qt::AlignRight | Qt::AlignVCenter );
 
-  mw = QFontMetrics(font()).width("99999 fpm");
+  mw = QFontMetrics(font()).horizontalAdvance("99999 fpm");
 
   statusVarioL = new QLabel(statusBar());
   statusVarioL->setMinimumWidth( mw );
@@ -1011,7 +1011,7 @@ void MainWindow::createStatusBar()
   statusVarioL->setLineWidth(0);
   statusVarioL->setAlignment( Qt::AlignRight | Qt::AlignVCenter );
 
-  mw = QFontMetrics(font()).width("9999 km/h");
+  mw = QFontMetrics(font()).horizontalAdvance("9999 km/h");
 
   statusSpeedL = new QLabel(statusBar());
   statusSpeedL->setMinimumWidth( mw );
@@ -1035,7 +1035,7 @@ void MainWindow::createStatusBar()
   statusLonL->setLineWidth(0);
   statusLonL->setAlignment( Qt::AlignHCenter | Qt::AlignVCenter );
 
-  mw = QFontMetrics(font()).width("999999 ft MSL");
+  mw = QFontMetrics(font()).horizontalAdvance("999999 ft MSL");
 
   statusTerrainElevation = new QLabel(statusBar());
   statusTerrainElevation->setFixedHeight( statusLabel->sizeHint().height() );
@@ -1831,20 +1831,19 @@ void MainWindow::slotPrintMap()
 
   QPainter painter( &printer );
 
-  // We print the current content of the map into a file.
-  QWidget *map = _globalMap;
+  QRect pageRect = printer.pageLayout().paintRectPixels( 1200 );
+  QRect paperRect = printer.pageLayout().fullRectPixels( 1200 );
 
-  double xscale = printer.pageRect().width() / double( map->width() );
-  double yscale = printer.pageRect().height() / double( map->height() );
+  // We print the current content of the map into a file.
+  double xscale = pageRect.width() / double( map->width() );
+  double yscale = pageRect.height() / double( map->height() );
   double scale = qMin( xscale, yscale );
 
-  painter.translate( printer.paperRect().x() + printer.pageRect().width() / 2,
-                     printer.paperRect().y() + printer.pageRect().height() / 2 );
+  painter.translate( paperRect.x() + pageRect.width() / 2,
+                     paperRect.y() + pageRect.height () / 2 );
 
   painter.scale( scale, scale );
-
   painter.translate( -map->width() / 2, -map->height() / 2 );
-
   map->render( &painter );
 
   slotSetStatusMsg( tr( "Ready." ) );
@@ -1925,14 +1924,14 @@ void MainWindow::slotShowAbout()
   aw->setWindowTitle( tr( "About KFLog") );
   aw->setHeaderIcon( getPixmap("kflog_16.png") );
 
-  QString header( tr("<html>KFLog %1, &copy; 2000-2015, The KFLog-Team</html>").arg( QCoreApplication::applicationVersion() ) );
+  QString header( tr("<html>KFLog %1, &copy; 2000-2023, The KFLog-Team</html>").arg( QCoreApplication::applicationVersion() ) );
 
   aw->setHeaderText( header );
 
   QString about( tr(
           "<html>"
           "KFLog %1, compiled at %2 with QT %3<br><br>"
-          "Homepage: <a href=\"http://www.kflog.org/kflog/\">www.kflog.org/kflog/</a><br><br>"
+          "Homepage: <a href=\"http://www.kflog.org/kflog/\">www.kflog.org/kflog/</a> outdated, use GitHub link<br><br>"
           "GitHub Software Repository: <a href=\"https://github.com/kflog-project/KFLog\">https://github.com/kflog-project/KFLog</a><br><br>"
           "ChangeLog of <a href=\"https://github.com/kflog-project/KFLog/blob/%1/ChangeLog\">%1</a><br><br>"
           "Report bugs to: <a href=\"https://github.com/kflog-project/KFLog/issues\">kflog-project/KFLog/issues</a><br><br>"
