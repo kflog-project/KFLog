@@ -1,21 +1,50 @@
-=============================
-= A Basic Test Installation =
-=============================
+===============================================================================
+Building and installing KFLog under X11 and Qt5 for Linux/Unix
 
-Preconditions for self compiling KFlog under Ubuntu 14.04:
+Last update: 2023-01-19 by Axel Pauli
+===============================================================================
 
-  1. It should be installed the following Qt 4.8.x packages:
+These are the instructions to build and install KFLog from source code under
+Linux/Unix. The basic assumption is, that you will do it as normal user and
+not as root!
+
+Step 1)
+
+You will need to set up a build environment for KFLog under X11. The
+following components are mandatory:
+
+  a) The g++ tools, GNUs C++ compiler
+  b) The Qt tools qmake, moc and lrelease
+  c) The Qt libraries libQtCore, libQtGui, libQtNetwork, libQtXml
+  d) The Qt header files
+  e) A git client and the tool unzip
+  f) The tools dh_make and dpkg-buildpackage
   
-  qt4-dev-tools, qt4-qmake, libqt4-dev, libqt4-network, libqt4-xml,
-  libqtcore4, libqtgui4
-  
-  If some packages are missing, install them with the following command:
-  
-  sudo apt-get install <package-name> ...
+At least the last Qt Release 5.15.2 should be used.
 
-The simplest way to compile the source code in Ubuntu or Debian is:
+The different Linux distributions do provide normally installable packages for
+that. For XUbuntu 22.04 you have to execute the following command to get them:
 
-  1. 'cd' into the directory containing the package's source code and type
+  sudo apt-get install build-essential git unzip
+  sudo apt-get install qtcreator qtbase5-dev qttools5-dev-tools qt5-doc
+  sudo apt-get install libbluetooth-dev bluez
+  sudo apt-get install dh-make fakeroot dpkg-dev
+  
+  Additional help is to find here:
+  
+  https://wiki.qt.io/Install_Qt_5_on_Ubuntu
+
+Step 2)
+
+Download the sources of KFLog as git repository.
+
+  git clone https://github.com/kflog-project/KFLog.git
+
+Step 3)
+
+The simplest way to compile the source code under Ubuntu or Debian is:
+
+  1. 'cd' into the root directory containing the source code and type
      'make -f Makefile.qmake all'
 
   2. Type 'make -f Makefile.qmake install_test' to install the application and
@@ -23,20 +52,18 @@ The simplest way to compile the source code in Ubuntu or Debian is:
      It carry the name kflog. All data files are stored in your home
      directory and can be accessed by typing 'cd ~/KFLog/'. The map files are
      stored in different subdirectories under the subdirectory mapdata.
-     Landscape and airfield files are downloaded automatically. Airspace
-     files have to be installed by hand or over the setup airspace page.
+     Landscape, airfield and airspace data files are downloaded automatically,
+     if you run kflog.
 
   3. You can remove the program binaries and object files from the
      source code directory by typing 'make -f Makefile.qmake distclean'.
      
-You can use the following command to get the sources of KFLog as git repository.
+Please report found bugs or feature wishes on GitHub:
 
-  git clone https://github.com/kflog-project/KFLog.git
-
-Please report found bugs on GitHub: https://github.com/kflog-project/KFLog/issues
+  https://github.com/kflog-project/KFLog/issues
 
 To do that you need a GitHub account.
 
-You can find more information about KFLog at www.kflog.org.
+You can find more information about KFLog at https://github.com/kflog-project/KFLog.
 
 Have fun with KFlog ...
