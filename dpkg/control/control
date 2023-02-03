@@ -14,7 +14,7 @@ Section: utils
 Priority: optional
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Flight planner and logger for glider pilots
- KFLog gives you a powerful tool to plan your flight tasks and analyze your
+ KFLog gives you a tool to plan your flight tasks and analyze your
  flights afterwards. It is the only flight analyzer program available for Linux
  to be recognized by the FAI IGC.
  .

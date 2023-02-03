@@ -129,6 +129,97 @@ double dist(QPoint* p1, QPoint* p2)
                    double(p2->x()), double(p2->y()) ));
 }
 
+/**
+ * vincentys-formula for DMST distance calculation taken over from:
+ *
+ * https://github.com/dariusarnold/vincentys-formula
+ *
+ * http://www.movable-type.co.uk/scripts/latlong-vincenty.html#direct
+ *
+ * @param lat1 from point
+ * @param lon1 from point
+ * @param lat2 to point
+ * @param lon2 to point
+ *
+ * @return distance in Kilometers and bearing from/to in radiant.
+ */
+QPair<double, double> distVinc( double lat1, double lon1,
+                                double lat2, double lon2 )
+{
+  const double req = 6378137.0;             // Radius at equator
+  const double flat = 1 / 298.257223563;    // flattening of earth
+  const double rpol = (1 - flat) * req;
+
+  double sin_sigma, cos_sigma, sigma, sin_alpha, cos_sq_alpha, cos2sigma;
+  double C, lam_pre;
+
+  // convert coordinates from KFLOG format back to normal format
+  lat1 /= 600000.;
+  lat2 /= 600000.;
+  lon1 /= 600000.;
+  lon2 /= 600000.;
+
+  // convert to radians
+  lat1 = M_PI * lat1 / 180.0;
+  lat2 = M_PI * lat2 / 180.0;
+  lon1 = M_PI * lon1 / 180.0;
+  lon2 = M_PI * lon2 / 180.0;
+
+  const double u1 = atan((1 - flat) * tan(lat2));
+  const double u2 = atan((1 - flat) * tan(lat1));
+
+  double lon = lon1 - lon2;
+  double lam = lon;
+  const double tol = pow(10., -12.); // iteration tolerance
+  double diff = 1.;
+
+  while (abs(diff) > tol)
+    {
+      sin_sigma = sqrt(pow((cos(u2) * sin(lam)), 2.) + pow(cos(u1)*sin(u2) - sin(u1)*cos(u2)*cos(lam), 2.));
+      cos_sigma = sin(u1) * sin(u2) + cos(u1) * cos(u2) * cos(lam);
+      sigma = atan(sin_sigma / cos_sigma);
+      sin_alpha = (cos(u1) * cos(u2) * sin(lam)) / sin_sigma;
+      cos_sq_alpha = 1 - pow(sin_alpha, 2.);
+      cos2sigma = cos_sigma - ((2 * sin(u1) * sin(u2)) / cos_sq_alpha);
+      C = (flat / 16) * cos_sq_alpha * (4 + flat * (4 - 3 * cos_sq_alpha));
+      lam_pre = lam;
+      lam = lon + (1 - C) * flat * sin_alpha * (sigma + C * sin_sigma * (cos2sigma + C * cos_sigma * (2 * pow(cos2sigma, 2.) - 1)));
+      diff = abs(lam_pre - lam);
+  }
+
+  const double usq = cos_sq_alpha * ((pow(req, 2.) - pow(rpol, 2.)) / pow(rpol ,2.));
+  const double A = 1 + (usq / 16384) * (4096 + usq * (-768 + usq * (320 - 175 * usq)));
+  const double B = (usq / 1024) * (256 + usq * (-128 + usq * (74 - 47 * usq)));
+  const double delta_sig = B * sin_sigma * (cos2sigma + 0.25 * B * (cos_sigma * (-1 + 2 * pow(cos2sigma, 2.)) -
+                                                       (1 / 6) * B * cos2sigma * (-3 + 4 * pow(sin_sigma, 2.)) *
+                                                       (-3 + 4 * pow(cos2sigma, 2.))));
+  const double dist = rpol * A * (sigma - delta_sig);
+
+  // const double alpha1 = atan2( (cos(u2) * sin(lam)), cos(u1) * sin(u2) - sin(u1) * cos(u2) * cos(lam) ); // α1 is the initial bearing, or forward azimuth
+  const double alpha2 = atan2( (cos(u1) * sin(lam)), -sin(u1) * cos(u2) + cos(u1) * sin(u2) * cos(lam) ); // α2 is the final bearing (in direction p1→p2)
+
+  // Turn angle to the right direction.
+  double alphaC = alpha2 + M_PI;
+
+  if( alphaC >= M_PI * 2 )
+    {
+      alphaC -= M_PI * 2;
+    }
+
+  QPair<double, double> pair;
+
+  // Distance in kilometers
+  pair.first = dist / 1000.0;
+  pair.second = alphaC; // α2 is the final bearing (in direction p1→p2)
+  return pair;
+}
+
+QPair<double, double> distVinc( QPoint *p1, QPoint *p2 )
+{
+  return ( distVinc( double(p1->x()), double(p1->y()),
+                     double(p2->x()), double(p2->y()) ));
+}
+
 /*
  * Die Funktion scheint noch Probleme zu haben, wenn die Position nahe an
  * 0° W/E liegt.

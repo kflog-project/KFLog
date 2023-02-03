@@ -7,6 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  1999, 2000 by Heiner Lamprecht, Florian Ehinger
+**                   2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -17,6 +18,7 @@
 
 #include <ctime>
 
+#include <QPair>
 #include <QRect>
 #include <QString>
 
@@ -52,6 +54,33 @@ double dist(Waypoint* wp, FlightPoint* fp);
  * Calculates the distance between two given points (in km).
  */
 double dist( FlightPoint* fp1, FlightPoint* fp2);
+
+/**
+ * Vincentys-formula for DMST distance calculation taken over from:
+ *
+ * https://github.com/dariusarnold/vincentys-formula
+ *
+ * http://www.movable-type.co.uk/scripts/latlong-vincenty.html#direct
+ *
+ * @param lat1 from point
+ * @param lon1 from point
+ * @param lat2 to point
+ * @param lon2 to point
+ *
+ * @return distance in Kilometers and bearing from/to in radiant.
+ */
+QPair<double, double> distVinc(double latp, double longp,
+                               double latc, double longc);
+
+/**
+ * Wrapper function for Vincentys-formula for DMST distance calculation.
+ *
+ * @param p1 from point in kflog format
+ * @param p2 to point in kflog format
+ *
+ * @return distance in Kilometers and bearing from/to in radiant.
+ */
+QPair<double, double> distVinc( QPoint *p1, QPoint *p2 );
 
 /**
  * Converts the given time (in sec. from 1.1.1970 00:00:00) into a readable string.
