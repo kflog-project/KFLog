@@ -107,7 +107,7 @@ void KFLogTreeWidget::mousePressEvent( QMouseEvent* event )
       return;
     }
 
-  if( event->button() == Qt::MidButton )
+  if( event->button() == Qt::MiddleButton )
     {
       // Create a menu for switch on/off of tree view columns.
       createShowColMenu();

@@ -1122,7 +1122,7 @@ void Map::mousePressEvent(QMouseEvent* event)
 
   const QPoint current( event->pos() );
 
-  if( event->button() == Qt::MidButton )
+  if( event->button() == Qt::MiddleButton )
     {
       // Center Map
       _globalMapMatrix->centerToPoint( event->pos() );

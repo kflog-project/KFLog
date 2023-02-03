@@ -30,7 +30,7 @@
 /**
  * The device-name of the port.
  */
-char* portName = "\0";
+const char* portName = "\0";
 int portID = -1;
 
 /**
@@ -421,11 +421,10 @@ int Volkslogger::readWaypoints(QList<Waypoint*> *waypoints)
 
     bool isLandable = (wp->typ & VLAPI_DATA::WPT::WPTTYP_L) > 0;
 
-    // TODO
-//    if (isLandable) {
-//      rwy.m_isOpen = true;
-//      rwy.m_surface = (wp->typ & VLAPI_DATA::WPT::WPTTYP_H) > 0 ? Runway::Asphalt : Runway::Grass;
-//    }
+    if (isLandable) {
+      rwy.setOperations( Runway::Active );
+      rwy.setSurface( (wp->typ & VLAPI_DATA::WPT::WPTTYP_H) > 0 ? Runway::Asphalt : Runway::Grass );
+    }
 
     frWp->type = (wp->typ & VLAPI_DATA::WPT::WPTTYP_A) > 0 ? BaseMapElement::Airfield : -1;
 

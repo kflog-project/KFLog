@@ -145,7 +145,7 @@ QString Flarm::getFlarmDebug (QFile& file) {
   ushort cs = calcCheckSum (str.length(), str);
   QString ccs = QString ("%1").arg (cs, 2, 16, QChar('0'));
   QString sentence = str + ccs + ENDL;
-  qDebug () << "getFlarmDebug cmd: " << sentence << endl;
+  qDebug () << "getFlarmDebug cmd: " << sentence;
   file.write (sentence.toLatin1().constData(), sentence.length());
   file.flush();
     
@@ -164,7 +164,7 @@ QString Flarm::getFlarmData (QFile& file, const QString& cmd, const QString& key
   ushort cs = calcCheckSum (str.length(), str);
   QString ccs = QString ("%1").arg (cs, 2, 16, QChar('0'));
   QString sentence = str + ccs + ENDL;
-  qDebug () << "getFlarmData cmd: " << sentence << endl;
+  qDebug () << "getFlarmData cmd: " << sentence;
   file.write (sentence.toLatin1().constData(), sentence.length());
   file.flush();
     
@@ -173,10 +173,10 @@ QString Flarm::getFlarmData (QFile& file, const QString& cmd, const QString& key
   QTime t1 = QTime::currentTime ();
   while (!bytes.startsWith (cmd + ",A,")) {
     if (t1.secsTo (QTime::currentTime ()) > 10) {
-      qDebug () << "No response from recorder within 10 seconds!" << endl;
+      qDebug () << "No response from recorder within 10 seconds!";
       return "";
     }
-    qDebug () << "ignored bytes: " << bytes << endl;
+    qDebug () << "ignored bytes: " << bytes;
     bytes = file.readLine();
   }
   qDebug () << "answer: " << bytes;
@@ -187,16 +187,16 @@ QString Flarm::getFlarmData (QFile& file, const QString& cmd, const QString& key
   bool ok;
   cs = checksum.toShort (&ok, 16);
   if (!ok) {
-    qDebug () << "checksum not readable: " << checksum << endl;
+    qDebug () << "checksum not readable: " << checksum;
     return "";
   }
-  // qDebug () << "checksum valid" << endl;
+  // qDebug () << "checksum valid";
   if (cs == calcCheckSum (answer.length(), answer)) {
-    // qDebug () << "checksum ok" << endl;
+    // qDebug () << "checksum ok";
     list = answer.split(",");
     return list[3];
   } else {
-    qDebug () << "bad Checksum: " << bytes << "; " << checksum << endl;
+    qDebug () << "bad Checksum: " << bytes << "; " << checksum;
     return "";
   }
 }
@@ -213,7 +213,7 @@ bool Flarm::putFlarmData (QFile& file, const QString& cmd, const QString& key, c
   ushort cs = calcCheckSum (str.length(), str);
   QString ccs = QString ("%1").arg (cs, 2, 16, QChar('0'));
   QString sentence = str + ccs + ENDL;
-  qDebug () << "putFlarmData cmd: " << sentence << endl;
+  qDebug () << "putFlarmData cmd: " << sentence;
   file.write (sentence.toLatin1().constData(), sentence.length());
   file.flush();
 
@@ -222,14 +222,14 @@ bool Flarm::putFlarmData (QFile& file, const QString& cmd, const QString& key, c
   QTime t1 = QTime::currentTime();
   while (!bytes.startsWith (cmd + ",A,")) {
     if (t1.secsTo (QTime::currentTime()) > 10) {
-      // qDebug () << "No response from recorder within 10 seconds!" << endl;
+      // qDebug () << "No response from recorder within 10 seconds!";
       _errorinfo = tr("No response from recorder within 10 seconds!\n");
       return false;
     }
-    qDebug () << "ignored bytes: " << bytes << endl;
+    qDebug () << "ignored bytes: " << bytes;
     bytes = file.readLine();
   }
-  qDebug () << "putFlarmData answer: " << bytes << endl;
+  qDebug () << "putFlarmData answer: " << bytes;
 
   QStringList list = bytes.split("*");
   QString answer = list[0];
@@ -237,14 +237,14 @@ bool Flarm::putFlarmData (QFile& file, const QString& cmd, const QString& key, c
   bool ok;
   cs = checksum.toInt (&ok, 16);
   if (!ok) {
-    qDebug () << "checksum not readable: " << checksum << endl;
+    qDebug () << "checksum not readable: " << checksum;
     return "";
   }
-  // qDebug () << "checksum valid" << endl;
+  // qDebug () << "checksum valid";
   if (cs == calcCheckSum (answer.length(), answer)) {
     return true;
   } else {
-    qDebug () << "bad Checksum: " << bytes << "; " << checksum << endl;
+    qDebug () << "bad Checksum: " << bytes << "; " << checksum;
     return false;
   }
 }
@@ -273,7 +273,7 @@ int Flarm::getBasicData(FR_BasicData& data)
   // this delivers always 0xFFFFFF; we get device id from debug info
   // data.devID  = getFlarmData (file, "$PFLAC","ID");
   data.swVersion     = getFlarmData (file, "$PFLAV","");
-  qDebug () << "Version: " << data.swVersion << endl;
+  qDebug () << "Version: " << data.swVersion;
   
   QStringList debug  = getFlarmDebug (file).split (",");
   data.recorderType  = debug[0];
@@ -552,7 +552,7 @@ bool Flarm::check4Device()
     return true;
   else {
     _errorinfo = tr("device failure");
-    qDebug () << "device failure: " << result << endl;
+    qDebug () << "device failure: " << result;
     return false;
   }
 }
@@ -611,7 +611,7 @@ QString Flarm::lon2flarm(int lon)
 
 int Flarm::writeDeclaration(FRTaskDeclaration* decl, QList<Waypoint*>* wpList, const QString& name)
 {
-    qDebug() << "Flarm::writeDeclaration" << endl;
+    qDebug() << "Flarm::writeDeclaration";
     if (!check4Device())
       return FR_ERROR;
       
