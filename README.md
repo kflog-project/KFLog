@@ -21,7 +21,7 @@ The current bug tracker is located at Git-Hub:
 
 Please report any found bugs or change requests there.
 
-The last published Debian and Ubuntu release is 5.0.0.
+The last published Debian and Ubuntu release is 5.0.0 at 2022-02-04.
 
-Last update: 2023-02-03
+Last update: 2023-02-04
 
