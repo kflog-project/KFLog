@@ -7,11 +7,10 @@
  ************************************************************************
  **
  **   Copyright (c):  2002 by Garrecht Ingenieurgesellschaft
+ **                   2013-2023 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   Licence. See the file COPYING for more information.
- **
- **   $Id$
  **
  ***********************************************************************/
 
@@ -28,8 +27,6 @@
 #include "grecord.h"
 
 #include <utils.h>
-
-using namespace std;
 
 extern int noninteractive;
 
@@ -317,7 +314,7 @@ int32 VLA_XFR::readlog(lpb puffer, int32 maxlen) {
     gcs_counter = 0;
   }
 
-  cout << "loops " << pp << " chars " << gcs_counter << "\n";
+  std::cout << "loops " << pp << " chars " << gcs_counter << "\n";
   if ((ende == -1) || crc16)
     return -1; //Fehlermeldung
   else

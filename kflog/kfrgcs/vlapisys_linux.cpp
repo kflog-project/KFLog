@@ -7,7 +7,7 @@
  ************************************************************************
  **
  **   Copyright (c):  2002 by Heiner Lamprecht
- **                   2014 by Axel Pauli
+ **                   2014-2023 by Axel Pauli
  **
  **   This file is distributed under the terms of the General Public
  **   Licence. See the file COPYING for more information.
@@ -30,8 +30,6 @@
 #include <ctime>
 #include <unistd.h>
 
-using namespace std; 
-
 int noninteractive;
 
 /**
@@ -43,7 +41,7 @@ void releaseTTY(int signal)
   extern int portID;
   extern struct termios oldTermEnv;
 
-  cerr << "Logger-Connection: releaseTTY(" << signal << ")\n";
+  std::cerr << "Logger-Connection: releaseTTY(" << signal << ")\n";
   tcsetattr(portID, TCSANOW, &oldTermEnv);
   exit(-1);
 }
@@ -221,8 +219,8 @@ VLA_ERROR VLA_SYS::serial_in(byte *inbyte)
   if(res == 0) {
     //  	  *inbyte = 0x03;
     // Kein Zeichen empfangen!!!
-    //		  cerr << "\n Nichts gelesen !!!\n\n";
-    //      cerr << "Fehlercode: " << VLA_ERR_NOCHAR << " (sonst: " << VLA_ERR_NOERR << ")\n";
+    //		  std::cerr << "\n Nichts gelesen !!!\n\n";
+    //      std::cerr << "Fehlercode: " << VLA_ERR_NOCHAR << " (sonst: " << VLA_ERR_NOERR << ")\n";
     // Trotz dieses Rueckgabe-Codes bricht die aufrufende Funktion nicht ab!
     // Eine "-1" kann die Funktion nicht zurueckliefern, da dies kein
     // Element von VLA_ERROR ist :-(
@@ -242,7 +240,7 @@ VLA_ERROR VLA_SYS::serial_empty_io_buffers()
   }
 	
   if(tcflush(portID, TCIOFLUSH) == -1) {
-    cerr << "\nERROR: could not empty buffer!\n";
+    std::cerr << "\nERROR: could not empty buffer!\n";
   }
 
   return VLA_ERR_NOERR;
@@ -311,7 +309,7 @@ boolean VLA_SYS::test_user_break()
 
 int16 VLA_SYS::clear_user_break()
 {
-  cerr << "VLA_SYS::clear_user_break()\n";
+  std::cerr << "VLA_SYS::clear_user_break()\n";
   if(noninteractive)  return 0;
 
   return 0;
@@ -350,7 +348,7 @@ void VLA_SYS::progress_set( VLS_TXT_ID /* txtid */ )
 
 void VLA_SYS::show(VLS_TXT_ID txtid)
 {
-  cout << statustext[txtid] << endl;
+  std::cout << statustext[txtid] << std::endl;
 
   if(noninteractive)  return;
   if (txtid == VLS_TXT_NIL)  return;
@@ -359,7 +357,7 @@ void VLA_SYS::show(VLS_TXT_ID txtid)
 
 void VLA_SYS::showwait(VLS_TXT_ID txtid)
 {
-  cout << statustext[txtid] << endl;
+  std::cout << statustext[txtid] << std::endl;
 
   if(noninteractive)  return;
 }

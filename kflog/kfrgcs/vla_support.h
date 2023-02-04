@@ -8,19 +8,16 @@
 **
 **   Copyright (c):  2002 by Heiner Lamprecht,
 **                           Garrecht Ingenieurgesellschaft
+**                   2013-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
-#ifndef VLA_SUPPORT
-#define VLA_SUPPORT
+#pragma once
 
 #include "vlapityp.h"
-
 #include "vlapierr.h"
 
 /*
@@ -101,7 +98,7 @@ protected:
 		cmd_GFS = 0x03,// Flug lesen mit Signatur
 		cmd_RDB = 0x04,// Datenbank lesen
 		cmd_WPR = 0x05,// Parameter schreiben
-		cmd_CFL = 0x06,// Flugspeicher löschen
+		cmd_CFL = 0x06,// Flugspeicher lï¿½schen
 		cmd_PDB = 0x07,// Datenbank schreiben
 		cmd_SIG = 0x08,// Signatur berechnen und ausgeben
 		cmd_ERO = 0x09,// Emergency readout (Memorydump lesen)
@@ -139,5 +136,3 @@ protected:
   int32 flightget(lpb buffer, int32 buffersize, int16 flightnr, int16 secmode);
   VLA_ERROR readdir(lpb buffer, int32 buffersize);
 };
-
-#endif

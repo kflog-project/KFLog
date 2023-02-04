@@ -7,12 +7,10 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by Thomas Nielsen, André Somers
-**                   2011 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -140,7 +138,7 @@ int GarminFR::writeConfigData( FR_BasicData& /*basicdata*/,
  */
 int GarminFR::openRecorder(const QString& portName, int /*baud*/)
 {
-  this->portName = portName.toLatin1().data();
+  this->portName = portName.toLatin1().constData();
 
   if( !gmn.openComm( this->portName ) )
     {

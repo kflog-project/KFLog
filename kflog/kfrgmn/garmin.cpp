@@ -3,6 +3,7 @@
 // - Garmin GPS Class implementation
 //
 // 2001, Thomas Nielsen
+// 2023 by Axel Pauli
 //
 
 #ifndef _GNU_SOURCE
@@ -75,7 +76,7 @@ GarminGPS::~GarminGPS()
 // Link Layer
 //
 //////////////////////////////////////////////////////////////////////////////////
-int GarminGPS::openComm(char * port)
+int GarminGPS::openComm(const char * port)
 {
   int fd;
 

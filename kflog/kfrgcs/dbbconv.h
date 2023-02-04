@@ -7,16 +7,14 @@
 ************************************************************************
 **
 **   Copyright (c):  2002 by Garrecht Ingenieurgesellschaft
+**                   2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
-#ifndef DBBCONV_H
-#define DBBCONV_H
+#pragma once
 
 #include "vlapityp.h"
 
@@ -33,7 +31,8 @@ public:
  int fdfcursor;
  struct HEADER {
 	 int dsanzahl;
-	 int dslaenge, keylaenge;
+	 int dslaenge;
+	 int keylaenge;
 	 unsigned short int dsfirst, dslast;
  };
  HEADER header[8];
@@ -47,5 +46,3 @@ public:
 	void add_fdf(int feldkennung,int feldlaenge, void *quelle);
 	int16 fdf_findfield(byte id);
 };
-
-#endif

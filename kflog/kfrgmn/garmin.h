@@ -3,10 +3,10 @@
 // - GARMIN GPS Class header file
 //
 // 2001, Thomas Nielsen
+// 2023 by Axel Pauli
 //
 
-#ifndef _GARMIN_H
-#define _GARMIN_H
+#pragma once
 //#define _POSIX_SOURCE 1	  	// posix compliant source
 
 #include "garmintypes.h"        // Garmin specific types, structs and ready commands
@@ -32,7 +32,7 @@ class GarminGPS
     //
     // link layer
     //
-    int openComm(char *);
+    int openComm(const char *);
     int closeComm();
     unsigned char * readPacket(int *);
     int writePacket(unsigned char *, int);
@@ -67,5 +67,3 @@ class GarminGPS
     int m_model;               // holds the GARMIN model ID of the GPS
     double m_software_version; // holds the GARMIN sw verion of the GPS
 };
-
-#endif

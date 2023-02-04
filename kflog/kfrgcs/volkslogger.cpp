@@ -473,13 +473,16 @@ int Volkslogger::writeWaypoints(QList<Waypoint*> *waypoints)
         rwy = frWp->rwyList[0];
       }
 
-    // TODO
-//    wp->typ =
-//      (rwy.m_isOpen ? VLAPI_DATA::WPT::WPTTYP_L : 0) |
-//      (rwy.m_surface == Runway::Asphalt || rwy.m_surface == Runway::Concrete ? VLAPI_DATA::WPT::WPTTYP_H : 0) |
-//      (frWp->type == BaseMapElement::Airfield || frWp->type == BaseMapElement::Gliderfield ||
-//       frWp->type == BaseMapElement::Airport || frWp->type == BaseMapElement::IntAirport ||
-//       frWp->type == BaseMapElement::MilAirport || frWp->type == BaseMapElement::CivMilAirport ? VLAPI_DATA::WPT::WPTTYP_A : 0);
+    wp->typ =
+      (rwy.isOpen() ? VLAPI_DATA::WPT::WPTTYP_L : 0) |
+      (rwy.getSurface() == Runway::Asphalt ||
+       rwy.getSurface() == Runway::Concrete ? VLAPI_DATA::WPT::WPTTYP_H : 0) |
+      (frWp->type == BaseMapElement::Airfield ||
+       frWp->type == BaseMapElement::Gliderfield ||
+       frWp->type == BaseMapElement::Airport ||
+       frWp->type == BaseMapElement::IntAirport ||
+       frWp->type == BaseMapElement::MilAirport ||
+       frWp->type == BaseMapElement::CivMilAirport ? VLAPI_DATA::WPT::WPTTYP_A : 0);
   }
 
   return vl.write_db_and_declaration() == VLA_ERR_NOERR ? FR_OK : FR_ERROR;

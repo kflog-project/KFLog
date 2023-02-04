@@ -7,11 +7,10 @@
 ************************************************************************
 **
 **   Copyright (c):  2002 by Garrecht Ingenieurgesellschaft
+**                   2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   Licence. See the file COPYING for more information.
-**
-**   $Id$
 **
 ***********************************************************************/
 
@@ -33,8 +32,7 @@
 
 */
 
-#ifndef VLAPITYP_H
-#define VLAPITYP_H
+#pragma once
 
 #ifdef VLAPI2_EXPORTS
 #define VLAPI2_API __declspec(dllexport)
@@ -95,5 +93,3 @@ typedef int
 // pointer to a byte variable, which can be anywhere in the memory space
 typedef byte *
   lpb;
-
-#endif

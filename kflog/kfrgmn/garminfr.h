@@ -7,17 +7,14 @@
 ************************************************************************
 **
 **   Copyright (c):  2003 by Thomas Nielsen, André Somers
-**                   2011 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
 **
-**   $Id$
-**
 ***********************************************************************/
 
-#ifndef GARMIN_FR_H
-#define GARMIN_FR_H
+#pragma once
 
 #include <QObject>
 
@@ -124,7 +121,7 @@ protected:
   /**
    * The device-name of the port.
    */
-  char* portName;
+  const char* portName;
 
   /**
    * The file-handle
@@ -141,5 +138,3 @@ protected:
    */
   struct termios newTermEnv;
 };
-
-#endif
