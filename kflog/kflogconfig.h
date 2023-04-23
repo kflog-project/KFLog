@@ -150,12 +150,12 @@ class KFLogConfig : public QDialog
   /**
    * Emitted to request an openAIP airspace file download.
    */
-  void downloadOpenAipAirspaces( bool askUser );
+  void downloadOpenAipAirspaces();
 
   /**
    * Emitted to request an openAIP point data file download.
    */
-  void downloadOpenAipPointFiles( bool askUser );
+  void downloadOpenAipPointFiles();
 
   /**
    * Emitted to initiate an openAIP point data update check.

@@ -1786,8 +1786,8 @@ void MainWindow::slotConfigureKFLog()
   connect( confDlg, SIGNAL(reloadPointData()),
            _globalMapContents, SLOT(slotReloadPointData()) );
 
-  connect( confDlg, SIGNAL(downloadOpenAipAirspaces(bool)),
-           _globalMapContents, SLOT(slotDownloadOpenAipAirspaceFiles(bool)) );
+  connect( confDlg, SIGNAL(downloadOpenAipAirspaces()),
+           _globalMapContents, SLOT(slotDownloadOpenAipAirspaceFiles()) );
 
   connect( _globalMapContents, SIGNAL(airspacesDownloaded()),
            confDlg, SLOT(slotLoadAirspaceFilesIntoTable()) );
@@ -1795,8 +1795,8 @@ void MainWindow::slotConfigureKFLog()
   connect( _globalMapContents, SIGNAL(pointsDownloaded()),
            confDlg, SLOT(slotLoadOpenAipPointFilesIntoTable()) );
 
-  connect( confDlg, SIGNAL(downloadOpenAipPointFiles(bool)),
-           _globalMapContents, SLOT(slotDownloadOpenAipPointFiles(bool)) );
+  connect( confDlg, SIGNAL(downloadOpenAipPointFiles()),
+           _globalMapContents, SLOT(slotDownloadOpenAipPointFiles()) );
 
   connect( confDlg, SIGNAL(airspaceFileListChanged()),
           _globalMapContents, SLOT(slotReloadAirspaceData()) );

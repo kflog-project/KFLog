@@ -2325,7 +2325,7 @@ void KFLogConfig::slotDownloadOpenAipAs()
   _settings.setValue( "/Airspace/Countries",
                       asOpenAipCountries->text().trimmed().toLower() );
 
-  emit downloadOpenAipAirspaces( false );
+  emit downloadOpenAipAirspaces();
 }
 
 void KFLogConfig::slotDownloadOpenAipPointData()
@@ -2340,7 +2340,7 @@ void KFLogConfig::slotDownloadOpenAipPointData()
   _settings.setValue( "/Points/Countries",
                       pointsOpenAipCountries->text().trimmed().toLower() );
 
-  emit downloadOpenAipPointFiles( false );
+  emit downloadOpenAipPointFiles();
 }
 
 /**
