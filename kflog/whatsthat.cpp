@@ -104,19 +104,14 @@ void WhatsThat::leaveEvent( QEvent* )
 
 void WhatsThat::paintEvent( QPaintEvent* )
 {
-  QPixmap pm = QPixmap( docW+1, docH+1 );
-  pm.fill(QColor(255, 255, 224)); // LightYellow www.wackerart.de/rgbfarben.html
-
-  QPainter docP;
-
-  docP.begin(&pm);
-  doc->drawContents( &docP );
-  docP.end();
-
   QPainter p( this );
-  p.fillRect( rect(), Qt::red );
-
-  p.drawPixmap( hMargin, vMargin, pm );
+  QPen borderPen(Qt::red);
+  borderPen.setWidth(5);
+  p.setPen(borderPen);
+  p.drawRect(rect());
+  p.setBrush(palette().window());
+  p.setPen(QPen(palette().text(), 1));
+  doc->drawContents( &p );
 }
 
 /** Tries to find itself a good position to display. */
