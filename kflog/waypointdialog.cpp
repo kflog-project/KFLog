@@ -7,7 +7,7 @@
 ************************************************************************
 **
 **   Copyright (c):  2001 by Harald Maier
-**                   2011-2013 by Axel Pauli
+**                   2011-2023 by Axel Pauli
 **
 **   This file is distributed under the terms of the General Public
 **   License. See the file COPYING for more information.
@@ -126,7 +126,6 @@ void WaypointDialog::__initDialog()
   row++;
 
   waypointType = new QComboBox;
-  waypointType->setAutoCompletion(true);
   layout->addWidget(waypointType, row, 0, 1, 2);
 
   elevation = new QLineEdit;
