@@ -23,4 +23,4 @@
 
 #pragma once
 
-#define KFLOG_VERSION "5.0.1"
+#define KFLOG_VERSION "5.0.2"
