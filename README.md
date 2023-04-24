@@ -17,7 +17,7 @@ Please consider the user conditions of their [Data License](https://creativecomm
 KFLog is fully ported to Qt5.15.2 the last official Qt5 release. Current
 Debian and Ubuntu packages are to find [here in Git-Hub](https://github.com/kflog-project/KFLog/tree/master/Releases)
 together the latest [change log file](https://github.com/kflog-project/KFLog/blob/master/ChangeLog).
-If you want to contribute to KFLog, feel free to contribute your improvements or corrections here.
+If you want to contribute to KFLog, feel free to contribute your improvements or corrections here as pull requests.
 
 The current bug tracker is located at Git-Hub:
 
